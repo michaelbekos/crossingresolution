@@ -1,1 +1,1 @@
-javac -cp ".;yfiles-for-java.jar" MainFrame.java
+javac -cp ".;yfiles-for-java.jar" util\Just.java util\Nothing.java MainFrame.java

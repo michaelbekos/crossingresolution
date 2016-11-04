@@ -1,2 +1,4 @@
 *.class
 *~
+/com.yworks.yfiles.java.license.xml
+/src/com.yworks.yfiles.java.license.xml

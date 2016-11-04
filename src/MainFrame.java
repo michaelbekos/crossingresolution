@@ -22,9 +22,11 @@ import io.ChristianIOHandler;
 import io.SergeyIOHandler;
 import layout.algo.ForceDirectedAlgorithm;
 import layout.algo.ForceDirectedFactory;
+import algorithms.graphs.MinimumAngle;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import util.RandomGraphGenerator;
+import util.Maybe;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -745,6 +747,12 @@ public class MainFrame extends JFrame {
         stNumberingMenu.addActionListener(this::stNumberingMenuActionPerformed);
         analyzeMenu.add(stNumberingMenu);
 
+        JMenuItem minimumCrossingDegreeMenu = new JMenuItem();
+        minimumCrossingDegreeMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
+        minimumCrossingDegreeMenu.setText("minimum Degree");
+        minimumCrossingDegreeMenu.addActionListener(this::minimumCrossingDegreeMenuActionPerformed);
+        analyzeMenu.add(minimumCrossingDegreeMenu);
+
         viewMenu.add(toolsMenu);
         viewMenu.add(analyzeMenu);
         viewMenu.add(new JSeparator());
@@ -990,6 +998,17 @@ public class MainFrame extends JFrame {
             INode original = adapter.getOriginalNode(nc.node());
             this.graph.setLabelText(original.getLabels().first(), Integer.toString(st));
         }
+    }
+
+    private void minimumCrossingDegreeMenuActionPerformed(ActionEvent evt){
+        Maybe<Double> minAngle = MinimumAngle.getMinimumAngle(graph);
+        if(minAngle.hasValue()){
+            infoLabel.setText("Minimum Degree: " + minAngle.get().toString());
+        }
+        else{
+            infoLabel.setText("Graph has no crossings.");
+        }
+
     }
 
     private void maxDegreeMenuActionPerformed(ActionEvent evt) {
