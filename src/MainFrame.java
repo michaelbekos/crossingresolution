@@ -936,9 +936,22 @@ public class MainFrame extends JFrame {
      ********************************************************************/
 
     private void gridSpringEmbedderItemActionPerformed(ActionEvent evt) {
-        //TODO: implement action performed for usage in GUI
 
+        JTextField movementsTextField = new JTextField("1");
+        int movements = 1;
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Steps of Movement to the Left/Right: ", movementsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                movements = Integer.parseInt(movementsTextField.getText());
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe steps of movement to the left/right will be set to 1.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
         GridDrawing gd = new GridDrawing(view);
+        gd.moveOneRight(movements);
+        gd.roundingGrid();
 
         this.view.updateUI();
     }
