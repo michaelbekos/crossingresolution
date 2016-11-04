@@ -19,14 +19,14 @@ public class NodeFunctions {
      * Sorts a list of nodes of the graph ascending according to the x coordinate.
      * @param graph - The input graph.
      */
-    public void compareAndSort(IGraph graph){
+    public List<INode> compareAndSort(IGraph graph){
 
         IListEnumerable<INode> graphNodes = graph.getNodes();
         List<INode> target = new ArrayList<>();
         graphNodes.forEach(target::add);
         Comparator<INode> byX = (INode n1, INode n2) -> Double.compare(n1.getLayout().getCenter().x, n2.getLayout().getCenter().x);
         Collections.sort(target, byX);
-
+        return target;
     }
 
 }

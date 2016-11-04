@@ -11,14 +11,14 @@ public class MinimumAngle{
   public static Maybe<Double> getMinimumAngle(IGraph graph){
     List<Tuple4<IEdge, IEdge, PointD, Double>> crossings = getCrossings(graph);
     Comparator<Tuple4<IEdge, IEdge, PointD, Double>> byAngle = 
-      (Tuple4<IEdge, IEdge, PointD, Double> t1, Tuple4<IEdge, IEdge, PointD, Double> t2) ->t1.d.compareTo(t2.d);
+      (Tuple4<IEdge, IEdge, PointD, Double> t1, Tuple4<IEdge, IEdge, PointD, Double> t2) -> t1.d.compareTo(t2.d);
     Collections.sort(crossings, byAngle);
     if(crossings.size() > 0){
       return new Just<Double>(crossings.get(0).d);
     }
     else{
       return new Nothing<Double>();
-    }
+    } 
   }
 
   public static List<Tuple4<IEdge, IEdge, PointD, Double>> getCrossings(IGraph graph){
