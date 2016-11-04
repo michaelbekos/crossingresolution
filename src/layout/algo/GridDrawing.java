@@ -24,10 +24,7 @@ public class GridDrawing {
         this.graph = view.getGraph();
         this.func = new NodeFunctions();
 
-        roundingGrid();
         double x = 2;
-        blowUpGridPoints(x);
-        roundingGrid();
     }
 
 
@@ -84,7 +81,21 @@ public class GridDrawing {
         this.view.updateUI();
     }
 
+    /**
+     * Used to move all vertices left/right or up/down
+     * @param x - amount of movements
+     */
+    public void moveOneRight(double x){
+        for (INode u : graph.getNodes())
+        {
+            double u_x = u.getLayout().getCenter().x;
+            double u_y = u.getLayout().getCenter().y;
 
+            this.view.getGraph().setNodeCenter(u, new PointD(u_x+x,u_y));
+
+        }
+        this.view.updateUI();
+    }
 
 }
 
