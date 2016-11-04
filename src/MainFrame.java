@@ -24,6 +24,7 @@ import layout.algo.ForceDirectedAlgorithm;
 import layout.algo.ForceDirectedFactory;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
+import layout.algo.GridDrawing;
 import util.RandomGraphGenerator;
 
 import javax.swing.*;
@@ -786,6 +787,13 @@ public class MainFrame extends JFrame {
         springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
         layoutMenu.add(springEmbedderItem);
 
+        //TODO: implement grid points after using force directed algorithm
+        JMenuItem gridSpringEmbedderItem = new JMenuItem();
+        gridSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        gridSpringEmbedderItem.setText("Grid Point Spring Embedder");
+        gridSpringEmbedderItem.addActionListener(this::gridSpringEmbedderItemActionPerformed);
+        layoutMenu.add(gridSpringEmbedderItem);
+
         /*
         this.fppItem = new JMenuItem();
         this.fppItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
@@ -918,6 +926,14 @@ public class MainFrame extends JFrame {
     /*********************************************************************
      * Implementation of actions
      ********************************************************************/
+
+    private void gridSpringEmbedderItemActionPerformed(ActionEvent evt) {
+        //TODO: implement action performed for usage in GUI
+
+        GridDrawing gd = new GridDrawing(view);
+
+        this.view.updateUI();
+    }
 
     private void springEmbedderItemActionPerformed(ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
