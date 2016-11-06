@@ -1,12 +1,16 @@
 package layout.algo;
 
-import com.yworks.yfiles.algorithms.YPoint;
+import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.utils.IListEnumerable;
 import com.yworks.yfiles.view.GraphComponent;
 import util.NodeFunctions;
+import util.RandomGraphGenerator;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -14,44 +18,106 @@ import java.util.*;
  */
 public class GridDrawing {
 
-    private GraphComponent view;
+    //private GraphComponent view;
     private IGraph graph;
     private NodeFunctions func;
+    final private IGraph graphFinal;
 
-    public GridDrawing(GraphComponent view)
+
+    public GridDrawing(IGraph graph)
     {
-        this.view = view;
-        this.graph = view.getGraph();
+        this.graph = graph;
         this.func = new NodeFunctions();
-
-        double x = 2;
+        graphFinal = graph;
+        //double x = 2;
     }
 
 
     /**
-     * Calculate grid positions for each node by rounding down.
+     * Calculate grid positions for each node by rounding down or up depending on floating point.
      */
     public void roundingGrid()
     {
-        for (INode u : graph.getNodes())
-        {
+        for (INode u : graph.getNodes()) {
             double u_x = u.getLayout().getCenter().x;
             double u_y = u.getLayout().getCenter().y;
 
-            YPoint p_u = new YPoint(u_x, u_y);
-
             //Calculate Integer Grid Points
-            if(u_x % 2 != 0){
-                u_x = Math.floor(u_x);
+            if (u_x % 2 != 0) {
+                if (u_x - Math.floor(u_x) < 0.5) {
+                    u_x = Math.floor(u_x);
+                } else {
+                    u_x = Math.ceil(u_x);
+                }
             }
-            if(u_y % 2 != 0){
-                u_y = Math.floor(u_y);
+            if (u_y % 2 != 0) {
+                if (u_y - Math.floor(u_y) < 0.5) {
+                    u_y = Math.floor(u_y);
+                } else {
+                    u_y = Math.ceil(u_y);
+                }
             }
-            this.view.getGraph().setNodeCenter(u, new PointD(u_x,u_y));
+            this.graph.setNodeCenter(u, new PointD(u_x, u_y));
 
         }
-        this.view.updateUI();
     }
+
+    /**
+     * Calculate grid positions for each node by rounding down or up depending on floating point
+     * temporarily without updating UI
+     * @return gridGraph - Graph with grid points
+     */
+    public static IGraph roundingGridTemp(IGraph graph)
+    {
+        IGraph gridGraph = graph;
+        for (INode u : gridGraph.getNodes()) {
+            double u_x = u.getLayout().getCenter().x;
+            double u_y = u.getLayout().getCenter().y;
+
+            //Calculate Integer Grid Points
+            if (u_x % 2 != 0) {
+                if (u_x - Math.floor(u_x) < 0.5) {
+                    u_x = Math.floor(u_x);
+                } /*else {
+                    u_x = Math.ceil(u_x);
+                }*/
+            }
+            if (u_y % 2 != 0) {
+                if (u_y - Math.floor(u_y) < 0.5) {
+                    u_y = Math.floor(u_y);
+                } /*else {
+                    u_y = Math.ceil(u_y);
+                }*/
+            }
+            gridGraph.setNodeCenter(u, new PointD(u_x, u_y));
+
+        }
+
+        return gridGraph;
+    }
+
+    /**
+     * Calculate grid positions for each node by rounding down
+     */
+    public void lowerRoundingGrid()
+    {
+        IGraph gridGraph = this.graph;
+        for (INode u : gridGraph.getNodes()) {
+            double u_x = u.getLayout().getCenter().x;
+            double u_y = u.getLayout().getCenter().y;
+
+            //Calculate Integer Grid Points
+            if (u_x % 2 != 0) {
+                u_x = Math.floor(u_x);
+            }
+            if (u_y % 2 != 0) {
+                u_y = Math.floor(u_y);
+            }
+            gridGraph.setNodeCenter(u, new PointD(u_x, u_y));
+
+        }
+    }
+
 
     /**
      * Calculate grid positions by relative position to the most left point
@@ -75,26 +141,10 @@ public class GridDrawing {
             INode currN = iter.next();
             currP = currN.getLayout().getCenter();
             tempP = PointD.add(currP, PointD.times(x,PointD.subtract(currP, leftP)));
-            this.view.getGraph().setNodeCenter(currN, new PointD(tempP.getX(), tempP.getY()));
+            this.graph.setNodeCenter(currN, new PointD(tempP.getX(), tempP.getY()));
 
         }
-        this.view.updateUI();
-    }
-
-    /**
-     * Used to move all vertices left/right or up/down
-     * @param x - amount of movements
-     */
-    public void moveOneRight(double x){
-        for (INode u : graph.getNodes())
-        {
-            double u_x = u.getLayout().getCenter().x;
-            double u_y = u.getLayout().getCenter().y;
-
-            this.view.getGraph().setNodeCenter(u, new PointD(u_x+x,u_y));
-
-        }
-        this.view.updateUI();
+        //this.view.updateUI();
     }
 
 }
