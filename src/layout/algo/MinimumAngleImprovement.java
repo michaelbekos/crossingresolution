@@ -14,21 +14,21 @@ import java.util.List;
 /**
  * Created by Jessica Wolz on 06.11.16.
  */
-public class MinimumCrossingImprovement {
+public class MinimumAngleImprovement {
 
     private IGraph graph;
     private NodeFunctions func;
 
 
-    public MinimumCrossingImprovement(IGraph graph){
+    public MinimumAngleImprovement(IGraph graph){
         this.graph = graph;
         this.func = new NodeFunctions();
     }
     /**
-     * Minimal Crossing Improvement by moving points along x axis
+     * Minimal Angle Improvement by moving points along x axis
      * @param x - step size
      */
-    public void minimumCrossingImprovement(double x){
+    public void minimumAngleImprovement(double x){
 
         IGraph tempGraph = this.graph;
 
