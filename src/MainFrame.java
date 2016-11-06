@@ -23,6 +23,7 @@ import io.SergeyIOHandler;
 import layout.algo.ForceDirectedAlgorithm;
 import layout.algo.ForceDirectedFactory;
 import algorithms.graphs.MinimumAngle;
+import layout.algo.MinimumAngleImprovement;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import layout.algo.GridDrawing;
@@ -750,7 +751,7 @@ public class MainFrame extends JFrame {
 
         JMenuItem minimumCrossingDegreeMenu = new JMenuItem();
         minimumCrossingDegreeMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        minimumCrossingDegreeMenu.setText("minimum Degree");
+        minimumCrossingDegreeMenu.setText("Minimum Degree");
         minimumCrossingDegreeMenu.addActionListener(this::minimumCrossingDegreeMenuActionPerformed);
         analyzeMenu.add(minimumCrossingDegreeMenu);
 
@@ -801,6 +802,14 @@ public class MainFrame extends JFrame {
         gridSpringEmbedderItem.setText("Grid Point Spring Embedder");
         gridSpringEmbedderItem.addActionListener(this::gridSpringEmbedderItemActionPerformed);
         layoutMenu.add(gridSpringEmbedderItem);
+
+        JMenuItem minimumAngleImprovementItem = new JMenuItem();
+        minimumAngleImprovementItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        minimumAngleImprovementItem.setText("Testing Improvement of Minimal Crossing Angle");
+        minimumAngleImprovementItem.addActionListener(this::minimumAngleImprovementItemActionPerformed);
+        layoutMenu.add(minimumAngleImprovementItem);
+
+
 
         /*
         this.fppItem = new JMenuItem();
@@ -937,23 +946,29 @@ public class MainFrame extends JFrame {
 
     private void gridSpringEmbedderItemActionPerformed(ActionEvent evt) {
 
-        JTextField movementsTextField = new JTextField("1");
-        int movements = 1;
+        GridDrawing gd = new GridDrawing(this.view.getGraph());
+        gd.roundingGrid();
+        this.view.updateUI();
+    }
+
+    private void minimumAngleImprovementItemActionPerformed(ActionEvent evt) {
+
+        JTextField movementsTextField = new JTextField("0.1");
+        double movements = 0.1;
 
         int result = JOptionPane.showOptionDialog(null, new Object[]{"Steps of Movement to the Left/Right: ", movementsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
         if (result == JOptionPane.OK_OPTION) {
             try {
-                movements = Integer.parseInt(movementsTextField.getText());
+                movements = Double.parseDouble(movementsTextField.getText());
             } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe steps of movement to the left/right will be set to 1.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe steps of movement to the left/right will be set to 0.1.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
             }
         }
-        GridDrawing gd = new GridDrawing(view);
-        gd.moveOneRight(movements);
-        gd.roundingGrid();
 
-        this.view.updateUI();
+        MinimumAngleImprovement mc = new MinimumAngleImprovement(this.view.getGraph());
+        mc.minimumAngleImprovement(movements);
+
     }
 
     private void springEmbedderItemActionPerformed(ActionEvent evt) {
