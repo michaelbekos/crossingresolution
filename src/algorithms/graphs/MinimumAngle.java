@@ -10,7 +10,7 @@ import util.graph2d.*;
 
 public class MinimumAngle{
   public static Maybe<Double> getMinimumAngle(IGraph graph){
-    return getMinimumAngleCrossing(graph).andThen(i -> i.c.angle);
+    return getMinimumAngleCrossing(graph).bind(i -> Maybe.just(i.c.angle));
   }
   public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph){
     List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph);
