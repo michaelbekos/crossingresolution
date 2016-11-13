@@ -42,7 +42,7 @@ public class MinimumAngleImprovement {
 
         ArrayList<Double> minAngles = new ArrayList<>();
 
-        for(int j = 0; j < 1; j++){
+        for(int j = 0; j*x < 1; j++){
             minAngles.add(MinimumAngle.getMinimumAngle(tempGraph).get());
 
             //moving to left by x steps
