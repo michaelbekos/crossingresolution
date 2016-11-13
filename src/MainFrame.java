@@ -28,7 +28,8 @@ import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import layout.algo.GridDrawing;
 import util.RandomGraphGenerator;
-import util.Maybe;
+import util.*;
+import util.graph2d.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -1045,9 +1046,19 @@ public class MainFrame extends JFrame {
     }
 
     private void minimumCrossingDegreeMenuActionPerformed(ActionEvent evt){
-        Maybe<Double> minAngle = MinimumAngle.getMinimumAngle(graph);
-        if(minAngle.hasValue()){
-            infoLabel.setText("Minimum Degree: " + minAngle.get().toString());
+        Maybe<Tuple3<util.graph2d.LineSegment, util.graph2d.LineSegment, Intersection>> 
+            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
+        if(minAngleCr.hasValue()){
+            Tuple3<util.graph2d.LineSegment, util.graph2d.LineSegment, Intersection> 
+                cr = minAngleCr.get();
+            String text = "Minimum Degree: " + cr.c.angle.toString();
+            if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
+                text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
+                text += " , " +  cr.a.n2.get().getLabels().first().getText();
+                text += " | " +  cr.b.n1.get().getLabels().first().getText();
+                text += " , " +  cr.b.n2.get().getLabels().first().getText();
+            }
+            infoLabel.setText(text);
         }
         else{
             infoLabel.setText("Graph has no crossings.");
