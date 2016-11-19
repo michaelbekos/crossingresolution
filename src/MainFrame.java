@@ -1032,7 +1032,7 @@ public class MainFrame extends JFrame {
         }))));
 
         fd.algos.add(new IncidentEdgesForce(e1 -> (e2 -> (angle -> (deg -> {
-            double threshold = 0.09,
+            double threshold = 0.01,
                     optAngle = (new Integer(360) / deg);
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
@@ -1041,6 +1041,7 @@ public class MainFrame extends JFrame {
             t1 = PointD.times(t1, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
             t2 = PointD.times(t2, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
             t1 = PointD.times(rot, t1);
+            t2 = PointD.negate(t2);
             t2 = PointD.times(rot, t2);
             return new Tuple2<>(t1, t2);
         })))));
