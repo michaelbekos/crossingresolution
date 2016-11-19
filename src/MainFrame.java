@@ -1,5 +1,6 @@
 import com.yworks.yfiles.algorithms.*;
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.geometry.Matrix2D;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
@@ -992,34 +993,35 @@ public class MainFrame extends JFrame {
         }
 
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations);
-        fd.algos.add(new NodePairForce(p1 -> { return (p2 -> {
+        fd.algos.add(new NodePairForce(p1 -> (p2 -> {
             double electricalRepulsion = 50000,
-                   threshold = 0.01;
+                   threshold = 0.00;
             PointD t = PointD.subtract(p1, p2);
             double dist = t.getVectorLength();
             t = PointD.div(t, dist);
             t = PointD.times(threshold * electricalRepulsion / Math.pow(dist, 2), t);
             return t;
-        });}));
-        fd.algos.add(new NodeNeighbourForce(p1 -> { return (p2 -> {
+        })));
+        fd.algos.add(new NodeNeighbourForce(p1 -> (p2 -> {
             double springStiffness = 150,
                    springNaturalLength = 100,
-                   threshold = 0.01;
+                   threshold = 0.00;
             PointD t = PointD.subtract(p2, p1);
             double dist = t.getVectorLength();
             t = PointD.div(t, dist);
             t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
             return t;
-        });}));
+        })));
 
-        fd.algos.add(new CrossingForce(e1 -> { return (e2 -> { return (angle -> {
+        fd.algos.add(new CrossingForce(e1 -> (e2 -> (angle -> {
             double threshold = 0.01;
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
+            Matrix2D rot = new Matrix2D(0, -1, 0, 1, 0, 0);
             t1 = t1.times(t1, threshold * Math.cos(angle));
             t2 = t2.times(t2, threshold * Math.cos(angle));
             return new Tuple2<>(t1, t2);
-        });});}));
+        }))));
         
         Thread thread = new Thread(fd);
         thread.start();
