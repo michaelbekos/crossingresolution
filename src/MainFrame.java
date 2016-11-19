@@ -1032,8 +1032,9 @@ public class MainFrame extends JFrame {
         }))));
 
         fd.algos.add(new IncidentEdgesForce(e1 -> (e2 -> (angle -> (deg -> {
+            if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
             double threshold = 0.09,
-                    optAngle = (new Integer(360) / deg);
+                    optAngle = (360 / deg);
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
             Matrix2D rot = new Matrix2D();
