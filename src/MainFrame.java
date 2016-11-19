@@ -995,7 +995,7 @@ public class MainFrame extends JFrame {
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations);
         fd.algos.add(new NodePairForce(p1 -> (p2 -> {
             double electricalRepulsion = 50000,
-                   threshold = 0.00;
+                   threshold = 0.01;
             PointD t = PointD.subtract(p1, p2);
             double dist = t.getVectorLength();
             t = PointD.div(t, dist);
@@ -1005,7 +1005,7 @@ public class MainFrame extends JFrame {
         fd.algos.add(new NodeNeighbourForce(p1 -> (p2 -> {
             double springStiffness = 150,
                    springNaturalLength = 100,
-                   threshold = 0.00;
+                   threshold = 0.01;
             PointD t = PointD.subtract(p2, p1);
             double dist = t.getVectorLength();
             t = PointD.div(t, dist);
@@ -1014,17 +1014,36 @@ public class MainFrame extends JFrame {
         })));
 
         fd.algos.add(new CrossingForce(e1 -> (e2 -> (angle -> {
-            double threshold = 0.01;
+            double threshold = 0.09;
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
             Matrix2D rot = new Matrix2D();
             rot.rotate(Math.PI/2);
-            t1 = t1.times(t1, threshold * Math.cos(angle));
-            t2 = t2.times(t2, threshold * Math.cos(angle));
+            t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
+            t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
+            t1 = PointD.times(rot, t1);
+            t2 = PointD.times(rot, t2);
+            /*if(angle > 60 && angle < 120){
+                return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
+            }
+            t1 = PointD.times(t1, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
+            t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));*/
+            return new Tuple2<>(t1, t2);
+        }))));
+
+        fd.algos.add(new IncidentEdgesForce(e1 -> (e2 -> (angle -> (deg -> {
+            double threshold = 0.09,
+                    optAngle = (new Integer(360) / deg);
+            PointD t1 = e1.getNormalized();
+            PointD t2 = e2.getNormalized();
+            Matrix2D rot = new Matrix2D();
+            rot.rotate(Math.PI/2);
+            t1 = PointD.times(t1, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
+            t2 = PointD.times(t2, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
             t1 = PointD.times(rot, t1);
             t2 = PointD.times(rot, t2);
             return new Tuple2<>(t1, t2);
-        }))));
+        })))));
         
         Thread thread = new Thread(fd);
         thread.start();
@@ -1049,7 +1068,7 @@ public class MainFrame extends JFrame {
             public void calculateVectors() {
                 ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
                 ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
-                ForceDirectedFactory.calculateCosineForcesEades(graph, 1, map);
+                ForceDirectedFactory.calculateCosineForcesEades(graph, 0.05, map);
             }
         };
         fd.addAlgorithmListener(new AlgorithmListener() {
