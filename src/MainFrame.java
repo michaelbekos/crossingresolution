@@ -1011,6 +1011,15 @@ public class MainFrame extends JFrame {
             t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
             return t;
         });}));
+
+        fd.algos.add(new CrossingForce(e1 -> { return (e2 -> { return (angle -> {
+            double threshold = 0.01;
+            PointD t1 = e1.getNormalized();
+            PointD t2 = e2.getNormalized();
+            t1 = t1.times(t1, threshold * Math.cos(angle));
+            t2 = t2.times(t2, threshold * Math.cos(angle));
+            return new Tuple2<>(t1, t2);
+        });});}));
         
         Thread thread = new Thread(fd);
         thread.start();
