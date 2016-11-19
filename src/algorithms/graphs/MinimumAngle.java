@@ -26,10 +26,13 @@ public class MinimumAngle{
   }
 
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph){
-    return getCrossingsNaiive(graph);
+    return getCrossings(graph, true);
+  }
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly){
+    return getCrossings(graph, edgesOnly);
   }
 
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph){
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph, boolean edgesOnly){
     List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
     for (IEdge e1 : graph.getEdges()){
       LineSegment l1 = new LineSegment(e1);
@@ -37,7 +40,7 @@ public class MinimumAngle{
         // same edge
         if(e1.equals(e2)) continue;
         LineSegment l2 = new LineSegment(e2);
-        Maybe<Intersection> i = l1.intersects(l2, true);
+        Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
         if(i.hasValue()){
           Intersection i1 = i.get();
           res.add(new Tuple3<>(l1, l2, i1));
