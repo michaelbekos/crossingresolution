@@ -20,8 +20,7 @@ public class LineSegment{
     ve = PointD.subtract(p2, p1);
   }
   public LineSegment(INode n1, INode n2){
-    p1 = n1.getLayout().getCenter();
-    p2 = n2.getLayout().getCenter();
+    this(n1.getLayout().getCenter(), n2.getLayout().getCenter());
     this.n1 = Maybe.just(n1);
     this.n2 = Maybe.just(n2);
   }
