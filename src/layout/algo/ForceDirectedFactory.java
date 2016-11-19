@@ -114,14 +114,11 @@ public class ForceDirectedFactory {
      */
     public static void calculateCosineForcesEades(IGraph graph, double threshold, IMapper<INode, List<YVector>> map)
     {
-        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(graph);
-        List<YVector> vectors;
-
         for (Tuple3<LineSegment, LineSegment, Intersection> c : MinimumAngle.getCrossings(graph))
         {
             // crossing of (a,b) and (c,d)
-            double a_y = c.a.p1.getY();
             double a_x = c.a.p1.getX();
+            double a_y = c.a.p1.getY();
 
             double b_x = c.a.p2.getX();
             double b_y = c.a.p2.getY();
@@ -142,14 +139,16 @@ public class ForceDirectedFactory {
 
             firstTemp.norm();
             secTemp.norm();
+
             firstTemp.scale(threshold * Math.cos(c.c.angle));
+            map.getValue(c.a.n1.get()).add(firstTemp); // a
+            firstTemp.scale(-1);
+            map.getValue(c.a.n2.get()).add(firstTemp); // b
+
             secTemp.scale(threshold * Math.cos(c.c.angle));
-
-            map.getValue(c.a.n1.get()).add(firstTemp);
-            map.getValue(c.a.n2.get()).add(firstTemp);
-            map.getValue(c.b.n1.get()).add(secTemp);
-            map.getValue(c.b.n2.get()).add(secTemp);
-
+            map.getValue(c.b.n1.get()).add(secTemp); // c
+            secTemp.scale(-1);
+            map.getValue(c.b.n2.get()).add(secTemp); // d
 
         }
 
