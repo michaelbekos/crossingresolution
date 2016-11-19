@@ -4,14 +4,18 @@ import com.yworks.yfiles.geometry.PointD;
 
 public class Intersection{
   public PointD intersectionPoint;
-  public Double angle;
+  public Double angle, orientedAngle;
   @Override 
   public String toString(){
     return "I(" + intersectionPoint + ", " + angle + ")";
   }
   public Intersection(PointD i, Double a){
     intersectionPoint = i;
-    angle = a;
+    orientedAngle = a;
+    angle = orientedAngle;
+    if(angle > 90){
+      angle = 180 - angle;
+    }
   }
   @Override
   public boolean equals(Object o){

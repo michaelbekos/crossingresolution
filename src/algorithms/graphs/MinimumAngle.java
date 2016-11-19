@@ -29,7 +29,7 @@ public class MinimumAngle{
     return getCrossings(graph, true);
   }
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly){
-    return getCrossings(graph, edgesOnly);
+    return getCrossingsNaiive(graph, edgesOnly);
   }
 
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph, boolean edgesOnly){
