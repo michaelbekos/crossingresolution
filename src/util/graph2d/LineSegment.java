@@ -5,7 +5,7 @@ import com.yworks.yfiles.graph.*;
 import util.*;
 
 public class LineSegment{
-  public PointD p1, p2;
+  public PointD p1, p2, ve;
   public Maybe<IEdge> e = new Nothing<>();
   public Maybe<INode> n1 = new Nothing<>(), 
                       n2 = new Nothing<>();
@@ -17,6 +17,7 @@ public class LineSegment{
   public LineSegment(PointD p11, PointD p21){
     p1 = p11;
     p2 = p21;
+    ve = PointD.subtract(p2, p1);
   }
   public LineSegment(INode n1, INode n2){
     p1 = n1.getLayout().getCenter();

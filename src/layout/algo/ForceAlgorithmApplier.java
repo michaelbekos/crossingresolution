@@ -56,7 +56,9 @@ public class ForceAlgorithmApplier implements Runnable {
     List<NodePairForce> nodePairA;
     List<NodeNeighbourForce> nodeNeighbourA;
     List<CrossingForce> edgeCrossingsA;
+    List<IncidentEdgesForce> incidentEdgesA;
     IMapper<INode, PointD> map = new Mapper<>(new WeakHashMap<>()); 
+
     nodePairA = algos.parallelStream()
       .filter(a -> a instanceof NodePairForce)
       .map(a -> (NodePairForce) a)
@@ -72,6 +74,11 @@ public class ForceAlgorithmApplier implements Runnable {
       .map(a -> (CrossingForce) a)
       .collect(Collectors.toList());
 
+    incidentEdgesA = algos.parallelStream()
+      .filter(a -> a instanceof IncidentEdgesForce)
+      .map(a -> (IncidentEdgesForce) a)
+      .collect(Collectors.toList());
+
     for(INode n1: g.getNodes()){
       map.setValue(n1, new PointD(0, 0));
     }
@@ -79,6 +86,7 @@ public class ForceAlgorithmApplier implements Runnable {
     for(INode n1: g.getNodes()){
       PointD p1 = n1.getLayout().getCenter();
       PointD f1 = map.getValue(n1);
+      Integer n1degree = g.degree(n1);
       for(INode n2: g.getNodes()){
         if(n1.equals(n2)) continue;
         PointD p2 = n2.getLayout().getCenter();
@@ -89,10 +97,36 @@ public class ForceAlgorithmApplier implements Runnable {
       }
       for(INode n2: g.neighbors(INode.class, n1)){
         PointD p2 = n2.getLayout().getCenter();
+        PointD f2 = map.getValue(n2);
+        for(INode n3: g.neighbors(INode.class, n1)){
+          if(n2.equals(n3)) continue;
+          PointD f3 = map.getValue(n3);
+          LineSegment l1, l2;
+          l1 = new LineSegment(n1, n2);
+          l2 = new LineSegment(n1, n3);
+          Maybe<Intersection> mi = l1.intersects(l2, false);
+          if(mi.hasValue()){
+            Intersection i = mi.get();
+            for(IncidentEdgesForce fa: incidentEdgesA){
+              Tuple2<PointD, PointD> forces = fa
+                .apply(l1.ve)
+                .apply(l2.ve)
+                .apply(i.orientedAngle)
+                .apply(n1degree);
+              PointD f2_1, f3_1;
+              f2_1 = forces.a;
+              f3_1 = forces.b;
+              f2 = PointD.add(f2, f2_1);
+              f3 = PointD.add(f3, f3_1);
+            }
+          }
+          map.setValue(n3, f3);
+        }
         for(NodeNeighbourForce fa: nodeNeighbourA){
           PointD force = fa.apply(p1).apply(p2);
           f1 = PointD.add(f1, force);
         }
+        map.setValue(n2, f2);
       }
       map.setValue(n1, f1);
     }
