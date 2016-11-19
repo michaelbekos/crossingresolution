@@ -20,8 +20,7 @@ import com.yworks.yfiles.view.export.PixelImageExporter;
 import com.yworks.yfiles.view.input.*;
 import io.ChristianIOHandler;
 import io.SergeyIOHandler;
-import layout.algo.ForceDirectedAlgorithm;
-import layout.algo.ForceDirectedFactory;
+import layout.algo.*;
 import algorithms.graphs.MinimumAngle;
 import layout.algo.MinimumAngleImprovement;
 import layout.algo.event.AlgorithmEvent;
@@ -797,6 +796,12 @@ public class MainFrame extends JFrame {
         springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
         layoutMenu.add(springEmbedderItem);
 
+        JMenuItem springEmbedderItem2 = new JMenuItem();
+        springEmbedderItem2.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        springEmbedderItem2.setText("Spring Embedder NEW");
+        springEmbedderItem2.addActionListener(this::springEmbedder2ItemActionPerformed);
+        layoutMenu.add(springEmbedderItem2);
+
         //TODO: implement grid points after using force directed algorithm
         JMenuItem gridSpringEmbedderItem = new JMenuItem();
         gridSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
@@ -970,6 +975,46 @@ public class MainFrame extends JFrame {
         MinimumAngleImprovement mc = new MinimumAngleImprovement(this.view.getGraph());
         mc.minimumAngleImprovement(movements);
 
+    }
+
+    private void springEmbedder2ItemActionPerformed(ActionEvent evt) {
+        JTextField iterationsTextField = new JTextField("1000");
+        int iterations = 1000;
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                iterations = Integer.parseInt(iterationsTextField.getText());
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations);
+        fd.algos.add(new NodePairForce(p1 -> { return (p2 -> {
+            double electricalRepulsion = 50000,
+                   threshold = 0.01;
+            PointD t = PointD.subtract(p1, p2);
+            double dist = t.getVectorLength();
+            t = PointD.div(t, dist);
+            t = PointD.times(threshold * electricalRepulsion / Math.pow(dist, 2), t);
+            return t;
+        });}));
+        fd.algos.add(new NodeNeighbourForce(p1 -> { return (p2 -> {
+            double springStiffness = 150,
+                   springNaturalLength = 100,
+                   threshold = 0.01;
+            PointD t = PointD.subtract(p2, p1);
+            double dist = t.getVectorLength();
+            t = PointD.div(t, dist);
+            t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
+            return t;
+        });}));
+        
+        Thread thread = new Thread(fd);
+        thread.start();
+        this.view.updateUI();
     }
 
     private void springEmbedderItemActionPerformed(ActionEvent evt) {

@@ -1,1 +1,1 @@
-javac -cp ".;yfiles-for-java.jar" util\Just.java util\Nothing.java MainFrame.java
+javac -cp ".;yfiles-for-java.jar" util\Just.java util\Nothing.java layout\algo\ForceAlgorithm.java MainFrame.java
