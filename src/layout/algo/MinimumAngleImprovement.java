@@ -32,6 +32,7 @@ public class MinimumAngleImprovement {
         if(x == 0) return;
         IGraph tempGraph = this.graph;
 
+
         //File name = new File("nodes.txt");
         //try {
         //    func.copyToFile(this.graph, name);

@@ -990,6 +990,7 @@ public class MainFrame extends JFrame {
             public void calculateVectors() {
                 ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
                 ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
+                ForceDirectedFactory.calculateCosineForcesEades(graph, 0.8, map);
             }
         };
         fd.addAlgorithmListener(new AlgorithmListener() {
