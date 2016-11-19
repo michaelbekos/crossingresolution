@@ -1017,9 +1017,12 @@ public class MainFrame extends JFrame {
             double threshold = 0.01;
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
-            Matrix2D rot = new Matrix2D(0, -1, 0, 1, 0, 0);
+            Matrix2D rot = new Matrix2D();
+            rot.rotate(Math.PI/2);
             t1 = t1.times(t1, threshold * Math.cos(angle));
             t2 = t2.times(t2, threshold * Math.cos(angle));
+            t1 = PointD.times(rot, t1);
+            t2 = PointD.times(rot, t2);
             return new Tuple2<>(t1, t2);
         }))));
         
