@@ -803,7 +803,6 @@ public class MainFrame extends JFrame {
         springEmbedderItem2.addActionListener(this::springEmbedder2ItemActionPerformed);
         layoutMenu.add(springEmbedderItem2);
 
-        //TODO: implement grid points after using force directed algorithm
         JMenuItem gridSpringEmbedderItem = new JMenuItem();
         gridSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         gridSpringEmbedderItem.setText("Grid Point Spring Embedder");
@@ -1032,8 +1031,9 @@ public class MainFrame extends JFrame {
         }))));
 
         fd.algos.add(new IncidentEdgesForce(e1 -> (e2 -> (angle -> (deg -> {
-            double threshold = 0.01,
-                    optAngle = (new Integer(360) / deg);
+            if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
+            double threshold = 0.09,
+                    optAngle = (360 / deg);
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
             Matrix2D rot = new Matrix2D();
