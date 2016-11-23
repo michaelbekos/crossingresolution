@@ -1,5 +1,7 @@
 package layout.algo;
 
+import com.sun.org.apache.xml.internal.security.algorithms.JCEMapper;
+import com.yworks.yfiles.algorithms.YVector;
 import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.view.*;
@@ -8,26 +10,45 @@ import java.util.*;
 import java.util.stream.*;
 import java.awt.Color;
 
+import layout.algo.event.AlgorithmEvent;
+import layout.algo.event.AlgorithmListener;
 import util.*;
 import util.graph2d.*;
 import algorithms.graphs.*;
 import view.visual.*;
 
 public class ForceAlgorithmApplier implements Runnable {
-  public List<ForceAlgorithm> algos = new LinkedList<>();
-  protected GraphComponent view;
-  protected IGraph graph;
-  protected int maxNoOfIterations;   
-  protected static List<ICanvasObject> canvasObjects = new ArrayList<>();
+    public List<ForceAlgorithm> algos = new LinkedList<>();
+    protected GraphComponent view;
+    protected IGraph graph;
+    protected int maxNoOfIterations;
+    protected static List<ICanvasObject> canvasObjects = new ArrayList<>();
+    static IMapper<INode, PointD> map;
+    protected List<AlgorithmListener> algorithmListeners;
 
     
-  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations){
-    this.view = view;
-    this.graph = view.getGraph();
-    this.maxNoOfIterations = maxNoOfIterations;
+    public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations){
+        this.view = view;
+        this.graph = view.getGraph();
+        this.maxNoOfIterations = maxNoOfIterations;
+        map = new Mapper<>(new WeakHashMap<>());
+        this.algorithmListeners = new ArrayList<AlgorithmListener>();
   }
 
   public void run() {
+      AlgorithmEvent evt = new AlgorithmEvent(this,0);
+
+      // Notify listeners
+      for(Iterator<AlgorithmListener> it = this.algorithmListeners.iterator(); it.hasNext(); ){
+          it.next().algorithmStarted(evt);
+      }
+
+      if (this.maxNoOfIterations == 0) {
+          this.clearDrawables();
+          ForceAlgorithmApplier.applyAlgos(algos, graph);
+          this.displayVectors();
+
+      }
     for (int i=0; i < this.maxNoOfIterations; i++) {
       this.clearDrawables();
       ForceAlgorithmApplier.applyAlgos(algos, graph);
@@ -40,7 +61,49 @@ public class ForceAlgorithmApplier implements Runnable {
       }
     }
   }
+
+
   protected void draw() {
+
+    for(INode u: graph.getNodes()){
+        PointD vector = new PointD(0,0);
+        List<PointD> vectors = new ArrayList<PointD>();
+        vectors.add(map.getValue(u));
+
+        Iterator<PointD> it = vectors.iterator();
+        while (it.hasNext()){
+            vector.add(vector, it.next());
+        }
+
+        double u_x = u.getLayout().getCenter().getX();
+        double u_y = u.getLayout().getCenter().getY();
+
+        PointD p_u = new PointD(u_x, u_y);
+        p_u.add(p_u, vector);
+
+        this.view.getGraph().setNodeCenter(u, new PointD(p_u.getX(), p_u.getY()));
+    }
+
+    this.view.updateUI();
+  }
+
+  protected void displayVectors() {
+      for( INode u: graph.getNodes()){
+          YVector vector = new YVector(0,0);
+
+          List<YVector> vectors = new ArrayList<YVector>();
+          vectors.add(new YVector(this.map.getValue(u).getX(),
+                                this.map.getValue(u).getY()));
+
+          Iterator<YVector> it = vectors.iterator();
+          while (it.hasNext()){
+              YVector temp = it.next();
+              this.canvasObjects.add(this.view.getBackgroundGroup()
+                      .addChild(new VectorVisual(this.view, temp, u, Color.RED),
+                              ICanvasObjectDescriptor.VISUAL));
+          }
+      }
+      this.view.updateUI();
   }
   
   private void clearDrawables() {
@@ -57,7 +120,7 @@ public class ForceAlgorithmApplier implements Runnable {
     List<NodeNeighbourForce> nodeNeighbourA;
     List<CrossingForce> edgeCrossingsA;
     List<IncidentEdgesForce> incidentEdgesA;
-    IMapper<INode, PointD> map = new Mapper<>(new WeakHashMap<>()); 
+    //ForceAlgorithmApplier.map = new Mapper<>(new WeakHashMap<>());
 
     nodePairA = algos.parallelStream()
       .filter(a -> a instanceof NodePairForce)
