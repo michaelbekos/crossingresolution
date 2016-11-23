@@ -30,6 +30,7 @@ import layout.algo.GridDrawing;
 import util.RandomGraphGenerator;
 import util.*;
 import util.graph2d.*;
+import util.graph2d.LineSegment;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -1046,7 +1047,25 @@ public class MainFrame extends JFrame {
             t2 = PointD.times(rot, t2);
             return new Tuple2<>(t1, t2);
         })))));
-        
+
+        fd.addAlgorithmListener(new AlgorithmListener() {
+            public void algorithmStarted(AlgorithmEvent evt) {
+            }
+
+            public void algorithmFinished(AlgorithmEvent evt) {
+                progressBar.setValue(0);
+
+                view.fitContent();
+                view.updateUI();
+            }
+
+            public void algorithmStateChanged(AlgorithmEvent evt) {
+                progressBar.setValue(evt.currentStatus());
+                infoLabel.setText(fd.displayMinimumAngle(graph));
+            }
+        });
+
+
         Thread thread = new Thread(fd);
         thread.start();
         this.view.updateUI();
@@ -1133,7 +1152,7 @@ public class MainFrame extends JFrame {
         if(minAngleCr.hasValue()){
             Tuple3<util.graph2d.LineSegment, util.graph2d.LineSegment, Intersection> 
                 cr = minAngleCr.get();
-            String text = "Minimum Degree: " + cr.c.angle.toString();
+            String text = "Minimum Angle: " + cr.c.angle.toString();
             if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
                 text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
                 text += " , " +  cr.a.n2.get().getLabels().first().getText();
