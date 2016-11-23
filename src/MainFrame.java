@@ -1008,7 +1008,8 @@ public class MainFrame extends JFrame {
             PointD t = PointD.subtract(p2, p1);
             double dist = t.getVectorLength();
             t = PointD.div(t, dist);
-            t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
+            //t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
+            t = PointD.times(t, threshold*(dist-springNaturalLength));
             return t;
         })));
 
@@ -1069,7 +1070,8 @@ public class MainFrame extends JFrame {
             public void calculateVectors() {
                 ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
                 ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
-                ForceDirectedFactory.calculateCosineForcesEades(graph, 0.05, map);
+                ForceDirectedFactory.calculateCosineForcesEades(graph, 0.09, map);
+                ForceDirectedFactory.calculateSinusForceEades(graph, 0.09, map);
             }
         };
         fd.addAlgorithmListener(new AlgorithmListener() {
