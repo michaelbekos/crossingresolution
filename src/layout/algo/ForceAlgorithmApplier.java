@@ -310,7 +310,7 @@ public class ForceAlgorithmApplier implements Runnable {
             this.maxMinAngle = currCross.c.angle;
             this.maxMinAngleIterations = this.currNoOfIterations;
         }
-
+        displayCriticalEdges(currCross);
         return DisplayMessagesGui.createMinimumAngleMsg(currCross);
     }
 
@@ -338,6 +338,34 @@ public class ForceAlgorithmApplier implements Runnable {
         return DisplayMessagesGui.createEdgeLengthMsg(this.minEdgeLength, line);
     }
 
+    /**
+     * Displays vectors for debugging purposes
+     */
+    protected void displayCriticalEdges(Tuple3<LineSegment, LineSegment, Intersection> crossing) {
+
+        INode n1 = crossing.a.n1.get(),
+              n2 = crossing.a.n2.get(),
+              n3 = crossing.b.n1.get(),
+              n4 = crossing.b.n2.get();
+
+        YPoint u1 = new YPoint(n1.getLayout().getCenter().x, n1.getLayout().getCenter().y),
+               u2 = new YPoint(n2.getLayout().getCenter().x, n2.getLayout().getCenter().y),
+               u3 = new YPoint(n3.getLayout().getCenter().x, n3.getLayout().getCenter().y),
+               u4 = new YPoint(n4.getLayout().getCenter().x, n4.getLayout().getCenter().y);
+
+        YVector v1 = new YVector(u1, u2);
+        YVector v2 = new YVector(u3, u4);
+
+       /* this.canvasObjects.add(this.view.getBackgroundGroup()
+                .addChild(new VectorVisual(this.view, v1, n1, Color.RED),
+                            ICanvasObjectDescriptor.VISUAL));
+
+        this.canvasObjects.add(this.view.getBackgroundGroup()
+                .addChild(new VectorVisual(this.view, v2, n3, Color.RED),
+                        ICanvasObjectDescriptor.VISUAL));*/
+       //TODO: Add coloring of edges
+        
+    }
 
 }
 
