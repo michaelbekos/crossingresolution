@@ -1054,14 +1054,14 @@ public class MainFrame extends JFrame {
 
             public void algorithmFinished(AlgorithmEvent evt) {
                 progressBar.setValue(0);
-                JOptionPane.showMessageDialog(null, fd.displayMaxMinAngle(graph), "Maximal Minimum Angle", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, fd.displayMaxMinAngle(), "Maximal Minimum Angle", JOptionPane.INFORMATION_MESSAGE);
                 view.fitContent();
                 view.updateUI();
             }
 
             public void algorithmStateChanged(AlgorithmEvent evt) {
                 progressBar.setValue(evt.currentStatus());
-                infoLabel.setText(fd.displayMinimumAngle(graph));
+                infoLabel.setText(fd.displayMinimumAngle(graph) /*+ fd.displayEdgeLength(graph)*/);
             }
         });
 
