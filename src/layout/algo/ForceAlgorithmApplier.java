@@ -23,19 +23,23 @@ public class ForceAlgorithmApplier implements Runnable {
     protected GraphComponent view;
     protected IGraph graph;
     protected int maxNoOfIterations;
+    protected int currNoOfIterations;
+    protected int maxMinAngleIterations;
     protected static List<ICanvasObject> canvasObjects = new ArrayList<>();
     static IMapper<INode, PointD> map;
     protected List<AlgorithmListener> algorithmListeners;
-    protected double minAngle;
+    protected double maxMinAngle;
 
     
     public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations){
         this.view = view;
         this.graph = view.getGraph();
         this.maxNoOfIterations = maxNoOfIterations;
+        this.currNoOfIterations = 0;
         map = new Mapper<>(new WeakHashMap<>());
         this.algorithmListeners = new ArrayList<AlgorithmListener>();
-        this.minAngle = MinimumAngle.getMinimumAngleCrossing(graph).get().c.orientedAngle;
+        this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph).get().c.angle;
+        this.maxMinAngleIterations = 0;
     }
 
     public void run() {
@@ -55,6 +59,7 @@ public class ForceAlgorithmApplier implements Runnable {
         for (int i=0; i < this.maxNoOfIterations; i++) {
             this.clearDrawables();
             ForceAlgorithmApplier.applyAlgos(algos, graph);
+            this.currNoOfIterations = i;
             //this.draw();
             try {
                 Thread.sleep(1);
@@ -70,6 +75,7 @@ public class ForceAlgorithmApplier implements Runnable {
         for(Iterator<AlgorithmListener> it = this.algorithmListeners.iterator(); it.hasNext(); ){
             evt.currentStatus(100);
             it.next().algorithmFinished(evt);
+
         }
     }
 
@@ -138,13 +144,20 @@ public class ForceAlgorithmApplier implements Runnable {
         if (crossing.hasValue()){
             currCross = crossing.get();
         }
-        for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
-            if (cross.c.orientedAngle < this.minAngle){
-                this.minAngle = cross.c.orientedAngle;
+        
+        /*for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
+            if (cross.c.angle < this.minAngle){
+                this.minAngle = cross.c.angle;
                 currCross = cross;
                 //updateCriticalEdges(cross.c);
-            }
+                }
+          }*/
+
+        if(currCross.c.angle > this.maxMinAngle){
+            this.maxMinAngle = currCross.c.angle;
+            this.maxMinAngleIterations = this.currNoOfIterations;
         }
+
 
         String text = "Minimum Angle: " + currCross.c.angle.toString();
         if(currCross.a.n1.hasValue() && currCross.b.n1.hasValue()){
@@ -155,6 +168,7 @@ public class ForceAlgorithmApplier implements Runnable {
         }
         return text;
     }
+
   
     private void clearDrawables() {
         for (ICanvasObject o: canvasObjects) {
