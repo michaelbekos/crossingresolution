@@ -29,6 +29,7 @@ public class ForceAlgorithmApplier implements Runnable {
     static IMapper<INode, PointD> map;
     protected List<AlgorithmListener> algorithmListeners;
     protected double maxMinAngle;
+    protected double minEdgeLength;
 
     
     public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations){
@@ -38,6 +39,7 @@ public class ForceAlgorithmApplier implements Runnable {
         this.currNoOfIterations = 0;
         map = new Mapper<>(new WeakHashMap<>());
         this.algorithmListeners = new ArrayList<AlgorithmListener>();
+        this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).get().b;
         this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph).get().c.angle;
         this.maxMinAngleIterations = 0;
     }
@@ -130,57 +132,6 @@ public class ForceAlgorithmApplier implements Runnable {
         this.view.updateUI();
     }
 
-    /**
-     * Updates minimum crossing angle on the fly
-     * @param graph
-     * @return text - text to be displayed in gui
-     */
-    public String displayMinimumAngle(IGraph graph) {
-        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = MinimumAngle.getMinimumAngleCrossing(graph);
-        Tuple3<LineSegment, LineSegment, Intersection> currCross = new Tuple3<>(
-                new LineSegment(new PointD(0,0), new PointD(0,0)),
-                new LineSegment(new PointD(0,0), new PointD(0,0)),
-                new Intersection(new PointD(0,0) , 0.0));
-        if (crossing.hasValue()){
-            currCross = crossing.get();
-        }
-
-        /*for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
-            if (cross.c.angle < this.minAngle){
-                this.minAngle = cross.c.angle;
-                currCross = cross;
-                //updateCriticalEdges(cross.c);
-                }
-          }*/
-
-        if(currCross.c.angle > this.maxMinAngle){
-            this.maxMinAngle = currCross.c.angle;
-            this.maxMinAngleIterations = this.currNoOfIterations;
-        }
-
-
-        String text = "Minimum Angle: " + currCross.c.angle.toString();
-        if(currCross.a.n1.hasValue() && currCross.b.n1.hasValue()){
-            text += " | Nodes: " + currCross.a.n1.get().getLabels().first().getText();
-            text += " , " +  currCross.a.n2.get().getLabels().first().getText();
-            text += " | " +  currCross.b.n1.get().getLabels().first().getText();
-            text += " , " +  currCross.b.n2.get().getLabels().first().getText();
-        }
-        return text;
-    }
-
-    /**
-     * Creates Message for Popup at end of iterations, which holds the maximal
-     * minimum angle after x iterations.
-     * @param graph - the input graph
-     * @return text - the generated text for the pop up message
-     */
-    public String displayMaxMinAngle(IGraph graph) {
-        String text = "Maximal Minimum Angle: " + this.maxMinAngle +
-                " after " + (this.maxMinAngleIterations +1) + " iterations.";
-        return text;
-    }
-  
     private void clearDrawables() {
         for (ICanvasObject o: canvasObjects) {
             o.remove();
@@ -330,6 +281,61 @@ public class ForceAlgorithmApplier implements Runnable {
     public void removeAlgorithmListener(AlgorithmListener algorithmListener)
     {
         this.algorithmListeners.remove(algorithmListener);
+    }
+
+    /**
+     * Updates minimum crossing angle on the fly
+     * @param graph
+     * @return text - text to be displayed in gui
+     */
+    public String displayMinimumAngle(IGraph graph) {
+        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = MinimumAngle.getMinimumAngleCrossing(graph);
+        Tuple3<LineSegment, LineSegment, Intersection> currCross = new Tuple3<>(
+                new LineSegment(new PointD(0,0), new PointD(0,0)),
+                new LineSegment(new PointD(0,0), new PointD(0,0)),
+                new Intersection(new PointD(0,0) , 0.0));
+        if (crossing.hasValue()){
+            currCross = crossing.get();
+        }
+
+        /*for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
+            if (cross.c.angle < this.minAngle){
+                this.minAngle = cross.c.angle;
+                currCross = cross;
+                //updateCriticalEdges(cross.c);
+                }
+          }*/
+
+        if(currCross.c.angle > this.maxMinAngle){
+            this.maxMinAngle = currCross.c.angle;
+            this.maxMinAngleIterations = this.currNoOfIterations;
+        }
+
+        return DisplayMessagesGui.createMinimumAngleMsg(currCross);
+    }
+
+    /**
+     * Gets Message for Popup, which holds the maximal
+     * minimum angle
+     * @return text - the generated text for the pop up message
+     */
+    public String displayMaxMinAngle(){
+        return DisplayMessagesGui.createMaxMinAngleMsg(this.maxMinAngle, this.maxMinAngleIterations);
+    }
+
+    public String displayEdgeLength(IGraph graph){
+        Maybe<Tuple2<LineSegment, Double>> edges = ShortestEdgeLength.getShortestEdge(graph);
+        LineSegment line = new LineSegment(new PointD(0,0), new PointD(0,0));
+        double currLength = 0.0;
+        if(edges.hasValue()){
+            line = edges.get().a;
+            currLength = edges.get().b;
+        }
+        if(currLength < this.minEdgeLength){
+            this.minEdgeLength = currLength;
+
+        }
+        return DisplayMessagesGui.createEdgeLengthMsg(this.minEdgeLength, line);
     }
 
 
