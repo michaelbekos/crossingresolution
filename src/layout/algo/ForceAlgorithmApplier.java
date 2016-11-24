@@ -144,7 +144,7 @@ public class ForceAlgorithmApplier implements Runnable {
         if (crossing.hasValue()){
             currCross = crossing.get();
         }
-        
+
         /*for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
             if (cross.c.angle < this.minAngle){
                 this.minAngle = cross.c.angle;
@@ -169,6 +169,17 @@ public class ForceAlgorithmApplier implements Runnable {
         return text;
     }
 
+    /**
+     * Creates Message for Popup at end of iterations, which holds the maximal
+     * minimum angle after x iterations.
+     * @param graph - the input graph
+     * @return text - the generated text for the pop up message
+     */
+    public String displayMaxMinAngle(IGraph graph) {
+        String text = "Maximal Minimum Angle: " + this.maxMinAngle +
+                " after " + (this.maxMinAngleIterations +1) + " iterations.";
+        return text;
+    }
   
     private void clearDrawables() {
         for (ICanvasObject o: canvasObjects) {
