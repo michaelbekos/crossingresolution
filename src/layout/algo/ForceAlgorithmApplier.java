@@ -1,10 +1,10 @@
 package layout.algo;
 
 import com.yworks.yfiles.algorithms.YVector;
-import com.yworks.yfiles.algorithms.YPoint;
 import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.view.*;
+
 
 import java.util.*;
 import java.util.stream.*;
@@ -67,6 +67,7 @@ public class ForceAlgorithmApplier implements Runnable {
     });
     JOptionPane.showMessageDialog(null, displayMaxMinAngle(), "Maximal Minimum Angle", JOptionPane.INFORMATION_MESSAGE);
     this.view.fitContent();
+    displayMinimumAngle(graph);
     this.view.updateUI();
   }
 
@@ -75,18 +76,11 @@ public class ForceAlgorithmApplier implements Runnable {
    */
   protected void displayVectors(IMapper<INode, PointD> map) {
     for( INode u: graph.getNodes()){
-      YVector vector = new YVector(0,0);
-
-      List<YVector> vectors = new ArrayList<YVector>();
-      vectors.add(new YVector(map.getValue(u).getX(), map.getValue(u).getY()));
-
-      Iterator<YVector> it = vectors.iterator();
-      while (it.hasNext()){
-        YVector temp = it.next();
-        this.canvasObjects.add(this.view.getBackgroundGroup()
-              .addChild(new VectorVisual(this.view, temp, u, Color.RED),
-                  ICanvasObjectDescriptor.VISUAL));
-      }
+      YVector vector = new YVector(map.getValue(u).getX(), map.getValue(u).getY());
+      this.canvasObjects.add(this.view.getBackgroundGroup()
+            .addChild(new VectorVisual(this.view, vector, u, Color.RED),
+                ICanvasObjectDescriptor.VISUAL));
+      
     }
     this.view.updateUI();
   }
@@ -267,7 +261,7 @@ public class ForceAlgorithmApplier implements Runnable {
         this.maxMinAngle = currCross.c.angle;
         this.maxMinAngleIterations = this.currNoOfIterations;
       }
-      displayCriticalEdges(currCross);
+      MinimumAngle.highlightCrossing(currCross);
       return DisplayMessagesGui.createMinimumAngleMsg(currCross);
     });
     return s.getDefault("No crossings!");
@@ -298,37 +292,7 @@ public class ForceAlgorithmApplier implements Runnable {
     return DisplayMessagesGui.createEdgeLengthMsg(this.minEdgeLength, line);
   }
 
-  /**
-   * Displays vectors for debugging purposes
-   */
-  protected void displayCriticalEdges(Tuple3<LineSegment, LineSegment, Intersection> crossing) {
 
-    crossing.a.n1.andThen(n1 -> 
-      crossing.a.n2.andThen(n2 -> 
-      crossing.b.n1.andThen(n3 ->
-      crossing.b.n2.andThen(n4 -> {
-      YPoint u1 = new YPoint(n1.getLayout().getCenter().x, n1.getLayout().getCenter().y),
-             u2 = new YPoint(n2.getLayout().getCenter().x, n2.getLayout().getCenter().y),
-             u3 = new YPoint(n3.getLayout().getCenter().x, n3.getLayout().getCenter().y),
-             u4 = new YPoint(n4.getLayout().getCenter().x, n4.getLayout().getCenter().y);
   
-      YVector v1 = new YVector(u1, u2);
-      YVector v2 = new YVector(u3, u4);
-  
-       /* this.canvasObjects.add(this.view.getBackgroundGroup()
-          .addChild(new VectorVisual(this.view, v1, n1, Color.RED),
-                ICanvasObjectDescriptor.VISUAL));
-  
-      this.canvasObjects.add(this.view.getBackgroundGroup()
-          .addChild(new VectorVisual(this.view, v2, n3, Color.RED),
-              ICanvasObjectDescriptor.VISUAL));*/
-       //TODO: Add coloring of edges
-    }))));
-    
-
-    
-    
-  }
-
 }
 

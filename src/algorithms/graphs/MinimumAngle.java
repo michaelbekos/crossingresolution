@@ -2,6 +2,8 @@ package algorithms.graphs;
 
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.graph.styles.*;
+import com.yworks.yfiles.view.*;
 
 import java.util.*;
 
@@ -15,7 +17,9 @@ public class MinimumAngle{
   public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph){
     List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph);
     if(crossings.size() > 0){
-      return Maybe.just(crossings.get(0));
+      Tuple3<LineSegment, LineSegment, Intersection> crossing = crossings.get(0);
+      highlightCrossing(crossing);
+      return Maybe.just(crossing);
     }
     else{
       return Maybe.nothing();
@@ -51,5 +55,28 @@ public class MinimumAngle{
       }
     }
     return res;
+  }
+  /**
+   * Displays vectors for debugging purposes
+   */
+  public static void highlightCrossing(Tuple3<LineSegment, LineSegment, Intersection> crossing) {
+    crossing.a.e.andThen(e1 ->
+    crossing.b.e.andThen(e2 -> {
+      IEdgeStyle s1, s2;
+      s1 = e1.getStyle();
+      s2 = e2.getStyle();
+      if(s1 instanceof PolylineEdgeStyle){
+        ((PolylineEdgeStyle) s1).setPen(Pen.getRed());
+      }
+      else{
+        System.out.println(s1.getClass());
+      }
+      if(s2 instanceof PolylineEdgeStyle){
+        ((PolylineEdgeStyle) s2).setPen(Pen.getRed());
+      }
+      else{
+        System.out.println(s2.getClass());
+      }
+    }));
   }
 }
