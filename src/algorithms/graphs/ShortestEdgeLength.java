@@ -18,7 +18,7 @@ import util.graph2d.LineSegment;
 public class ShortestEdgeLength {
 
     public static Maybe<Double> getShortestEdgeLength(IGraph graph){
-        return getShortestEdge(graph).bind(i -> Maybe.just(i.b));
+        return getShortestEdge(graph).fmap(i -> i.b);
     }
 
     public static Maybe<Tuple2<LineSegment, Double>> getShortestEdge(IGraph graph){
@@ -34,9 +34,8 @@ public class ShortestEdgeLength {
     }
 
     private static Double getDist(IEdge edge){
-        return edge.getSourcePort().getLocation()
-                .distanceTo( new PointD(edge.getTargetNode().getLayout().getCenter().getX(),
-                        edge.getTargetNode().getLayout().getCenter().getY()));
+        LineSegment l = new LineSegment(edge);
+        return l.ve.getVectorLength();
     }
 
     public static List<Tuple2<LineSegment, Double>> getEdges(IGraph graph){

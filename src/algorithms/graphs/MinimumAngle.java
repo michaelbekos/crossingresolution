@@ -13,10 +13,7 @@ public class MinimumAngle{
     return getMinimumAngleCrossing(graph).bind(i -> Maybe.just(i.c.angle));
   }
   public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph);
-    Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byAngle = 
-      (t1, t2) -> t1.c.angle.compareTo(t2.c.angle);
-    Collections.sort(crossings, byAngle);
+    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph);
     if(crossings.size() > 0){
       return Maybe.just(crossings.get(0));
     }
@@ -24,7 +21,13 @@ public class MinimumAngle{
       return Maybe.nothing();
     } 
   }
-
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph){
+    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph);
+    Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byAngle = 
+      (t1, t2) -> t1.c.angle.compareTo(t2.c.angle);
+    Collections.sort(crossings, byAngle);
+    return crossings;
+  }
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph){
     return getCrossings(graph, true);
   }

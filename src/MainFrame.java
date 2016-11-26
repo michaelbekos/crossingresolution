@@ -992,7 +992,7 @@ public class MainFrame extends JFrame {
             }
         }
 
-        ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations);
+        ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, Maybe.just(progressBar));
         fd.algos.add(new NodePairForce(p1 -> (p2 -> {
             double electricalRepulsion = 50000,
                    threshold = 0.01;
@@ -1047,24 +1047,6 @@ public class MainFrame extends JFrame {
             t2 = PointD.times(rot, t2);
             return new Tuple2<>(t1, t2);
         })))));
-
-        fd.addAlgorithmListener(new AlgorithmListener() {
-            public void algorithmStarted(AlgorithmEvent evt) {
-            }
-
-            public void algorithmFinished(AlgorithmEvent evt) {
-                progressBar.setValue(0);
-                JOptionPane.showMessageDialog(null, fd.displayMaxMinAngle(), "Maximal Minimum Angle", JOptionPane.INFORMATION_MESSAGE);
-                view.fitContent();
-                view.updateUI();
-            }
-
-            public void algorithmStateChanged(AlgorithmEvent evt) {
-                progressBar.setValue(evt.currentStatus());
-                infoLabel.setText(fd.displayMinimumAngle(graph) /*+ fd.displayEdgeLength(graph)*/);
-            }
-        });
-
 
         Thread thread = new Thread(fd);
         thread.start();
