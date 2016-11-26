@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 /**
  * Created by michael on 28.10.16.
@@ -751,11 +752,11 @@ public class MainFrame extends JFrame {
         stNumberingMenu.addActionListener(this::stNumberingMenuActionPerformed);
         analyzeMenu.add(stNumberingMenu);
 
-        JMenuItem minimumCrossingDegreeMenu = new JMenuItem();
-        minimumCrossingDegreeMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        minimumCrossingDegreeMenu.setText("Minimum Degree");
-        minimumCrossingDegreeMenu.addActionListener(this::minimumCrossingDegreeMenuActionPerformed);
-        analyzeMenu.add(minimumCrossingDegreeMenu);
+        JMenuItem minimumCrossingAngleMenu = new JMenuItem();
+        minimumCrossingAngleMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
+        minimumCrossingAngleMenu.setText("Minimum Angle");
+        minimumCrossingAngleMenu.addActionListener(this::minimumCrossingAngleMenuActionPerformed);
+        analyzeMenu.add(minimumCrossingAngleMenu);
 
         viewMenu.add(toolsMenu);
         viewMenu.add(analyzeMenu);
@@ -1015,15 +1016,24 @@ public class MainFrame extends JFrame {
         })));
 
         fd.algos.add(new CrossingForce(e1 -> (e2 -> (angle -> {
-            double threshold = 0.09;
+            double threshold = 0.01;
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
-            Matrix2D rot = new Matrix2D();
-            rot.rotate(Math.PI/2);
+            PointD t1Neg = PointD.negate(t1);
+            PointD t2Neg = PointD.negate(t2);
+
+            PointD t1_ = PointD.times(t2Neg, threshold * Math.cos(Math.toRadians(angle)));
+            PointD t2_ = PointD.times(t1Neg, threshold * Math.cos(Math.toRadians(angle)));
+
+            Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
+
             t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
             t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
-            t1 = PointD.times(rot, t1);
-            t2 = PointD.times(rot, t2);
+            t1 = rotate.apply(PointD.negate(t1));
+            t2 = rotate.apply(t2);
+            System.out.println(t1);
+            System.out.println(t2);
+
             /*if(angle > 60 && angle < 120){
                 return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
             }
@@ -1128,12 +1138,10 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void minimumCrossingDegreeMenuActionPerformed(ActionEvent evt){
+    private void minimumCrossingAngleMenuActionPerformed(ActionEvent evt){
         Maybe<Tuple3<util.graph2d.LineSegment, util.graph2d.LineSegment, Intersection>> 
             minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
-        if(minAngleCr.hasValue()){
-            Tuple3<util.graph2d.LineSegment, util.graph2d.LineSegment, Intersection> 
-                cr = minAngleCr.get();
+        Maybe<String> labText = minAngleCr.fmap(cr -> {
             String text = "Minimum Angle: " + cr.c.angle.toString();
             if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
                 text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
@@ -1141,12 +1149,11 @@ public class MainFrame extends JFrame {
                 text += " | " +  cr.b.n1.get().getLabels().first().getText();
                 text += " , " +  cr.b.n2.get().getLabels().first().getText();
             }
-            infoLabel.setText(text);
-        }
-        else{
-            infoLabel.setText("Graph has no crossings.");
-        }
-
+            MinimumAngle.highlightCrossing(cr);
+            view.updateUI();
+            return text;
+        });
+        infoLabel.setText(labText.getDefault("Graph has no crossings."));
     }
 
     private void maxDegreeMenuActionPerformed(ActionEvent evt) {
