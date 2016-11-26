@@ -29,6 +29,7 @@ import layout.algo.event.AlgorithmListener;
 import layout.algo.GridDrawing;
 import util.RandomGraphGenerator;
 import util.*;
+import util.interaction.*;
 import util.graph2d.*;
 import util.graph2d.LineSegment;
 
@@ -833,6 +834,8 @@ public class MainFrame extends JFrame {
 
         mainMenuBar.add(layoutMenu);
         super.setJMenuBar(mainMenuBar);
+
+        sliders.setVisible(true);
     }
 
 
@@ -979,6 +982,9 @@ public class MainFrame extends JFrame {
 
     }
 
+    final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.01};
+    JFrame sliders = ThresholdSliders.create(this, springThreshholds);
+
     private void springEmbedder2ItemActionPerformed(ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
         int iterations = 1000;
@@ -992,11 +998,14 @@ public class MainFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
             }
         }
+        else return;
+
+        
 
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, Maybe.just(progressBar));
         fd.algos.add(new NodePairForce(p1 -> (p2 -> {
             double electricalRepulsion = 50000,
-                   threshold = 0.01;
+                   threshold = springThreshholds[0];
             PointD t = PointD.subtract(p1, p2);
             double dist = t.getVectorLength();
             t = PointD.div(t, dist);
@@ -1006,7 +1015,7 @@ public class MainFrame extends JFrame {
         fd.algos.add(new NodeNeighbourForce(p1 -> (p2 -> {
             double springStiffness = 150,
                    springNaturalLength = 100,
-                   threshold = 0.01;
+                   threshold = springThreshholds[1];
             PointD t = PointD.subtract(p2, p1);
             double dist = t.getVectorLength();
             t = PointD.div(t, dist);
@@ -1016,7 +1025,7 @@ public class MainFrame extends JFrame {
         })));
 
         fd.algos.add(new CrossingForce(e1 -> (e2 -> (angle -> {
-            double threshold = 0.01;
+            double threshold = springThreshholds[2];
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
             PointD t1Neg = PointD.negate(t1);
@@ -1042,7 +1051,7 @@ public class MainFrame extends JFrame {
 
         fd.algos.add(new IncidentEdgesForce(e1 -> (e2 -> (angle -> (deg -> {
             if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
-            double threshold = 0.09,
+            double threshold = springThreshholds[3],
                     optAngle = (360 / deg);
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
