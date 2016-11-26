@@ -1031,8 +1031,6 @@ public class MainFrame extends JFrame {
             t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
             t1 = rotate.apply(PointD.negate(t1));
             t2 = rotate.apply(t2);
-            System.out.println(t1);
-            System.out.println(t2);
 
             /*if(angle > 60 && angle < 120){
                 return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
