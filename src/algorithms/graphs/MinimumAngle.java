@@ -41,11 +41,13 @@ public class MinimumAngle{
 
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph, boolean edgesOnly){
     List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
+    Set<IEdge> seenEdges = new HashSet<>();
     for (IEdge e1 : graph.getEdges()){
       LineSegment l1 = new LineSegment(e1);
+      seenEdges.add(e1);
       for (IEdge e2 : graph.getEdges()){
         // same edge
-        if(e1.equals(e2)) continue;
+        if(seenEdges.contains(e2)) continue;
         LineSegment l2 = new LineSegment(e2);
         Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
         if(i.hasValue()){
