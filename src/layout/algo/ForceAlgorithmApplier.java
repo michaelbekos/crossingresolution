@@ -31,7 +31,6 @@ public class ForceAlgorithmApplier implements Runnable {
   public Maybe<JProgressBar> progressBar;
   protected Maybe<JLabel> infoLabel;
   protected double maxMinAngle;
-  protected double minAngle;
   protected double minEdgeLength;
 
  
@@ -41,8 +40,7 @@ public class ForceAlgorithmApplier implements Runnable {
     this.graph = view.getGraph();
     this.maxNoOfIterations = maxNoOfIterations;
     this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).get().b;
-    this.minAngle = MinimumAngle.getMinimumAngleCrossing(graph).get().c.angle;
-    this.maxMinAngle = this.minAngle;
+    this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph).get().c.angle;
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
@@ -258,15 +256,6 @@ public class ForceAlgorithmApplier implements Runnable {
 
 
     Maybe<String> s = crossing.fmap(currCross -> {
-
-     for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
-      if (cross.c.angle < this.minAngle){
-        this.minAngle = cross.c.angle;
-        currCross = cross;
-        //updateCriticalEdges(cross.c);
-        }
-      }
-
       if(currCross.c.angle > this.maxMinAngle){
         this.maxMinAngle = currCross.c.angle;
         this.maxMinAngleIterations = this.currNoOfIterations;
