@@ -37,8 +37,8 @@ public class LineSegment{
       (p1.equals(p3) || p1.equals(p4) ||
        p2.equals(p3) || p2.equals(p4))) return Maybe.nothing();
     // http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
-    PointD r = PointD.subtract(p2, p1);
-    PointD s = PointD.subtract(p4, p3);
+    PointD r = ve;
+    PointD s = o.ve;
     double rTimesS = crossProduct(r, s);
     // lines parallel
     if(rTimesS == 0) return Maybe.nothing();

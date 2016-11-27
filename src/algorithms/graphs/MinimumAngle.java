@@ -60,7 +60,7 @@ public class MinimumAngle{
     return res;
   }
 
-  public static void resetHighlighting(IGraph graph){
+ public static void resetHighlighting(IGraph graph){
     for(IEdge e1 : graph.getEdges()){
       IEdgeStyle s1 = e1.getStyle();
       if(s1 instanceof PolylineEdgeStyle) {

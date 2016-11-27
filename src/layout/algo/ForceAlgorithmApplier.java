@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.stream.*;
 import java.awt.Color;
 
+
 import javax.swing.*;
 
 import util.*;
@@ -33,8 +34,9 @@ public class ForceAlgorithmApplier implements Runnable {
   protected double minAngle;
   protected double minEdgeLength;
 
-  
-  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
+ 
+  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar){
+
     this.view = view;
     this.graph = view.getGraph();
     this.maxNoOfIterations = maxNoOfIterations;
@@ -76,7 +78,6 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.fitContent();
     displayMinimumAngle(graph);
     this.view.updateUI();
-
   }
 
   /**
@@ -256,13 +257,17 @@ public class ForceAlgorithmApplier implements Runnable {
   public String displayMinimumAngle(IGraph graph) {
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = MinimumAngle.getMinimumAngleCrossing(graph);
 
+
     Maybe<String> s = crossing.fmap(currCross -> {
-      /*for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
-        if (cross.c.angle < this.minAngle){
-          this.minAngle = cross.c.angle;
-          currCross = cross;
+
+     /*for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
+      if (cross.c.angle < this.minAngle){
+        this.minAngle = cross.c.angle;
+        currCross = cross;
+        //updateCriticalEdges(cross.c);
         }
       }*/
+
       if(currCross.c.angle > this.maxMinAngle){
         this.maxMinAngle = currCross.c.angle;
         this.maxMinAngleIterations = this.currNoOfIterations;
@@ -275,14 +280,12 @@ public class ForceAlgorithmApplier implements Runnable {
     
   }
 
-
-  /**
+/**
    * Gets Message for Popup, which holds the maximal
    * minimum angle
    * @return text - the generated text for the pop up message
    */
   public String displayMaxMinAngle(){
-
     return DisplayMessagesGui.createMaxMinAngleMsg(this.maxMinAngle, this.maxMinAngleIterations);
   }
 
