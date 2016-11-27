@@ -29,13 +29,13 @@ public class ForceAlgorithmApplier implements Runnable {
   protected int maxMinAngleIterations;
   protected static List<ICanvasObject> canvasObjects = new ArrayList<>();
   public Maybe<JProgressBar> progressBar;
-  public Maybe<JLabel> infoLabel;
+  protected Maybe<JLabel> infoLabel;
   protected double maxMinAngle;
   protected double minAngle;
   protected double minEdgeLength;
 
  
-  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar){
+  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
 
     this.view = view;
     this.graph = view.getGraph();
@@ -134,30 +134,29 @@ public class ForceAlgorithmApplier implements Runnable {
     return map;
   }
 
-  public static IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IGraph g, IMapper<INode, PointD> map){
-    for(INode n1: g.getNodes()){
+  public static IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IGraph g, IMapper<INode, PointD> map) {
+    for (INode n1 : g.getNodes()) {
       Integer n1degree = g.degree(n1);
-      for(INode n2: g.neighbors(INode.class, n1)){
+      for (INode n2 : g.neighbors(INode.class, n1)) {
         PointD f2 = map.getValue(n2);
-        for(INode n3: g.neighbors(INode.class, n1)){
-          if(n2.equals(n3)) continue;
+        for (INode n3 : g.neighbors(INode.class, n1)) {
+          if (n2.equals(n3)) continue;
           PointD f3 = map.getValue(n3);
           LineSegment l1, l2;
           l1 = new LineSegment(n1, n2);
           l2 = new LineSegment(n1, n3);
           Double angle = Math.toDegrees(Math.acos(PointD.scalarProduct(l1.ve, l2.ve) / (l1.ve.getVectorLength() * l2.ve.getVectorLength())));
-          for(IncidentEdgesForce fa: algos){
+          for (IncidentEdgesForce fa : algos) {
             Tuple2<PointD, PointD> forces = fa
-              .apply(l1.ve)
-              .apply(l2.ve)
-              .apply(angle)
-              .apply(n1degree);
+                    .apply(l1.ve)
+                    .apply(l2.ve)
+                    .apply(angle)
+                    .apply(n1degree);
             f2 = PointD.add(f2, forces.a);
             f3 = PointD.add(f3, forces.b);
           }
           map.setValue(n3, f3);
         }
-        map.setValue(n2, f2);
       }
     }
     return map;
@@ -260,13 +259,13 @@ public class ForceAlgorithmApplier implements Runnable {
 
     Maybe<String> s = crossing.fmap(currCross -> {
 
-     /*for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
+     for(Tuple3<LineSegment, LineSegment, Intersection> cross: MinimumAngle.getCrossings(graph)) {
       if (cross.c.angle < this.minAngle){
         this.minAngle = cross.c.angle;
         currCross = cross;
         //updateCriticalEdges(cross.c);
         }
-      }*/
+      }
 
       if(currCross.c.angle > this.maxMinAngle){
         this.maxMinAngle = currCross.c.angle;
