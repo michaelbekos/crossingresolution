@@ -1002,7 +1002,7 @@ public class MainFrame extends JFrame {
 
         
 
-        ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, Maybe.just(progressBar));
+        ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, Maybe.just(progressBar), Maybe.just(infoLabel));
         fd.algos.add(new NodePairForce(p1 -> (p2 -> {
             double electricalRepulsion = 50000,
                    threshold = springThreshholds[0];
