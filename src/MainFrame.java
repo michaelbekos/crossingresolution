@@ -274,10 +274,10 @@ public class MainFrame extends JFrame {
         widthLabel.setText("Width:");
         toolBar.add(widthLabel);
 
-        JComboBox widthComboBox = new JComboBox();
+        JComboBox<String> widthComboBox = new JComboBox<>();
         for (int i=20; i<=50; i+=2)
         {
-            Object item = Integer.toString(i);
+            String item = Integer.toString(i);
             widthComboBox.addItem(item);
             if (this.graph.getNodeDefaults().getSize().width == i)
             {
@@ -297,10 +297,10 @@ public class MainFrame extends JFrame {
         heightLabel.setText("Height:");
         toolBar.add(heightLabel);
 
-        JComboBox heightComboBox = new JComboBox();
+        JComboBox<String> heightComboBox = new JComboBox<>();
         for (int i=20; i<=50; i+=2)
         {
-            Object item = Integer.toString(i);
+            String item = Integer.toString(i);
             heightComboBox.addItem(item);
             if (this.graph.getNodeDefaults().getSize().height == i)
             {
@@ -320,10 +320,10 @@ public class MainFrame extends JFrame {
         labelSizeLabel.setText("Label size:");
         toolBar.add(labelSizeLabel);
 
-        JComboBox labelSizeComboBox = new JComboBox();
+        JComboBox<String> labelSizeComboBox = new JComboBox<>();
         for (int i=8; i<=30; i+=2)
         {
-            Object item = Integer.toString(i);
+            String item = Integer.toString(i);
             labelSizeComboBox.addItem(item);
             if (this.defaultLabelStyle.getFont().getSize() == i)
             {
