@@ -33,21 +33,26 @@ public class ForceAlgorithmApplier implements Runnable {
   protected Maybe<JLabel> infoLabel;
   protected double maxMinAngle;
   protected double minEdgeLength;
-  protected IMapper<INode, PointD> nodePositions = new Mapper<>(new WeakHashMap<>());
+  protected IMapper<INode, PointD> nodePositions;
 
  
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
 
     this.view = view;
     this.graph = view.getGraph();
+    nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
     this.maxNoOfIterations = maxNoOfIterations;
     this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).get().b;
-    this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph).fmap(t -> t.c.angle).getDefault(0.0);
+    this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions)).fmap(t -> t.c.angle).getDefault(0.0);
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
-
-    graph.getNodes().stream().forEach(n1 -> nodePositions.setValue(n1, n1.getLayout().getCenter()));
+    
+  }
+  public static IMapper<INode, PointD> initPositionMap(IGraph g){
+    IMapper<INode, PointD> nodePos = new Mapper<>(new WeakHashMap<>());
+    g.getNodes().stream().forEach(n1 -> nodePos.setValue(n1, n1.getLayout().getCenter()));
+    return nodePos;
   }
 
   public void run() {
@@ -175,7 +180,7 @@ public class ForceAlgorithmApplier implements Runnable {
     });
   }
   public IMapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, IMapper<INode, PointD> map){
-    for(Tuple3<LineSegment, LineSegment, Intersection> ci: MinimumAngle.getCrossings(graph)){
+    for(Tuple3<LineSegment, LineSegment, Intersection> ci: MinimumAngle.getCrossings(graph, Maybe.just(nodePositions))){
       LineSegment l1 = ci.a,
                   l2 = ci.b;
       Intersection i = ci.c;
@@ -275,7 +280,7 @@ public class ForceAlgorithmApplier implements Runnable {
    * @return text - text to be displayed in gui
    */
   public String displayMinimumAngle(IGraph graph) {
-    Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = MinimumAngle.getMinimumAngleCrossing(graph);
+    Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions));
 
 
     Maybe<String> s = crossing.fmap(currCross -> {

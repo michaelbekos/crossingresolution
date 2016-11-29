@@ -1150,7 +1150,7 @@ public class MainFrame extends JFrame {
 
     private void minimumCrossingAngleMenuActionPerformed(ActionEvent evt){
         Maybe<Tuple3<util.graph2d.LineSegment, util.graph2d.LineSegment, Intersection>> 
-            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
+            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
         Maybe<String> labText = minAngleCr.fmap(cr -> {
             String text = "Minimum Angle: " + cr.c.angle.toString();
             if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
