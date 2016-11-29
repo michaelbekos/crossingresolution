@@ -1036,16 +1036,17 @@ public class MainFrame extends JFrame {
 
             Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
 
-            t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
-            t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
-            t1 = rotate.apply(PointD.negate(t1));
-            t2 = rotate.apply(t2);
-
-            /*if(angle > 60 && angle < 120){
+            //t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
+            //t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
+            if(angle > 60 && angle < 120){
                 return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
             }
             t1 = PointD.times(t1, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
-            t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));*/
+            t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
+
+            t1 = rotate.apply(PointD.negate(t1));
+            t2 = rotate.apply(t2);
+
             return new Tuple2<>(t1, t2);
         }))));
 
@@ -1156,6 +1157,7 @@ public class MainFrame extends JFrame {
                 text += " | " +  cr.b.n1.get().getLabels().first().getText();
                 text += " , " +  cr.b.n2.get().getLabels().first().getText();
             }
+            MinimumAngle.resetHighlighting(this.graph);
             MinimumAngle.highlightCrossing(cr);
             view.updateUI();
             return text;
