@@ -16,7 +16,7 @@ public class ThresholdSliders {
     JSlider slider;
     for(int i = 0; i < t.length; i++){
       final int i1 = i;
-      slider = new JSlider(1, (int) (20 * 1000 * t[i]));
+      slider = new JSlider(0, (int) (20 * 1000 * t[i]));
       slider.setValue((int) (1000 * t[i]));
       slider.addChangeListener(new ChangeListener() {
         final Double[] t1 = t;

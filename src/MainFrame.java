@@ -81,6 +81,8 @@ public class MainFrame extends JFrame {
 
     private GeneticAlgorithm geneticAlgorithm;
 
+    final Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
+
     /**
      * Creates new form MainFrame
      */
@@ -254,6 +256,10 @@ public class MainFrame extends JFrame {
         sidePanel.add(startGenetic, cSidePanel);
         cSidePanel.gridx = 1;
         sidePanel.add(stopGenetic, cSidePanel);
+    }
+
+    public void initializeGeneticAlgorithm(){
+
     }
 
     public void startGeneticClicked(ActionEvent e){
@@ -1026,7 +1032,7 @@ public class MainFrame extends JFrame {
 
     }
 
-    final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.01};
+    final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
 
     private void springEmbedderItemActionPerformed(ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
@@ -1077,8 +1083,6 @@ public class MainFrame extends JFrame {
             PointD t1_ = PointD.times(t2Neg, threshold * Math.cos(Math.toRadians(angle)));
             PointD t2_ = PointD.times(t1Neg, threshold * Math.cos(Math.toRadians(angle)));
 
-            Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
-
             t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
             t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
             t1 = rotate.apply(PointD.negate(t1));
@@ -1098,13 +1102,11 @@ public class MainFrame extends JFrame {
                     optAngle = (360 / deg);
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
-            Matrix2D rot = new Matrix2D();
-            rot.rotate(Math.PI/2);
             t1 = PointD.times(t1, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
             t2 = PointD.times(t2, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
-            t1 = PointD.times(rot, t1);
+            t1 = rotate.apply(t1);
             t2 = PointD.negate(t2);
-            t2 = PointD.times(rot, t2);
+            t2 = rotate.apply(t2);
             return new Tuple2<>(t1, t2);
         })))));
 
