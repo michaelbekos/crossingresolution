@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.function.Function;
 
+
 /**
  * Created by michael on 28.10.16.
  */
@@ -74,6 +75,13 @@ public class MainFrame extends JFrame {
     /* Central gui elements */
     private JLabel infoLabel;
     private JProgressBar progressBar;
+
+    private JPanel sidePanel;
+    private int sidePanelFirstY = 0, sidePanelNextY;
+
+    private GeneticAlgorithm geneticAlgorithm;
+
+    final Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
 
     /**
      * Creates new form MainFrame
@@ -123,13 +131,23 @@ public class MainFrame extends JFrame {
         JPanel mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.setPreferredSize(new Dimension(300, 300));
-        mainPanel.setLayout(new BorderLayout(0, 10));
-        mainPanel.add(progressBarPanel, BorderLayout.PAGE_END);
+        //mainPanel.setLayout(new BorderLayout(0, 10));
+        mainPanel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridy = 2;
+        c. insets = new Insets(5, 0, 5, 0);
+        mainPanel.add(progressBarPanel, c);
+        //mainPanel.add(progressBarPanel, BorderLayout.PAGE_END);
 
         this.view = new GraphComponent();
         this.view.setSize(330, 330);
         this.view.requestFocus();
-        mainPanel.add(this.view, BorderLayout.CENTER);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridy = 1;
+        c.weightx = 0.8;
+        mainPanel.add(this.view, c);
+        //mainPanel.add(this.view, BorderLayout.CENTER);
 
         this.graph = this.view.getGraph();
         this.graph.setUndoEngineEnabled(true);
@@ -203,13 +221,53 @@ public class MainFrame extends JFrame {
 
         super.getContentPane().setLayout(new java.awt.BorderLayout(20, 20));
         super.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
+        //super.getContentPane().add(mainPanel, c);
 
         JPanel toolBar = this.initToolBar();
-        mainPanel.add(toolBar, BorderLayout.PAGE_START);
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c. insets = new Insets(5, 0, 10, 0);
+        mainPanel.add(toolBar, c);
+        //mainPanel.add(toolBar, BorderLayout.PAGE_START);
 
         this.defaultLayouter = new OrganicLayout();
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
+
+        Tuple2<JPanel, Integer> slidersAndCount = ThresholdSliders.create(springThreshholds, new String[]{"Spring force", "Electrical force", "Crossing force", "Incident edges force"});
+        this.sidePanel = slidersAndCount.a;
+        sidePanelNextY = slidersAndCount.b;
+        c.gridy = 1;
+        c.gridx = 1;
+        c.weighty = 1;
+        c.weightx = 0.2;
+        c.insets = new Insets(0, 0, 0, 0);
+        c.fill = GridBagConstraints.VERTICAL;
+        mainPanel.add(sidePanel, c);
+        //mainPanel.add(sliders, BorderLayout.LINE_END);
+        GridBagConstraints cSidePanel = new GridBagConstraints();
+        //WARNING: POST-INCREMENT!
+        cSidePanel.gridy = sidePanelNextY++;
+        JButton startGenetic = new JButton("Start genetic algo"), 
+                stopGenetic  = new JButton("Stop genetic algo");
+        startGenetic.addActionListener(this::startGeneticClicked);
+        stopGenetic.addActionListener(this::stopGeneticClicked);
+
+        sidePanel.add(startGenetic, cSidePanel);
+        cSidePanel.gridx = 1;
+        sidePanel.add(stopGenetic, cSidePanel);
+    }
+
+    public void initializeGeneticAlgorithm(){
+
+    }
+
+    public void startGeneticClicked(ActionEvent e){
+        
+    }
+
+    public void stopGeneticClicked(ActionEvent e){
+        
     }
 
     private JPanel initToolBar()
@@ -222,10 +280,10 @@ public class MainFrame extends JFrame {
         widthLabel.setText("Width:");
         toolBar.add(widthLabel);
 
-        JComboBox widthComboBox = new JComboBox();
+        JComboBox<String> widthComboBox = new JComboBox<>();
         for (int i=20; i<=50; i+=2)
         {
-            Object item = Integer.toString(i);
+            String item = Integer.toString(i);
             widthComboBox.addItem(item);
             if (this.graph.getNodeDefaults().getSize().width == i)
             {
@@ -245,10 +303,10 @@ public class MainFrame extends JFrame {
         heightLabel.setText("Height:");
         toolBar.add(heightLabel);
 
-        JComboBox heightComboBox = new JComboBox();
+        JComboBox<String> heightComboBox = new JComboBox<>();
         for (int i=20; i<=50; i+=2)
         {
-            Object item = Integer.toString(i);
+            String item = Integer.toString(i);
             heightComboBox.addItem(item);
             if (this.graph.getNodeDefaults().getSize().height == i)
             {
@@ -268,10 +326,10 @@ public class MainFrame extends JFrame {
         labelSizeLabel.setText("Label size:");
         toolBar.add(labelSizeLabel);
 
-        JComboBox labelSizeComboBox = new JComboBox();
+        JComboBox<String> labelSizeComboBox = new JComboBox<>();
         for (int i=8; i<=30; i+=2)
         {
-            Object item = Integer.toString(i);
+            String item = Integer.toString(i);
             labelSizeComboBox.addItem(item);
             if (this.defaultLabelStyle.getFont().getSize() == i)
             {
@@ -800,12 +858,6 @@ public class MainFrame extends JFrame {
         springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
         layoutMenu.add(springEmbedderItem);
 
-        JMenuItem springEmbedderItem2 = new JMenuItem();
-        springEmbedderItem2.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        springEmbedderItem2.setText("Spring Embedder NEW");
-        springEmbedderItem2.addActionListener(this::springEmbedder2ItemActionPerformed);
-        layoutMenu.add(springEmbedderItem2);
-
         JMenuItem gridSpringEmbedderItem = new JMenuItem();
         gridSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         gridSpringEmbedderItem.setText("Grid Point Spring Embedder");
@@ -834,8 +886,6 @@ public class MainFrame extends JFrame {
 
         mainMenuBar.add(layoutMenu);
         super.setJMenuBar(mainMenuBar);
-
-        sliders.setVisible(true);
     }
 
 
@@ -982,10 +1032,9 @@ public class MainFrame extends JFrame {
 
     }
 
-    final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.01};
-    JFrame sliders = ThresholdSliders.create(this, springThreshholds);
+    final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
 
-    private void springEmbedder2ItemActionPerformed(ActionEvent evt) {
+    private void springEmbedderItemActionPerformed(ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
         int iterations = 1000;
 
@@ -1034,19 +1083,20 @@ public class MainFrame extends JFrame {
             PointD t1_ = PointD.times(t2Neg, threshold * Math.cos(Math.toRadians(angle)));
             PointD t2_ = PointD.times(t1Neg, threshold * Math.cos(Math.toRadians(angle)));
 
-            Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
-
-            //t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
+           //t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
             //t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
-            if(angle > 60 && angle < 120){
+
+            t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
+            t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
+            t1 = rotate.apply(PointD.negate(t1));
+            t2 = rotate.apply(t2);
+            /*if(angle > 60 && angle < 120){
                 return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
             }
             t1 = PointD.times(t1, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
             t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
-
-            t1 = rotate.apply(PointD.negate(t1));
-            t2 = rotate.apply(t2);
-
+		*/
+       
             return new Tuple2<>(t1, t2);
         }))));
 
@@ -1056,57 +1106,14 @@ public class MainFrame extends JFrame {
                     optAngle = (360 / deg);
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
-            Matrix2D rot = new Matrix2D();
-            rot.rotate(Math.PI/2);
             t1 = PointD.times(t1, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
             t2 = PointD.times(t2, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
-            t1 = PointD.times(rot, t1);
+            t1 = rotate.apply(t1);
             t2 = PointD.negate(t2);
-            t2 = PointD.times(rot, t2);
+            t2 = rotate.apply(t2);
             return new Tuple2<>(t1, t2);
         })))));
 
-        Thread thread = new Thread(fd);
-        thread.start();
-        this.view.updateUI();
-    }
-
-    private void springEmbedderItemActionPerformed(ActionEvent evt) {
-        JTextField iterationsTextField = new JTextField("1000");
-        int iterations = 1000;
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                iterations = Integer.parseInt(iterationsTextField.getText());
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
-            public void calculateVectors() {
-                ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
-                ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
-                ForceDirectedFactory.calculateCosineForcesEades(graph, 0.09, map);
-                ForceDirectedFactory.calculateSinusForceEades(graph, 0.09, map);
-            }
-        };
-        fd.addAlgorithmListener(new AlgorithmListener() {
-            public void algorithmStarted(AlgorithmEvent evt) {
-            }
-
-            public void algorithmFinished(AlgorithmEvent evt) {
-                progressBar.setValue(0);
-                view.fitContent();
-                view.updateUI();
-            }
-
-            public void algorithmStateChanged(AlgorithmEvent evt) {
-                progressBar.setValue(evt.currentStatus());
-            }
-        });
         Thread thread = new Thread(fd);
         thread.start();
         this.view.updateUI();

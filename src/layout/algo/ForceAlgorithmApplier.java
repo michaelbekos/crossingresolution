@@ -6,6 +6,7 @@ import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.IEdgeStyle;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.view.*;
+import com.yworks.yfiles.utils.IEnumerable;
 
 
 import java.util.*;
@@ -32,6 +33,7 @@ public class ForceAlgorithmApplier implements Runnable {
   protected Maybe<JLabel> infoLabel;
   protected double maxMinAngle;
   protected double minEdgeLength;
+  protected IMapper<INode, PointD> nodePositions = new Mapper<>(new WeakHashMap<>());
 
  
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
@@ -40,22 +42,25 @@ public class ForceAlgorithmApplier implements Runnable {
     this.graph = view.getGraph();
     this.maxNoOfIterations = maxNoOfIterations;
     this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).get().b;
-    this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph).get().c.angle;
+    this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph).fmap(t -> t.c.angle).getDefault(0.0);
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
+
+    graph.getNodes().stream().forEach(n1 -> nodePositions.setValue(n1, n1.getLayout().getCenter()));
   }
 
   public void run() {
     if (this.maxNoOfIterations == 0) {
       this.clearDrawables();
-      IMapper<INode, PointD> map = ForceAlgorithmApplier.calculateAllForces(algos, graph);
+      IMapper<INode, PointD> map = calculateAllForces();
       this.displayVectors(map);
     }
 
     for (int i = 0; i < this.maxNoOfIterations; i++) {
       this.clearDrawables();
-      ForceAlgorithmApplier.applyAlgos(algos, graph);
+      nodePositions = applyAlgos();
+      ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
       this.currNoOfIterations = i;
       this.view.updateUI();
       try {
@@ -82,7 +87,7 @@ public class ForceAlgorithmApplier implements Runnable {
    * Displays vectors for debugging purposes
    */
   protected void displayVectors(IMapper<INode, PointD> map) {
-    for( INode u: graph.getNodes()){
+    for(INode u: graph.getNodes()){
       YVector vector = new YVector(map.getValue(u).getX(), map.getValue(u).getY());
       this.canvasObjects.add(this.view.getBackgroundGroup()
             .addChild(new VectorVisual(this.view, vector, u, Color.RED),
@@ -99,13 +104,13 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
   }
 
-  public static IMapper<INode, PointD> calculatePairwiseForces(List<NodePairForce> algos, IGraph g, IMapper<INode, PointD> map){
-    for(INode n1: g.getNodes()){
-      PointD p1 = n1.getLayout().getCenter();
+  public IMapper<INode, PointD> calculatePairwiseForces(List<NodePairForce> algos, IMapper<INode, PointD> map){
+    for(INode n1: graph.getNodes()){
+      PointD p1 = nodePositions.getValue(n1);
       PointD f1 = map.getValue(n1);
-      for(INode n2: g.getNodes()){
+      for(INode n2: graph.getNodes()){
         if(n1.equals(n2)) continue;
-        PointD p2 = n2.getLayout().getCenter();
+        PointD p2 = nodePositions.getValue(n2);
         // applying spring force
         for(NodePairForce fa: algos){
           PointD force = fa.apply(p1).apply(p2);
@@ -116,12 +121,12 @@ public class ForceAlgorithmApplier implements Runnable {
     }
     return map;
   }
-  public static IMapper<INode, PointD> calculateNeighbourForces(List<NodeNeighbourForce> algos, IGraph g, IMapper<INode, PointD> map){
-    for(INode n1: g.getNodes()){
-      PointD p1 = n1.getLayout().getCenter();
+  public IMapper<INode, PointD> calculateNeighbourForces(List<NodeNeighbourForce> algos, IMapper<INode, PointD> map){
+    for(INode n1: graph.getNodes()){
+      PointD p1 = nodePositions.getValue(n1);
       PointD f1 = map.getValue(n1);
-      for(INode n2: g.neighbors(INode.class, n1)){
-        PointD p2 = n2.getLayout().getCenter();
+      for(INode n2: graph.neighbors(INode.class, n1)){
+        PointD p2 = nodePositions.getValue(n2);
         for(NodeNeighbourForce fa: algos){
           PointD force = fa.apply(p1).apply(p2);
           f1 = PointD.add(f1, force);
@@ -132,36 +137,45 @@ public class ForceAlgorithmApplier implements Runnable {
     return map;
   }
 
-  public static IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IGraph g, IMapper<INode, PointD> map) {
-    for (INode n1 : g.getNodes()) {
-      Integer n1degree = g.degree(n1);
-      for (INode n2 : g.neighbors(INode.class, n1)) {
+  public IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IMapper<INode, PointD> map) {
+    for (INode n1 : graph.getNodes()) {
+      Integer n1degree = graph.degree(n1);
+      nonEqualPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).forEach(n2n3 -> {
+        INode n2 = n2n3.a,
+              n3 = n2n3.b;
         PointD f2 = map.getValue(n2);
-        for (INode n3 : g.neighbors(INode.class, n1)) {
-          if (n2.equals(n3)) continue;
-          PointD f3 = map.getValue(n3);
-          LineSegment l1, l2;
-          l1 = new LineSegment(n1, n2);
-          l2 = new LineSegment(n1, n3);
-          Double angle = Math.toDegrees(Math.acos(PointD.scalarProduct(l1.ve, l2.ve) / (l1.ve.getVectorLength() * l2.ve.getVectorLength())));
-          for (IncidentEdgesForce fa : algos) {
-            Tuple2<PointD, PointD> forces = fa
-                    .apply(l1.ve)
-                    .apply(l2.ve)
-                    .apply(angle)
-                    .apply(n1degree);
-            f2 = PointD.add(f2, forces.a);
-            f3 = PointD.add(f3, forces.b);
-          }
-          map.setValue(n3, f3);
+        PointD f3 = map.getValue(n3);
+        LineSegment l1, l2;
+        l1 = new LineSegment(n1, n2);
+        l2 = new LineSegment(n1, n3);
+        Double angle = Math.toDegrees(Math.acos(PointD.scalarProduct(l1.ve, l2.ve) / (l1.ve.getVectorLength() * l2.ve.getVectorLength())));
+        for (IncidentEdgesForce fa : algos) {
+          Tuple2<PointD, PointD> forces = fa
+                  .apply(l1.ve)
+                  .apply(l2.ve)
+                  .apply(angle)
+                  .apply(n1degree);
+          f2 = PointD.add(f2, forces.a);
+          f3 = PointD.add(f3, forces.b);
         }
-      }
+        map.setValue(n2, f2);
+        map.setValue(n3, f3);
+      });
     }
     return map;
   }
-
-  public static IMapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, IGraph g, IMapper<INode, PointD> map){
-    for(Tuple3<LineSegment, LineSegment, Intersection> ci: MinimumAngle.getCrossings(g)){
+  public static <T1, T2> Stream<Tuple2<T1, T2>> nonEqualPairs(Stream<T1> s1, Stream<T2> s2){
+    Set<T1> seenNodes = new HashSet<>();
+    List<T2> s2l = s2.collect(Collectors.toList());
+    return s1.flatMap(n1 -> {
+      seenNodes.add(n1);
+      return s2l.stream()
+        .filter(n2 -> !seenNodes.contains(n2))
+        .map(n2 -> new Tuple2<>(n1, n2));
+    });
+  }
+  public IMapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, IMapper<INode, PointD> map){
+    for(Tuple3<LineSegment, LineSegment, Intersection> ci: MinimumAngle.getCrossings(graph)){
       LineSegment l1 = ci.a,
                   l2 = ci.b;
       Intersection i = ci.c;
@@ -205,16 +219,25 @@ public class ForceAlgorithmApplier implements Runnable {
     return map;
   }
 
-  public static IGraph applyForces(IGraph g, IMapper<INode, PointD> map){
+  public static IGraph applyNodePositionsToGraph(IGraph g, IMapper<INode, PointD> nodePositions){
     for(INode n1: g.getNodes()){
-      PointD f1 = map.getValue(n1),
-          p1 = n1.getLayout().getCenter();
-      p1 = PointD.add(f1, p1);
+      PointD p1 = nodePositions.getValue(n1);
       g.setNodeCenter(n1, p1);
     }
     return g;
   }
+  public static IMapper<INode, PointD> applyForces(IGraph g, IMapper<INode, PointD> nodePositions, IMapper<INode, PointD> map){
+    for(INode n1: g.getNodes()){
+      PointD f1 = map.getValue(n1),
+             p1 = nodePositions.getValue(n1);
+      p1 = PointD.add(f1, p1);
+      nodePositions.setValue(n1, p1);
+    }
+    return nodePositions;
+  }
 
+  //everythings fine, this is checked, the compiler just doesn't get it
+  @SuppressWarnings("unchecked")
   public static <T1, T extends T1> List<T> filterListSubclass(List<T1> l, Class<T> type){
     return l.parallelStream()
       .filter(a -> type.isInstance(a))
@@ -222,28 +245,28 @@ public class ForceAlgorithmApplier implements Runnable {
       .collect(Collectors.toList());
   }
 
-  public static IMapper<INode, PointD> calculateAllForces(List<ForceAlgorithm> algos, IGraph g){
+  public IMapper<INode, PointD> calculateAllForces(){
     List<NodePairForce> nodePairA = 
-      filterListSubclass(algos, NodePairForce.class);
+      ForceAlgorithmApplier.filterListSubclass(algos, NodePairForce.class);
     List<NodeNeighbourForce> nodeNeighbourA = 
-      filterListSubclass(algos, NodeNeighbourForce.class);
+      ForceAlgorithmApplier.filterListSubclass(algos, NodeNeighbourForce.class);
     List<IncidentEdgesForce> incidentEdgesA = 
-      filterListSubclass(algos, IncidentEdgesForce.class);
+      ForceAlgorithmApplier.filterListSubclass(algos, IncidentEdgesForce.class);
     List<CrossingForce> edgeCrossingsA = 
-      filterListSubclass(algos, CrossingForce.class);
+      ForceAlgorithmApplier.filterListSubclass(algos, CrossingForce.class);
 
-    IMapper<INode, PointD> map = initForceMap(g);
+    IMapper<INode, PointD> map = ForceAlgorithmApplier.initForceMap(graph);
 
-    map = calculatePairwiseForces(nodePairA, g, map);
-    map = calculateNeighbourForces(nodeNeighbourA, g, map);
-    map = calculateIncidentForces(incidentEdgesA, g, map);
-    map = calculateCrossingForces(edgeCrossingsA, g, map);
+    map = calculatePairwiseForces(nodePairA, map);
+    map = calculateNeighbourForces(nodeNeighbourA, map);
+    map = calculateIncidentForces(incidentEdgesA, map);
+    map = calculateCrossingForces(edgeCrossingsA, map);
 
     return map;
   }
 
-  public static IGraph applyAlgos(List<ForceAlgorithm> algos, IGraph g){
-    return applyForces(g, calculateAllForces(algos, g));
+  public IMapper<INode, PointD> applyAlgos(){
+    return applyForces(graph, nodePositions, calculateAllForces());
   }
 
   /**

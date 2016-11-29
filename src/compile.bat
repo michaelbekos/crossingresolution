@@ -1,1 +1,1 @@
-javac -cp ".;yfiles-for-java.jar" MainFrame.java
+javac -cp ".;yfiles-for-java.jar" MainFrame.java -Xlint:unchecked
