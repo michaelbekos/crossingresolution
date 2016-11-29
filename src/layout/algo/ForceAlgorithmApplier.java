@@ -87,7 +87,7 @@ public class ForceAlgorithmApplier implements Runnable {
    * Displays vectors for debugging purposes
    */
   protected void displayVectors(IMapper<INode, PointD> map) {
-    for( INode u: graph.getNodes()){
+    for(INode u: graph.getNodes()){
       YVector vector = new YVector(map.getValue(u).getX(), map.getValue(u).getY());
       this.canvasObjects.add(this.view.getBackgroundGroup()
             .addChild(new VectorVisual(this.view, vector, u, Color.RED),
@@ -140,7 +140,7 @@ public class ForceAlgorithmApplier implements Runnable {
   public IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IMapper<INode, PointD> map) {
     for (INode n1 : graph.getNodes()) {
       Integer n1degree = graph.degree(n1);
-      for (Tuple2<INode, INode> n2n3: nonEqualPairs(graph.neighbors(INode.class, n1), graph.neighbors(INode.class, n1))){
+      nonEqualPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).forEach(n2n3 -> {
         INode n2 = n2n3.a,
               n3 = n2n3.b;
         PointD f2 = map.getValue(n2);
@@ -160,18 +160,19 @@ public class ForceAlgorithmApplier implements Runnable {
         }
         map.setValue(n2, f2);
         map.setValue(n3, f3);
-      }
+      });
     }
     return map;
   }
-  public static <T1, T2> List<Tuple2<T1, T2>> nonEqualPairs(IEnumerable<T1> s1, IEnumerable<T2> s2){
+  public static <T1, T2> Stream<Tuple2<T1, T2>> nonEqualPairs(Stream<T1> s1, Stream<T2> s2){
     Set<T1> seenNodes = new HashSet<>();
-    return s1.stream().flatMap(n1 -> {
+    List<T2> s2l = s2.collect(Collectors.toList());
+    return s1.flatMap(n1 -> {
       seenNodes.add(n1);
-      return s2.stream()
+      return s2l.stream()
         .filter(n2 -> !seenNodes.contains(n2))
         .map(n2 -> new Tuple2<>(n1, n2));
-    }).collect(Collectors.toList());
+    });
   }
   public IMapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, IMapper<INode, PointD> map){
     for(Tuple3<LineSegment, LineSegment, Intersection> ci: MinimumAngle.getCrossings(graph)){
