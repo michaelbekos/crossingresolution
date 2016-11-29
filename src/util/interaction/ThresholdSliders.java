@@ -6,16 +6,18 @@ import util.*;
 import java.awt.*;
 
 public class ThresholdSliders {
-  public static JFrame create(Frame owner, final Double[] t){
-    JFrame thresholdSliders = new JFrame();
-    thresholdSliders.setLayout(new GridLayout(4, 1));
-    JSlider[] sliders = new JSlider[4];
-    for(int i = 0; i < sliders.length; i++){
+  public static JPanel create(final Double[] t, String[] names){
+    JPanel thresholdSliders = new JPanel();
+    thresholdSliders.setLayout(new GridLayout(t.length, 1));
+    JSlider slider;
+    for(int i = 0; i < t.length; i++){
       final int i1 = i;
+      JPanel subpanel = new JPanel();
+      subpanel.setLayout(new GridLayout(2, 1));
       System.out.println(1 + ", " + (int) (20 * 1000 * t[i]));
-      sliders[i] = new JSlider(1, (int) (20 * 1000 * t[i]));
-      sliders[i].setValue((int) (1000 * t[i]));
-      sliders[i].addChangeListener(new ChangeListener() {
+      slider = new JSlider(1, (int) (20 * 1000 * t[i]));
+      slider.setValue((int) (1000 * t[i]));
+      slider.addChangeListener(new ChangeListener() {
         final Double[] t1 = t;
         final int index = i1;
         @Override
@@ -26,10 +28,13 @@ public class ThresholdSliders {
           System.out.println(t1[index]);
         }
       });
-      sliders[i].setSize(450, 30);
-      thresholdSliders.add(sliders[i], i);
+      slider.setSize(450, 30);
+      subpanel.add(new JLabel(names[i]));
+      subpanel.add(slider);
+      thresholdSliders.add(subpanel, i);
     }
     thresholdSliders.setSize(500, 300);
+    thresholdSliders.setMinimumSize(new Dimension(500, 300));
     return thresholdSliders;
   }
   

@@ -75,6 +75,8 @@ public class MainFrame extends JFrame {
     private JLabel infoLabel;
     private JProgressBar progressBar;
 
+    private JPanel sliders;
+
     /**
      * Creates new form MainFrame
      */
@@ -120,16 +122,26 @@ public class MainFrame extends JFrame {
         this.progressBar.setStringPainted(true);
         progressBarPanel.add(this.progressBar);
 
-        JPanel mainPanel = new JPanel();
+                JPanel mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.setPreferredSize(new Dimension(300, 300));
-        mainPanel.setLayout(new BorderLayout(0, 10));
-        mainPanel.add(progressBarPanel, BorderLayout.PAGE_END);
+        //mainPanel.setLayout(new BorderLayout(0, 10));
+        mainPanel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridy = 2;
+        c. insets = new Insets(5, 0, 5, 0);
+        mainPanel.add(progressBarPanel, c);
+        //mainPanel.add(progressBarPanel, BorderLayout.PAGE_END);
 
         this.view = new GraphComponent();
         this.view.setSize(330, 330);
         this.view.requestFocus();
-        mainPanel.add(this.view, BorderLayout.CENTER);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridy = 1;
+        c.weightx = 0.8;
+        mainPanel.add(this.view, c);
+        //mainPanel.add(this.view, BorderLayout.CENTER);
 
         this.graph = this.view.getGraph();
         this.graph.setUndoEngineEnabled(true);
@@ -203,13 +215,29 @@ public class MainFrame extends JFrame {
 
         super.getContentPane().setLayout(new java.awt.BorderLayout(20, 20));
         super.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
+        //super.getContentPane().add(mainPanel, c);
 
         JPanel toolBar = this.initToolBar();
-        mainPanel.add(toolBar, BorderLayout.PAGE_START);
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c. insets = new Insets(5, 0, 10, 0);
+        mainPanel.add(toolBar, c);
+        //mainPanel.add(toolBar, BorderLayout.PAGE_START);
 
         this.defaultLayouter = new OrganicLayout();
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
+
+        this.sliders = ThresholdSliders.create(springThreshholds, new String[]{"Spring force", "Electrical force", "Crossing force", "Incident edges force"});
+        c.gridy = 1;
+        c.gridx = 1;
+        c.weighty = 1;
+        c.weightx = 0.2;
+        c.insets = new Insets(0, 0, 0, 0);
+        c.fill = GridBagConstraints.VERTICAL;
+        mainPanel.add(sliders, c);
+        //mainPanel.add(sliders, BorderLayout.LINE_END);
+
     }
 
     private JPanel initToolBar()
@@ -983,7 +1011,6 @@ public class MainFrame extends JFrame {
     }
 
     final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.01};
-    JFrame sliders = ThresholdSliders.create(this, springThreshholds);
 
     private void springEmbedder2ItemActionPerformed(ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
