@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.function.Function;
 
+
 /**
  * Created by michael on 28.10.16.
  */
@@ -75,7 +76,10 @@ public class MainFrame extends JFrame {
     private JLabel infoLabel;
     private JProgressBar progressBar;
 
-    private JPanel sliders;
+    private JPanel sidePanel;
+    private int sidePanelFirstY = 0, sidePanelNextY;
+
+    private GeneticAlgorithm geneticAlgorithm;
 
     /**
      * Creates new form MainFrame
@@ -122,7 +126,7 @@ public class MainFrame extends JFrame {
         this.progressBar.setStringPainted(true);
         progressBarPanel.add(this.progressBar);
 
-                JPanel mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.setPreferredSize(new Dimension(300, 300));
         //mainPanel.setLayout(new BorderLayout(0, 10));
@@ -228,16 +232,36 @@ public class MainFrame extends JFrame {
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
 
-        this.sliders = ThresholdSliders.create(springThreshholds, new String[]{"Spring force", "Electrical force", "Crossing force", "Incident edges force"});
+        Tuple2<JPanel, Integer> slidersAndCount = ThresholdSliders.create(springThreshholds, new String[]{"Spring force", "Electrical force", "Crossing force", "Incident edges force"});
+        this.sidePanel = slidersAndCount.a;
+        sidePanelNextY = slidersAndCount.b;
         c.gridy = 1;
         c.gridx = 1;
         c.weighty = 1;
         c.weightx = 0.2;
         c.insets = new Insets(0, 0, 0, 0);
         c.fill = GridBagConstraints.VERTICAL;
-        mainPanel.add(sliders, c);
+        mainPanel.add(sidePanel, c);
         //mainPanel.add(sliders, BorderLayout.LINE_END);
+        GridBagConstraints cSidePanel = new GridBagConstraints();
+        //WARNING: POST-INCREMENT!
+        cSidePanel.gridy = sidePanelNextY++;
+        JButton startGenetic = new JButton("Start genetic algo"), 
+                stopGenetic  = new JButton("Stop genetic algo");
+        startGenetic.addActionListener(this::startGeneticClicked);
+        stopGenetic.addActionListener(this::stopGeneticClicked);
 
+        sidePanel.add(startGenetic, cSidePanel);
+        cSidePanel.gridx = 1;
+        sidePanel.add(stopGenetic, cSidePanel);
+    }
+
+    public void startGeneticClicked(ActionEvent e){
+        
+    }
+
+    public void stopGeneticClicked(ActionEvent e){
+        
     }
 
     private JPanel initToolBar()
@@ -828,12 +852,6 @@ public class MainFrame extends JFrame {
         springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
         layoutMenu.add(springEmbedderItem);
 
-        JMenuItem springEmbedderItem2 = new JMenuItem();
-        springEmbedderItem2.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        springEmbedderItem2.setText("Spring Embedder NEW");
-        springEmbedderItem2.addActionListener(this::springEmbedder2ItemActionPerformed);
-        layoutMenu.add(springEmbedderItem2);
-
         JMenuItem gridSpringEmbedderItem = new JMenuItem();
         gridSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         gridSpringEmbedderItem.setText("Grid Point Spring Embedder");
@@ -862,8 +880,6 @@ public class MainFrame extends JFrame {
 
         mainMenuBar.add(layoutMenu);
         super.setJMenuBar(mainMenuBar);
-
-        sliders.setVisible(true);
     }
 
 
@@ -1012,7 +1028,7 @@ public class MainFrame extends JFrame {
 
     final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.01};
 
-    private void springEmbedder2ItemActionPerformed(ActionEvent evt) {
+    private void springEmbedderItemActionPerformed(ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
         int iterations = 1000;
 
@@ -1092,47 +1108,6 @@ public class MainFrame extends JFrame {
             return new Tuple2<>(t1, t2);
         })))));
 
-        Thread thread = new Thread(fd);
-        thread.start();
-        this.view.updateUI();
-    }
-
-    private void springEmbedderItemActionPerformed(ActionEvent evt) {
-        JTextField iterationsTextField = new JTextField("1000");
-        int iterations = 1000;
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                iterations = Integer.parseInt(iterationsTextField.getText());
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
-            public void calculateVectors() {
-                ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
-                ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
-                ForceDirectedFactory.calculateCosineForcesEades(graph, 0.09, map);
-                ForceDirectedFactory.calculateSinusForceEades(graph, 0.09, map);
-            }
-        };
-        fd.addAlgorithmListener(new AlgorithmListener() {
-            public void algorithmStarted(AlgorithmEvent evt) {
-            }
-
-            public void algorithmFinished(AlgorithmEvent evt) {
-                progressBar.setValue(0);
-                view.fitContent();
-                view.updateUI();
-            }
-
-            public void algorithmStateChanged(AlgorithmEvent evt) {
-                progressBar.setValue(evt.currentStatus());
-            }
-        });
         Thread thread = new Thread(fd);
         thread.start();
         this.view.updateUI();

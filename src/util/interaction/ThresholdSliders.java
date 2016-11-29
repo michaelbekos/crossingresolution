@@ -6,15 +6,16 @@ import util.*;
 import java.awt.*;
 
 public class ThresholdSliders {
-  public static JPanel create(final Double[] t, String[] names){
+  public static Tuple2<JPanel, Integer> create(final Double[] t, String[] names){
     JPanel thresholdSliders = new JPanel();
-    thresholdSliders.setLayout(new GridLayout(t.length, 1));
+    thresholdSliders.setLayout(new GridBagLayout());
+    GridBagConstraints cSlider = new GridBagConstraints();
+    GridBagConstraints cLabel = new GridBagConstraints();
+    cSlider.fill = GridBagConstraints.HORIZONTAL;
+    cSlider.gridwidth = GridBagConstraints.REMAINDER;
     JSlider slider;
     for(int i = 0; i < t.length; i++){
       final int i1 = i;
-      JPanel subpanel = new JPanel();
-      subpanel.setLayout(new GridLayout(2, 1));
-      System.out.println(1 + ", " + (int) (20 * 1000 * t[i]));
       slider = new JSlider(1, (int) (20 * 1000 * t[i]));
       slider.setValue((int) (1000 * t[i]));
       slider.addChangeListener(new ChangeListener() {
@@ -29,13 +30,14 @@ public class ThresholdSliders {
         }
       });
       slider.setSize(450, 30);
-      subpanel.add(new JLabel(names[i]));
-      subpanel.add(slider);
-      thresholdSliders.add(subpanel, i);
+      cLabel.gridy = 2*i;
+      cSlider.gridy = 2*i + 1;
+      thresholdSliders.add(new JLabel(names[i]), cLabel);
+      thresholdSliders.add(slider, cSlider);
     }
     thresholdSliders.setSize(500, 300);
     thresholdSliders.setMinimumSize(new Dimension(500, 300));
-    return thresholdSliders;
+    return new Tuple2<>(thresholdSliders, 2 * t.length);
   }
   
 }
