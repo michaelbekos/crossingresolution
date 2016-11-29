@@ -44,8 +44,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.function.Function;
 
 
@@ -79,7 +79,8 @@ public class MainFrame extends JFrame {
     private JPanel sidePanel;
     private int sidePanelFirstY = 0, sidePanelNextY;
 
-    private GeneticAlgorithm geneticAlgorithm;
+    private GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
+    private Thread geneticAlgorithmThread;
 
     final Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
 
@@ -256,18 +257,65 @@ public class MainFrame extends JFrame {
         sidePanel.add(startGenetic, cSidePanel);
         cSidePanel.gridx = 1;
         sidePanel.add(stopGenetic, cSidePanel);
+
     }
-
+    public static Random rand = new Random();
     public void initializeGeneticAlgorithm(){
-
+        geneticAlgorithm = GeneticAlgorithm.<ForceAlgorithmApplier>newGeneticAlgorithm_FunGen(
+            (faa -> {
+                faa.runNoDraw();
+                return faa;
+            }),
+            ((faa1, faa2) -> {
+                Maybe<Double> ma1 = MinimumAngle.getMinimumAngle(graph, Maybe.just(faa1.nodePositions)),
+                              ma2 = MinimumAngle.getMinimumAngle(graph, Maybe.just(faa2.nodePositions));
+                if(ma1.hasValue() && !ma2.hasValue()){
+                    return -1;
+                }
+                if(!ma1.hasValue() && ma2.hasValue()){
+                    return 1;
+                }
+                if(!ma1.hasValue() && !ma2.hasValue()){
+                    return 0;
+                }
+                Double a1 = ma1.get(),
+                       a2 = ma2.get();
+                return a1.compareTo(a2);
+            }),
+            20,
+            (fa -> {
+                IMapper<INode, PointD> nodePositions = new Mapper<>(new WeakHashMap<>());
+                graph.getNodes().stream().forEach(n -> {
+                    nodePositions.setValue(n, fa.nodePositions.getValue(n));
+                });
+                int nodeIndex = rand.nextInt(graph.getNodes().size());
+                INode node = graph.getNodes().getItem(nodeIndex);
+                PointD pos = nodePositions.getValue(node);
+                pos = PointD.add(pos, new PointD(2 * rand.nextDouble() - 1, 2 * rand.nextDouble() - 1));
+                nodePositions.setValue(node, pos);
+                ForceAlgorithmApplier fa2 = new ForceAlgorithmApplier(fa.view, fa.maxNoOfIterations, fa.progressBar, fa.infoLabel);
+                fa2.nodePositions = nodePositions;
+                fa2.algos = fa.algos;
+                return fa2;
+            }));
+        geneticAlgorithm.bestChanged = Maybe.just(faa -> {
+            faa.draw(graph);
+            view.updateUI();
+        });
+        ForceAlgorithmApplier fa = defaultForceAlgorithmApplier(500);
+        geneticAlgorithm.instances.add(fa);
+        geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
 
     public void startGeneticClicked(ActionEvent e){
-        
+        if(geneticAlgorithm == null || geneticAlgorithm.running == false){
+            initializeGeneticAlgorithm();
+            geneticAlgorithmThread.start();
+        }
     }
 
     public void stopGeneticClicked(ActionEvent e){
-        
+        geneticAlgorithm.running = false;
     }
 
     private JPanel initToolBar()
@@ -1049,8 +1097,16 @@ public class MainFrame extends JFrame {
         }
         else return;
 
+        ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(iterations);
+
         
 
+        Thread thread = new Thread(fd);
+        thread.start();
+        this.view.updateUI();
+    }
+
+    private ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, Maybe.just(progressBar), Maybe.just(infoLabel));
         fd.algos.add(new NodePairForce(p1 -> (p2 -> {
             double electricalRepulsion = 50000,
@@ -1108,10 +1164,7 @@ public class MainFrame extends JFrame {
             t2 = rotate.apply(t2);
             return new Tuple2<>(t1, t2);
         })))));
-
-        Thread thread = new Thread(fd);
-        thread.start();
-        this.view.updateUI();
+        return fd;
     }
 
     private void organicItemActionPerformed(ActionEvent evt) {

@@ -12,7 +12,7 @@ public class LineSegment{
   public Double key;
   @Override
   public String toString(){
-    return "LS(" + p1 + ", " + p2 + ")";
+    return "(LS " + p1 + " " + p2 + ")";
   }
   public LineSegment(PointD p11, PointD p21){
     p1 = p11;

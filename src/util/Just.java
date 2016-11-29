@@ -14,6 +14,6 @@ public class Just<T> extends Maybe<T>{
   public T get(){ return t; }
   @Override
   public String toString(){
-    return "Just(" + t + ")";
+    return "(Just " + t + ")";
   }
 }
