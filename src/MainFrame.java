@@ -45,6 +45,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.*;
 import java.util.List;
 import java.util.function.Function;
 
@@ -81,7 +82,7 @@ public class MainFrame extends JFrame {
 
     private GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
     private Thread geneticAlgorithmThread;
-
+    final double Epsilon = 0.001;
     final Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
 
     /**
@@ -288,14 +289,62 @@ public class MainFrame extends JFrame {
                 graph.getNodes().stream().forEach(n -> {
                     nodePositions.setValue(n, fa.nodePositions.getValue(n));
                 });
-                int nodeIndex = rand.nextInt(graph.getNodes().size());
-                INode node = graph.getNodes().getItem(nodeIndex);
-                PointD pos = nodePositions.getValue(node);
-                pos = PointD.add(pos, new PointD(2 * rand.nextDouble() - 1, 2 * rand.nextDouble() - 1));
-                nodePositions.setValue(node, pos);
+                List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossingsSorted(graph, Maybe.just(nodePositions));
                 ForceAlgorithmApplier fa2 = new ForceAlgorithmApplier(fa.view, fa.maxNoOfIterations, fa.progressBar, fa.infoLabel);
-                fa2.nodePositions = nodePositions;
                 fa2.algos = fa.algos;
+                fa2.nodePositions = nodePositions;
+                if(crossings.size() == 0) {
+                    return fa2;
+                }
+                List<Tuple3<LineSegment, LineSegment, Intersection>> mostInteresting = crossings.subList(0, crossings.size() / 10);
+                //int nodeIndex = rand.nextInt(graph.getNodes().size());
+                //INode node = graph.getNodes().getItem(nodeIndex);
+                INode node = null;
+                int nodeDegree = Integer.MAX_VALUE;
+                Tuple3<LineSegment, LineSegment, Intersection> nodeCrossing = null;
+                int whichNode = -1;
+                for(Tuple3<LineSegment, LineSegment, Intersection> l1l2i: mostInteresting){
+                    INode[] nodes = new INode[]{
+                        l1l2i.a.n1.get(),
+                        l1l2i.a.n2.get(),
+                        l1l2i.b.n1.get(),
+                        l1l2i.b.n2.get()
+                    };
+                    int i = 0;
+                    for(INode n2: nodes){
+                        int n2degree = graph.degree(n2);
+                        if(n2degree < nodeDegree){
+                            node = n2;
+                            nodeDegree = n2degree;
+                            nodeCrossing = l1l2i;
+                            whichNode = i;
+                        }
+                        i++;
+                    }
+                }
+                if(node == null || nodeCrossing == null || whichNode < 0){
+                    // ???
+                    return fa2;
+                }
+                PointD pos = nodePositions.getValue(node);
+                PointD direction = new PointD(0, 0);
+                switch(whichNode){
+                    case 0: direction = PointD.negate(nodeCrossing.b.ve);
+                            break;
+                    case 1: direction = nodeCrossing.b.ve;
+                            break;
+                    case 2: direction = PointD.negate(nodeCrossing.a.ve);
+                            break;    
+                    case 3: direction = nodeCrossing.a.ve;
+                            break;
+                }
+                if(nodeCrossing.c.orientedAngle > 90){
+                    direction = PointD.negate(direction);
+                }
+                direction = direction.getNormalized();
+                pos = PointD.add(pos, PointD.times(100 * springThreshholds[2], direction));
+                nodePositions.setValue(node, pos);
+                fa2.nodePositions = nodePositions;
                 return fa2;
             }));
         geneticAlgorithm.bestChanged = Maybe.just(faa -> {
@@ -1113,6 +1162,9 @@ public class MainFrame extends JFrame {
                    threshold = springThreshholds[0];
             PointD t = PointD.subtract(p1, p2);
             double dist = t.getVectorLength();
+            if(dist <= Epsilon){
+                return new PointD(0, 0);
+            }
             t = PointD.div(t, dist);
             t = PointD.times(threshold * electricalRepulsion / Math.pow(dist, 2), t);
             return t;
@@ -1123,6 +1175,9 @@ public class MainFrame extends JFrame {
                    threshold = springThreshholds[1];
             PointD t = PointD.subtract(p2, p1);
             double dist = t.getVectorLength();
+            if(dist <= Epsilon){
+                return new PointD(0, 0);
+            }
             t = PointD.div(t, dist);
             //t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
             t = PointD.times(t, threshold*(dist-springNaturalLength));
@@ -1131,6 +1186,10 @@ public class MainFrame extends JFrame {
 
         fd.algos.add(new CrossingForce(e1 -> (e2 -> (angle -> {
             double threshold = springThreshholds[2];
+            if(e1.getVectorLength() <= Epsilon ||
+               e2.getVectorLength() <= Epsilon){
+                return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
+            }
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
             PointD t1Neg = PointD.negate(t1);
@@ -1160,6 +1219,10 @@ public class MainFrame extends JFrame {
             if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
             double threshold = springThreshholds[3],
                     optAngle = (360 / deg);
+            if(e1.getVectorLength() <= Epsilon ||
+               e2.getVectorLength() <= Epsilon){
+                return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
+            }
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
             t1 = PointD.times(t1, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
