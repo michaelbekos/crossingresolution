@@ -17,31 +17,31 @@ public class GeneticAlgorithm<T> implements Runnable {
   Comparator<T> scoring;
   Function<List<T>, T> generator;
   Function<T, T> advance;
-  boolean running = false;
-  public Maybe<Consumer<T>> bestChanged;
+  public boolean running = false;
+  public Maybe<Consumer<T>> bestChanged = Maybe.nothing();
 
-  public static <T> GeneticAlgorithm newGeneticAlgorithm_ListGen(Function<T, T> adv, Comparator<T> sf, Function<List<T>, T> gen){
-    return new GeneticAlgorithm(adv, sf, Maybe.nothing(), gen);
+  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_ListGen(Function<T, T> adv, Comparator<T> sf, Function<List<T>, T> gen){
+    return new GeneticAlgorithm<>(adv, sf, Maybe.nothing(), gen);
   }
-  public static <T> GeneticAlgorithm newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Function<T, T> gen){
+  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Function<T, T> gen){
     return newGeneticAlgorithm_FunGen(adv, sf, Maybe.nothing(), gen);
   }
-  public static <T> GeneticAlgorithm newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Integer desiredIC, Function<T, T> gen){
-    GeneticAlgorithm ga = newGeneticAlgorithm_FunGen(adv, sf, Maybe.just(desiredIC), gen);
-    ga.instances = new ArrayList(desiredIC);
+  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Integer desiredIC, Function<T, T> gen){
+    GeneticAlgorithm<T> ga = newGeneticAlgorithm_FunGen(adv, sf, Maybe.just(desiredIC), gen);
+    ga.instances = new ArrayList<>(desiredIC);
     return ga;
   }
-  public static <T> GeneticAlgorithm newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Maybe<Integer> desiredIC, Function<T, T> gen){
+  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Maybe<Integer> desiredIC, Function<T, T> gen){
     Function<List<T>, T> genList = (l -> {
       int listElemIndex = rand.nextInt(l.size());
       T listElem = l.get(listElemIndex);
       return gen.apply(listElem);
     });
-    return new GeneticAlgorithm(adv, sf, desiredIC, genList);
+    return new GeneticAlgorithm<>(adv, sf, desiredIC, genList);
   }
-  public static <T> GeneticAlgorithm newGeneticAlgorithm_ListGen(Function<T, T> adv, Comparator<T> sf, Integer desiredIC, Function<List<T>, T> gen){
-    GeneticAlgorithm ga = new GeneticAlgorithm(adv, sf, Maybe.just(desiredIC), gen);
-    ga.instances = new ArrayList(desiredIC);
+  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_ListGen(Function<T, T> adv, Comparator<T> sf, Integer desiredIC, Function<List<T>, T> gen){
+    GeneticAlgorithm<T> ga = new GeneticAlgorithm<>(adv, sf, Maybe.just(desiredIC), gen);
+    ga.instances = new ArrayList<>(desiredIC);
     return ga;
   }
 
@@ -53,6 +53,7 @@ public class GeneticAlgorithm<T> implements Runnable {
   }
 
   public void runRound(){
+    assertInstances();
     instances = instances
       .parallelStream()
       .map(i -> advance.apply(i))
@@ -78,10 +79,8 @@ public class GeneticAlgorithm<T> implements Runnable {
   }
   private void notifyChanged(){
     bestChanged.andThen(f -> {
-      synchronized(instances){
-        Collections.sort(instances, scoring);
-        f.accept(instances.get(instances.size() - 1));
-      }
+      Collections.sort(instances, scoring);
+      f.accept(instances.get(instances.size() - 1));
     });
   }
   public void runIndefinitely(){
@@ -89,6 +88,14 @@ public class GeneticAlgorithm<T> implements Runnable {
     while(running){
       runRound();
       nextGeneration();
+      notifyChanged();
+      try {
+        Thread.sleep(1);
+      } catch (InterruptedException exc) {
+        System.out.println("Sleep interrupted!");
+        //Do nothing...
+      }
+      
     }
   }
   public void run(){

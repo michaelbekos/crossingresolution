@@ -23,31 +23,36 @@ import view.visual.*;
 
 public class ForceAlgorithmApplier implements Runnable {
   public List<ForceAlgorithm> algos = new LinkedList<>();
-  protected GraphComponent view;
-  protected IGraph graph;
-  protected int maxNoOfIterations;
-  protected int currNoOfIterations;
-  protected int maxMinAngleIterations;
-  protected static List<ICanvasObject> canvasObjects = new ArrayList<>();
+  public GraphComponent view;
+  public IGraph graph;
+  public int maxNoOfIterations;
+  public int currNoOfIterations;
+  public int maxMinAngleIterations;
+  public static List<ICanvasObject> canvasObjects = new ArrayList<>();
   public Maybe<JProgressBar> progressBar;
-  protected Maybe<JLabel> infoLabel;
-  protected double maxMinAngle;
-  protected double minEdgeLength;
-  protected IMapper<INode, PointD> nodePositions = new Mapper<>(new WeakHashMap<>());
+  public Maybe<JLabel> infoLabel;
+  public double maxMinAngle;
+  public double minEdgeLength;
+  public IMapper<INode, PointD> nodePositions;
 
  
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
 
     this.view = view;
     this.graph = view.getGraph();
+    nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
     this.maxNoOfIterations = maxNoOfIterations;
-    this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).get().b;
-    this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph).fmap(t -> t.c.angle).getDefault(0.0);
+    this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).fmap(x -> x.b).getDefault(0.0);
+    this.maxMinAngle = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions)).fmap(t -> t.c.angle).getDefault(0.0);
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
-
-    graph.getNodes().stream().forEach(n1 -> nodePositions.setValue(n1, n1.getLayout().getCenter()));
+    
+  }
+  public static IMapper<INode, PointD> initPositionMap(IGraph g){
+    IMapper<INode, PointD> nodePos = new Mapper<>(new WeakHashMap<>());
+    g.getNodes().stream().forEach(n1 -> nodePos.setValue(n1, n1.getLayout().getCenter()));
+    return nodePos;
   }
 
   public void run() {
@@ -83,10 +88,22 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
   }
 
+  public void runNoDraw() {
+    for (int i = 0; i < this.maxNoOfIterations; i++) {
+      nodePositions = applyAlgos();
+    }
+  }
+
+  public void draw(IGraph g){
+    ForceAlgorithmApplier.applyNodePositionsToGraph(g, nodePositions);
+    this.view.updateUI();
+    //displayMinimumAngle(g); 
+    infoLabel.andThen(p -> p.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/));
+  }
   /**
    * Displays vectors for debugging purposes
    */
-  protected void displayVectors(IMapper<INode, PointD> map) {
+  public void displayVectors(IMapper<INode, PointD> map) {
     for(INode u: graph.getNodes()){
       YVector vector = new YVector(map.getValue(u).getX(), map.getValue(u).getY());
       this.canvasObjects.add(this.view.getBackgroundGroup()
@@ -139,15 +156,18 @@ public class ForceAlgorithmApplier implements Runnable {
 
   public IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IMapper<INode, PointD> map) {
     for (INode n1 : graph.getNodes()) {
+      PointD p1 = nodePositions.getValue(n1);
       Integer n1degree = graph.degree(n1);
       nonEqualPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).forEach(n2n3 -> {
         INode n2 = n2n3.a,
               n3 = n2n3.b;
+        PointD p2 = nodePositions.getValue(n2),
+               p3 = nodePositions.getValue(n3);
         PointD f2 = map.getValue(n2);
         PointD f3 = map.getValue(n3);
         LineSegment l1, l2;
-        l1 = new LineSegment(n1, n2);
-        l2 = new LineSegment(n1, n3);
+        l1 = new LineSegment(p1, p2);
+        l2 = new LineSegment(p1, p3);
         Double angle = Math.toDegrees(Math.acos(PointD.scalarProduct(l1.ve, l2.ve) / (l1.ve.getVectorLength() * l2.ve.getVectorLength())));
         for (IncidentEdgesForce fa : algos) {
           Tuple2<PointD, PointD> forces = fa
@@ -175,7 +195,7 @@ public class ForceAlgorithmApplier implements Runnable {
     });
   }
   public IMapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, IMapper<INode, PointD> map){
-    for(Tuple3<LineSegment, LineSegment, Intersection> ci: MinimumAngle.getCrossings(graph)){
+    for(Tuple3<LineSegment, LineSegment, Intersection> ci: MinimumAngle.getCrossings(graph, Maybe.just(nodePositions))){
       LineSegment l1 = ci.a,
                   l2 = ci.b;
       Intersection i = ci.c;
@@ -275,7 +295,7 @@ public class ForceAlgorithmApplier implements Runnable {
    * @return text - text to be displayed in gui
    */
   public String displayMinimumAngle(IGraph graph) {
-    Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = MinimumAngle.getMinimumAngleCrossing(graph);
+    Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions));
 
 
     Maybe<String> s = crossing.fmap(currCross -> {

@@ -12,11 +12,11 @@ import util.*;
 import util.graph2d.*;
 
 public class MinimumAngle{
-  public static Maybe<Double> getMinimumAngle(IGraph graph){
-    return getMinimumAngleCrossing(graph).bind(i -> Maybe.just(i.c.angle));
+  public static Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    return getMinimumAngleCrossing(graph, np).bind(i -> Maybe.just(i.c.angle));
   }
-  public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph);
+  public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph, np);
     if(crossings.size() > 0){
       Tuple3<LineSegment, LineSegment, Intersection> crossing = crossings.get(0);
       highlightCrossing(crossing);
@@ -26,30 +26,32 @@ public class MinimumAngle{
       return Maybe.nothing();
     } 
   }
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph);
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph, np);
     Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byAngle = 
       (t1, t2) -> t1.c.angle.compareTo(t2.c.angle);
     Collections.sort(crossings, byAngle);
     return crossings;
   }
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph){
-    return getCrossings(graph, true);
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    return getCrossings(graph, true, np);
   }
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly){
-    return getCrossingsNaiive(graph, edgesOnly);
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
+    IMapper<INode, PointD> defaultMap = ForceAlgorithmApplier.initPositionMap(graph);
+    IMapper<INode, PointD> actualMap = np.getDefault(defaultMap);
+    return getCrossingsNaiive(graph, edgesOnly, actualMap);
   }
 
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph, boolean edgesOnly){
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();
     for (IEdge e1 : graph.getEdges()){
-      LineSegment l1 = new LineSegment(e1);
+      LineSegment l1 = new LineSegment(e1, nodePositions);
       seenEdges.add(e1);
       for (IEdge e2 : graph.getEdges()){
         // same edge
         if(seenEdges.contains(e2)) continue;
-        LineSegment l2 = new LineSegment(e2);
+        LineSegment l2 = new LineSegment(e2, nodePositions);
         Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
         if(i.hasValue()){
           Intersection i1 = i.get();
@@ -61,37 +63,24 @@ public class MinimumAngle{
   }
 
  public static void resetHighlighting(IGraph graph){
-    for(IEdge e1 : graph.getEdges()){
-      IEdgeStyle s1 = e1.getStyle();
-      if(s1 instanceof PolylineEdgeStyle) {
-        ((PolylineEdgeStyle) s1).setPen(Pen.getBlack());
-      } else {
-        System.out.println(s1.getClass());
-      }
+    for(IEdge e: graph.getEdges()){
+      paintEdge(e, Pen.getBlack());
     }
   }
 
+  public static void paintEdge(IEdge e, Pen p){
+    IEdgeStyle s = e.getStyle();
+    if(s instanceof PolylineEdgeStyle) {
+      ((PolylineEdgeStyle) s).setPen(p);
+    } else {
+      System.out.println(s.getClass());
+    }
+  }
   /**
    * Displays vectors for debugging purposes
    */
   public static void highlightCrossing(Tuple3<LineSegment, LineSegment, Intersection> crossing) {
-    crossing.a.e.andThen(e1 ->
-    crossing.b.e.andThen(e2 -> {
-      IEdgeStyle s1, s2;
-      s1 = e1.getStyle();
-      s2 = e2.getStyle();
-      if(s1 instanceof PolylineEdgeStyle){
-        ((PolylineEdgeStyle) s1).setPen(Pen.getRed());
-      }
-      else{
-        System.out.println(s1.getClass());
-      }
-      if(s2 instanceof PolylineEdgeStyle){
-        ((PolylineEdgeStyle) s2).setPen(Pen.getRed());
-      }
-      else{
-        System.out.println(s2.getClass());
-      }
-    }));
+    crossing.a.e.andThen(e -> paintEdge(e, Pen.getRed()));
+    crossing.b.e.andThen(e -> paintEdge(e, Pen.getRed()));
   }
 }

@@ -5,6 +5,7 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import util.NodeFunctions;
+import util.Maybe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,7 +59,7 @@ public class MinimumAngleImprovement {
             
             tempGraph = GridDrawing.roundingGridTemp(tempGraph);
 
-            minAngles.add(MinimumAngle.getMinimumAngle(tempGraph).get());
+            minAngles.add(MinimumAngle.getMinimumAngle(tempGraph, Maybe.nothing()).get());
 
             // reseting the original graph
             int i = 0;

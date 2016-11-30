@@ -12,7 +12,7 @@ public class LineSegment{
   public Double key;
   @Override
   public String toString(){
-    return "LS(" + p1 + ", " + p2 + ")";
+    return "(LS " + p1 + " " + p2 + ")";
   }
   public LineSegment(PointD p11, PointD p21){
     p1 = p11;
@@ -28,12 +28,18 @@ public class LineSegment{
     this(e.getSourceNode(), e.getTargetNode());
     this.e = Maybe.just(e);
   }
+  public LineSegment(IEdge e, IMapper<INode, PointD> np){
+    this(e);
+    p1 = np.getValue(n1.get());
+    p2 = np.getValue(n2.get());
+    ve = PointD.subtract(p2, p1);
+  }
   public Maybe<Intersection> intersects(LineSegment o, boolean skipEqualEndpoints){
     PointD p3, p4;
     p3 = o.p1;
     p4 = o.p2;
     // skip equal endpoints
-    if(skipEqualEndpoints && 
+    if(skipEqualEndpoints &&  
       (p1.equals(p3) || p1.equals(p4) ||
        p2.equals(p3) || p2.equals(p4))) return Maybe.nothing();
     // http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
