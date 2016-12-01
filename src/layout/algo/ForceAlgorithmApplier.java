@@ -33,7 +33,7 @@ public class ForceAlgorithmApplier implements Runnable {
   public Maybe<JLabel> infoLabel;
   public double maxMinAngle;
   public double minEdgeLength;
-  public IMapper<INode, PointD> nodePositions;
+  public static IMapper<INode, PointD> nodePositions;
 
  
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
@@ -53,6 +53,14 @@ public class ForceAlgorithmApplier implements Runnable {
     IMapper<INode, PointD> nodePos = new Mapper<>(new WeakHashMap<>());
     g.getNodes().stream().forEach(n1 -> nodePos.setValue(n1, n1.getLayout().getCenter()));
     return nodePos;
+  }
+
+  public static void changeNodePosition(INode u){
+    double u_x = u.getLayout().getCenter().getX();
+    double u_y = u.getLayout().getCenter().getY();
+
+    PointD newU = new PointD(u_x,u_y);
+    ForceAlgorithmApplier.nodePositions.setValue(u, newU);
   }
 
   public void run() {
