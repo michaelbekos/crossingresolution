@@ -270,11 +270,12 @@ public class MainFrame extends JFrame {
         sidePanel.add(stopGenetic, cSidePanel);
         cSidePanel.gridy = sidePanelNextY++;
         forceDirectionPerpendicular = new JRadioButton("Perpendicular");
+        cSidePanel.gridx = 0;
         sidePanel.add(forceDirectionPerpendicular,cSidePanel);
         //sidePanel.add(forceDirectionButton);
         forceDirectionPerpendicular.setSelected(true);
         forceDirectionPerpendicular.addActionListener(this::forceDirectionPerpendicularActionPerformed);
-        cSidePanel.gridy = sidePanelNextY++;
+        cSidePanel.gridx = 1;
         forceDirectionNonPerpendicular = new JRadioButton("Non Perpendicular");
         sidePanel.add(forceDirectionNonPerpendicular,cSidePanel);
         //sidePanel.add(forceDirectionButton);
@@ -284,6 +285,17 @@ public class MainFrame extends JFrame {
         ButtonGroup group = new ButtonGroup();
         group.add(forceDirectionNonPerpendicular);
         group.add(forceDirectionPerpendicular);
+
+        cSidePanel.gridy = sidePanelNextY++;
+        cSidePanel.gridx = 0;
+        JButton startForce = new JButton("Start force algo"),
+                stopForce  = new JButton("Stop force algo");
+        startForce.addActionListener(this::startForceClicked);
+        stopForce.addActionListener(this::stopForceClicked);
+
+        sidePanel.add(startForce, cSidePanel);
+        cSidePanel.gridx = 1;
+        sidePanel.add(stopForce, cSidePanel);
     }
     public static Random rand = new Random();
     public void initializeGeneticAlgorithm(){
@@ -388,8 +400,24 @@ public class MainFrame extends JFrame {
         }
     }
 
+
     public void stopGeneticClicked(ActionEvent e){
         geneticAlgorithm.running = false;
+    }
+
+    public void startForceClicked(ActionEvent e){
+        System.out.println("Hallo");
+        if(ForceAlgorithmApplier.running == false){
+            System.out.println("HalloAGAIN");
+            ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
+            Thread thread = new Thread(fd);
+            thread.start();
+            this.view.updateUI();
+        }
+    }
+
+    public void stopForceClicked(ActionEvent e){
+        ForceAlgorithmApplier.running = false;
     }
 
     private JPanel initToolBar()
@@ -1181,7 +1209,9 @@ public class MainFrame extends JFrame {
     }
 
     private ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
+
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, Maybe.just(progressBar), Maybe.just(infoLabel));
+        ForceAlgorithmApplier.running = true;
         fd.algos.add(new NodePairForce(p1 -> (p2 -> {
             double electricalRepulsion = 50000,
                    threshold = springThreshholds[0];
@@ -1418,7 +1448,6 @@ public class MainFrame extends JFrame {
     }
 
     private void forceDirectionPerpendicularActionPerformed(ActionEvent evt){
-
             this.perpendicular = true;
     }
     private void forceDirectionNonPerpendicularActionPerformed(ActionEvent evt){

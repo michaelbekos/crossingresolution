@@ -34,7 +34,7 @@ public class ForceAlgorithmApplier implements Runnable {
   public double maxMinAngle;
   public double minEdgeLength;
   public static IMapper<INode, PointD> nodePositions;
-
+  public static boolean running = false;
  
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
 
@@ -49,6 +49,7 @@ public class ForceAlgorithmApplier implements Runnable {
     this.infoLabel = infoLabel;
     
   }
+
   public static IMapper<INode, PointD> initPositionMap(IGraph g){
     IMapper<INode, PointD> nodePos = new Mapper<>(new WeakHashMap<>());
     g.getNodes().stream().forEach(n1 -> nodePos.setValue(n1, n1.getLayout().getCenter()));
@@ -70,21 +71,41 @@ public class ForceAlgorithmApplier implements Runnable {
       this.displayVectors(map);
     }
 
-    for (int i = 0; i < this.maxNoOfIterations; i++) {
-      this.clearDrawables();
-      nodePositions = applyAlgos();
-      ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-      this.currNoOfIterations = i;
-      this.view.updateUI();
-      try {
-        Thread.sleep(1);
-      } catch (InterruptedException exc) {
-        System.out.println("Sleep interrupted!");
-        //Do nothing...
+    if (this.maxNoOfIterations ==-1) {
+      int j = 0;
+      while (running){
+        this.clearDrawables();
+        nodePositions = applyAlgos();
+        ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.currNoOfIterations = j;
+        this.view.updateUI();
+        try {
+          Thread.sleep(1);
+        } catch (InterruptedException exc) {
+          System.out.println("Sleep interrupted!");
+          //Do nothing...
+        }
+        infoLabel.andThen(p -> p.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/));
+        j++;
       }
-      int progress = Math.round(100 * i / this.maxNoOfIterations);
-      progressBar.andThen(p -> p.setValue(progress));
-      infoLabel.andThen(p -> p.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/));
+    } else {
+      for (int i = 0; i < this.maxNoOfIterations; i++) {
+        this.clearDrawables();
+        nodePositions = applyAlgos();
+        ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.currNoOfIterations = i;
+        this.view.updateUI();
+        try {
+          Thread.sleep(1);
+        } catch (InterruptedException exc) {
+          System.out.println("Sleep interrupted!");
+          //Do nothing...
+        }
+        int progress = Math.round(100 * i / this.maxNoOfIterations);
+        progressBar.andThen(p -> p.setValue(progress));
+        infoLabel.andThen(p -> p.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/));
+        running = false;
+      }
     }
 
     progressBar.andThen(p -> {
