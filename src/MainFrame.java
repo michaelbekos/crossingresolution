@@ -84,7 +84,9 @@ public class MainFrame extends JFrame {
     private Thread geneticAlgorithmThread;
     final double Epsilon = 0.001;
     final Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
-
+    private JRadioButton forceDirectionPerpendicular;
+    private JRadioButton forceDirectionNonPerpendicular;
+    private boolean perpendicular = true;
     /**
      * Creates new form MainFrame
      */
@@ -110,6 +112,7 @@ public class MainFrame extends JFrame {
             }
         });
     }
+
 
     /**
      * This method is called within the constructor to initialize the form.
@@ -189,6 +192,13 @@ public class MainFrame extends JFrame {
             infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size());
         });
 
+        this.graph.addNodeLayoutChangedListener((o, u, iNodeItemEventArgs) -> {
+            synchronized(this) {
+                MinimumAngle.resetHighlighting(this.graph);
+                ForceAlgorithmApplier.changeNodePosition(u);
+            }
+        });
+
         /* Add two listeners two the graph */
         this.graphSnapContext = new GraphSnapContext();
         this.graphEditorInputMode.setSnapContext(this.graphSnapContext);
@@ -207,7 +217,7 @@ public class MainFrame extends JFrame {
         this.defaultNodeStyle.setShadowDrawingEnabled(false);
         this.graph.getNodeDefaults().setStyle(defaultNodeStyle);
         this.graph.getDecorator().getNodeDecorator().getFocusIndicatorDecorator().hideImplementation();
-        this.graph.getNodeDefaults().setSize(new SizeD(30, 30));
+        this.graph.getNodeDefaults().setSize(new SizeD(17, 17));
 
         /* Default Edge Styling */
         this.defaultEdgeStyle = new PolylineEdgeStyle();
@@ -258,7 +268,22 @@ public class MainFrame extends JFrame {
         sidePanel.add(startGenetic, cSidePanel);
         cSidePanel.gridx = 1;
         sidePanel.add(stopGenetic, cSidePanel);
+        cSidePanel.gridy = sidePanelNextY++;
+        forceDirectionPerpendicular = new JRadioButton("Perpendicular");
+        sidePanel.add(forceDirectionPerpendicular,cSidePanel);
+        //sidePanel.add(forceDirectionButton);
+        forceDirectionPerpendicular.setSelected(true);
+        forceDirectionPerpendicular.addActionListener(this::forceDirectionPerpendicularActionPerformed);
+        cSidePanel.gridy = sidePanelNextY++;
+        forceDirectionNonPerpendicular = new JRadioButton("Non Perpendicular");
+        sidePanel.add(forceDirectionNonPerpendicular,cSidePanel);
+        //sidePanel.add(forceDirectionButton);
+        forceDirectionNonPerpendicular.setSelected(false);
+        forceDirectionNonPerpendicular.addActionListener(this::forceDirectionNonPerpendicularActionPerformed);
 
+        ButtonGroup group = new ButtonGroup();
+        group.add(forceDirectionNonPerpendicular);
+        group.add(forceDirectionPerpendicular);
     }
     public static Random rand = new Random();
     public void initializeGeneticAlgorithm(){
@@ -351,7 +376,7 @@ public class MainFrame extends JFrame {
             faa.draw(graph);
             view.updateUI();
         });
-        ForceAlgorithmApplier fa = defaultForceAlgorithmApplier(500);
+        ForceAlgorithmApplier fa = defaultForceAlgorithmApplier(2000);
         geneticAlgorithm.instances.add(fa);
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
@@ -1203,8 +1228,10 @@ public class MainFrame extends JFrame {
 
             t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
             t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
-            t1 = rotate.apply(PointD.negate(t1));
-            t2 = rotate.apply(t2);
+            if(this.perpendicular) {
+                t1 = rotate.apply(PointD.negate(t1));
+                t2 = rotate.apply(t2);
+            }
             /*if(angle > 60 && angle < 120){
                 return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
             }
@@ -1388,6 +1415,15 @@ public class MainFrame extends JFrame {
 
         //Update the view.
         view.updateUI();
+    }
+
+    private void forceDirectionPerpendicularActionPerformed(ActionEvent evt){
+
+            this.perpendicular = true;
+    }
+    private void forceDirectionNonPerpendicularActionPerformed(ActionEvent evt){
+
+            this.perpendicular = false;
     }
 
     private void gridItemActionPerformed(ActionEvent evt) {
