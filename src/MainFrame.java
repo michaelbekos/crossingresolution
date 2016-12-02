@@ -1,3 +1,4 @@
+import algorithms.graphs.GridPositioning;
 import com.yworks.yfiles.algorithms.*;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.Matrix2D;
@@ -406,9 +407,7 @@ public class MainFrame extends JFrame {
     }
 
     public void startForceClicked(ActionEvent e){
-        System.out.println("Hallo");
         if(ForceAlgorithmApplier.running == false){
-            System.out.println("HalloAGAIN");
             ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
             Thread thread = new Thread(fd);
             thread.start();
@@ -1008,11 +1007,11 @@ public class MainFrame extends JFrame {
         springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
         layoutMenu.add(springEmbedderItem);
 
-        JMenuItem gridSpringEmbedderItem = new JMenuItem();
-        gridSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        gridSpringEmbedderItem.setText("Grid Point Spring Embedder");
-        gridSpringEmbedderItem.addActionListener(this::gridSpringEmbedderItemActionPerformed);
-        layoutMenu.add(gridSpringEmbedderItem);
+        JMenuItem gridPositioningItem = new JMenuItem();
+        gridPositioningItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        gridPositioningItem.setText("Respective Crossing Angle Gridding");
+        gridPositioningItem.addActionListener(this::gridCrossingItemActionPerformed);
+        layoutMenu.add(gridPositioningItem);
 
         JMenuItem minimumAngleImprovementItem = new JMenuItem();
         minimumAngleImprovementItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
@@ -1155,11 +1154,12 @@ public class MainFrame extends JFrame {
      * Implementation of actions
      ********************************************************************/
 
-    private void gridSpringEmbedderItemActionPerformed(ActionEvent evt) {
+    private void gridCrossingItemActionPerformed(ActionEvent evt) {
 
-        GridDrawing gd = new GridDrawing(this.view.getGraph());
-        gd.roundingGrid();
-        this.view.updateUI();
+        GridPositioning grid = new GridPositioning(this.graph);
+        if(!grid.isGridded(this.graph)) {
+            ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodes());
+        }
     }
 
     private void minimumAngleImprovementItemActionPerformed(ActionEvent evt) {
