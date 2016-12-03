@@ -1,7 +1,4 @@
-/**
- * Created by Jessica Wolz on 01.12.16.
- */
-
+package algorithms.graphs;
 
 import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
@@ -10,99 +7,252 @@ import java.util.*;
 
 import layout.algo.ForceAlgorithmApplier;
 import util.*;
-import algorithms.graphs.*;
+import util.graph2d.Intersection;
+import util.graph2d.LineSegment;
+
+/**
+ * Created by Jessica Wolz on 01.12.16.
+ */
 
 public class GridPositioning {
 
     private IGraph graph;
     private static IMapper<INode, PointD> nodePositions;
+    private List<PointD> gridPoints;
+    private Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
 
-    public GridPositioning(IGraph graph){
+    /**
+     * Constructor
+     * @param graph - input graph
+     */
+    public GridPositioning(IGraph graph) {
         this.graph = graph;
         nodePositions = ForceAlgorithmApplier.initPositionMap(this.graph);
+        gridPoints = new ArrayList<>();
     }
 
-    public IMapper<INode, PointD> getGridNodes(){
+    /**
+     * Computes integer grid points respectively by crossing angle if such exists
+     * Otherwise respectively to the minimum angle of the graph
+     * @return nodePositions - integer grid node positions
+     */
+    public IMapper<INode, PointD> getGridNodesRespectively() {
+        Set<INode> seenNodes = new HashSet<>();
+        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(this.graph, Maybe.just(nodePositions));
+        IMapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(this.graph);
 
-        for(INode u : graph.getNodes()){
-            PointD currP = nodePositions.getValue(u);
-            double currAngle = getResultingAngle(nodePositions);
-            PointD leftDown, leftUp, rightDown, rightUp;
-            // four different grid positions of same node
-            List<PointD> gridPoints = new ArrayList<>();
-            gridPoints.add(new PointD(Math.floor(currP.getX()), Math.floor(currP.getY())));
-            gridPoints.add(new PointD(Math.floor(currP.getX()), Math.ceil(currP.getY())));
-            gridPoints.add(new PointD(Math.ceil(currP.getX()), Math.floor(currP.getY())));
-            gridPoints.add(new PointD(Math.ceil(currP.getX()), Math.ceil(currP.getY())));
+        List<Tuple2<PointD, Double>> coord = new ArrayList<>();
+        List<Tuple3<PointD, PointD, Double>> coordCrossing = new ArrayList<>();
+        boolean contained = false;
+        Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
+        Comparator<Tuple3<PointD, PointD, Double>> byAngles = (p1, p2) -> p1.c.compareTo(p2.c);
 
-           /* leftDown = new PointD(Math.floor(currP.getX()), Math.floor(currP.getY()));
-            leftUp = new PointD(Math.floor(currP.getX()), Math.ceil(currP.getY()));
-            rightDown = new PointD(Math.ceil(currP.getX()), Math.floor(currP.getY()));
-            rightUp = new PointD(Math.ceil(currP.getX()), Math.ceil(currP.getY()));*/
-
-            IMapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(this.graph);
-            List<Tuple2<PointD, Double>> coord = new ArrayList<>();
-            //double x;
-            Iterator<PointD> iter = gridPoints.iterator();
-            while (iter.hasNext())
-            {
-                PointD it = iter.next();
-                coord.add(new Tuple2<>(it, getResultingAngle(temp, u, it)));
-            }
-
-            /*if((x = getResultingAngle(temp, u, leftDown)) > currAngle){
-                coord.add(new Tuple2<>(leftDown, x));
-            }
-            if((x = getResultingAngle(temp, u, leftUp)) > currAngle){
-                coord.add(new Tuple2<>(leftUp, x));
-            }
-            if((x = getResultingAngle(temp, u, rightDown)) > currAngle){
-                coord.add(new Tuple2<>(rightDown, x));
-            }
-            if((x = getResultingAngle(temp, u, rightUp)) > currAngle){
-                coord.add(new Tuple2<>(leftDown, x));
-            }*/
-
-            Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
-            Collections.sort(coord, byAngle);
-            if(coord.size() > 0){
-                // TODO: ascending or descending comparator!?
-                // double newAngle = coord.get(0);
-                PointD newP = coord.get(coord.size()).a;
-                nodePositions.setValue(u, newP);
-
-            } else {
+        // computes the grid nodes respectively for single nodes or for crossing nodes
+        for (INode u : graph.getNodes()) {
+            // insures that coordinates to same node are not added twice
+            if (seenNodes.contains(u)) {
                 break;
+            }
+            seenNodes.add(u);
+            PointD currU = nodePositions.getValue(u);
+
+            for (INode v : graph.neighbors(INode.class, u)) {
+                if (seenNodes.contains(v)) {
+                    break;
+                }
+                seenNodes.add(v);
+                PointD currV = nodePositions.getValue(v);
+                LineSegment l1 = new LineSegment(currU, currV);
+                LineSegment l2 = new LineSegment(currV, currU);
+                if (crossings.contains(l1) || crossings.contains(l2)) {
+                    contained = true;
+                    coordCrossing.clear();
+                    coordCrossing.addAll(addCoordinates(getGridPoints(currU, currV), temp));
+
+                    Collections.sort(coordCrossing, byAngles);
+                    if (coordCrossing.size() > 0) {
+                        nodePositions.setValue(u, coordCrossing.get(coordCrossing.size() - 1).a);
+                        nodePositions.setValue(v, coordCrossing.get(coordCrossing.size() - 1).b);
+                    }
+                } else {
+                    contained = false;
+                    coord.clear();
+                    coord.addAll(addCoordinates(v, getGridPoints(currV), temp));
+                    Collections.sort(coord, byAngle);
+                    if (coord.size() > 0) {
+                        nodePositions.setValue(v, coord.get(coord.size() - 1).a);
+                    }
+                }
+            }
+
+            coord.clear();
+            if (!contained) {
+                coord.addAll(addCoordinates(u, getGridPoints(nodePositions.getValue(u)), temp));
+                Collections.sort(coord, byAngle);
+                if (coord.size() > 0) {
+                    nodePositions.setValue(u, coord.get(coord.size() - 1).a);
+                }
             }
 
         }
-
         return nodePositions;
     }
 
-    public Double getResultingAngle(IMapper<INode, PointD> map, INode node, PointD p){
+    /**
+     * Iterates over all PointD's in coords and computes minimum angle
+     * Adds this to output coordinates
+     * @param  coords - contains surrounding grid points and original nodes
+     * @param pos - node positions of entire graph
+     * @return coordinates - contains all minimum angles with node positions
+     */
+    private List<Tuple3<PointD, PointD, Double>> addCoordinates(List<Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>>> coords, IMapper<INode, PointD> pos) {
+        List<Tuple3<PointD, PointD, Double>> coordinates = new ArrayList<>();
+        Iterator<Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>>> iter = coords.iterator();
+        while (iter.hasNext()) {
+            Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>> it = iter.next();
+            PointD u = it.a.b,
+                    v = it.b.b;
+            INode iU = it.a.a,
+                    iV = it.b.a;
+            coordinates.add(new Tuple3<>(u, v, getResultingAngle(pos, iU, u, iV, v)));
+        }
+        return coordinates;
+    }
+
+    /**
+     * Iterates over all PointD's in gridPointsSingle and computes minimum angle
+     * Adds this to output coordinates
+     * @param u - original node
+     * @param gridPoints - contains surrounding grid points
+     * @param pos - node positions of entire graph
+     * @return coordinates - contains all minimum angles with node positions
+     */
+    private List<Tuple2<PointD, Double>> addCoordinates(INode u, List<PointD> gridPoints, IMapper<INode, PointD> pos) {
+        List<Tuple2<PointD, Double>> coordinates = new ArrayList<>();
+        Iterator<PointD> iter = gridPoints.iterator();
+        while (iter.hasNext()) {
+            PointD it = iter.next();
+            coordinates.add(new Tuple2<>(it, getResultingAngle(pos, u, it)));
+        }
+
+        return coordinates;
+    }
+
+    /**
+     * Computes integer grid points node per node
+     * @return nodePositions - holds new positions of all nodes
+     */
+    public IMapper<INode, PointD> getGridNodes() {
+
+        IMapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(this.graph);
+        List<Tuple2<PointD, Double>> coord = new ArrayList<>();
+
+        for (INode u : graph.getNodes()) {
+            coord.clear();
+            coord.addAll(addCoordinates(u, getGridPoints(nodePositions.getValue(u)), temp));
+
+            Collections.sort(coord, byAngle);
+            if (coord.size() > 0) {
+                nodePositions.setValue(u, coord.get(coord.size() - 1).a);
+            }
+        }
+        return nodePositions;
+    }
+
+    /**
+     * Updates node positions and computes new minimum Angle of several nodes
+     * @param map   - input node positions
+     * @param u,v   - nodes to be updated
+     * @param posU, posV - new position of nodes
+     * @return Double - computes minimum angle of new positions
+     */
+    public Double getResultingAngle(IMapper<INode, PointD> map, INode u, PointD posU, INode v, PointD posV) {
+        map.setValue(u, posU);
+        map.setValue(v, posV);
+        return getResultingAngle(map);
+    }
+
+
+    /**
+     * Updates node positions and computes new minimum Angle
+     * @param map  - input node positions
+     * @param node - node to be updated
+     * @param p    - new position of node
+     * @return Double - computes minimum angle of new positions
+     */
+    public Double getResultingAngle(IMapper<INode, PointD> map, INode node, PointD p) {
         map.setValue(node, p);
         return getResultingAngle(map);
     }
 
-    public Double getResultingAngle(IMapper<INode, PointD> map){
+    /**
+     * Computes minimum angle of positions
+     * @param map - Input node positions
+     * @return Double - minimum angle of graph
+     */
+    public Double getResultingAngle(IMapper<INode, PointD> map) {
 
         Maybe<Double> tempAngle = MinimumAngle.getMinimumAngle(this.graph, Maybe.just(map));
-        if(tempAngle.hasValue()) {
+        if (tempAngle.hasValue()) {
             return tempAngle.get();
         }
         return 0.0;
     }
 
-    public boolean isGridded(IGraph graph){
-        for(INode u: graph.getNodes()){
-            if((u.getLayout().getCenter().getX() % 1) != 0){
+    /**
+     * Checks if the nodes of the graph are on integer grid points
+     * @param graph - Input graph
+     * @return true/false - depending on whether the nodes are integer
+     */
+    public boolean isGridded(IGraph graph) {
+        for (INode u : graph.getNodes()) {
+            if ((u.getLayout().getCenter().getX() % 1) != 0) {
                 return false;
             }
-            if((u.getLayout().getCenter().getY() % 1) != 0){
+            if ((u.getLayout().getCenter().getY() % 1) != 0) {
                 return false;
             }
         }
         return true;
     }
+
+
+    /**
+     * Returns combination of surrounding grid points of two points
+     *
+     * @param u - non-grid point
+     * @param v - non-grid point
+     * @return gridPoints - combination of u and v grid points
+     */
+    public List<Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>>> getGridPoints(PointD u, PointD v) {
+        List<Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>>> gridPoints = new ArrayList<>();
+        List<PointD> gridU = getGridPoints(u);
+        List<PointD> gridV = getGridPoints(v);
+
+        Iterator<PointD> iterU = gridU.iterator();
+        Iterator<PointD> iterV = gridV.iterator();
+        while (iterU.hasNext()) {
+            while (iterV.hasNext()) {
+                Tuple2 tup = new Tuple2<>(u, iterU.next());
+                Tuple2 tupV = new Tuple2<>(v, iterV.next());
+                gridPoints.add(new Tuple2<>(tup, tupV));
+            }
+        }
+        return gridPoints;
+    }
+
+    /**
+     * Returns the four surrounding integer grid points of point u
+     * @param u - non-grid point
+     * @return points - List of surrounding grid points
+     */
+    public List<PointD> getGridPoints(PointD u) {
+        List<PointD> points = new ArrayList<>();
+        points.add(new PointD(Math.floor(u.getX()), Math.floor(u.getY())));
+        points.add(new PointD(Math.ceil(u.getX()), Math.floor(u.getY())));
+        points.add(new PointD(Math.floor(u.getX()), Math.ceil(u.getY())));
+        points.add(new PointD(Math.ceil(u.getX()), Math.ceil(u.getY())));
+        return points;
+    }
+
 }

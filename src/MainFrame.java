@@ -13,6 +13,7 @@ import com.yworks.yfiles.layout.OperationType;
 import com.yworks.yfiles.layout.YGraphAdapter;
 import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import com.yworks.yfiles.layout.organic.OrganicRemoveOverlapsStage;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.*;
@@ -1158,7 +1159,7 @@ public class MainFrame extends JFrame {
 
         GridPositioning grid = new GridPositioning(this.graph);
         if(!grid.isGridded(this.graph)) {
-            ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodes());
+            ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodesRespectively());
         }
     }
 
