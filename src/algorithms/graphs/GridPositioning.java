@@ -18,8 +18,9 @@ public class GridPositioning {
 
     private IGraph graph;
     private static IMapper<INode, PointD> nodePositions;
-    private List<PointD> gridPoints;
     private Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
+    private Comparator<Tuple3<PointD, PointD, Double>> byAngles = (p1, p2) -> p1.c.compareTo(p2.c);
+
 
     /**
      * Constructor
@@ -28,7 +29,6 @@ public class GridPositioning {
     public GridPositioning(IGraph graph) {
         this.graph = graph;
         nodePositions = ForceAlgorithmApplier.initPositionMap(this.graph);
-        gridPoints = new ArrayList<>();
     }
 
     /**
@@ -44,8 +44,6 @@ public class GridPositioning {
         List<Tuple2<PointD, Double>> coord = new ArrayList<>();
         List<Tuple3<PointD, PointD, Double>> coordCrossing = new ArrayList<>();
         boolean contained = false;
-        Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
-        Comparator<Tuple3<PointD, PointD, Double>> byAngles = (p1, p2) -> p1.c.compareTo(p2.c);
 
         // computes the grid nodes respectively for single nodes or for crossing nodes
         for (INode u : graph.getNodes()) {
@@ -67,7 +65,7 @@ public class GridPositioning {
                 if (crossings.contains(l1) || crossings.contains(l2)) {
                     contained = true;
                     coordCrossing.clear();
-                    coordCrossing.addAll(addCoordinates(getGridPoints(currU, currV), temp));
+                    coordCrossing.addAll(addCoordinates(getGridPoints(u,v), temp));
 
                     Collections.sort(coordCrossing, byAngles);
                     if (coordCrossing.size() > 0) {
@@ -77,7 +75,7 @@ public class GridPositioning {
                 } else {
                     contained = false;
                     coord.clear();
-                    coord.addAll(addCoordinates(v, getGridPoints(currV), temp));
+                    coord.addAll(addCoordinates(v, getGridPoints(v), temp));
                     Collections.sort(coord, byAngle);
                     if (coord.size() > 0) {
                         nodePositions.setValue(v, coord.get(coord.size() - 1).a);
@@ -87,7 +85,7 @@ public class GridPositioning {
 
             coord.clear();
             if (!contained) {
-                coord.addAll(addCoordinates(u, getGridPoints(nodePositions.getValue(u)), temp));
+                coord.addAll(addCoordinates(u, getGridPoints(u), temp));
                 Collections.sort(coord, byAngle);
                 if (coord.size() > 0) {
                     nodePositions.setValue(u, coord.get(coord.size() - 1).a);
@@ -105,17 +103,17 @@ public class GridPositioning {
      * @param pos - node positions of entire graph
      * @return coordinates - contains all minimum angles with node positions
      */
-    private List<Tuple3<PointD, PointD, Double>> addCoordinates(List<Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>>> coords, IMapper<INode, PointD> pos) {
+    private List<Tuple3<PointD, PointD, Double>> addCoordinates(List<Tuple4<INode, PointD,INode, PointD>> coords, IMapper<INode, PointD> pos) {
         List<Tuple3<PointD, PointD, Double>> coordinates = new ArrayList<>();
-        Iterator<Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>>> iter = coords.iterator();
-        while (iter.hasNext()) {
-            Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>> it = iter.next();
-            PointD u = it.a.b,
-                    v = it.b.b;
-            INode iU = it.a.a,
-                    iV = it.b.a;
-            coordinates.add(new Tuple3<>(u, v, getResultingAngle(pos, iU, u, iV, v)));
+
+        for(Tuple4<INode, PointD,INode, PointD> tup : coords){
+            PointD p_u = tup.b,
+                    p_v = tup.d;
+            INode i_u = tup.a,
+                    i_v = tup.c;
+            coordinates.add(new Tuple3<>(p_u, p_v, getResultingAngle(pos, i_u, p_u, i_v, p_v)));
         }
+
         return coordinates;
     }
 
@@ -129,12 +127,9 @@ public class GridPositioning {
      */
     private List<Tuple2<PointD, Double>> addCoordinates(INode u, List<PointD> gridPoints, IMapper<INode, PointD> pos) {
         List<Tuple2<PointD, Double>> coordinates = new ArrayList<>();
-        Iterator<PointD> iter = gridPoints.iterator();
-        while (iter.hasNext()) {
-            PointD it = iter.next();
-            coordinates.add(new Tuple2<>(it, getResultingAngle(pos, u, it)));
+        for(PointD p : gridPoints) {
+            coordinates.add(new Tuple2<>(p, getResultingAngle(pos, u, p)));
         }
-
         return coordinates;
     }
 
@@ -149,7 +144,7 @@ public class GridPositioning {
 
         for (INode u : graph.getNodes()) {
             coord.clear();
-            coord.addAll(addCoordinates(u, getGridPoints(nodePositions.getValue(u)), temp));
+            coord.addAll(addCoordinates(u, getGridPoints(u), temp));
 
             Collections.sort(coord, byAngle);
             if (coord.size() > 0) {
@@ -220,34 +215,32 @@ public class GridPositioning {
     /**
      * Returns combination of surrounding grid points of two points
      *
-     * @param u - non-grid point
-     * @param v - non-grid point
+     * @param u - non-grid node
+     * @param v - non-grid node
      * @return gridPoints - combination of u and v grid points
      */
-    public List<Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>>> getGridPoints(PointD u, PointD v) {
-        List<Tuple2<Tuple2<INode, PointD>, Tuple2<INode, PointD>>> gridPoints = new ArrayList<>();
+    public List<Tuple4<INode, PointD, INode, PointD>> getGridPoints(INode u, INode v) {
+        List<Tuple4<INode, PointD, INode, PointD>> gridPoints = new ArrayList<>();
         List<PointD> gridU = getGridPoints(u);
         List<PointD> gridV = getGridPoints(v);
 
-        Iterator<PointD> iterU = gridU.iterator();
-        Iterator<PointD> iterV = gridV.iterator();
-        while (iterU.hasNext()) {
-            while (iterV.hasNext()) {
-                Tuple2 tup = new Tuple2<>(u, iterU.next());
-                Tuple2 tupV = new Tuple2<>(v, iterV.next());
-                gridPoints.add(new Tuple2<>(tup, tupV));
+        for(PointD p_u: gridU){
+            for(PointD p_v: gridV){
+                gridPoints.add(new Tuple4<INode, PointD, INode, PointD>(u, p_u, v, p_v));
             }
         }
+
         return gridPoints;
     }
 
     /**
      * Returns the four surrounding integer grid points of point u
-     * @param u - non-grid point
+     * @param node - non-grid node
      * @return points - List of surrounding grid points
      */
-    public List<PointD> getGridPoints(PointD u) {
+    public List<PointD> getGridPoints(INode node) {
         List<PointD> points = new ArrayList<>();
+        PointD u = nodePositions.getValue(node);
         points.add(new PointD(Math.floor(u.getX()), Math.floor(u.getY())));
         points.add(new PointD(Math.ceil(u.getX()), Math.floor(u.getY())));
         points.add(new PointD(Math.floor(u.getX()), Math.ceil(u.getY())));

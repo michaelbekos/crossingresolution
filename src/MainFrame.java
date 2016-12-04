@@ -1156,10 +1156,11 @@ public class MainFrame extends JFrame {
      ********************************************************************/
 
     private void gridCrossingItemActionPerformed(ActionEvent evt) {
-
-        GridPositioning grid = new GridPositioning(this.graph);
-        if(!grid.isGridded(this.graph)) {
-            ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodesRespectively());
+        if(ForceAlgorithmApplier.class != null) {
+            GridPositioning grid = new GridPositioning(this.graph);
+            if (!grid.isGridded(this.graph)) {
+                ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodesRespectively());
+            }
         }
     }
 
