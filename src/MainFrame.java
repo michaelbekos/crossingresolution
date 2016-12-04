@@ -84,11 +84,13 @@ public class MainFrame extends JFrame {
 
     private GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
     private Thread geneticAlgorithmThread;
-    final double Epsilon = 0.001;
+    final double Epsilon = 0.01;
     final Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
     private JRadioButton forceDirectionPerpendicular;
     private JRadioButton forceDirectionNonPerpendicular;
     private boolean perpendicular = true;
+
+    private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
     /**
      * Creates new form MainFrame
      */
@@ -195,10 +197,11 @@ public class MainFrame extends JFrame {
         });
 
         this.graph.addNodeLayoutChangedListener((o, u, iNodeItemEventArgs) -> {
-            synchronized(this) {
-                MinimumAngle.resetHighlighting(this.graph);
-                ForceAlgorithmApplier.changeNodePosition(u);
-            }
+            MinimumAngle.resetHighlighting(this.graph);
+            faa.andThen(f -> {
+                if(f.running)
+                    f.resetNodePosition(u);
+            });
         });
 
         /* Add two listeners two the graph */
@@ -324,10 +327,8 @@ public class MainFrame extends JFrame {
             }),
             20,
             (fa -> {
-                IMapper<INode, PointD> nodePositions = new Mapper<>(new WeakHashMap<>());
-                graph.getNodes().stream().forEach(n -> {
-                    nodePositions.setValue(n, fa.nodePositions.getValue(n));
-                });
+                IMapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions, graph.getNodes().stream());
+
                 List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossingsSorted(graph, Maybe.just(nodePositions));
                 ForceAlgorithmApplier fa2 = new ForceAlgorithmApplier(fa.view, fa.maxNoOfIterations, fa.progressBar, fa.infoLabel);
                 fa2.algos = fa.algos;
@@ -336,36 +337,53 @@ public class MainFrame extends JFrame {
                     return fa2;
                 }
                 List<Tuple3<LineSegment, LineSegment, Intersection>> mostInteresting = crossings.subList(0, crossings.size() / 10);
+                //random choice
                 //int nodeIndex = rand.nextInt(graph.getNodes().size());
                 //INode node = graph.getNodes().getItem(nodeIndex);
                 INode node = null;
                 int nodeDegree = Integer.MAX_VALUE;
                 Tuple3<LineSegment, LineSegment, Intersection> nodeCrossing = null;
                 int whichNode = -1;
-                for(Tuple3<LineSegment, LineSegment, Intersection> l1l2i: mostInteresting){
-                    INode[] nodes = new INode[]{
-                        l1l2i.a.n1.get(),
-                        l1l2i.a.n2.get(),
-                        l1l2i.b.n1.get(),
-                        l1l2i.b.n2.get()
-                    };
-                    int i = 0;
-                    for(INode n2: nodes){
-                        int n2degree = graph.degree(n2);
-                        if(n2degree < nodeDegree){
-                            node = n2;
-                            nodeDegree = n2degree;
-                            nodeCrossing = l1l2i;
-                            whichNode = i;
-                        }
-                        i++;
-                    }
-                }
+
+                //random crossing
+                int crossingIndex = rand.nextInt(mostInteresting.size());
+                nodeCrossing = mostInteresting.get(crossingIndex);
+                whichNode = rand.nextInt(4);
+                INode[] nodes = new INode[]{
+                    nodeCrossing.a.n1.get(),
+                    nodeCrossing.a.n2.get(),
+                    nodeCrossing.b.n1.get(),
+                    nodeCrossing.b.n2.get()
+                };
+                node = nodes[whichNode];
+
+                //deterministic
+                //for(Tuple3<LineSegment, LineSegment, Intersection> l1l2i: mostInteresting){
+                //    INode[] nodes = new INode[]{
+                //        l1l2i.a.n1.get(),
+                //        l1l2i.a.n2.get(),
+                //        l1l2i.b.n1.get(),
+                //        l1l2i.b.n2.get()
+                //    };
+                //    int i = 0;
+                //    for(INode n2: nodes){
+                //        int n2degree = graph.degree(n2);
+                //        if(n2degree < nodeDegree){
+                //            node = n2;
+                //            nodeDegree = n2degree;
+                //            nodeCrossing = l1l2i;
+                //            whichNode = i;
+                //        }
+                //        i++;
+                //    }
+                //}
+
                 if(node == null || nodeCrossing == null || whichNode < 0){
-                    // ???
+                    // ??? This CAN'T happen. Compiler thinks it can, but it can't.
                     return fa2;
                 }
-                PointD pos = nodePositions.getValue(node);
+                //PointD pos = nodePositions.getValue(node);
+                PointD pos = nodeCrossing.c.intersectionPoint;
                 PointD direction = new PointD(0, 0);
                 switch(whichNode){
                     case 0: direction = PointD.negate(nodeCrossing.b.ve);
@@ -380,8 +398,12 @@ public class MainFrame extends JFrame {
                 if(nodeCrossing.c.orientedAngle > 90){
                     direction = PointD.negate(direction);
                 }
+                if(direction.getVectorLength() <= Epsilon){
+                    return fa2;
+                }
                 direction = direction.getNormalized();
-                pos = PointD.add(pos, PointD.times(100 * springThreshholds[2], direction));
+                PointD posOld = pos;
+                pos = PointD.add(pos, PointD.times(springThreshholds[2], direction));
                 nodePositions.setValue(node, pos);
                 fa2.nodePositions = nodePositions;
                 return fa2;
@@ -390,7 +412,7 @@ public class MainFrame extends JFrame {
             faa.draw(graph);
             view.updateUI();
         });
-        ForceAlgorithmApplier fa = defaultForceAlgorithmApplier(2000);
+        ForceAlgorithmApplier fa = defaultForceAlgorithmApplier(500);
         geneticAlgorithm.instances.add(fa);
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
@@ -408,8 +430,9 @@ public class MainFrame extends JFrame {
     }
 
     public void startForceClicked(ActionEvent e){
-        if(ForceAlgorithmApplier.running == false){
+        if(!faa.hasValue() || faa.get().running == false){
             ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
+            faa = Maybe.just(fd);
             Thread thread = new Thread(fd);
             thread.start();
             this.view.updateUI();
@@ -417,7 +440,7 @@ public class MainFrame extends JFrame {
     }
 
     public void stopForceClicked(ActionEvent e){
-        ForceAlgorithmApplier.running = false;
+        faa.andThen(f -> f.running = false);
     }
 
     private JPanel initToolBar()
@@ -1212,7 +1235,6 @@ public class MainFrame extends JFrame {
     private ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
 
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, Maybe.just(progressBar), Maybe.just(infoLabel));
-        ForceAlgorithmApplier.running = true;
         fd.algos.add(new NodePairForce(p1 -> (p2 -> {
             double electricalRepulsion = 50000,
                    threshold = springThreshholds[0];
@@ -1236,7 +1258,7 @@ public class MainFrame extends JFrame {
             }
             t = PointD.div(t, dist);
             //t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
-            t = PointD.times(t, threshold*(dist-springNaturalLength));
+            t = PointD.times(t, threshold * (dist - springNaturalLength));
             return t;
         })));
 
@@ -1259,9 +1281,13 @@ public class MainFrame extends JFrame {
 
             t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
             t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
-            if(this.perpendicular) {
-                t1 = rotate.apply(PointD.negate(t1));
-                t2 = rotate.apply(t2);
+            t1 = rotate.apply(PointD.negate(t1));
+            t2 = rotate.apply(t2);
+            if(this.perpendicular) {  
+                return new Tuple2<>(t1, t2);
+            }
+            else{
+                return new Tuple2<>(t1_, t2_);
             }
             /*if(angle > 60 && angle < 120){
                 return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
@@ -1270,7 +1296,6 @@ public class MainFrame extends JFrame {
             t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
 		*/
        
-            return new Tuple2<>(t1, t2);
         }))));
 
         fd.algos.add(new IncidentEdgesForce(e1 -> (e2 -> (angle -> (deg -> {

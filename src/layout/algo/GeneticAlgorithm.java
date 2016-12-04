@@ -62,20 +62,27 @@ public class GeneticAlgorithm<T> implements Runnable {
   public void assertInstances(){
     desiredInstanceCount.andThen(ic -> {
       while(instances.size() < ic){
-        instances.add(generator.apply(instances));
+        newInstance();
       }
     });
     if(instances.isEmpty()){
       throw new IllegalStateException();
     }
   }
+  public void newInstance(){
+    T newInstance = generator.apply(instances);
+    for(int i = 0; i < 10; i++){
+      newInstance = advance.apply(newInstance);
+    }
+    instances.add(newInstance);
+  }
+
   public void nextGeneration(){
     assertInstances();
     Collections.sort(instances, scoring);
     // instances is not empty, since (assertInstances)
     instances.remove(0);
-    T newInstance = generator.apply(instances);
-    instances.add(newInstance);
+    newInstance();
   }
   private void notifyChanged(){
     bestChanged.andThen(f -> {

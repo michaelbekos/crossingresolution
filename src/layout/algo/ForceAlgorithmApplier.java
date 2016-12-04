@@ -33,9 +33,18 @@ public class ForceAlgorithmApplier implements Runnable {
   public Maybe<JLabel> infoLabel;
   public double maxMinAngle;
   public double minEdgeLength;
-  public static IMapper<INode, PointD> nodePositions;
-  public static boolean running = false;
- 
+  public IMapper<INode, PointD> nodePositions;
+  public boolean running = false;
+
+  public static IMapper<INode, PointD> copyNodePositionsMap(IMapper<INode, PointD> im, Stream<INode> nodes){
+    IMapper<INode, PointD> res = new Mapper<>(new WeakHashMap<INode, PointD>());
+    nodes.forEach(n -> {
+      PointD p1 = im.getValue(n);
+      res.setValue(n, im.getValue(n));
+    });
+    return res;
+  }
+
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
 
     this.view = view;
@@ -52,26 +61,27 @@ public class ForceAlgorithmApplier implements Runnable {
 
   public static IMapper<INode, PointD> initPositionMap(IGraph g){
     IMapper<INode, PointD> nodePos = new Mapper<>(new WeakHashMap<>());
-    g.getNodes().stream().forEach(n1 -> nodePos.setValue(n1, n1.getLayout().getCenter()));
+    g.getNodes().stream().forEach(n1 -> {
+      PointD p1 = n1.getLayout().getCenter();
+      nodePos.setValue(n1, n1.getLayout().getCenter());
+    });
     return nodePos;
   }
 
-  public static void changeNodePosition(INode u){
-    double u_x = u.getLayout().getCenter().getX();
-    double u_y = u.getLayout().getCenter().getY();
-
-    PointD newU = new PointD(u_x,u_y);
-    ForceAlgorithmApplier.nodePositions.setValue(u, newU);
+  public void resetNodePosition(INode u){
+    System.out.println("resetting node position: " + u);
+    nodePositions.setValue(u, u.getLayout().getCenter());
   }
 
   public void run() {
+    running = true;
     if (this.maxNoOfIterations == 0) {
       this.clearDrawables();
       IMapper<INode, PointD> map = calculateAllForces();
       this.displayVectors(map);
     }
 
-    if (this.maxNoOfIterations ==-1) {
+    if (this.maxNoOfIterations < 0) {
       int j = 0;
       while (running){
         this.clearDrawables();
@@ -115,12 +125,15 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.fitContent();
     displayMinimumAngle(graph);
     this.view.updateUI();
+    running = false;
   }
 
   public void runNoDraw() {
-    for (int i = 0; i < this.maxNoOfIterations; i++) {
+    running = true;
+    for (int i = 0; i < this.maxNoOfIterations && running; i++) {
       nodePositions = applyAlgos();
     }
+    running = false;
   }
 
   public void draw(IGraph g){
@@ -197,7 +210,9 @@ public class ForceAlgorithmApplier implements Runnable {
         LineSegment l1, l2;
         l1 = new LineSegment(p1, p2);
         l2 = new LineSegment(p1, p3);
-        Double angle = Math.toDegrees(Math.acos(PointD.scalarProduct(l1.ve, l2.ve) / (l1.ve.getVectorLength() * l2.ve.getVectorLength())));
+        double cosAngle = PointD.scalarProduct(l1.ve, l2.ve) / (l1.ve.getVectorLength() * l2.ve.getVectorLength());
+        cosAngle = Math.max(-1, Math.min(1, cosAngle));
+        Double angle = Math.toDegrees(Math.acos(cosAngle));
         for (IncidentEdgesForce fa : algos) {
           Tuple2<PointD, PointD> forces = fa
                   .apply(l1.ve)
@@ -250,8 +265,9 @@ public class ForceAlgorithmApplier implements Runnable {
         f1 = PointD.add(f1, force1);
         f2 = PointD.add(f2, PointD.negate(force1));
         f3 = PointD.add(f3, force2);
-        f4 = PointD.add(f4, PointD.negate(force2));
+        f4 = PointD.add(f4, PointD.negate(force2));   
       }
+    
       map.setValue(n1, f1);
       map.setValue(n2, f2);
       map.setValue(n3, f3);
@@ -276,11 +292,13 @@ public class ForceAlgorithmApplier implements Runnable {
     return g;
   }
   public static IMapper<INode, PointD> applyForces(IGraph g, IMapper<INode, PointD> nodePositions, IMapper<INode, PointD> map){
+    IMapper<INode, PointD> oldPos = copyNodePositionsMap(nodePositions, g.getNodes().stream());
     for(INode n1: g.getNodes()){
       PointD f1 = map.getValue(n1),
-             p1 = nodePositions.getValue(n1);
-      p1 = PointD.add(f1, p1);
-      nodePositions.setValue(n1, p1);
+             p1 = nodePositions.getValue(n1),
+             p2;
+      p2 = PointD.add(f1, p1);
+      nodePositions.setValue(n1, p2);
     }
     return nodePositions;
   }
