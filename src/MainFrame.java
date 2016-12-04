@@ -89,6 +89,8 @@ public class MainFrame extends JFrame {
     private JRadioButton forceDirectionPerpendicular;
     private JRadioButton forceDirectionNonPerpendicular;
     private boolean perpendicular = true;
+    private boolean createNodeAllowed = true;
+
 
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
     /**
@@ -336,7 +338,7 @@ public class MainFrame extends JFrame {
                 if(crossings.size() == 0) {
                     return fa2;
                 }
-                List<Tuple3<LineSegment, LineSegment, Intersection>> mostInteresting = crossings.subList(0, crossings.size() / 10);
+                List<Tuple3<LineSegment, LineSegment, Intersection>> mostInteresting = crossings.subList(0, (int) Math.ceil(crossings.size() / 100.0));
                 //random choice
                 //int nodeIndex = rand.nextInt(graph.getNodes().size());
                 //INode node = graph.getNodes().getItem(nodeIndex);
@@ -419,7 +421,9 @@ public class MainFrame extends JFrame {
 
     public void startGeneticClicked(ActionEvent e){
         if(geneticAlgorithm == null || geneticAlgorithm.running == false){
+            ForceAlgorithmApplier.init();
             initializeGeneticAlgorithm();
+        this.graphEditorInputMode.setCreateNodeAllowed(false);
             geneticAlgorithmThread.start();
         }
     }
@@ -427,20 +431,27 @@ public class MainFrame extends JFrame {
 
     public void stopGeneticClicked(ActionEvent e){
         geneticAlgorithm.running = false;
+        this.graphEditorInputMode.setCreateNodeAllowed(true);
     }
 
     public void startForceClicked(ActionEvent e){
         if(!faa.hasValue() || faa.get().running == false){
+            ForceAlgorithmApplier.init();
             ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
             faa = Maybe.just(fd);
             Thread thread = new Thread(fd);
+        this.graphEditorInputMode.setCreateNodeAllowed(false);
             thread.start();
             this.view.updateUI();
         }
     }
 
     public void stopForceClicked(ActionEvent e){
-        faa.andThen(f -> f.running = false);
+        faa.andThen(f -> {
+            f.running = false;
+        this.graphEditorInputMode.setCreateNodeAllowed(true);
+        });
+        
     }
 
     private JPanel initToolBar()

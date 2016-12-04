@@ -34,8 +34,12 @@ public class ForceAlgorithmApplier implements Runnable {
   public double maxMinAngle;
   public double minEdgeLength;
   public IMapper<INode, PointD> nodePositions;
+  public static Maybe<Tuple2<IMapper<INode, PointD>, Maybe<Double>>> bestSolution = Maybe.nothing();
   public boolean running = false;
 
+  public static void init(){
+    bestSolution = Maybe.nothing();
+  }
   public static IMapper<INode, PointD> copyNodePositionsMap(IMapper<INode, PointD> im, Stream<INode> nodes){
     IMapper<INode, PointD> res = new Mapper<>(new WeakHashMap<INode, PointD>());
     nodes.forEach(n -> {
@@ -71,6 +75,7 @@ public class ForceAlgorithmApplier implements Runnable {
   public void resetNodePosition(INode u){
     System.out.println("resetting node position: " + u);
     nodePositions.setValue(u, u.getLayout().getCenter());
+    ForceAlgorithmApplier.improveSolution(graph, nodePositions);
   }
 
   public void run() {
@@ -86,6 +91,7 @@ public class ForceAlgorithmApplier implements Runnable {
       while (running){
         this.clearDrawables();
         nodePositions = applyAlgos();
+        ForceAlgorithmApplier.improveSolution(graph, nodePositions);
         ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.currNoOfIterations = j;
         this.view.updateUI();
@@ -127,11 +133,32 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
     running = false;
   }
+  public static void improveSolution(IGraph g, IMapper<INode, PointD> sol){
+    Maybe<Double> solutionAngle = MinimumAngle.getMinimumAngle(g, Maybe.just(sol));
+    Tuple2<IMapper<INode, PointD>, Maybe<Double>> thisSol = new Tuple2<>(copyNodePositionsMap(sol, g.getNodes().stream()), solutionAngle);
+    if(!bestSolution.hasValue()){
+      bestSolution = Maybe.just(thisSol);
+      return;
+    }
+    Tuple2<IMapper<INode, PointD>, Maybe<Double>> prevBest = bestSolution.get();
+    // previous one had no crossings
+    if(!prevBest.b.hasValue()) return;
+    // this one has no crossings
+    if(!solutionAngle.hasValue()){
+      bestSolution = Maybe.just(thisSol); 
+      return;
+    }
+    // previous angle was better
+    if(prevBest.b.get() >= solutionAngle.get()) return;
+    bestSolution = Maybe.just(thisSol);
+    
+  }
 
   public void runNoDraw() {
     running = true;
     for (int i = 0; i < this.maxNoOfIterations && running; i++) {
       nodePositions = applyAlgos();
+      ForceAlgorithmApplier.improveSolution(graph, nodePositions);
     }
     running = false;
   }
