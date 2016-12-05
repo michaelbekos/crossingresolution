@@ -49,7 +49,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.*;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.*;
 
 
 /**
@@ -93,6 +93,12 @@ public class MainFrame extends JFrame {
 
 
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
+
+    public static final Consumer<Maybe<ForceAlgorithmApplier>> finalizeFAA = Maybe.lift(f -> {
+        f.running = false;
+        f.clearDrawables();
+    });
+
     /**
      * Creates new form MainFrame
      */
@@ -201,6 +207,7 @@ public class MainFrame extends JFrame {
         this.graph.addNodeLayoutChangedListener((o, u, iNodeItemEventArgs) -> {
             MinimumAngle.resetHighlighting(this.graph);
             faa.andThen(f -> {
+                f.clearDrawables();
                 if(f.running)
                     f.cleanVectors();
                     f.resetNodePosition(u);
@@ -439,6 +446,7 @@ public class MainFrame extends JFrame {
         if(!faa.hasValue() || faa.get().running == false){
             ForceAlgorithmApplier.init();
             ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
+            MainFrame.finalizeFAA.accept(faa);
             faa = Maybe.just(fd);
             Thread thread = new Thread(fd);
         this.graphEditorInputMode.setCreateNodeAllowed(false);
@@ -450,7 +458,7 @@ public class MainFrame extends JFrame {
     public void stopForceClicked(ActionEvent e){
         faa.andThen(f -> {
             f.running = false;
-        this.graphEditorInputMode.setCreateNodeAllowed(true);
+            this.graphEditorInputMode.setCreateNodeAllowed(true);
         });
         
     }
@@ -1238,13 +1246,15 @@ public class MainFrame extends JFrame {
         else return;
 
         ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(iterations);
-
+        MainFrame.finalizeFAA.accept(faa);
+        faa = Maybe.just(fd);
         
 
         Thread thread = new Thread(fd);
         thread.start();
         this.view.updateUI();
     }
+    
 
     private ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
 
