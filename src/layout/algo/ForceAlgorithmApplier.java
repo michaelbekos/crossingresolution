@@ -73,7 +73,6 @@ public class ForceAlgorithmApplier implements Runnable {
   }
 
   public void resetNodePosition(INode u){
-    System.out.println("resetting node position: " + u);
     nodePositions.setValue(u, u.getLayout().getCenter());
     ForceAlgorithmApplier.improveSolution(graph, nodePositions);
   }
@@ -182,7 +181,7 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
   }
 
-  private void clearDrawables() {
+  public void clearDrawables() {
     for (ICanvasObject o: canvasObjects) {
       o.remove();
     }

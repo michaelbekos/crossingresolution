@@ -34,4 +34,10 @@ public abstract class Maybe<T>{
     if(hasValue()) return get();
     return d;
   }
+  public static <T> Consumer<Maybe<T>> lift(Consumer<T> f){
+    return (m -> m.andThen(el -> f.accept(el)));
+  }
+  public static <T, R> Function<Maybe<T>, Maybe<R>> lift(Function<T, R> f){
+    return (m -> m.fmap(el -> f.apply(el)));
+  }
 }
