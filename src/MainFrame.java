@@ -209,8 +209,7 @@ public class MainFrame extends JFrame {
             MinimumAngle.resetHighlighting(this.graph);
             faa.andThen(f -> {
                 f.clearDrawables();
-                if(f.running)
-                    f.resetNodePosition(u);
+                f.resetNodePosition(u);
             });
         });
 
@@ -326,6 +325,17 @@ public class MainFrame extends JFrame {
         sidePanel.add(startForce, cSidePanel);
         cSidePanel.gridx = 1;
         sidePanel.add(stopForce, cSidePanel);
+
+        cSidePanel.gridy = sidePanelNextY++;
+        cSidePanel.gridx = 0;
+        JButton showForces = new JButton("Show forces");
+        showForces.addActionListener(e -> {
+            if(!faa.hasValue()){
+                faa = Maybe.just(defaultForceAlgorithmApplier(0));
+            }
+            faa.get().showForces();
+        });
+        sidePanel.add(showForces, cSidePanel);
     }
 
 
@@ -1357,8 +1367,10 @@ public class MainFrame extends JFrame {
             }
             PointD t1 = e1.getNormalized();
             PointD t2 = e2.getNormalized();
-            t1 = PointD.times(t1, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
-            t2 = PointD.times(t2, threshold * Math.sin((Math.toRadians(optAngle) - Math.toRadians(angle))/2.0));
+            Double neg = Math.signum(angle);
+
+            t1 = PointD.times(t1, neg * threshold * Math.sin((Math.toRadians(optAngle - Math.abs(angle)))/2.0));
+            t2 = PointD.times(t2, neg * threshold * Math.sin((Math.toRadians(optAngle - Math.abs(angle)))/2.0));
             t1 = rotate.apply(t1);
             t2 = PointD.negate(t2);
             t2 = rotate.apply(t2);
