@@ -86,10 +86,11 @@ public class MainFrame extends JFrame {
     private Thread geneticAlgorithmThread;
     final double Epsilon = 0.01;
     final Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
-    private JRadioButton forceDirectionPerpendicular;
-    private JRadioButton forceDirectionNonPerpendicular;
     private boolean perpendicular = true;
     private boolean createNodeAllowed = true;
+    private boolean optimizingNinty = true;
+
+
 
 
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
@@ -283,22 +284,37 @@ public class MainFrame extends JFrame {
         cSidePanel.gridx = 1;
         sidePanel.add(stopGenetic, cSidePanel);
         cSidePanel.gridy = sidePanelNextY++;
-        forceDirectionPerpendicular = new JRadioButton("Perpendicular");
+        JRadioButton forceDirectionPerpendicular = new JRadioButton("Perpendicular"),
+                forceDirectionNonPerpendicular = new JRadioButton("Non Perpendicular");
         cSidePanel.gridx = 0;
         sidePanel.add(forceDirectionPerpendicular,cSidePanel);
-        //sidePanel.add(forceDirectionButton);
         forceDirectionPerpendicular.setSelected(true);
         forceDirectionPerpendicular.addActionListener(this::forceDirectionPerpendicularActionPerformed);
         cSidePanel.gridx = 1;
-        forceDirectionNonPerpendicular = new JRadioButton("Non Perpendicular");
         sidePanel.add(forceDirectionNonPerpendicular,cSidePanel);
-        //sidePanel.add(forceDirectionButton);
         forceDirectionNonPerpendicular.setSelected(false);
         forceDirectionNonPerpendicular.addActionListener(this::forceDirectionNonPerpendicularActionPerformed);
 
         ButtonGroup group = new ButtonGroup();
         group.add(forceDirectionNonPerpendicular);
         group.add(forceDirectionPerpendicular);
+
+        JRadioButton optimizingAngleNinty = new JRadioButton("Optimizing Angle Crossing: 90°"),
+                optimizingAngleSixty = new JRadioButton("Optimizing Angle Crossing: 60°");
+
+        cSidePanel.gridy = sidePanelNextY++;
+        cSidePanel.gridx = 0;
+        sidePanel.add(optimizingAngleNinty,cSidePanel);
+        optimizingAngleNinty.setSelected(true);
+        optimizingAngleNinty.addActionListener(this::optimizingAngleNintyActionPerformed);
+        cSidePanel.gridx = 1;
+        sidePanel.add(optimizingAngleSixty,cSidePanel);
+        optimizingAngleSixty.setSelected(false);
+        optimizingAngleSixty.addActionListener(this::optimizingAngleSixtyActionPerformed);
+
+        ButtonGroup angleGroup = new ButtonGroup();
+        angleGroup.add(optimizingAngleNinty);
+        angleGroup.add(optimizingAngleSixty);
 
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
@@ -311,6 +327,8 @@ public class MainFrame extends JFrame {
         cSidePanel.gridx = 1;
         sidePanel.add(stopForce, cSidePanel);
     }
+
+
     public static Random rand = new Random();
     public void initializeGeneticAlgorithm(){
         geneticAlgorithm = GeneticAlgorithm.<ForceAlgorithmApplier>newGeneticAlgorithm_FunGen(
@@ -612,6 +630,7 @@ public class MainFrame extends JFrame {
                 super.mouseEntered(e);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
+
 
             @Override
             public void mouseExited(MouseEvent e) {
@@ -1294,15 +1313,23 @@ public class MainFrame extends JFrame {
             PointD t2 = e2.getNormalized();
             PointD t1Neg = PointD.negate(t1);
             PointD t2Neg = PointD.negate(t2);
+            PointD t1_ = new PointD(0,0),
+                    t2_= new PointD(0,0);
+            if(optimizingNinty) {
+                t1_ = PointD.times(t2Neg, threshold * Math.cos(Math.toRadians(angle)));
+                t2_ = PointD.times(t1Neg, threshold * Math.cos(Math.toRadians(angle)));
+                t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
+                t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
+            } else {
+                t1_ = PointD.times(t2Neg, threshold * Math.cos(2/3*Math.toRadians(angle)));
+                t2_ = PointD.times(t1Neg, threshold * Math.cos(2/3*Math.toRadians(angle)));
+                t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(2/3*angle)));
+                t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(2/3*angle)));
 
-            PointD t1_ = PointD.times(t2Neg, threshold * Math.cos(Math.toRadians(angle)));
-            PointD t2_ = PointD.times(t1Neg, threshold * Math.cos(Math.toRadians(angle)));
-
+            }
            //t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
             //t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
 
-            t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
-            t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
             t1 = rotate.apply(PointD.negate(t1));
             t2 = rotate.apply(t2);
             if(this.perpendicular) {  
@@ -1498,10 +1525,10 @@ public class MainFrame extends JFrame {
     private void forceDirectionPerpendicularActionPerformed(ActionEvent evt){
             this.perpendicular = true;
     }
-    private void forceDirectionNonPerpendicularActionPerformed(ActionEvent evt){
+    private void forceDirectionNonPerpendicularActionPerformed(ActionEvent evt){ this.perpendicular = false; }
 
-            this.perpendicular = false;
-    }
+    private void optimizingAngleNintyActionPerformed(ActionEvent actionEvent) { this.optimizingNinty = true; }
+    private void optimizingAngleSixtyActionPerformed(ActionEvent actionEvent) { this.optimizingNinty = false; }
 
     private void gridItemActionPerformed(ActionEvent evt) {
         if (this.isGridVisible) {
