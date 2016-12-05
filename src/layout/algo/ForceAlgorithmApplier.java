@@ -77,12 +77,17 @@ public class ForceAlgorithmApplier implements Runnable {
     ForceAlgorithmApplier.improveSolution(graph, nodePositions);
   }
 
+  public void showForces(){
+    this.clearDrawables();
+    IMapper<INode, PointD> map = calculateAllForces();
+    System.out.println();
+    this.displayVectors(map);
+  }
+
   public void run() {
     running = true;
     if (this.maxNoOfIterations == 0) {
-      this.clearDrawables();
-      IMapper<INode, PointD> map = calculateAllForces();
-      this.displayVectors(map);
+      showForces();
     }
 
     if (this.maxNoOfIterations < 0) {
@@ -223,12 +228,43 @@ public class ForceAlgorithmApplier implements Runnable {
   }
 
   public IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IMapper<INode, PointD> map) {
+    //http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/
     for (INode n1 : graph.getNodes()) {
       PointD p1 = nodePositions.getValue(n1);
       Integer n1degree = graph.degree(n1);
-      nonEqualPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).forEach(n2n3 -> {
+      if(n1degree < 2) continue;
+      //nonStrictlyEqualPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).forEach(n2n3 -> {
+      List<Tuple3<INode, INode, Double>> neighboursWithAngle = 
+      nonEqalPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).map(
+        n2n3 -> {
+          INode n2 = n2n3.a,
+                n3 = n2n3.b;
+          PointD p2 = nodePositions.getValue(n2),
+                 p3 = nodePositions.getValue(n3);
+          LineSegment l1, l2;
+          l1 = new LineSegment(p1, p2);
+          l2 = new LineSegment(p1, p3);
+          Double angle = Math.toDegrees(Math.atan2(l2.ve.getY(), l2.ve.getX()) - Math.atan2(l1.ve.getY(), l1.ve.getX()));
+          return new Tuple3<>(n2n3, angle);
+        })
+        .map(n2n3d -> {
+          if(n2n3d.c < 0) 
+            return new Tuple3<>(n2n3d, 360 + n2n3d.c);
+          else 
+            return n2n3d;
+        })
+        .collect(Collectors.toList());
+      Comparator<Tuple3<INode, INode, Double>> byAngle = 
+        (t1, t2) -> Double.compare(t1.c, t2.c);
+      Collections.sort(neighboursWithAngle, byAngle);
+      Tuple3<INode, INode, Double> n2n3 = neighboursWithAngle.get(0);
+      neighboursWithAngle.remove(0);
+      Set<INode> seenNodes = new HashSet<>();
+      boolean nextFound = true;
+      while(nextFound) {
         INode n2 = n2n3.a,
               n3 = n2n3.b;
+        seenNodes.add(n3);
         PointD p2 = nodePositions.getValue(n2),
                p3 = nodePositions.getValue(n3);
         PointD f2 = map.getValue(n2);
@@ -236,9 +272,7 @@ public class ForceAlgorithmApplier implements Runnable {
         LineSegment l1, l2;
         l1 = new LineSegment(p1, p2);
         l2 = new LineSegment(p1, p3);
-        double cosAngle = PointD.scalarProduct(l1.ve, l2.ve) / (l1.ve.getVectorLength() * l2.ve.getVectorLength());
-        cosAngle = Math.max(-1, Math.min(1, cosAngle));
-        Double angle = Math.toDegrees(Math.acos(cosAngle));
+        Double angle = n2n3.c;
         for (IncidentEdgesForce fa : algos) {
           Tuple2<PointD, PointD> forces = fa
                   .apply(l1.ve)
@@ -250,11 +284,29 @@ public class ForceAlgorithmApplier implements Runnable {
         }
         map.setValue(n2, f2);
         map.setValue(n3, f3);
-      });
+        nextFound = false;
+        for(Tuple3<INode, INode, Double> next: neighboursWithAngle) {
+          if(next.a.equals(n3) && !seenNodes.contains(next.b)){
+            n2n3 = next;
+            nextFound = true;
+            break;
+          }
+        } 
+      } 
     }
     return map;
   }
-  public static <T1, T2> Stream<Tuple2<T1, T2>> nonEqualPairs(Stream<T1> s1, Stream<T2> s2){
+  public static <T1, T2> Stream<Tuple2<T1, T2>> allPairs(Stream<T1> s1, Stream<T2> s2){
+    List<T2> s2l = s2.collect(Collectors.toList());
+    return s1.flatMap(n1 -> {
+      return s2l.stream()
+        .map(n2 -> new Tuple2<>(n1, n2));
+    });
+  }
+  public static <T1, T2> Stream<Tuple2<T1, T2>> nonEqalPairs(Stream<T1> s1, Stream<T2> s2){
+    return allPairs(s1, s2).filter(t12 -> !t12.a.equals(t12.b));
+  }
+  public static <T1, T2> Stream<Tuple2<T1, T2>> nonStrictlyEqualPairs(Stream<T1> s1, Stream<T2> s2){
     Set<T1> seenNodes = new HashSet<>();
     List<T2> s2l = s2.collect(Collectors.toList());
     return s1.flatMap(n1 -> {

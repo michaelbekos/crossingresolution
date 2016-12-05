@@ -9,4 +9,14 @@ public class Tuple3<A, B, C>{
       b = b1;
       c = c1;
     }
+    public Tuple3(Tuple2<A, B> ab, C c1){
+      a = ab.a;
+      b = ab.b;
+      c = c1;
+    }
+    public Tuple3(Tuple3<A, B, C> abc, C c1){
+      a = abc.a;
+      b = abc.b;
+      c = c1;
+    }
   }
