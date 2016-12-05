@@ -6,9 +6,9 @@ import util.*;
 
 public class LineSegment{
   public PointD p1, p2, ve;
-  public Maybe<IEdge> e = new Nothing<>();
-  public Maybe<INode> n1 = new Nothing<>(), 
-                      n2 = new Nothing<>();
+  public Maybe<IEdge>  e = Maybe.nothing();
+  public Maybe<INode> n1 = Maybe.nothing(), 
+                      n2 = Maybe.nothing();
   public Double key;
   @Override
   public String toString(){
@@ -52,7 +52,7 @@ public class LineSegment{
     t = crossProduct(PointD.subtract(p3, p1), s) / rTimesS;
     u = crossProduct(PointD.subtract(p3, p1), r) / rTimesS;
     // intersection not on line segments
-    if(t < 0 || u < 0 || t > 1 || u > 1) return new Nothing<>();
+    if(t < 0 || u < 0 || t > 1 || u > 1) return Maybe.nothing();
     PointD crossingPoint = PointD.add(p1, PointD.times(t, r));
     Double crossingsAngle = Math.toDegrees(Math.acos(PointD.scalarProduct(r, s) / (r.getVectorLength() * s.getVectorLength())));
     return Maybe.just(new Intersection(crossingPoint, crossingsAngle));

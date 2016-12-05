@@ -118,6 +118,67 @@ public class ForceDirectedFactory {
      */
     public static void calculateCosineForcesEades(IGraph graph, double threshold, IMapper<INode, List<YVector>> map)
     {
+        for (Tuple3<LineSegment, LineSegment, Intersection> c : MinimumAngle.getCrossings(graph, Maybe.nothing()))
+        {
+            INode n1 = c.a.n1.get();
+            INode n2 = c.a.n2.get();
+            INode n3 = c.b.n1.get();
+            INode n4 = c.b.n2.get();
+            /*PointD p1 = c.a.p1;
+            PointD p2 = c.a.p2;
+            PointD p3 = c.b.p1;
+            PointD p4 = c.b.p2;
+            */
+            // crossing of (a,b) and (c,d)
+            YVector firstForce = new YVector(
+                    new YPoint(n1.getLayout().getCenter().getX(), n1.getLayout().getCenter().getY()),
+                    new YPoint(n2.getLayout().getCenter().getX(), n2.getLayout().getCenter().getY()));
+            YVector negFirstForce = new YVector(
+                    new YPoint(n1.getLayout().getCenter().getX(), n1.getLayout().getCenter().getY()),
+                    new YPoint(n2.getLayout().getCenter().getX(), n2.getLayout().getCenter().getY()));
+            YVector secForce = new YVector(
+                    new YPoint(n3.getLayout().getCenter().getX(), n3.getLayout().getCenter().getY()),
+                    new YPoint(n4.getLayout().getCenter().getX(), n4.getLayout().getCenter().getY()));
+            YVector negSecForce = new YVector(
+                    new YPoint(n3.getLayout().getCenter().getX(), n3.getLayout().getCenter().getY()),
+                    new YPoint(n4.getLayout().getCenter().getX(), n4.getLayout().getCenter().getY()));
+
+
+            //PointD v1 = PointD.add(p1, PointD.negate(p2));
+            //PointD v2 = PointD.add(p3, PointD.negate(p4));
+            //PointD t1 = v1.getNormalized();
+            //PointD t2 = v2.getNormalized();
+            firstForce.norm();
+            secForce.norm();
+            negFirstForce.norm();
+            negSecForce.norm();
+
+
+            // calculate forces ...
+            double angle = Math.cos(Math.toRadians(c.c.orientedAngle));
+            //t1 = PointD.times(t1, threshold*angle);
+            //t2 = PointD.times(t2, threshold*angle);
+            firstForce.scale(threshold * angle);
+            negFirstForce.scale(-1 * threshold * angle);
+            secForce.scale(threshold * angle);
+            negSecForce.scale(-1 * threshold * angle);
+
+            // rotate and add to map
+            //firstForce.rotate(Math.PI/2);
+            //secForce.rotate(Math.PI/2);
+            //negFirstForce.rotate(Math.PI/2);
+            //negSecForce.rotate(Math.PI/2);
+
+
+            map.getValue(n1).add(firstForce); // a
+            map.getValue(n2).add(negFirstForce); // b
+            map.getValue(n3).add(secForce); // c
+            map.getValue(n4).add(negSecForce); // d
+
+            /*map.getValue(n1).add(new YVector(t1.getX(), t1.getY()));
+            map.getValue(n2).add(new YVector(PointD.negate(t1).getX(), PointD.negate(t1).getY()));
+            map.getValue(n3).add(new YVector(t2.getX(), t2.getY()));
+            map.getValue(n4).add(new YVector(PointD.negate(t2).getX(), PointD.negate(t2).getY())); */
 
     }
 
