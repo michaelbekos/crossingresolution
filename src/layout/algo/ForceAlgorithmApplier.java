@@ -149,10 +149,14 @@ public class ForceAlgorithmApplier implements Runnable {
     for(INode u: graph.getNodes()){
       YVector vector = new YVector(map.getValue(u).getX(), map.getValue(u).getY());
       this.canvasObjects.add(this.view.getBackgroundGroup()
-            .addChild(new VectorVisual(this.view, vector, u, Color.RED),
+            .addChild(new VectorVisual(this.view, vector, u, Color.GREEN),
                 ICanvasObjectDescriptor.VISUAL));
     }
     this.view.updateUI();
+  }
+
+  public void cleanVectors() {
+    this.clearDrawables();
   }
 
   private void clearDrawables() {

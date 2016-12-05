@@ -200,6 +200,7 @@ public class MainFrame extends JFrame {
             MinimumAngle.resetHighlighting(this.graph);
             faa.andThen(f -> {
                 if(f.running)
+                    f.cleanVectors();
                     f.resetNodePosition(u);
             });
         });
@@ -593,6 +594,7 @@ public class MainFrame extends JFrame {
                 super.mouseEntered(e);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
+
 
             @Override
             public void mouseExited(MouseEvent e) {
