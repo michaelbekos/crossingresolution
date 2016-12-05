@@ -118,7 +118,7 @@ public class ForceDirectedFactory {
      */
     public static void calculateCosineForcesEades(IGraph graph, double threshold, IMapper<INode, List<YVector>> map)
     {
-        for (Tuple3<LineSegment, LineSegment, Intersection> c : MinimumAngle.getCrossings(graph))
+        for (Tuple3<LineSegment, LineSegment, Intersection> c : MinimumAngle.getCrossings(graph, Maybe.nothing()))
         {
             INode n1 = c.a.n1.get();
             INode n2 = c.a.n2.get();

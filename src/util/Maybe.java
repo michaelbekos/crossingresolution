@@ -1,6 +1,4 @@
 package util;
-import util.Just;
-import util.Nothing;
 import java.util.function.Function;
 import java.util.function.Consumer;
 
@@ -39,5 +37,32 @@ public abstract class Maybe<T>{
   }
   public static <T, R> Function<Maybe<T>, Maybe<R>> lift(Function<T, R> f){
     return (m -> m.fmap(el -> f.apply(el)));
+  }
+
+
+
+  static class Just<T> extends Maybe<T> {
+    T t;
+    public Just(T t1){
+      if(t1 == null){
+        throw new IllegalStateException();
+      }
+      t = t1;
+    }
+    public boolean hasValue(){ return true; }
+    public T get(){ return t; }
+    @Override
+    public String toString(){
+      return "(Just " + t + ")";
+    }
+  }
+
+  static class Nothing<T> extends Maybe<T> { 
+    public boolean hasValue(){ return false; } 
+    public T get(){ throw new IllegalStateException(); }
+    @Override
+    public String toString(){
+      return "Nothing";
+    }
   }
 }
