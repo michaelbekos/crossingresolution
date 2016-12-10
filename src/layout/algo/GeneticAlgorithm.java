@@ -81,8 +81,10 @@ public class GeneticAlgorithm<T> implements Runnable {
     assertInstances();
     Collections.sort(instances, scoring);
     // instances is not empty, since (assertInstances)
-    instances.remove(0);
-    newInstance();
+    for(int i = 0; i < 2; i++){
+      instances.remove(0);
+      newInstance();  
+    }
   }
   private void notifyChanged(){
     bestChanged.andThen(f -> {

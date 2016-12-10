@@ -34,8 +34,11 @@ public class ForceAlgorithmApplier implements Runnable {
   public double maxMinAngle;
   public double minEdgeLength;
   public IMapper<INode, PointD> nodePositions;
-  public static Maybe<Tuple2<IMapper<INode, PointD>, Maybe<Double>>> bestSolution = Maybe.nothing();
+  public static Maybe<Tuple4<IMapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]>> bestSolution = Maybe.nothing();
   public boolean running = false;
+
+  public Double[] modifiers = new Double[0];
+  public Boolean[] switches = new Boolean[0];
 
   public static void init(){
     bestSolution = Maybe.nothing();
@@ -63,6 +66,18 @@ public class ForceAlgorithmApplier implements Runnable {
     
   }
 
+  @Override
+  public ForceAlgorithmApplier clone(){
+    ForceAlgorithmApplier ret = new ForceAlgorithmApplier(this.view, this.maxNoOfIterations, this.progressBar, this.infoLabel);
+    ret.graph = this.graph;
+    ret.nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(this.nodePositions, this.graph.getNodes().stream());
+    ret.modifiers = this.modifiers.clone();
+    ret.switches = this.switches.clone();
+    ret.algos = this.algos;
+
+    return ret;
+  }
+
   public static IMapper<INode, PointD> initPositionMap(IGraph g){
     IMapper<INode, PointD> nodePos = new Mapper<>(new WeakHashMap<>());
     g.getNodes().stream().forEach(n1 -> {
@@ -74,7 +89,7 @@ public class ForceAlgorithmApplier implements Runnable {
 
   public void resetNodePosition(INode u){
     nodePositions.setValue(u, u.getLayout().getCenter());
-    ForceAlgorithmApplier.improveSolution(graph, nodePositions);
+    ForceAlgorithmApplier.improveSolution(graph, this);
   }
 
   public void showForces(){
@@ -95,7 +110,7 @@ public class ForceAlgorithmApplier implements Runnable {
       while (running){
         this.clearDrawables();
         nodePositions = applyAlgos();
-        ForceAlgorithmApplier.improveSolution(graph, nodePositions);
+        ForceAlgorithmApplier.improveSolution(graph, this);
         ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.currNoOfIterations = j;
         this.view.updateUI();
@@ -137,14 +152,15 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
     running = false;
   }
-  public static void improveSolution(IGraph g, IMapper<INode, PointD> sol){
+  public static void improveSolution(IGraph g, ForceAlgorithmApplier faa){
+    IMapper<INode, PointD> sol = faa.nodePositions;
     Maybe<Double> solutionAngle = MinimumAngle.getMinimumAngle(g, Maybe.just(sol));
-    Tuple2<IMapper<INode, PointD>, Maybe<Double>> thisSol = new Tuple2<>(copyNodePositionsMap(sol, g.getNodes().stream()), solutionAngle);
+    Tuple4<IMapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]> thisSol = new Tuple4<>(copyNodePositionsMap(sol, g.getNodes().stream()), solutionAngle, faa.modifiers.clone(), faa.switches.clone());
     if(!bestSolution.hasValue()){
       bestSolution = Maybe.just(thisSol);
       return;
     }
-    Tuple2<IMapper<INode, PointD>, Maybe<Double>> prevBest = bestSolution.get();
+    Tuple4<IMapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]> prevBest = bestSolution.get();
     // previous one had no crossings
     if(!prevBest.b.hasValue()) return;
     // this one has no crossings
@@ -162,7 +178,7 @@ public class ForceAlgorithmApplier implements Runnable {
     running = true;
     for (int i = 0; i < this.maxNoOfIterations && running; i++) {
       nodePositions = applyAlgos();
-      ForceAlgorithmApplier.improveSolution(graph, nodePositions);
+      ForceAlgorithmApplier.improveSolution(graph, this);
     }
     running = false;
   }
@@ -261,6 +277,8 @@ public class ForceAlgorithmApplier implements Runnable {
       neighboursWithAngle.remove(0);
       Set<INode> seenNodes = new HashSet<>();
       boolean nextFound = true;
+      // go from node to node until all nodes have been visited
+      // visit the first node twice --> don't add it before the first iteration
       while(nextFound) {
         INode n2 = n2n3.a,
               n3 = n2n3.b;
