@@ -5,8 +5,7 @@ import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
-import util.RandomGraphGenerator;
-import util.HypercubeGenerator;
+import util.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -88,6 +87,21 @@ public class InitMenuBar {
             }
         });
         newMenuItem.add(hypercubeGraphItem);
+
+        JMenuItem gridGraphItem = new JMenuItem();
+        gridGraphItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
+        gridGraphItem.setText("Grid graph");
+        gridGraphItem.addActionListener(e -> {
+            JTextField xCount = new JTextField("5");
+            JTextField yCount = new JTextField("5");
+            int result = JOptionPane.showOptionDialog(null, new Object[]{"xCount: ", xCount, "yCount: ", yCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (result == JOptionPane.OK_OPTION) {
+                int xC = Integer.parseInt(xCount.getText());
+                int yC = Integer.parseInt(yCount.getText());
+                GridGenerator.generate(graph, xC, yC);
+            }
+        });
+        newMenuItem.add(gridGraphItem);
 
         fileMenu.add(newMenuItem);
         fileMenu.add(new JSeparator());
