@@ -9,7 +9,7 @@ import com.yworks.yfiles.view.Pen;
 import java.awt.*;
 
 /**
- * Created by khokhi on 10.12.16.
+ * Created by Jessica Wolz on 10.12.16.
  */
 public class DefaultStyling {
 
@@ -25,7 +25,7 @@ public class DefaultStyling {
     /**
      * Default Node Style
      */
-    public ShinyPlateNodeStyle defaultNodeStyle(){
+    public void defaultNodeStyle(){
         ShinyPlateNodeStyle defaultNodeStyle = new ShinyPlateNodeStyle();
         defaultNodeStyle.setPaint(Color.RED);
         defaultNodeStyle.setPen(new Pen(Color.GRAY, 1));
