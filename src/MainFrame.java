@@ -89,6 +89,7 @@ public class MainFrame extends JFrame {
     private boolean perpendicular = true;
     private boolean createNodeAllowed = true;
     private boolean optimizingNinty = true;
+    JSlider[] sliders;
 
 
 
@@ -250,9 +251,10 @@ public class MainFrame extends JFrame {
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
 
-        Tuple2<JPanel, Integer> slidersAndCount = ThresholdSliders.create(springThreshholds, new String[]{"Spring force", "Electrical force", "Crossing force", "Incident edges force"});
-        this.sidePanel = slidersAndCount.a;
-        sidePanelNextY = slidersAndCount.b;
+        Tuple3<JPanel, JSlider[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Spring force", "Electrical force", "Crossing force", "Incident edges force"});
+        this.sidePanel = slidPanelSlidersCount.a;
+        this.sliders = slidPanelSlidersCount.b;
+        sidePanelNextY = slidPanelSlidersCount.c;
         c.gridy = 1;
         c.gridx = 1;
         c.weighty = 1;
@@ -330,7 +332,6 @@ public class MainFrame extends JFrame {
         cSidePanel.gridx = 1;
         JButton showBestSolution = new JButton("Show best");
         showBestSolution.addActionListener(e -> {
-            System.out.println(ForceAlgorithmApplier.bestSolution);
             ForceAlgorithmApplier.bestSolution.andThen( nm_mca_da_ba -> {
                 IMapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
                 Maybe<Double> minCrossingAngle = nm_mca_da_ba.b;
@@ -340,7 +341,9 @@ public class MainFrame extends JFrame {
                 String msg = minCrossingAngle.fmap(d -> "Minimum crossing angle: " + d.toString()).getDefault("No crossings!");
                 msg += "\n";
                 msg += "Modifiers:\n";
-                for(Double d: mods){
+                for(int i = 0; i < mods.length; i++){
+                    Double d = mods[i];
+                    sliders[i].setValue((int) (1000 * d));
                     msg += "\t" + d.toString() + "\n";
                 }
                 msg += "\n";
@@ -464,7 +467,7 @@ public class MainFrame extends JFrame {
             faa.draw(graph);
             view.updateUI();
         });
-        ForceAlgorithmApplier fa = defaultForceAlgorithmApplier(500);
+        ForceAlgorithmApplier fa = defaultForceAlgorithmApplier(250);
         geneticAlgorithm.instances.add(fa);
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
