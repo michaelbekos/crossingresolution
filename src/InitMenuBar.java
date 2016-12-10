@@ -6,6 +6,7 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import util.RandomGraphGenerator;
+import util.RandomMeshGraphGenerator;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -74,6 +75,13 @@ public class InitMenuBar {
         randomGraphItem.setText("Random Graph");
         randomGraphItem.addActionListener(this::randomGraphItemActionPerformed);
         newMenuItem.add(randomGraphItem);
+
+        JMenuItem randomMeshGraphItem = new JMenuItem();
+        //randomMeshGraphItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
+        randomMeshGraphItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
+        randomMeshGraphItem.setText("Random Graph");
+        randomMeshGraphItem.addActionListener(this::randomMeshGraphItemActionPerformed);
+        newMenuItem.add(randomMeshGraphItem);
 
         fileMenu.add(newMenuItem);
         fileMenu.add(new JSeparator());
@@ -310,6 +318,34 @@ public class InitMenuBar {
 
     }
     */
+
+    private void randomMeshGraphItemActionPerformed(ActionEvent evt) {
+        RandomMeshGraphGenerator rmg = new RandomMeshGraphGenerator();
+        rmg.allowMultipleEdges(false);
+        rmg.allowCycles(true);
+        rmg.allowSelfLoops(false);
+
+        JTextField nodeCount = new JTextField("30");
+        JTextField edgeCount = new JTextField("59");
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes: ", nodeCount, "Number of Edges: ", edgeCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                rmg.setNodeCount(Integer.parseInt(nodeCount.getText()));
+                rmg.setEdgeCount(Integer.parseInt(edgeCount.getText()));
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe graph will be created with 10 nodes and 10 edges.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                rmg.setNodeCount(10);
+                rmg.setEdgeCount(10);
+            } finally {
+                rmg.generate(this.graph);
+                LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
+                this.view.fitGraphBounds();
+                this.view.updateUI();
+            }
+        }
+    }
 
     private void randomGraphItemActionPerformed(ActionEvent evt) {
         RandomGraphGenerator rgg = new RandomGraphGenerator();
