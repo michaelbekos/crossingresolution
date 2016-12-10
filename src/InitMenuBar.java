@@ -5,6 +5,7 @@ import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
+
 import util.*;
 
 import javax.swing.*;
@@ -338,6 +339,8 @@ public class InitMenuBar {
 
     }
     */
+
+
 
     private void randomGraphItemActionPerformed(ActionEvent evt) {
         RandomGraphGenerator rgg = new RandomGraphGenerator();

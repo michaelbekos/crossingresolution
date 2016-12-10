@@ -217,26 +217,8 @@ public class MainFrame extends JFrame {
         this.graphSnapContext.setNodeGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
         this.graphSnapContext.setBendGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
 
-        /* Default Node Styling */
-        this.defaultNodeStyle = new ShinyPlateNodeStyle();
-        this.defaultNodeStyle.setPaint(Color.RED);
-        this.defaultNodeStyle.setPen(new Pen(Color.GRAY, 1));
-        this.defaultNodeStyle.setShadowDrawingEnabled(false);
-        this.graph.getNodeDefaults().setStyle(defaultNodeStyle);
-        this.graph.getDecorator().getNodeDecorator().getFocusIndicatorDecorator().hideImplementation();
-        this.graph.getNodeDefaults().setSize(new SizeD(17, 17));
-
-        /* Default Edge Styling */
-        this.defaultEdgeStyle = new PolylineEdgeStyle();
-        this.defaultEdgeStyle.setPen(Pen.getBlack());
-        this.graph.getEdgeDefaults().setStyle(this.defaultEdgeStyle);
-
-        /* Default Label Styling */
-        this.defaultLabelStyle = new SimpleLabelStyle();
-        this.defaultLabelStyle.setFont(new Font("Dialog", Font.PLAIN, 12));
-        this.defaultLabelStyle.setTextPaint(Colors.WHITE);
-        this.graph.getNodeDefaults().getLabelDefaults().setStyle(this.defaultLabelStyle);
-        this.graph.getEdgeDefaults().getLabelDefaults().setStyle(this.defaultLabelStyle);
+       /* Default Styling of Nodes, Edges and Labels */
+       DefaultStyling defStyle = new DefaultStyling(this.graph);
 
         super.getContentPane().setLayout(new java.awt.BorderLayout(20, 20));
         super.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);

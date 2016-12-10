@@ -15,7 +15,9 @@ import javax.sound.sampled.Line;
  */
 public class DisplayMessagesGui {
 
-
+    public static String createNumberEdgesVertices(IGraph graph){
+        return "Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size();
+    }
     public static String createMinimumAngleMsg(Tuple3<LineSegment, LineSegment, Intersection> currCross) {
 
         String text = "Minimum Angle: " + currCross.c.angle.toString();
