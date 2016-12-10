@@ -6,6 +6,7 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import util.RandomGraphGenerator;
+import util.HypercubeGenerator;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -74,6 +75,19 @@ public class InitMenuBar {
         randomGraphItem.setText("Random Graph");
         randomGraphItem.addActionListener(this::randomGraphItemActionPerformed);
         newMenuItem.add(randomGraphItem);
+
+        JMenuItem hypercubeGraphItem = new JMenuItem();
+        hypercubeGraphItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
+        hypercubeGraphItem.setText("Hypercube");
+        hypercubeGraphItem.addActionListener(e -> {
+            JTextField dim = new JTextField("3");
+            int result = JOptionPane.showOptionDialog(null, new Object[]{"Dimensions: ", dim}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (result == JOptionPane.OK_OPTION) {
+                int dimensions = Integer.parseInt(dim.getText());
+                HypercubeGenerator.generate(graph, dimensions);
+            }
+        });
+        newMenuItem.add(hypercubeGraphItem);
 
         fileMenu.add(newMenuItem);
         fileMenu.add(new JSeparator());
