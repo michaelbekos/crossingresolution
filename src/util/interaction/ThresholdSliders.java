@@ -6,13 +6,14 @@ import util.*;
 import java.awt.*;
 
 public class ThresholdSliders {
-  public static Tuple2<JPanel, Integer> create(final Double[] t, String[] names){
+  public static Tuple3<JPanel, JSlider[], Integer> create(final Double[] t, String[] names){
     JPanel thresholdSliders = new JPanel();
     thresholdSliders.setLayout(new GridBagLayout());
     GridBagConstraints cSlider = new GridBagConstraints();
     GridBagConstraints cLabel = new GridBagConstraints();
     cSlider.fill = GridBagConstraints.HORIZONTAL;
     cSlider.gridwidth = GridBagConstraints.REMAINDER;
+    JSlider[] sliders = new JSlider[t.length];
     JSlider slider;
     for(int i = 0; i < t.length; i++){
       final int i1 = i;
@@ -34,10 +35,11 @@ public class ThresholdSliders {
       cSlider.gridy = 2*i + 1;
       thresholdSliders.add(new JLabel(names[i]), cLabel);
       thresholdSliders.add(slider, cSlider);
+      sliders[i] = slider;
     }
     thresholdSliders.setSize(500, 300);
     thresholdSliders.setMinimumSize(new Dimension(500, 300));
-    return new Tuple2<>(thresholdSliders, 2 * t.length);
+    return new Tuple3<>(thresholdSliders, sliders, 2 * t.length);
   }
   
 }
