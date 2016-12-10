@@ -95,11 +95,13 @@ public class InitMenuBar {
         gridGraphItem.addActionListener(e -> {
             JTextField xCount = new JTextField("5");
             JTextField yCount = new JTextField("5");
-            int result = JOptionPane.showOptionDialog(null, new Object[]{"xCount: ", xCount, "yCount: ", yCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            JTextField rCount = new JTextField("5");
+            int result = JOptionPane.showOptionDialog(null, new Object[]{"xCount: ", xCount, "yCount: ", yCount, "rCount: ", rCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (result == JOptionPane.OK_OPTION) {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
-                GridGenerator.generate(graph, xC, yC);
+                int rC = Integer.parseInt(rCount.getText());
+                GridGenerator.generate(graph, xC, yC, rC);
             }
         });
         newMenuItem.add(gridGraphItem);
