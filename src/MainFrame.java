@@ -107,14 +107,6 @@ public class MainFrame extends JFrame {
         this.initComponents();
         this.initMenuBar();
 
-        //Centering
-        //this.setSize(1000, 800);
-        //java.awt.Toolkit toolkit = java.awt.Toolkit.getDefaultToolkit();
-        //java.awt.Dimension screenSize = toolkit.getScreenSize();
-        //int x = (screenSize.width - this.getWidth()) / 2;
-        //int y = (screenSize.height - this.getHeight()) / 2;
-        //this.setLocation(x, y);
-
         super.setTitle("Graph Drawing Tool");
         super.setMinimumSize(new Dimension(400, 300));
         super.setExtendedState(MAXIMIZED_BOTH);
@@ -249,11 +241,9 @@ public class MainFrame extends JFrame {
         super.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
         //super.getContentPane().add(mainPanel, c);
 
-        JPanel toolBar = this.initToolBar();
         c.gridy = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
         c. insets = new Insets(5, 0, 10, 0);
-        mainPanel.add(toolBar, c);
         //mainPanel.add(toolBar, BorderLayout.PAGE_START);
 
         this.defaultLayouter = new OrganicLayout();
@@ -373,7 +363,7 @@ public class MainFrame extends JFrame {
                 if(crossings.size() == 0) {
                     return fa2;
                 }
-                List<Tuple3<LineSegment, LineSegment, Intersection>> mostInteresting = crossings.subList(0, (int) Math.ceil(crossings.size() / 100.0));
+                List<Tuple3<LineSegment, LineSegment, Intersection>> mostInteresting = crossings.subList(0, (int) Math.ceil(crossings.size() / 20.0));
                 //random choice
                 //int nodeIndex = rand.nextInt(graph.getNodes().size());
                 //INode node = graph.getNodes().getItem(nodeIndex);
@@ -490,588 +480,14 @@ public class MainFrame extends JFrame {
         
     }
 
-    private JPanel initToolBar()
-    {
-        JPanel toolBar = new JPanel();
-        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 0));
-        toolBar.setBorder(BorderFactory.createEmptyBorder(0, -20, 0, 0));
-
-        JLabel widthLabel = new JLabel();
-        widthLabel.setText("Width:");
-        toolBar.add(widthLabel);
-
-        JComboBox<String> widthComboBox = new JComboBox<>();
-        for (int i=20; i<=50; i+=2)
-        {
-            String item = Integer.toString(i);
-            widthComboBox.addItem(item);
-            if (this.graph.getNodeDefaults().getSize().width == i)
-            {
-                widthComboBox.setSelectedItem(item);
-            }
-        }
-        widthComboBox.setPreferredSize(new Dimension(80, 20));
-        ((JLabel)widthComboBox.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
-        widthComboBox.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.widthComboBoxItemStateChanged(e);
-            }
-        });
-        toolBar.add(widthComboBox);
-
-        JLabel heightLabel = new JLabel();
-        heightLabel.setText("Height:");
-        toolBar.add(heightLabel);
-
-        JComboBox<String> heightComboBox = new JComboBox<>();
-        for (int i=20; i<=50; i+=2)
-        {
-            String item = Integer.toString(i);
-            heightComboBox.addItem(item);
-            if (this.graph.getNodeDefaults().getSize().height == i)
-            {
-                heightComboBox.setSelectedItem(item);
-            }
-        }
-        heightComboBox.setPreferredSize(new Dimension(80, 20));
-        ((JLabel)heightComboBox.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
-        heightComboBox.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.heightComboBoxItemStateChanged(e);
-            }
-        });
-        toolBar.add(heightComboBox);
-
-        JLabel labelSizeLabel = new JLabel();
-        labelSizeLabel.setText("Label size:");
-        toolBar.add(labelSizeLabel);
-
-        JComboBox<String> labelSizeComboBox = new JComboBox<>();
-        for (int i=8; i<=30; i+=2)
-        {
-            String item = Integer.toString(i);
-            labelSizeComboBox.addItem(item);
-            if (this.defaultLabelStyle.getFont().getSize() == i)
-            {
-                labelSizeComboBox.setSelectedItem(item);
-            }
-        }
-        labelSizeComboBox.setPreferredSize(new Dimension(80, 20));
-        ((JLabel)labelSizeComboBox.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
-        labelSizeComboBox.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.labelSizeComboBoxItemStateChanged(e);
-            }
-        });
-        toolBar.add(labelSizeComboBox);
-
-        JLabel nodeFillColorLabel = new JLabel();
-        nodeFillColorLabel.setText("Node Color:");
-        toolBar.add(nodeFillColorLabel);
-
-        JPanel nodeFillColorPanel = new JPanel();
-        nodeFillColorPanel.setPreferredSize(new Dimension(60, 20));
-        nodeFillColorPanel.setBackground((Color) this.defaultNodeStyle.getPaint());
-        nodeFillColorPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseEntered(e);
-                nodeFillColorPanelActionPerformed(nodeFillColorPanel, e);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                setCursor(Cursor.getDefaultCursor());
-            }
-        });
-        toolBar.add(nodeFillColorPanel);
-
-        JLabel nodeBorderColorLabel = new JLabel();
-        nodeBorderColorLabel.setText("Border Color:");
-        toolBar.add(nodeBorderColorLabel);
-
-        JPanel nodeBorderColorPanel = new JPanel();
-        nodeBorderColorPanel.setPreferredSize(new Dimension(60, 20));
-        nodeBorderColorPanel.setBackground((Color) this.defaultNodeStyle.getPen().getPaint());
-        nodeBorderColorPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseEntered(e);
-                nodeBorderColorPanelActionPerformed(nodeBorderColorPanel, e);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                setCursor(Cursor.getDefaultCursor());
-            }
-        });
-        toolBar.add(nodeBorderColorPanel);
-
-        JLabel edgeColorLabel = new JLabel();
-        edgeColorLabel.setText("Edge Color:");
-        toolBar.add(edgeColorLabel);
-
-        JPanel edgeColorPanel = new JPanel();
-        edgeColorPanel.setPreferredSize(new Dimension(60, 20));
-        edgeColorPanel.setBackground((Color) this.defaultEdgeStyle.getPen().getPaint());
-        edgeColorPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseEntered(e);
-                edgeColorPanelActionPerformed(edgeColorPanel, e);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                setCursor(Cursor.getDefaultCursor());
-            }
-        });
-        toolBar.add(edgeColorPanel);
-
-        return toolBar;
-    }
-
     private void initMenuBar() {
         JMenuBar mainMenuBar = new JMenuBar();
-
-        /* File Menu */
-        JMenu fileMenu = new JMenu();
-        fileMenu.setText("File");
-        mainMenuBar.add(fileMenu);
-
-        JMenuItem newMenuItem = new JMenu();
-        newMenuItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
-        newMenuItem.setText("New");
-
-        JMenuItem blankGraphItem = new JMenuItem();
-        blankGraphItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
-        blankGraphItem.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
-        blankGraphItem.setText("Blank Graph");
-        blankGraphItem.addActionListener(this::blankGraphItemGraphItemActionPerformed);
-        newMenuItem.add(blankGraphItem);
-        newMenuItem.add(new JPopupMenu.Separator());
-
-        JMenuItem treeGraphItem = new JMenuItem();
-        treeGraphItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-        treeGraphItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
-        treeGraphItem.setText("Tree Graph");
-        treeGraphItem.addActionListener(this::treeGraphItemActionPerformed);
-        newMenuItem.add(treeGraphItem);
-
-        JMenuItem connectedGraphItem = new JMenuItem();
-        connectedGraphItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-        connectedGraphItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
-        connectedGraphItem.setText("Connected Graph");
-        connectedGraphItem.addActionListener(this::connectedGraphItemActionPerformed);
-        newMenuItem.add(connectedGraphItem);
-
-        JMenuItem randomGraphItem = new JMenuItem();
-        randomGraphItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-        randomGraphItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
-        randomGraphItem.setText("Random Graph");
-        randomGraphItem.addActionListener(this::randomGraphItemActionPerformed);
-        newMenuItem.add(randomGraphItem);
-
-        fileMenu.add(newMenuItem);
-        fileMenu.add(new JSeparator());
-
-        JMenuItem openItem = new JMenuItem();
-        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-        openItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
-        openItem.setText("Open");
-        openItem.addActionListener(this::openItemActionPerformed);
-        fileMenu.add(openItem);
-
-        JMenuItem reloadItem = new JMenuItem();
-        reloadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
-        reloadItem.setIcon(new ImageIcon(getClass().getResource("/resources/reload-16.png")));
-        reloadItem.setText("Reload");
-        reloadItem.addActionListener(this::reloadItemActionPerformed);
-        fileMenu.add(reloadItem);
-        fileMenu.add(new JSeparator());
-
-        JMenuItem saveItem = new JMenuItem();
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-        saveItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
-        saveItem.setText("Save");
-        saveItem.addActionListener(this::saveItemActionPerformed);
-        fileMenu.add(saveItem);
-
-        JMenuItem saveAsItem = new JMenuItem();
-        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-        saveAsItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
-        saveAsItem.setText("Save As...");
-        saveAsItem.addActionListener(this::saveAsItemActionPerformed);
-        fileMenu.add(saveAsItem);
-
-        JMenu exportMenu = new JMenu();
-        exportMenu.setIcon(new ImageIcon(getClass().getResource("/resources/export-image-16.png")));
-        exportMenu.setText("Export");
-
-        JMenuItem jpgItem = new JMenuItem();
-        jpgItem.setIcon(new ImageIcon(getClass().getResource("/resources/export-image-16.png")));
-        jpgItem.setText("Export to JPG");
-        jpgItem.addActionListener(this::jpgItemActionPerformed);
-        exportMenu.add(jpgItem);
-
-        JMenuItem gifItem = new JMenuItem();
-        gifItem.setIcon(new ImageIcon(getClass().getResource("/resources/export-image-16.png")));
-        gifItem.setText("Export to GIF");
-        gifItem.addActionListener(this::gifItemActionPerformed);
-        exportMenu.add(gifItem);
-
-        JMenuItem christianFormatItem = new JMenuItem();
-        christianFormatItem.setIcon(new ImageIcon(getClass().getResource("/resources/export-image-16.png")));
-        christianFormatItem.setText("Export for Christian");
-        christianFormatItem.addActionListener(this::christianFormatItemActionPerformed);
-        exportMenu.add(christianFormatItem);
-
-        JMenuItem sergeyFormatItem = new JMenuItem();
-        sergeyFormatItem.setIcon(new ImageIcon(getClass().getResource("/resources/export-image-16.png")));
-        sergeyFormatItem.setText("Export for Sergey");
-        sergeyFormatItem.addActionListener(this::sergeyFormatItemActionPerformed);
-        exportMenu.add(sergeyFormatItem);
-
-        JMenu importMenu = new JMenu();
-        importMenu.setIcon(new ImageIcon(getClass().getResource("/resources/export-image-16.png")));
-        importMenu.setText("Import");
-
-        JMenuItem christianImportFormatItem = new JMenuItem();
-        christianImportFormatItem.setIcon(new ImageIcon(getClass().getResource("/resources/export-image-16.png")));
-        christianImportFormatItem.setText("Import from Christian");
-        christianImportFormatItem.addActionListener(this::christianImportFormatItemActionPerformed);
-        importMenu.add(christianImportFormatItem);
-
-        JMenuItem sergeyImportFormatItem = new JMenuItem();
-        sergeyImportFormatItem.setIcon(new ImageIcon(getClass().getResource("/resources/export-image-16.png")));
-        sergeyImportFormatItem.setText("Import from Sergey");
-        sergeyImportFormatItem.addActionListener(this::sergeyImportFormatItemActionPerformed);
-        importMenu.add(sergeyImportFormatItem);
-
-        fileMenu.add(exportMenu);
-        fileMenu.add(importMenu);
-        fileMenu.add(new JSeparator());
-
-        JMenuItem printItem = new JMenuItem();
-        printItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
-        printItem.setIcon(new ImageIcon(getClass().getResource("/resources/print-16.png")));
-        printItem.setText("Print");
-        printItem.addActionListener(this::printItemActionPerformed);
-        fileMenu.add(printItem);
-        fileMenu.add(new JSeparator());
-
-        JMenuItem quitItem = new JMenuItem();
-        quitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
-        quitItem.setIcon(new ImageIcon(getClass().getResource("/resources/exit-16.png")));
-        quitItem.setText("Quit");
-        quitItem.addActionListener(evt -> System.exit(0));
-        fileMenu.add(quitItem);
-
-        mainMenuBar.add(fileMenu);
-
-        /* Edit Menu */
-        JMenu editMenu = new JMenu();
-        editMenu.setText("Edit");
-
-        JMenuItem undoItem = new JMenuItem();
-        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
-        undoItem.setIcon(new ImageIcon(getClass().getResource("/resources/undo-16.png")));
-        undoItem.setText("Undo");
-        undoItem.addActionListener(this::undoItemActionPerformed);
-        editMenu.add(undoItem);
-
-        JMenuItem redoItem = new JMenuItem();
-        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK));
-        redoItem.setIcon(new ImageIcon(getClass().getResource("/resources/redo-16.png")));
-        redoItem.setText("Redo");
-        redoItem.addActionListener(this::redoItemActionPerformed);
-        editMenu.add(redoItem);
-        editMenu.add(new JSeparator());
-
-        JMenuItem cutItem = new JMenuItem();
-        cutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
-        cutItem.setIcon(new ImageIcon(getClass().getResource("/resources/cut-16.png")));
-        cutItem.setText("Cut");
-        cutItem.addActionListener(this::cutItemActionPerformed);
-        editMenu.add(cutItem);
-
-        JMenuItem copyItem = new JMenuItem();
-        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
-        copyItem.setIcon(new ImageIcon(getClass().getResource("/resources/copy-16.png")));
-        copyItem.setText("Copy");
-        copyItem.addActionListener(this::copyItemActionPerformed);
-        editMenu.add(copyItem);
-
-        JMenuItem pasteItem = new JMenuItem();
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
-        pasteItem.setIcon(new ImageIcon(getClass().getResource("/resources/paste-16.png")));
-        pasteItem.setText("Paste");
-        pasteItem.addActionListener(this::pasteItemActionPerformed);
-        editMenu.add(pasteItem);
-        editMenu.add(new JSeparator());
-
-        JMenuItem clearSelectedItem = new JMenuItem();
-        clearSelectedItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        clearSelectedItem.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
-        clearSelectedItem.setText("Clear Selected");
-        clearSelectedItem.addActionListener(this::clearSelectedItemActionPerformed);
-        editMenu.add(clearSelectedItem);
-
-        JMenuItem clearAllItem = new JMenuItem();
-        clearAllItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        clearAllItem.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
-        clearAllItem.setText("Clear all");
-        clearAllItem.addActionListener(this::clearAllItemActionPerformed);
-        editMenu.add(clearAllItem);
-        editMenu.add(new JSeparator());
-
-        JMenuItem selectAllItem = new JMenuItem();
-        selectAllItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
-        selectAllItem.setIcon(new ImageIcon(getClass().getResource("/resources/group-16.png")));
-        selectAllItem.setText("Select all");
-        selectAllItem.addActionListener(this::selectAllItemActionPerformed);
-        editMenu.add(selectAllItem);
-
-        JMenuItem deselectAllItem = new JMenuItem();
-        deselectAllItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-        deselectAllItem.setIcon(new ImageIcon(getClass().getResource("/resources/ungroup-16.png")));
-        deselectAllItem.setText("Deselect all");
-        deselectAllItem.addActionListener(this::deselectAllItemActionPerformed);
-        editMenu.add(deselectAllItem);
-
-        mainMenuBar.add(editMenu);
-
-        /* View Menu */
-
-        JMenu viewMenu = new JMenu();
-        viewMenu.setText("View");
-
-        JMenuItem zoomInItem = new JMenuItem();
-        zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.CTRL_MASK));
-        zoomInItem.setIcon(new ImageIcon(getClass().getResource("/resources/plus2-16.png")));
-        zoomInItem.setText("Zoom In");
-        zoomInItem.addActionListener(this::zoomInItemActionPerformed);
-        viewMenu.add(zoomInItem);
-
-        JMenuItem zoomOutItem = new JMenuItem();
-        zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.CTRL_MASK));
-        zoomOutItem.setIcon(new ImageIcon(getClass().getResource("/resources/minus2-16.png")));
-        zoomOutItem.setText("Zoom Out");
-        zoomOutItem.addActionListener(this::zoomOutItemActionPerformed);
-        viewMenu.add(zoomOutItem);
-
-        JMenuItem fitContentItem = new JMenuItem();
-        fitContentItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, InputEvent.CTRL_MASK));
-        fitContentItem.setIcon(new ImageIcon(getClass().getResource("/resources/zoom-original2-16.png")));
-        fitContentItem.setText("Fit Content");
-        fitContentItem.addActionListener(this::fitContentItemActionPerformed);
-        viewMenu.add(fitContentItem);
-
-        JMenu toolsMenu = new JMenu();
-        toolsMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        toolsMenu.setText("Actions and Tools");
-
-        /*
-        this.triangulateItem = new JMenuItem();
-        this.triangulateItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK));
-        this.triangulateItem.setIcon(new ImageIcon(getClass().getResource("/resources/Tool.png")));
-        this.triangulateItem.setText("Triangulate Planar Graph");
-        this.triangulateItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                triangulateItemActionPerformed(evt);
-            }
-        });
-        this.toolsMenu.add(this.triangulateItem);
-        */
-
-        JMenuItem mergeSelectedItem = new JMenuItem();
-        mergeSelectedItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_MASK));
-        mergeSelectedItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        mergeSelectedItem.setText("Merge Selected Nodes");
-        mergeSelectedItem.addActionListener(this::mergeSelectedItemActionPerformed);
-        toolsMenu.add(mergeSelectedItem);
-
-        JMenuItem stellateSelectedItem = new JMenuItem();
-        stellateSelectedItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
-        stellateSelectedItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        stellateSelectedItem.setText("Stellate Selected Nodes");
-        stellateSelectedItem.addActionListener(this::stellateSelectedItemActionPerformed);
-        toolsMenu.add(stellateSelectedItem);
-
-        /*
-        nodeToQuadrangleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.ALT_MASK));
-        nodeToQuadrangleItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        nodeToQuadrangleItem.setText("Selected Nodes To Quadrangle");
-        nodeToQuadrangleItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                nodeToQuadrangleItemActionPerformed(evt);
-            }
-        });
-        toolsMenu.add(nodeToQuadrangleItem);
-
-
-        onePlanarAugmentorItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        onePlanarAugmentorItem.setText("Augment By 2-hops");
-        onePlanarAugmentorItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                onePlanarAugmentorItemActionPerformed(evt);
-            }
-        });
-        toolsMenu.add(onePlanarAugmentorItem);
-        */
-
-        JMenuItem subdivideSelectedItem = new JMenuItem();
-        subdivideSelectedItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
-        subdivideSelectedItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        subdivideSelectedItem.setText("Subdivide Selected Edges");
-        subdivideSelectedItem.addActionListener(this::subdivideSelectedItemActionPerformed);
-        toolsMenu.add(subdivideSelectedItem);
-
-        JMenuItem gridItem = new JMenuItem();
-        gridItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
-        gridItem.setIcon(new ImageIcon(getClass().getResource("/resources/grid-16.png")));
-        gridItem.setText("Grid");
-        gridItem.addActionListener(this::gridItemActionPerformed);
-        viewMenu.add(gridItem);
-
-        JMenu geometricTranformationsMenu = new JMenu();
-        geometricTranformationsMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        geometricTranformationsMenu.setText("Geometric Tranformations");
-
-        JMenuItem scaleItem = new JMenuItem();
-        scaleItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        scaleItem.setText("Scale");
-        scaleItem.addActionListener(this::scaleItemActionPerformed);
-        geometricTranformationsMenu.add(scaleItem);
-
-        JMenuItem rotateItem = new JMenuItem();
-        rotateItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        rotateItem.setText("Rotate");
-        rotateItem.addActionListener(this::rotateItemActionPerformed);
-        geometricTranformationsMenu.add(rotateItem);
-
-        JMenuItem mirrorXItem = new JMenuItem();
-        mirrorXItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        mirrorXItem.setText("X-Axis Mirror");
-        mirrorXItem.addActionListener(this::mirrorXItemActionPerformed);
-        geometricTranformationsMenu.add(mirrorXItem);
-
-        JMenuItem mirrorYItem = new JMenuItem();
-        mirrorYItem.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        mirrorYItem.setText("Y-Axis Mirror");
-        mirrorYItem.addActionListener(this::mirrorYItemActionPerformed);
-        geometricTranformationsMenu.add(mirrorYItem);
-        viewMenu.add(geometricTranformationsMenu);
-        viewMenu.add(new JSeparator());
-
-        JMenu analyzeMenu = new JMenu();
-        analyzeMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        analyzeMenu.setText("Analyze Graph");
-
-        JMenuItem planarityMenu = new JMenuItem();
-        planarityMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        planarityMenu.setText("Planarity");
-        planarityMenu.addActionListener(this::planarityMenuActionPerformed);
-        analyzeMenu.add(planarityMenu);
-
-        JMenuItem acyclicnessMenu = new JMenuItem();
-        acyclicnessMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        acyclicnessMenu.setText("Acyclicness");
-        acyclicnessMenu.addActionListener(this::acyclicnessMenuActionPerformed);
-        analyzeMenu.add(acyclicnessMenu);
-
-        JMenuItem connectivityMenu = new JMenuItem();
-        connectivityMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        connectivityMenu.setText("Connectivity");
-        connectivityMenu.addActionListener(this::connectivityMenuActionPerformed);
-        analyzeMenu.add(connectivityMenu);
-
-        JMenuItem biconnectivityMenu = new JMenuItem();
-        biconnectivityMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        biconnectivityMenu.setText("Biconnectivity");
-        biconnectivityMenu.addActionListener(this::biconnectivityMenuActionPerformed);
-        analyzeMenu.add(biconnectivityMenu);
-
-        JMenuItem maxDegreeMenu = new JMenuItem();
-        maxDegreeMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        maxDegreeMenu.setText("Maximum Degree");
-        maxDegreeMenu.addActionListener(this::maxDegreeMenuActionPerformed);
-        analyzeMenu.add(maxDegreeMenu);
-
-        JMenuItem bipartitenessMenu = new JMenuItem();
-        bipartitenessMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        bipartitenessMenu.setText("Bipartiteness");
-        bipartitenessMenu.addActionListener(this::bipartitenessMenuActionPerformed);
-        analyzeMenu.add(bipartitenessMenu);
-
-        JMenuItem stNumberingMenu = new JMenuItem();
-        stNumberingMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        stNumberingMenu.setText("st-Numbering");
-        stNumberingMenu.addActionListener(this::stNumberingMenuActionPerformed);
-        analyzeMenu.add(stNumberingMenu);
-
-        JMenuItem minimumCrossingAngleMenu = new JMenuItem();
-        minimumCrossingAngleMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        minimumCrossingAngleMenu.setText("Minimum Angle");
-        minimumCrossingAngleMenu.addActionListener(this::minimumCrossingAngleMenuActionPerformed);
-        analyzeMenu.add(minimumCrossingAngleMenu);
-
-        viewMenu.add(toolsMenu);
-        viewMenu.add(analyzeMenu);
-        viewMenu.add(new JSeparator());
-
-        mainMenuBar.add(viewMenu);
-
-        /* View Menu */
         JMenu layoutMenu = new JMenu();
-        layoutMenu.setText("Layout");
+        JMenu viewMenu = new JMenu();
 
-        JMenuItem orthogonalItem = new JMenuItem();
-        orthogonalItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        orthogonalItem.setText("Orthogonal");
-        orthogonalItem.addActionListener(this::orthogonalItemActionPerformed);
-        layoutMenu.add(orthogonalItem);
-
-        JMenuItem circularItem = new JMenuItem();
-        circularItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        circularItem.setText("Circular");
-        circularItem.addActionListener(this::circularItemActionPerformed);
-        layoutMenu.add(circularItem);
-
-        JMenuItem treeItem = new JMenuItem();
-        treeItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        treeItem.setText("Tree");
-        treeItem.addActionListener(this::treeItemActionPerformed);
-        layoutMenu.add(treeItem);
-
-        JMenuItem organicItem = new JMenuItem();
-        organicItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        organicItem.setText("Organic");
-        organicItem.addActionListener(this::organicItemActionPerformed);
-        layoutMenu.add(organicItem);
-        layoutMenu.add(new JSeparator());
+        InitMenuBar menuBar = new InitMenuBar(mainMenuBar, layoutMenu, viewMenu, this.graph, this.infoLabel, this.view, this.graphEditorInputMode,
+                                                this.defaultLayouter, this.fileNamePathFolder, this.fileNamePath);
+        mainMenuBar = menuBar.initMenuBar();
 
         JMenuItem springEmbedderItem = new JMenuItem();
         springEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
@@ -1085,25 +501,24 @@ public class MainFrame extends JFrame {
         gridPositioningItem.addActionListener(this::gridCrossingItemActionPerformed);
         layoutMenu.add(gridPositioningItem);
 
-        JMenuItem minimumAngleImprovementItem = new JMenuItem();
-        minimumAngleImprovementItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        minimumAngleImprovementItem.setText("Testing Improvement of Minimal Crossing Angle");
-        minimumAngleImprovementItem.addActionListener(this::minimumAngleImprovementItemActionPerformed);
-        layoutMenu.add(minimumAngleImprovementItem);
+        JMenuItem gridItem = new JMenuItem();
+        gridItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
+        gridItem.setIcon(new ImageIcon(getClass().getResource("/resources/grid-16.png")));
+        gridItem.setText("Grid");
+        gridItem.addActionListener(this::gridItemActionPerformed);
+        viewMenu.add(gridItem);
 
+        JMenu analyzeMenu = new JMenu();
+        analyzeMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
+        analyzeMenu.setText("Analyze Graph");
 
-
-        /*
-        this.fppItem = new JMenuItem();
-        this.fppItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        this.fppItem.setText("De Fraysseix Pach Pollack");
-        this.fppItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                fppItemActionPerformed(evt);
-            }
-        });
-        this.layoutMenu.add(this.fppItem);
-        */
+        JMenuItem minimumCrossingAngleMenu = new JMenuItem();
+        minimumCrossingAngleMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
+        minimumCrossingAngleMenu.setText("Minimum Angle");
+        minimumCrossingAngleMenu.addActionListener(this::minimumCrossingAngleMenuActionPerformed);
+        analyzeMenu.add(minimumCrossingAngleMenu);
+        viewMenu.add(analyzeMenu);
+        viewMenu.add(new JSeparator());
 
         mainMenuBar.add(layoutMenu);
         super.setJMenuBar(mainMenuBar);
@@ -1168,64 +583,9 @@ public class MainFrame extends JFrame {
         }
     }
 
-    /**
-     * Returns the defualt node style
-     *
-     * @return default node style
-     */
-    public ShinyPlateNodeStyle getDefaultNodeStyle() {
-        return defaultNodeStyle;
-    }
-
-    /**
-     * Sets the default node style
-     *
-     * @param defaultNodeStyle new style
-     */
-    public void setDefaultNodeStyle(ShinyPlateNodeStyle defaultNodeStyle) {
-        this.defaultNodeStyle = defaultNodeStyle;
-    }
-
-    /**
-     * Returns the defualt edge style
-     *
-     * @return default edge style
-     */
-    public PolylineEdgeStyle getDefaultEdgeStyle() {
-        return defaultEdgeStyle;
-    }
-
-    /**
-     * Sets the default edge style
-     *
-     * @param defaultEdgeStyle new style
-     */
-    public void setDefaultEdgeStyle(PolylineEdgeStyle defaultEdgeStyle) {
-        this.defaultEdgeStyle = defaultEdgeStyle;
-    }
-
-    /**
-     * Returns the defualt label style
-     *
-     * @return default label style
-     */
-    public SimpleLabelStyle getDefaultLabelStyle() {
-        return defaultLabelStyle;
-    }
-
-    /**
-     * Sets the default label style
-     *
-     * @param defaultLabelStyle new style
-     */
-    public void setDefaultLabelStyle(SimpleLabelStyle defaultLabelStyle) {
-        this.defaultLabelStyle = defaultLabelStyle;
-    }
-
     /*********************************************************************
      * Implementation of actions
      ********************************************************************/
-
     private void gridCrossingItemActionPerformed(ActionEvent evt) {
         if(ForceAlgorithmApplier.class != null) {
             GridPositioning grid = new GridPositioning(this.graph);
@@ -1233,26 +593,6 @@ public class MainFrame extends JFrame {
                 ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodesRespectively());
             }
         }
-    }
-
-    private void minimumAngleImprovementItemActionPerformed(ActionEvent evt) {
-
-        JTextField movementsTextField = new JTextField("0.1");
-        double movements = 0.1;
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Steps of Movement to the Left/Right: ", movementsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                movements = Double.parseDouble(movementsTextField.getText());
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe steps of movement to the left/right will be set to 0.1.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        MinimumAngleImprovement mc = new MinimumAngleImprovement(this.view.getGraph());
-        mc.minimumAngleImprovement(movements);
-
     }
 
     final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
@@ -1275,13 +615,44 @@ public class MainFrame extends JFrame {
         ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(iterations);
         MainFrame.finalizeFAA.accept(faa);
         faa = Maybe.just(fd);
-        
+
 
         Thread thread = new Thread(fd);
         thread.start();
         this.view.updateUI();
     }
-    
+
+    private void gridItemActionPerformed(ActionEvent evt) {
+        if (this.isGridVisible) {
+            this.isGridVisible = false;
+            this.graphSnapContext.setGridSnapType(GridSnapTypes.NONE);
+        } else {
+            this.isGridVisible = true;
+            this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
+        }
+        this.gridVisualCreator.setVisible(this.isGridVisible);
+        this.view.updateUI();
+    }
+
+    private void minimumCrossingAngleMenuActionPerformed(ActionEvent evt){
+        Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
+                minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+        Maybe<String> labText = minAngleCr.fmap(cr -> {
+            String text = "Minimum Angle: " + cr.c.angle.toString();
+            if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
+                text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
+                text += " , " +  cr.a.n2.get().getLabels().first().getText();
+                text += " | " +  cr.b.n1.get().getLabels().first().getText();
+                text += " , " +  cr.b.n2.get().getLabels().first().getText();
+            }
+            MinimumAngle.resetHighlighting(this.graph);
+            MinimumAngle.highlightCrossing(cr);
+            view.updateUI();
+            return text;
+        });
+        infoLabel.setText(labText.getDefault("Graph has no crossings."));
+    }
+
 
     private ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
 
@@ -1325,18 +696,17 @@ public class MainFrame extends JFrame {
             PointD t2Neg = PointD.negate(t2);
             PointD t1_ = new PointD(0,0),
                     t2_= new PointD(0,0);
-            if(optimizingNinty) {
                 t1_ = PointD.times(t2Neg, threshold * Math.cos(Math.toRadians(angle)));
                 t2_ = PointD.times(t1Neg, threshold * Math.cos(Math.toRadians(angle)));
                 t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
                 t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
-            } else {
+            /*} else {
                 t1_ = PointD.times(t2Neg, threshold * Math.cos(2/3*Math.toRadians(angle)));
                 t2_ = PointD.times(t1Neg, threshold * Math.cos(2/3*Math.toRadians(angle)));
                 t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(2/3*angle)));
                 t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(2/3*angle)));
 
-            }
+            }*/
            //t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
             //t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
 
@@ -1379,161 +749,6 @@ public class MainFrame extends JFrame {
         return fd;
     }
 
-    private void organicItemActionPerformed(ActionEvent evt) {
-        LayoutUtilities.morphLayout(this.view, new OrganicLayout(), Duration.ofSeconds(1), null);
-    }
-
-    private void circularItemActionPerformed(ActionEvent evt) {
-        LayoutUtilities.morphLayout(this.view, new CircularLayout(), Duration.ofSeconds(1), null);
-    }
-
-    private void orthogonalItemActionPerformed(ActionEvent evt) {
-        LayoutUtilities.morphLayout(this.view, new OrthogonalLayout(), Duration.ofSeconds(1), null);
-    }
-
-    private void treeItemActionPerformed(ActionEvent evt) {
-        try {
-            LayoutUtilities.morphLayout(this.view, new TreeLayout(), Duration.ofSeconds(1), null);
-        } catch (Exception exc) {
-            this.infoLabel.setText("The input graph is not a tree or a forest.");
-        }
-    }
-
-    private void stNumberingMenuActionPerformed(ActionEvent evt) {
-        YGraphAdapter adapter = new YGraphAdapter(this.graph);
-        if (!GraphChecker.isBiconnected(adapter.getYGraph())) {
-            infoLabel.setText("The input graph is not biconnected.");
-            return;
-        }
-        NodeList stOrder = NodeOrders.st(adapter.getYGraph());
-        for (INodeCursor nc = stOrder.nodes(); nc.ok(); nc.next()) {
-            int st = stOrder.indexOf(nc.node()) + 1;
-            INode original = adapter.getOriginalNode(nc.node());
-            this.graph.setLabelText(original.getLabels().first(), Integer.toString(st));
-        }
-    }
-
-    private void minimumCrossingAngleMenuActionPerformed(ActionEvent evt){
-        Maybe<Tuple3<util.graph2d.LineSegment, util.graph2d.LineSegment, Intersection>> 
-            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
-        Maybe<String> labText = minAngleCr.fmap(cr -> {
-            String text = "Minimum Angle: " + cr.c.angle.toString();
-            if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
-                text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
-                text += " , " +  cr.a.n2.get().getLabels().first().getText();
-                text += " | " +  cr.b.n1.get().getLabels().first().getText();
-                text += " , " +  cr.b.n2.get().getLabels().first().getText();
-            }
-            MinimumAngle.resetHighlighting(this.graph);
-            MinimumAngle.highlightCrossing(cr);
-            view.updateUI();
-            return text;
-        });
-        infoLabel.setText(labText.getDefault("Graph has no crossings."));
-    }
-
-    private void maxDegreeMenuActionPerformed(ActionEvent evt) {
-        YGraphAdapter adapter = new YGraphAdapter(this.graph);
-        int maxDegree = 0;
-        for (INodeCursor nc = adapter.getYGraph().getNodeCursor(); nc.ok(); nc.next()) {
-            maxDegree = Math.max(maxDegree, nc.node().degree());
-        }
-        this.infoLabel.setText("The degree of the graph is " + maxDegree);
-    }
-
-    private void bipartitenessMenuActionPerformed(ActionEvent evt) {
-        YGraphAdapter adapter = new YGraphAdapter(this.graph);
-        this.infoLabel.setText("The input graph is " + (GraphChecker.isBipartite(adapter.getYGraph()) ? "" : " not") + " connected");
-    }
-
-    private void biconnectivityMenuActionPerformed(ActionEvent evt) {
-        YGraphAdapter adapter = new YGraphAdapter(this.graph);
-        this.infoLabel.setText("The input graph is " + (GraphChecker.isBiconnected(adapter.getYGraph()) ? "" : " not") + " biconnected");
-    }
-
-    private void connectivityMenuActionPerformed(ActionEvent evt) {
-        YGraphAdapter adapter = new YGraphAdapter(this.graph);
-        this.infoLabel.setText("The input graph is " + (GraphChecker.isConnected(adapter.getYGraph()) ? "" : " not") + " connected");
-    }
-
-    private void acyclicnessMenuActionPerformed(ActionEvent evt) {
-        YGraphAdapter adapter = new YGraphAdapter(this.graph);
-        this.infoLabel.setText("The input graph is " + (GraphChecker.isAcyclic(adapter.getYGraph()) ? "" : " not") + " acyclic");
-    }
-
-    private void planarityMenuActionPerformed(ActionEvent evt) {
-        YGraphAdapter adapter = new YGraphAdapter(this.graph);
-        this.infoLabel.setText("The input graph is " + (GraphChecker.isPlanar(adapter.getYGraph()) ? "" : " not") + " planar");
-    }
-
-    private void mirrorYItemActionPerformed(ActionEvent evt) {
-        GraphTransformer gt = new GraphTransformer();
-        gt.setOperation(OperationType.MIRROR_Y_AXIS);
-        LayoutUtilities.morphLayout(this.view, gt, Duration.ofSeconds(1), null);
-    }
-
-    private void mirrorXItemActionPerformed(ActionEvent evt) {
-        GraphTransformer gt = new GraphTransformer();
-        gt.setOperation(OperationType.MIRROR_X_AXIS);
-        LayoutUtilities.morphLayout(this.view, gt, Duration.ofSeconds(1), null);
-    }
-
-    private void rotateItemActionPerformed(ActionEvent evt) {
-        JTextField rotateAngleTextField = new JTextField("90");
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Rotation Angle: ", rotateAngleTextField}, "Rotation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-        if (result == JOptionPane.OK_OPTION) {
-
-            GraphTransformer gt = new GraphTransformer();
-            try {
-                gt.setOperation(OperationType.ROTATE);
-                gt.setRotationAngle(Double.valueOf(rotateAngleTextField.getText()));
-                LayoutUtilities.morphLayout(this.view, gt, Duration.ofSeconds(1), null);
-            } catch (NumberFormatException exc) {
-                this.infoLabel.setText("Wrong papameter passed as rotation angle.");
-            }
-        }
-    }
-
-    private void scaleItemActionPerformed(ActionEvent evt) {
-        JTextField scaleFactorTextField = new JTextField("2");
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Scale Factor: ", scaleFactorTextField}, "Scale", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-        if (result == JOptionPane.OK_OPTION) {
-
-            GraphTransformer gt = new GraphTransformer();
-            try {
-                gt.setOperation(OperationType.SCALE);
-                gt.setScaleFactor(Double.valueOf(scaleFactorTextField.getText()));
-                LayoutUtilities.morphLayout(this.view, gt, Duration.ofSeconds(1), null);
-            } catch (NumberFormatException exc) {
-                this.infoLabel.setText("Wrong papameter passed as scale factor.");
-            }
-        }
-    }
-
-    private void subdivideSelectedItemActionPerformed(ActionEvent evt) {
-        ISelectionModel<IEdge> selection = this.view.getSelection().getSelectedEdges();
-        List<IEdge> edgesToRemove = new ArrayList<>();
-
-        selection.forEach(edge -> {
-            INode newNode = this.graph.createNode();
-
-            final PointD sourceCenter = edge.getSourceNode().getLayout().getCenter();
-            final PointD targetCenter = edge.getTargetNode().getLayout().getCenter();
-
-            this.graph.setNodeCenter(newNode, new PointD((sourceCenter.x + targetCenter.x) / 2, (sourceCenter.y + targetCenter.y) / 2));
-            this.graph.createEdge(edge.getSourceNode(), newNode);
-            this.graph.createEdge(edge.getTargetNode(), newNode);
-            edgesToRemove.add(edge);
-        });
-
-        edgesToRemove.forEach(edge -> {
-            this.graph.remove(edge);
-        });
-
-        //Update the view.
-        view.updateUI();
-    }
-
     private void forceDirectionPerpendicularActionPerformed(ActionEvent evt){
             this.perpendicular = true;
     }
@@ -1542,323 +757,7 @@ public class MainFrame extends JFrame {
     private void optimizingAngleNintyActionPerformed(ActionEvent actionEvent) { this.optimizingNinty = true; }
     private void optimizingAngleSixtyActionPerformed(ActionEvent actionEvent) { this.optimizingNinty = false; }
 
-    private void gridItemActionPerformed(ActionEvent evt) {
-        if (this.isGridVisible) {
-            this.isGridVisible = false;
-            this.graphSnapContext.setGridSnapType(GridSnapTypes.NONE);
-        } else {
-            this.isGridVisible = true;
-            this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
-        }
-        this.gridVisualCreator.setVisible(this.isGridVisible);
-        this.view.updateUI();
-    }
 
-    private void stellateSelectedItemActionPerformed(ActionEvent evt) {
-        ISelectionModel<INode> selection = this.view.getSelection().getSelectedNodes();
-        final int selectionCount = selection.getCount();
-
-        if (selectionCount > 0) {
-            INode base = graph.createNode();
-
-            double x = 0;
-            double y = 0;
-            for (INode node : selection) {
-                final PointD center = node.getLayout().getCenter();
-                x += center.x;
-                y += center.y;
-                this.graph.createEdge(base, node);
-            }
-            this.graph.setNodeCenter(base, new PointD(x / selectionCount, y / selectionCount));
-        }
-    }
-
-    private void mergeSelectedItemActionPerformed(ActionEvent evt) {
-        ISelectionModel<INode> selection = this.view.getSelection().getSelectedNodes();
-        List<INode> nodesToRemove = new ArrayList<>();
-
-        if (selection.getCount() > 0) //selected nodes present
-        {
-            INode base = null;
-
-            for (INode node : selection) {
-                if (base == null) {
-                    base = node;
-                } else {
-                    nodesToRemove.add(node);
-                }
-                for (INode neighbor : this.graph.neighbors(INode.class, node)) {
-                    if (this.graph.getEdge(base, neighbor) != null && this.graph.getEdge(neighbor, base) != null) {
-                        this.graph.createEdge(base, neighbor);
-                    }
-                }
-
-            }
-        }
-
-        nodesToRemove.forEach(node -> {
-            this.graph.remove(node);
-        });
-
-        //Update the view.
-        this.view.updateUI();
-    }
-
-    private void fitContentItemActionPerformed(ActionEvent evt) {
-        this.view.fitGraphBounds();
-    }
-
-    private void zoomOutItemActionPerformed(ActionEvent evt) {
-        this.view.setZoom(this.view.getZoom() - 0.2);
-    }
-
-    private void zoomInItemActionPerformed(ActionEvent evt) {
-        this.view.setZoom(this.view.getZoom() + 0.2);
-    }
-
-    private void deselectAllItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.clearSelection();
-    }
-
-    private void selectAllItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.selectAll();
-    }
-
-    private void clearAllItemActionPerformed(ActionEvent evt) {
-        this.graph.clear();
-    }
-
-    private void clearSelectedItemActionPerformed(ActionEvent evt) {
-        if (this.graphEditorInputMode.isClearSelectionAllowed()) {
-            this.graphEditorInputMode.clearSelection();
-        }
-    }
-
-    private void pasteItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.paste();
-    }
-
-    private void copyItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.copy();
-    }
-
-    private void cutItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.cut();
-    }
-
-    private void redoItemActionPerformed(ActionEvent evt) {
-        if (this.graphEditorInputMode.isUndoOperationsAllowed()) {
-            this.graphEditorInputMode.redo();
-        }
-    }
-
-    private void undoItemActionPerformed(ActionEvent evt) {
-        if (this.graphEditorInputMode.isUndoOperationsAllowed()) {
-            this.graphEditorInputMode.undo();
-        }
-    }
-
-    private void blankGraphItemGraphItemActionPerformed(ActionEvent evt) {
-        this.graph.clear();
-        this.view.updateUI();
-    }
-
-    private void treeGraphItemActionPerformed(ActionEvent event) {
-        RandomGraphGenerator rgg = new RandomGraphGenerator();
-        rgg.allowMultipleEdges(false);
-        rgg.allowCycles(false);
-        rgg.allowSelfLoops(false);
-
-        JTextField nodeCount = new JTextField("10");
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes: ", nodeCount}, "Tree Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                rgg.setNodeCount(Integer.parseInt(nodeCount.getText()));
-                rgg.setEdgeCount(Integer.parseInt(nodeCount.getText()) - 1);
-            } catch (java.lang.NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe tree will be created with 10 nodes.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                rgg.setNodeCount(10);
-                rgg.setEdgeCount(9);
-            } finally {
-                rgg.generate(this.graph);
-                LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
-                this.view.fitGraphBounds();
-                this.view.updateUI();
-            }
-        }
-    }
-
-    private void connectedGraphItemActionPerformed(ActionEvent evt) {
-        RandomGraphGenerator rgg = new RandomGraphGenerator();
-        rgg.allowMultipleEdges(false);
-        rgg.allowCycles(true);
-        rgg.allowSelfLoops(false);
-
-        JTextField nodeCount = new JTextField();
-        JTextField edgeCount = new JTextField();
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes: ", nodeCount, "Number of Edges (may be more to achive connectivity): ", edgeCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                rgg.setNodeCount(Integer.parseInt(nodeCount.getText()));
-                rgg.setEdgeCount(Integer.parseInt(edgeCount.getText()));
-            } catch (java.lang.NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe graph will be created with 10 nodes and 10 edges.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                rgg.setNodeCount(10);
-                rgg.setEdgeCount(10);
-            } finally {
-                rgg.generate(this.graph);
-
-                YGraphAdapter adapter = new YGraphAdapter(this.graph);
-
-                EdgeList edgeList = GraphConnectivity.makeConnected(adapter.getYGraph());
-                for (IEdgeCursor ec = edgeList.edges(); ec.ok(); ec.next()) {
-                    this.graph.createEdge(adapter.getOriginalNode(ec.edge().source()), adapter.getOriginalNode(ec.edge().target()));
-                }
-
-                LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
-                this.view.fitGraphBounds();
-                this.view.updateUI();
-            }
-        }
-    }
-
-    private void randomGraphItemActionPerformed(ActionEvent evt) {
-        RandomGraphGenerator rgg = new RandomGraphGenerator();
-        rgg.allowMultipleEdges(false);
-        rgg.allowCycles(true);
-        rgg.allowSelfLoops(false);
-
-        JTextField nodeCount = new JTextField("20");
-        JTextField edgeCount = new JTextField("40");
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes: ", nodeCount, "Number of Edges: ", edgeCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                rgg.setNodeCount(Integer.parseInt(nodeCount.getText()));
-                rgg.setEdgeCount(Integer.parseInt(edgeCount.getText()));
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe graph will be created with 10 nodes and 10 edges.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                rgg.setNodeCount(10);
-                rgg.setEdgeCount(10);
-            } finally {
-                rgg.generate(this.graph);
-                LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
-                this.view.fitGraphBounds();
-                this.view.updateUI();
-            }
-        }
-    }
-
-    private void openItemActionPerformed(ActionEvent evt) {
-        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith("graphml"));
-            }
-
-            public String getDescription() {
-                return "GraphML Files [.graphml]";
-            }
-
-        });
-
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            this.fileNamePath = chooser.getSelectedFile().toString();
-
-            try {
-                this.view.importFromGraphML(fileNamePath);
-                this.view.fitGraphBounds();
-                this.view.updateUI();
-                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured while reading the input file.");
-            }
-        }
-    }
-
-    private void reloadItemActionPerformed(ActionEvent evt) {
-        if (this.fileNamePath != null) {
-            try {
-                this.graph.clear();
-                this.view.importFromGraphML(this.fileNamePath);
-                this.view.fitGraphBounds();
-                this.view.updateUI();
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured while reading the input file.");
-            }
-        } else {
-            infoLabel.setText("No file was recently opened.");
-        }
-    }
-
-    private void saveItemActionPerformed(ActionEvent evt) {
-        if (this.fileNamePath != null) {
-            try {
-                this.view.exportToGraphML(this.fileNamePath);
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured while exporting the graph.");
-            }
-        } else {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setFileFilter(new FileFilter() {
-                public boolean accept(File file) {
-                    return (file.isDirectory() || file.toString().toLowerCase().endsWith(".graphml"));
-                }
-
-                public String getDescription() {
-                    return "GraphML Files [.graphml]";
-                }
-
-            });
-            if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                this.fileNamePath = chooser.getSelectedFile().toString();
-                if (!this.fileNamePath.toLowerCase().endsWith(".graphml")) {
-                    this.fileNamePath = this.fileNamePath + ".graphml";
-                }
-                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-
-                try {
-                    this.view.exportToGraphML(this.fileNamePath);
-                } catch (IOException ioe) {
-                    this.infoLabel.setText("An error occured while exporting the graph.");
-                }
-            }
-        }
-    }
-
-    private void saveAsItemActionPerformed(ActionEvent evt) {
-        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith(".graphml"));
-            }
-
-            public String getDescription() {
-                return "GraphML Files [.graphml]";
-            }
-
-        });
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            this.fileNamePath = chooser.getSelectedFile().toString();
-
-            if (!this.fileNamePath.toLowerCase().endsWith(".graphml")) {
-                this.fileNamePath = this.fileNamePath + ".graphml";
-            }
-            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-
-            try {
-                this.view.exportToGraphML(this.fileNamePath);
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured while exporting the graph.");
-            }
-        }
-    }
 
     /**
      * @param args the command line arguments
@@ -1877,275 +776,5 @@ public class MainFrame extends JFrame {
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
     }
 
-    private void jpgItemActionPerformed(ActionEvent evt) {
-        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith(".jpg"));
-            }
 
-            public String getDescription() {
-                return "JPG Files [.jpg]";
-            }
-
-        });
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String fileName = chooser.getSelectedFile().toString();
-            if (!fileName.toLowerCase().endsWith(".jpg")) {
-                fileName = fileName + ".jpg";
-            }
-            ContextConfigurator configuration = new ContextConfigurator(this.view.getContentRect());
-            PixelImageExporter exporter = new PixelImageExporter(configuration);
-
-            try {
-                exporter.export(this.view, new FileOutputStream(fileName), "jpg");
-                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured which exporting the graph.");
-            }
-        }
-    }
-
-    private void gifItemActionPerformed(ActionEvent evt) {
-        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith(".gif"));
-            }
-
-            public String getDescription() {
-                return "GIF Files [.gif]";
-            }
-
-        });
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String fileName = chooser.getSelectedFile().toString();
-            if (!fileName.toLowerCase().endsWith(".gif")) {
-                fileName = fileName + ".gif";
-            }
-            ContextConfigurator configuration = new ContextConfigurator(this.view.getContentRect());
-            PixelImageExporter exporter = new PixelImageExporter(configuration);
-
-            try {
-                exporter.export(this.view, new FileOutputStream(fileName), "gif");
-                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured which exporting the graph.");
-            }
-        }
-    }
-
-    private void christianFormatItemActionPerformed(ActionEvent evt) {
-        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith(".amf"));
-            }
-
-            public String getDescription() {
-                return "AMF Files [.amf]";
-            }
-
-        });
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String fileName = chooser.getSelectedFile().toString();
-            if (!fileName.toLowerCase().endsWith(".amf")) {
-                fileName = fileName + ".amf";
-            }
-            try {
-                ChristianIOHandler.write(new YGraphAdapter(graph).getYGraph(), fileName);
-            } catch (IOException exc) {
-                this.infoLabel.setText("An error occured which exporting the graph.");
-            }
-        }
-    }
-
-    private void sergeyFormatItemActionPerformed(ActionEvent evt) {
-        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith(".edges"));
-            }
-
-            public String getDescription() {
-                return "Edges Files [.edges]";
-            }
-
-        });
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String fileName = chooser.getSelectedFile().toString();
-            if (!fileName.toLowerCase().endsWith(".edges")) {
-                fileName = fileName + ".edges";
-            }
-            try {
-                SergeyIOHandler.write(new YGraphAdapter(graph).getYGraph(), fileName);
-            } catch (IOException exc) {
-                this.infoLabel.setText("An error occured which exporting the graph.");
-            }
-        }
-    }
-
-    private void christianImportFormatItemActionPerformed(ActionEvent evt) {
-        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith("amf"));
-            }
-
-            public String getDescription() {
-                return "AMF Files [.amf]";
-            }
-
-        });
-        if (chooser.showOpenDialog(null) == javax.swing.JFileChooser.APPROVE_OPTION) {
-            this.fileNamePath = chooser.getSelectedFile().toString();
-            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-
-            try {
-                graph.clear();
-
-                Graph g = ChristianIOHandler.read(this.fileNamePath);
-                INodeMap map = g.createNodeMap();
-
-                for (INodeCursor nc = g.getNodeCursor(); nc.ok(); nc.next()) {
-                    map.set(nc.node(), this.graph.createNode());
-                }
-                for (IEdgeCursor ec = g.getEdgeCursor(); ec.ok(); ec.next()) {
-                    this.graph.createEdge((INode) map.get(ec.edge().target()), (INode) map.get(ec.edge().source()));
-                }
-                g.disposeNodeMap(map);
-
-                LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
-                this.view.fitGraphBounds();
-                this.view.updateUI();
-
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured which importing the graph.");
-            }
-        }
-    }
-
-    private void sergeyImportFormatItemActionPerformed(ActionEvent evt) {
-        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith("edges"));
-            }
-
-            public String getDescription() {
-                return "Edges Files [.edges]";
-            }
-
-        });
-        if (chooser.showOpenDialog(null) == javax.swing.JFileChooser.APPROVE_OPTION) {
-            this.fileNamePath = chooser.getSelectedFile().toString();
-            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-
-            try {
-                this.graph.clear();
-
-                Graph g = SergeyIOHandler.read(this.fileNamePath);
-                INodeMap map = g.createNodeMap();
-
-                for (INodeCursor nc = g.getNodeCursor(); nc.ok(); nc.next()) {
-                    map.set(nc.node(), graph.createNode());
-                }
-                for (IEdgeCursor ec = g.getEdgeCursor(); ec.ok(); ec.next()) {
-                    this.graph.createEdge((INode) map.get(ec.edge().target()), (INode) map.get(ec.edge().source()));
-                }
-                g.disposeNodeMap(map);
-
-                LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
-                this.view.fitGraphBounds();
-                this.view.updateUI();
-
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured which importing the graph.");
-            }
-        }
-    }
-
-    private void printItemActionPerformed(ActionEvent evt) {
-        PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new CanvasPrintable(this.view));
-        if (job.printDialog()) {
-            try {
-                job.print();
-            } catch (PrinterException e) {
-                this.infoLabel.setText("The graph cannot be printed.");
-            }
-        }
-    }
-
-    private void edgeColorPanelActionPerformed(Object o, MouseEvent me) {
-        Color c = JColorChooser.showDialog(null, "Choose a Color", ((JPanel) o).getBackground());
-        if (c != null) {
-            ((JPanel) o).setBackground(c);
-            this.view.getSelection().getSelectedEdges().forEach(e -> {
-                PolylineEdgeStyle style = (PolylineEdgeStyle) e.getStyle();
-                style.setPen(new Pen(c));
-                this.graph.setStyle(e, style);
-            });
-            this.defaultEdgeStyle.setPen(new Pen(c));
-            this.view.getSelection().getSelectedEdges().clear();
-        }
-    }
-
-    private void labelSizeComboBoxItemStateChanged(ItemEvent e) {
-        int labelSize = Integer.parseInt((String) e.getItem());
-
-        this.view.getSelection().getSelectedNodes().forEach(u -> {
-            SimpleLabelStyle style = ((SimpleLabelStyle) u.getLabels().first().getStyle()).clone();
-            style.setFont(new Font(style.getFont().getFontName(), style.getFont().getStyle(), labelSize));
-            this.graph.setStyle(u.getLabels().first(), style);
-        });
-
-        Font font = this.defaultLabelStyle.getFont();
-        this.defaultLabelStyle.setFont(new Font(font.getFontName(), font.getStyle(), labelSize));
-        this.view.getSelection().getSelectedNodes().clear();
-    }
-
-    private void nodeBorderColorPanelActionPerformed(Object o, MouseEvent e) {
-        Color c = JColorChooser.showDialog(null, "Choose a Color", ((JPanel) o).getBackground());
-        if (c != null) {
-            ((JPanel) o).setBackground(c);
-            this.view.getSelection().getSelectedNodes().forEach(u -> {
-                ShinyPlateNodeStyle style = (ShinyPlateNodeStyle) u.getStyle();
-                style.setPen(new Pen(c));
-                this.graph.setStyle(u, style);
-            });
-            this.defaultNodeStyle.setPen(new Pen(c));
-            this.view.getSelection().getSelectedNodes().clear();
-        }
-    }
-
-    private void nodeFillColorPanelActionPerformed(Object o, MouseEvent e) {
-        Color c = JColorChooser.showDialog(null, "Choose a Color", ((JPanel) o).getBackground());
-        if (c != null) {
-            ((JPanel) o).setBackground(c);
-            this.view.getSelection().getSelectedNodes().forEach(u -> {
-                ShinyPlateNodeStyle style = (ShinyPlateNodeStyle) u.getStyle();
-                style.setPaint(c);
-                this.graph.setStyle(u, style);
-            });
-            this.defaultNodeStyle.setPaint(c);
-            this.view.getSelection().getSelectedNodes().clear();
-        }
-    }
-
-    private void heightComboBoxItemStateChanged(ItemEvent e) {
-        int height = Integer.parseInt((String) e.getItem());
-        this.view.getSelection().getSelectedNodes().forEach(u -> {
-            this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(), u.getLayout().getY(), u.getLayout().getWidth(), height));
-        });
-        this.graph.getNodeDefaults().setSize(new SizeD(this.graph.getNodeDefaults().getSize().width, height));
-    }
-
-    private void widthComboBoxItemStateChanged(ItemEvent e) {
-        int width = Integer.parseInt((String) e.getItem());
-        this.view.getSelection().getSelectedNodes().forEach(u -> {
-            this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(), u.getLayout().getY(), width, u.getLayout().getHeight()));
-        });
-        this.graph.getNodeDefaults().setSize(new SizeD(width, this.graph.getNodeDefaults().getSize().height));
-    }
 }
