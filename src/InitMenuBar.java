@@ -24,7 +24,7 @@ public class InitMenuBar {
     private JMenu fileMenu = new JMenu();
     private JMenuBar mainMenuBar = new JMenuBar();
     private JMenuItem newMenuItem = new JMenu();
-    private JMenu editMenu = new JMenu();
+
     private JMenu layoutMenu = new JMenu();
     private IGraph graph;
     private JLabel infoLabel = new JLabel();
@@ -147,76 +147,7 @@ public class InitMenuBar {
 
         mainMenuBar.add(fileMenu);
 
-        /* Edit Menu */
-        editMenu.setText("Edit");
 
-        JMenuItem undoItem = new JMenuItem();
-        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
-        undoItem.setIcon(new ImageIcon(getClass().getResource("/resources/undo-16.png")));
-        undoItem.setText("Undo");
-        undoItem.addActionListener(this::undoItemActionPerformed);
-        editMenu.add(undoItem);
-
-        JMenuItem redoItem = new JMenuItem();
-        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK));
-        redoItem.setIcon(new ImageIcon(getClass().getResource("/resources/redo-16.png")));
-        redoItem.setText("Redo");
-        redoItem.addActionListener(this::redoItemActionPerformed);
-        editMenu.add(redoItem);
-        editMenu.add(new JSeparator());
-
-        JMenuItem cutItem = new JMenuItem();
-        cutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
-        cutItem.setIcon(new ImageIcon(getClass().getResource("/resources/cut-16.png")));
-        cutItem.setText("Cut");
-        cutItem.addActionListener(this::cutItemActionPerformed);
-        editMenu.add(cutItem);
-
-        JMenuItem copyItem = new JMenuItem();
-        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
-        copyItem.setIcon(new ImageIcon(getClass().getResource("/resources/copy-16.png")));
-        copyItem.setText("Copy");
-        copyItem.addActionListener(this::copyItemActionPerformed);
-        editMenu.add(copyItem);
-
-        JMenuItem pasteItem = new JMenuItem();
-        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
-        pasteItem.setIcon(new ImageIcon(getClass().getResource("/resources/paste-16.png")));
-        pasteItem.setText("Paste");
-        pasteItem.addActionListener(this::pasteItemActionPerformed);
-        editMenu.add(pasteItem);
-        editMenu.add(new JSeparator());
-
-        JMenuItem clearSelectedItem = new JMenuItem();
-        clearSelectedItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        clearSelectedItem.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
-        clearSelectedItem.setText("Clear Selected");
-        clearSelectedItem.addActionListener(this::clearSelectedItemActionPerformed);
-        editMenu.add(clearSelectedItem);
-
-        JMenuItem clearAllItem = new JMenuItem();
-        clearAllItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        clearAllItem.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
-        clearAllItem.setText("Clear all");
-        clearAllItem.addActionListener(this::clearAllItemActionPerformed);
-        editMenu.add(clearAllItem);
-        editMenu.add(new JSeparator());
-
-        JMenuItem selectAllItem = new JMenuItem();
-        selectAllItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
-        selectAllItem.setIcon(new ImageIcon(getClass().getResource("/resources/group-16.png")));
-        selectAllItem.setText("Select all");
-        selectAllItem.addActionListener(this::selectAllItemActionPerformed);
-        editMenu.add(selectAllItem);
-
-        JMenuItem deselectAllItem = new JMenuItem();
-        deselectAllItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-        deselectAllItem.setIcon(new ImageIcon(getClass().getResource("/resources/ungroup-16.png")));
-        deselectAllItem.setText("Deselect all");
-        deselectAllItem.addActionListener(this::deselectAllItemActionPerformed);
-        editMenu.add(deselectAllItem);
-
-        mainMenuBar.add(editMenu);
 
         /* View Menu */
 
@@ -274,47 +205,7 @@ public class InitMenuBar {
         this.view.setZoom(this.view.getZoom() + 0.2);
     }
 
-    private void deselectAllItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.clearSelection();
-    }
 
-    private void selectAllItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.selectAll();
-    }
-
-    private void clearAllItemActionPerformed(ActionEvent evt) {
-        this.graph.clear();
-    }
-
-    private void clearSelectedItemActionPerformed(ActionEvent evt) {
-        if (this.graphEditorInputMode.isClearSelectionAllowed()) {
-            this.graphEditorInputMode.clearSelection();
-        }
-    }
-
-    private void pasteItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.paste();
-    }
-
-    private void copyItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.copy();
-    }
-
-    private void cutItemActionPerformed(ActionEvent evt) {
-        this.graphEditorInputMode.cut();
-    }
-
-    private void redoItemActionPerformed(ActionEvent evt) {
-        if (this.graphEditorInputMode.isUndoOperationsAllowed()) {
-            this.graphEditorInputMode.redo();
-        }
-    }
-
-    private void undoItemActionPerformed(ActionEvent evt) {
-        if (this.graphEditorInputMode.isUndoOperationsAllowed()) {
-            this.graphEditorInputMode.undo();
-        }
-    }
 
     private void blankGraphItemGraphItemActionPerformed(ActionEvent evt) {
         this.graph.clear();
