@@ -5,6 +5,11 @@ import com.yworks.yfiles.graph.*;
 
 import java.util.*;
 
+import com.yworks.yfiles.layout.CopiedLayoutGraph;
+import com.yworks.yfiles.layout.LayoutGraphAdapter;
+import com.yworks.yfiles.layout.organic.OrganicLayout;
+import com.yworks.yfiles.layout.organic.OrganicRemoveOverlapsStage;
+import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
 import layout.algo.ForceAlgorithmApplier;
 import util.*;
 import util.graph2d.Intersection;
@@ -44,6 +49,7 @@ public class GridPositioning {
         List<Tuple2<PointD, Double>> coord = new ArrayList<>();
         List<Tuple3<PointD, PointD, Double>> coordCrossing = new ArrayList<>();
         boolean contained = false;
+        Set<INode> containedNodes = new HashSet<>();
 
         // computes the grid nodes respectively for single nodes or for crossing nodes
         for (INode u : graph.getNodes()) {
@@ -63,34 +69,19 @@ public class GridPositioning {
                 LineSegment l1 = new LineSegment(currU, currV);
                 LineSegment l2 = new LineSegment(currV, currU);
                 if (crossings.contains(l1) || crossings.contains(l2)) {
-                    contained = true;
+                    containedNodes.add(u);
+                    containedNodes.add(v);
                     coordCrossing.clear();
                     coordCrossing.addAll(addCoordinates(getGridPoints(u,v), temp));
-
                     Collections.sort(coordCrossing, byAngles);
                     if (coordCrossing.size() > 0) {
                         nodePositions.setValue(u, coordCrossing.get(coordCrossing.size() - 1).a);
                         nodePositions.setValue(v, coordCrossing.get(coordCrossing.size() - 1).b);
                     }
-                } else {
-                    contained = false;
-                    coord.clear();
-                    coord.addAll(addCoordinates(v, getGridPoints(v), temp));
-                    Collections.sort(coord, byAngle);
-                    if (coord.size() > 0) {
-                        nodePositions.setValue(v, coord.get(coord.size() - 1).a);
-                    }
                 }
             }
 
-            coord.clear();
-            if (!contained) {
-                coord.addAll(addCoordinates(u, getGridPoints(u), temp));
-                Collections.sort(coord, byAngle);
-                if (coord.size() > 0) {
-                    nodePositions.setValue(u, coord.get(coord.size() - 1).a);
-                }
-            }
+           getGridNodes(containedNodes);
 
         }
         return nodePositions;
@@ -137,12 +128,13 @@ public class GridPositioning {
      * Computes integer grid points node per node
      * @return nodePositions - holds new positions of all nodes
      */
-    public IMapper<INode, PointD> getGridNodes() {
+    public IMapper<INode, PointD> getGridNodes(Set<INode> containedNodes) {
 
         IMapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(this.graph);
         List<Tuple2<PointD, Double>> coord = new ArrayList<>();
 
         for (INode u : graph.getNodes()) {
+            if(containedNodes.contains(u)){ break; }
             coord.clear();
             coord.addAll(addCoordinates(u, getGridPoints(u), temp));
 
@@ -151,7 +143,31 @@ public class GridPositioning {
                 nodePositions.setValue(u, coord.get(coord.size() - 1).a);
             }
         }
+
         return nodePositions;
+    }
+
+    /**
+     * Removes node overlaps.
+     */
+    public void removeOverlapsOrganic(){
+        OrganicRemoveOverlapsStage removal = new OrganicRemoveOverlapsStage();
+        LayoutGraphAdapter adap = new LayoutGraphAdapter(this.graph);
+        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
+        removal.applyLayout(g2);
+        LayoutUtilities.applyLayout(this.graph, removal);
+    }
+
+
+    /**
+     * Removes node overlaps.
+     */
+    public void removeOverlaps(){
+        RemoveOverlapsStage removal = new RemoveOverlapsStage(0.01);
+        LayoutGraphAdapter adap = new LayoutGraphAdapter(this.graph);
+        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
+        removal.applyLayout(g2);
+        LayoutUtilities.applyLayout(this.graph, removal);
     }
 
     /**
@@ -199,7 +215,7 @@ public class GridPositioning {
      * @param graph - Input graph
      * @return true/false - depending on whether the nodes are integer
      */
-    public boolean isGridded(IGraph graph) {
+    public static boolean isGridded(IGraph graph) {
         for (INode u : graph.getNodes()) {
             if ((u.getLayout().getCenter().getX() % 1) != 0) {
                 return false;

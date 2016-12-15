@@ -1,54 +1,28 @@
 import algorithms.graphs.GridPositioning;
-import com.yworks.yfiles.algorithms.*;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.geometry.Matrix2D;
-import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
-import com.yworks.yfiles.layout.GraphTransformer;
-import com.yworks.yfiles.layout.OperationType;
-import com.yworks.yfiles.layout.YGraphAdapter;
-import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.layout.organic.OrganicRemoveOverlapsStage;
-import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.*;
-import com.yworks.yfiles.view.export.CanvasPrintable;
-import com.yworks.yfiles.view.export.ContextConfigurator;
-import com.yworks.yfiles.view.export.PixelImageExporter;
 import com.yworks.yfiles.view.input.*;
-import io.ChristianIOHandler;
-import io.SergeyIOHandler;
 import layout.algo.*;
 import algorithms.graphs.MinimumAngle;
-import layout.algo.MinimumAngleImprovement;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
-import layout.algo.GridDrawing;
-import util.RandomGraphGenerator;
 import util.*;
 import util.interaction.*;
 import util.graph2d.*;
 import util.graph2d.LineSegment;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.*;
-import java.util.stream.*;
 import java.util.List;
+import java.util.Random;
 import java.util.function.*;
 
 
@@ -92,7 +66,9 @@ public class MainFrame extends JFrame {
     private boolean optimizingNinty = true;
     JSlider[] sliders;
 
-    private InitForceAlgorithm forceAlg;
+    final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
+    final Boolean[] algoModifiers = new Boolean[]{false, false};
+
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
 
     public static final Consumer<Maybe<ForceAlgorithmApplier>> finalizeFAA = Maybe.lift(f -> {
@@ -251,7 +227,6 @@ public class MainFrame extends JFrame {
         this.defaultLayouter.setMinimumNodeDistance(100);
 
         initSidePanel(mainPanel, c);
-        forceAlg = new InitForceAlgorithm(this.view, this.graph, this.infoLabel, this.progressBar);
     }
 
     private void initSidePanel(JPanel mainPanel, GridBagConstraints c) {
@@ -327,7 +302,7 @@ public class MainFrame extends JFrame {
         JButton showForces = new JButton("Show forces");
         showForces.addActionListener(e -> {
             if(!faa.hasValue()){
-                faa = Maybe.just(this.forceAlg.defaultForceAlgorithmApplier(0));
+                faa = Maybe.just(defaultForceAlgorithmApplier(0));
             }
             faa.get().showForces();
         });
@@ -359,43 +334,6 @@ public class MainFrame extends JFrame {
             });
         });
         sidePanel.add(showBestSolution, cSidePanel);
-    }
-
-    public void startGeneticClicked(ActionEvent e){
-        if(geneticAlgorithm == null || geneticAlgorithm.running == false){
-            ForceAlgorithmApplier.init();
-            forceAlg.initializeGeneticAlgorithm();
-        this.graphEditorInputMode.setCreateNodeAllowed(false);
-            geneticAlgorithmThread.start();
-        }
-    }
-
-    public void stopGeneticClicked(ActionEvent e){
-        geneticAlgorithm.running = false;
-        this.graphEditorInputMode.setCreateNodeAllowed(true);
-    }
-
-    public void startForceClicked(ActionEvent e){
-        if(!faa.hasValue() || faa.get().running == false){
-            ForceAlgorithmApplier.init();
-            ForceAlgorithmApplier fd = forceAlg.defaultForceAlgorithmApplier(-1);
-            fd.modifiers = springThreshholds;
-            fd.switches = algoModifiers;
-            MainFrame.finalizeFAA.accept(faa);
-            faa = Maybe.just(fd);
-            Thread thread = new Thread(fd);
-        this.graphEditorInputMode.setCreateNodeAllowed(false);
-            thread.start();
-            this.view.updateUI();
-        }
-    }
-
-    public void stopForceClicked(ActionEvent e){
-        faa.andThen(f -> {
-            f.running = false;
-            this.graphEditorInputMode.setCreateNodeAllowed(true);
-        });
-        
     }
 
     private void initMenuBar() {
@@ -586,16 +524,57 @@ public class MainFrame extends JFrame {
      * Implementation of actions
      ********************************************************************/
     private void gridCrossingItemActionPerformed(ActionEvent evt) {
+        GridPositioning grid = new GridPositioning(this.graph);
+        boolean gridding = false;
         if(ForceAlgorithmApplier.class != null) {
-            GridPositioning grid = new GridPositioning(this.graph);
-            if (!grid.isGridded(this.graph)) {
+            while (gridding == false) {
                 ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodesRespectively());
+                //grid.removeOverlapsOrganic();
+                grid.removeOverlaps();
+                if(grid.isGridded(this.graph)){
+                    gridding = true;
+                }
             }
+        }
+        System.out.println("Graph is gridded: " + grid.isGridded(this.graph));
+    }
+
+    public void startGeneticClicked(ActionEvent e){
+        if(geneticAlgorithm == null || geneticAlgorithm.running == false){
+            ForceAlgorithmApplier.init();
+            initializeGeneticAlgorithm();
+            this.graphEditorInputMode.setCreateNodeAllowed(false);
+            geneticAlgorithmThread.start();
         }
     }
 
-    final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
-    final Boolean[] algoModifiers = new Boolean[]{false, false};
+    public void stopGeneticClicked(ActionEvent e){
+        geneticAlgorithm.running = false;
+        this.graphEditorInputMode.setCreateNodeAllowed(true);
+    }
+
+    public void startForceClicked(ActionEvent e){
+        if(!faa.hasValue() || faa.get().running == false){
+            ForceAlgorithmApplier.init();
+            ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
+            fd.modifiers = springThreshholds;
+            fd.switches = algoModifiers;
+            MainFrame.finalizeFAA.accept(faa);
+            faa = Maybe.just(fd);
+            Thread thread = new Thread(fd);
+            this.graphEditorInputMode.setCreateNodeAllowed(false);
+            thread.start();
+            this.view.updateUI();
+        }
+    }
+
+    public void stopForceClicked(ActionEvent e){
+        faa.andThen(f -> {
+            f.running = false;
+            this.graphEditorInputMode.setCreateNodeAllowed(true);
+        });
+
+    }
 
     private void yFilesSpringEmbedderItemActionPerformed(ActionEvent evt){
         JTextField iterationsTextField = new JTextField("1000");
@@ -651,7 +630,7 @@ public class MainFrame extends JFrame {
         }
         else return;
 
-        ForceAlgorithmApplier fd = this.forceAlg.defaultForceAlgorithmApplier(iterations);
+        ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(iterations);
         MainFrame.finalizeFAA.accept(faa);
         faa = Maybe.just(fd);
 
@@ -691,9 +670,6 @@ public class MainFrame extends JFrame {
         });
         infoLabel.setText(labText.getDefault("Graph has no crossings."));
     }
-
-
-
 
     private void forceDirectionPerpendicularActionPerformed(ActionEvent evt){    this.algoModifiers[0] = true; }
     private void forceDirectionNonPerpendicularActionPerformed(ActionEvent evt){ this.algoModifiers[0] = false; }
@@ -742,6 +718,210 @@ public class MainFrame extends JFrame {
         }
     }
 
+    public ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
+
+        ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, Maybe.just(progressBar), Maybe.just(infoLabel));
+        fd.modifiers = springThreshholds.clone();
+        fd.switches = algoModifiers.clone();
+        fd.algos.add(new NodePairForce(p1 -> (p2 -> {
+            double electricalRepulsion = 50000,
+                    threshold = fd.modifiers[0];
+            PointD t = PointD.subtract(p1, p2);
+            double dist = t.getVectorLength();
+            if(dist <= Epsilon){
+                return new PointD(0, 0);
+            }
+            t = PointD.div(t, dist);
+            t = PointD.times(threshold * electricalRepulsion / Math.pow(dist, 2), t);
+            return t;
+        })));
+        fd.algos.add(new NodeNeighbourForce(p1 -> (p2 -> {
+            double springStiffness = 150,
+                    springNaturalLength = 100,
+                    threshold = fd.modifiers[1];
+            PointD t = PointD.subtract(p2, p1);
+            double dist = t.getVectorLength();
+            if(dist <= Epsilon){
+                return new PointD(0, 0);
+            }
+            t = PointD.div(t, dist);
+            //t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
+            t = PointD.times(t, threshold * (dist - springNaturalLength));
+            return t;
+        })));
+
+        fd.algos.add(new CrossingForce(e1 -> (e2 -> (angle -> {
+            double threshold = fd.modifiers[2];
+            if(e1.getVectorLength() <= Epsilon ||
+                    e2.getVectorLength() <= Epsilon){
+                return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
+            }
+            PointD t1 = e1.getNormalized();
+            PointD t2 = e2.getNormalized();
+            PointD t1Neg = PointD.negate(t1);
+            PointD t2Neg = PointD.negate(t2);
+            PointD t1_ = new PointD(0,0),
+                    t2_ = new PointD(0,0);
+
+            t1_ = PointD.times(t2Neg, threshold * Math.cos(Math.toRadians(angle)));
+            t2_ = PointD.times(t1Neg, threshold * Math.cos(Math.toRadians(angle)));
+            t1 = PointD.times(t1, threshold * Math.cos(Math.toRadians(angle)));
+            t2 = PointD.times(t2, threshold * Math.cos(Math.toRadians(angle)));
+
+            t1 = rotate.apply(PointD.negate(t1));
+            t2 = rotate.apply(t2);
+            // if(perpendicular?)
+            if(fd.switches[0]) {
+                return new Tuple2<>(t1, t2);
+            }
+            // else direction of other edge
+            else{
+                return new Tuple2<>(t1_, t2_);
+            }
+            /*if(angle > 60 && angle < 120){
+                return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
+            }
+            t1 = PointD.times(t1, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
+            t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
+		*/
+
+        }))));
+
+        fd.algos.add(new IncidentEdgesForce(e1 -> (e2 -> (angle -> (deg -> {
+            if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
+            double threshold = fd.modifiers[3],
+                    optAngle = (360 / deg);
+            if(e1.getVectorLength() <= Epsilon ||
+                    e2.getVectorLength() <= Epsilon){
+                return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
+            }
+            PointD t1 = e1.getNormalized();
+            PointD t2 = e2.getNormalized();
+            Double neg = Math.signum(angle);
+
+            t1 = PointD.times(t1, neg * threshold * Math.sin((Math.toRadians(optAngle - Math.abs(angle)))/2.0));
+            t2 = PointD.times(t2, neg * threshold * Math.sin((Math.toRadians(optAngle - Math.abs(angle)))/2.0));
+            t1 = rotate.apply(t1);
+            t2 = PointD.negate(t2);
+            t2 = rotate.apply(t2);
+            return new Tuple2<>(t1, t2);
+        })))));
+        return fd;
+    }
+
+    public static Random rand = new Random();
+    public void initializeGeneticAlgorithm(){
+        geneticAlgorithm = GeneticAlgorithm.<ForceAlgorithmApplier>newGeneticAlgorithm_FunGen(
+                (faa -> {
+                    faa.runNoDraw();
+                    return faa;
+                }),
+                ((faa1, faa2) -> {
+                    Maybe<Double> ma1 = MinimumAngle.getMinimumAngle(graph, Maybe.just(faa1.nodePositions)),
+                            ma2 = MinimumAngle.getMinimumAngle(graph, Maybe.just(faa2.nodePositions));
+                    if(ma1.hasValue() && !ma2.hasValue()){
+                        return -1;
+                    }
+                    if(!ma1.hasValue() && ma2.hasValue()){
+                        return 1;
+                    }
+                    if(!ma1.hasValue() && !ma2.hasValue()){
+                        return 0;
+                    }
+                    Double a1 = ma1.get(),
+                            a2 = ma2.get();
+                    return a1.compareTo(a2);
+                }),
+                20,
+                (fa -> {
+                    IMapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions, graph.getNodes().stream());
+
+                    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossingsSorted(graph, Maybe.just(nodePositions));
+                    ForceAlgorithmApplier fa2 = fa.clone();
+                    if(crossings.size() == 0) {
+                        return fa2;
+                    }
+
+                    List<Tuple3<LineSegment, LineSegment, Intersection>> mostInteresting = crossings.subList(0, (int) Math.ceil(crossings.size() / 50.0));
+
+                    //random choice
+                    //int nodeIndex = rand.nextInt(graph.getNodes().size());
+                    //INode node = graph.getNodes().getItem(nodeIndex);
+                    INode node = null;
+                    int nodeDegree = Integer.MAX_VALUE;
+                    Tuple3<LineSegment, LineSegment, Intersection> nodeCrossing = null;
+                    int whichNode = -1;
+
+                    //random crossing
+                    int crossingIndex = rand.nextInt(mostInteresting.size());
+                    nodeCrossing = mostInteresting.get(crossingIndex);
+                    whichNode = rand.nextInt(4);
+                    INode[] nodes = new INode[]{
+                            nodeCrossing.a.n1.get(),
+                            nodeCrossing.a.n2.get(),
+                            nodeCrossing.b.n1.get(),
+                            nodeCrossing.b.n2.get()
+                    };
+                    node = nodes[whichNode];
+
+                    if(node == null || nodeCrossing == null || whichNode < 0){
+                        // ??? This CAN'T happen. Compiler thinks it can, but it can't.
+                        return fa2;
+                    }
+                    //PointD pos = nodePositions.getValue(node);
+                    PointD pos = nodeCrossing.c.intersectionPoint;
+                    PointD direction = new PointD(0, 0);
+                    switch(whichNode){
+                        case 0: direction = PointD.negate(nodeCrossing.b.ve);
+                            break;
+                        case 1: direction = nodeCrossing.b.ve;
+                            break;
+                        case 2: direction = PointD.negate(nodeCrossing.a.ve);
+                            break;
+                        case 3: direction = nodeCrossing.a.ve;
+                            break;
+                    }
+                    if(nodeCrossing.c.orientedAngle > 90){
+                        direction = PointD.negate(direction);
+                    }
+                    if(direction.getVectorLength() <= Epsilon){
+                        return fa2;
+                    }
+                    direction = direction.getNormalized();
+                    PointD posOld = pos;
+                    pos = PointD.add(pos, PointD.times(fa.modifiers[2], direction));
+                    nodePositions.setValue(node, pos);
+                    fa2.nodePositions = nodePositions;
+
+                    // russian roulette to change a modifier
+                    if(fa2.modifiers.length > 0 && rand.nextDouble() > 0.5){
+                        // randomly modify one spring threshhold
+                        int modIndex = rand.nextInt(fa.modifiers.length);
+                        // smallest double > 0
+                        double minVal = Math.nextAfter(0, Double.POSITIVE_INFINITY);
+                        // value should remain 0 < val <= 1
+                        fa2.modifiers[modIndex] = Math.min(1, Math.max(minVal, fa.modifiers[modIndex] * rand.nextDouble() * 2));
+                    }
+
+                    // russian roulette to change a switch
+                    if(fa2.switches.length > 0 && rand.nextDouble() > 0.5){
+                        // randomly modify one spring threshhold
+                        int switchIndex = rand.nextInt(fa.switches.length);
+                        // smallest double > 0
+                        double minVal = Math.nextAfter(0, Double.POSITIVE_INFINITY);
+                        // value should remain 0 < val <= 1
+                        fa2.switches[switchIndex] = (fa.switches[switchIndex] == false);
+                    }
+                    return fa2;
+                }));
+        geneticAlgorithm.bestChanged = Maybe.just(faa -> {
+            faa.draw(graph);
+            view.updateUI();
+        });
+        ForceAlgorithmApplier fa = defaultForceAlgorithmApplier(250);
+        geneticAlgorithm.instances.add(fa);
+        geneticAlgorithmThread = new Thread(geneticAlgorithm);
+    }
 
     /**
      * @param args the command line arguments
