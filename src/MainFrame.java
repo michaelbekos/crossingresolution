@@ -407,6 +407,12 @@ public class MainFrame extends JFrame {
                                                 this.defaultLayouter, this.fileNamePathFolder, this.fileNamePath);
         mainMenuBar = menuBar.initMenuBar();
 
+        JMenuItem yFilesSpringEmbedderItem = new JMenuItem();
+        yFilesSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        yFilesSpringEmbedderItem.setText("yFiles Spring Embedder");
+        yFilesSpringEmbedderItem.addActionListener(this::yFilesSpringEmbedderItemActionPerformed);
+        layoutMenu.add(yFilesSpringEmbedderItem);
+
         JMenuItem springEmbedderItem = new JMenuItem();
         springEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         springEmbedderItem.setText("Spring Embedder");
@@ -590,6 +596,45 @@ public class MainFrame extends JFrame {
 
     final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
     final Boolean[] algoModifiers = new Boolean[]{false, false};
+
+    private void yFilesSpringEmbedderItemActionPerformed(ActionEvent evt){
+        JTextField iterationsTextField = new JTextField("1000");
+        int iterations = 1000;
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                iterations = Integer.parseInt(iterationsTextField.getText());
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
+            public void calculateVectors() {
+                ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
+                ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
+            }
+        };
+        fd.addAlgorithmListener(new AlgorithmListener() {
+            public void algorithmStarted(AlgorithmEvent evt) {
+            }
+
+            public void algorithmFinished(AlgorithmEvent evt) {
+                progressBar.setValue(0);
+                view.fitContent();
+                view.updateUI();
+            }
+
+            public void algorithmStateChanged(AlgorithmEvent evt) {
+                progressBar.setValue(evt.currentStatus());
+            }
+        });
+        Thread thread = new Thread(fd);
+        thread.start();
+        this.view.updateUI();
+    }
 
     private void springEmbedderItemActionPerformed(ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
