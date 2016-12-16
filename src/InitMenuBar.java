@@ -1,6 +1,4 @@
-import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.GraphComponent;
