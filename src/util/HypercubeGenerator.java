@@ -1,5 +1,6 @@
 package util;
 
+import com.yworks.yfiles.geometry.Matrix2D;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
 
@@ -12,10 +13,9 @@ public class HypercubeGenerator {
     g.clear();
     INode n0 = g.createNode();
     g.setNodeCenter(n0, new PointD(500, 500));
-
+    PointD dir = new PointD(0, 100);
+    Matrix2D rot = Matrix2D.createRotateInstance(Math.PI / dimension);
     for (int d = 1; d <= dimension; d++){
-      PointD dir = (new PointD(2 * rand.nextDouble() - 1, 2 * rand.nextDouble() - 1)).getNormalized();
-      dir = PointD.times(100, dir);
       List<INode> oldNodes = g.getNodes().stream().collect(Collectors.toList());
       List<IEdge> oldEdges = g.getEdges().stream().collect(Collectors.toList());
       INode[] newNodes = new INode[oldNodes.size()];
@@ -35,6 +35,7 @@ public class HypercubeGenerator {
         target = newNodes[Integer.parseInt(e.getTargetNode().toString())];
         g.createEdge(source, target);
       }
+      dir = PointD.times(rot, dir);
     }
   }
 }
