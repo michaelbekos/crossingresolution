@@ -162,8 +162,8 @@ public class GridPositioning {
     /**
      * Removes node overlaps.
      */
-    public void removeOverlaps(){
-        RemoveOverlapsStage removal = new RemoveOverlapsStage(0.01);
+    public void removeOverlaps(double dist){
+        RemoveOverlapsStage removal = new RemoveOverlapsStage(dist);
         LayoutGraphAdapter adap = new LayoutGraphAdapter(this.graph);
         CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
         removal.applyLayout(g2);

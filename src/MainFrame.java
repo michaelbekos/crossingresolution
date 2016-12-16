@@ -357,6 +357,12 @@ public class MainFrame extends JFrame {
         springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
         layoutMenu.add(springEmbedderItem);
 
+        JMenuItem jitterItem = new JMenuItem();
+        jitterItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        jitterItem.setText("Jitter");
+        jitterItem.addActionListener(this::jitterItemActionPerformed);
+        layoutMenu.add(jitterItem);
+
         JMenuItem gridPositioningItem = new JMenuItem();
         gridPositioningItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         gridPositioningItem.setText("Respective Crossing Angle Gridding");
@@ -530,13 +536,14 @@ public class MainFrame extends JFrame {
             while (gridding == false) {
                 ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodesRespectively());
                 //grid.removeOverlapsOrganic();
-                grid.removeOverlaps();
+                grid.removeOverlaps(0.1);
                 if(grid.isGridded(this.graph)){
                     gridding = true;
                 }
             }
         }
         System.out.println("Graph is gridded: " + grid.isGridded(this.graph));
+        this.view.updateUI();
     }
 
     public void startGeneticClicked(ActionEvent e){
@@ -649,6 +656,12 @@ public class MainFrame extends JFrame {
             this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
         }
         this.gridVisualCreator.setVisible(this.isGridVisible);
+        this.view.updateUI();
+    }
+
+    private void jitterItemActionPerformed(ActionEvent evt) {
+        GridPositioning grid = new GridPositioning(this.graph);
+        grid.removeOverlaps(5);
         this.view.updateUI();
     }
 
