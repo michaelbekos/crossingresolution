@@ -1,26 +1,20 @@
-import algorithms.graphs.MinimumAngle;
-import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.IMapper;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.view.GraphComponent;
-import layout.algo.*;
-import util.Maybe;
-import util.Tuple2;
-import util.Tuple3;
-import util.graph2d.Intersection;
-import util.graph2d.LineSegment;
-
 import javax.swing.*;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.*;
+import java.util.function.*;
 
+import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.view.*;
+
+
+import algorithms.graphs.*;
+import layout.algo.*;
+import util.*;
+import util.graph2d.*;
 /**
  * Created by Jessica Wolz on 10.12.16.
  */
-public class InitForceAlgorithm {
+public abstract class InitForceAlgorithm {
     public final static Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
 
     public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations, GraphComponent view, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){

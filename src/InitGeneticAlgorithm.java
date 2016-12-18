@@ -21,8 +21,8 @@ public abstract class InitGeneticAlgorithm {
                       return faa;
                   }),
                   ((faa1, faa2) -> {
-                      Maybe<Double> ma1 = MinimumAngle.getMinimumAngle(graph, Maybe.just(faa1.nodePositions)),
-                              ma2 = MinimumAngle.getMinimumAngle(graph, Maybe.just(faa2.nodePositions));
+                      Maybe<Double> ma1 = faa1.cMinimumAngle.getMinimumAngle(graph, Maybe.just(faa1.nodePositions)),
+                          ma2 = faa2.cMinimumAngle.getMinimumAngle(graph, Maybe.just(faa2.nodePositions));
                       if(ma1.hasValue() && !ma2.hasValue()){
                           return -1;
                       }
@@ -96,6 +96,7 @@ public abstract class InitGeneticAlgorithm {
                       pos = PointD.add(pos, PointD.times(fa.modifiers[2], direction));
                       nodePositions.setValue(node, pos);
                       fa2.nodePositions = nodePositions;
+                      fa2.cMinimumAngle.invalidate();
   
                       // russian roulette to change a modifier
                       if(fa2.modifiers.length > 0 && rand.nextDouble() > 0.5){

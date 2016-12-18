@@ -1,6 +1,5 @@
 package util;
-import java.util.function.Function;
-import java.util.function.Consumer;
+import java.util.function.*;
 
 public abstract class Maybe<T>{
   public abstract T get();
@@ -28,9 +27,21 @@ public abstract class Maybe<T>{
   public static <T> Maybe<T> lift(T t){
     return Maybe.just(t);
   }
-  public T getDefault(T d){
+  public T getDefault(T t){
     if(hasValue()) return get();
-    return d;
+    return t;
+  }
+  public T getDefault(Supplier<T> lazyT){
+    if(hasValue()) return get();
+    return lazyT.get();
+  }
+  public Maybe<T> orElse(T t){
+    if(hasValue()) return this;
+    return Maybe.just(t);
+  }
+  public Maybe<T> orElse(Supplier<T> lazyT){
+    if(hasValue()) return this;
+    return Maybe.just(lazyT.get());
   }
   public static <T> Consumer<Maybe<T>> lift(Consumer<T> f){
     return (m -> m.andThen(el -> f.accept(el)));

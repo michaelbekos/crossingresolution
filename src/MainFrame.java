@@ -21,8 +21,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.*;
 
 
@@ -179,11 +178,15 @@ public class MainFrame extends JFrame {
         });
 
         this.graph.addNodeLayoutChangedListener((o, u, iNodeItemEventArgs) -> {
+            movedNodes.add(u);
+        });
+        this.view.addUpdatingListener((o, args) -> {
             MinimumAngle.resetHighlighting(this.graph);
             faa.andThen(f -> {
                 f.clearDrawables();
-                f.resetNodePosition(u);
+                f.resetNodePositions(movedNodes);
             });
+            movedNodes.clear();
         });
 
         /* Add two listeners two the graph */
@@ -233,6 +236,8 @@ public class MainFrame extends JFrame {
 
         initSidePanel(mainPanel, c);
     }
+
+    Set<INode> movedNodes = new HashSet<>();
 
     private void initSidePanel(JPanel mainPanel, GridBagConstraints c) {
         Tuple3<JPanel, JSlider[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Spring force", "Electrical force", "Crossing force", "Incident edges force"});

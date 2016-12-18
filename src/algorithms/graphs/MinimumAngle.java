@@ -11,37 +11,68 @@ import layout.algo.ForceAlgorithmApplier;
 import util.*;
 import util.graph2d.*;
 
-public class MinimumAngle{
+// to allow overriding for caching, we have an explicit singleton object, which implements all methods. Static calls just use the singleton.
+// This is because you can't derive static methods to member-methods.
+// since you can't have methods and functions with the same name, we need a helper class...
+
+public class MinimumAngle {
+  private static MinimumAngleHelper m = new MinimumAngleHelper();
+  public static class MinimumAngleHelper{
+    protected MinimumAngleHelper(){ }
+    
+    public Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+      return this.getMinimumAngleCrossing(graph, np).fmap(i -> i.c.angle);
+    }
+
+    public Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph, np);
+      if(crossings.size() > 0){
+        Tuple3<LineSegment, LineSegment, Intersection> crossing = crossings.get(0);
+        highlightCrossing(crossing);
+        return Maybe.just(crossing);
+      }
+      else{
+        return Maybe.nothing();
+      } 
+    }
+
+    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph, np);
+      return sortCrossings(crossings);
+    }
+
+    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+      return getCrossings(graph, true, np);
+    }
+    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
+      IMapper<INode, PointD> actualMap = np.getDefault(() -> ForceAlgorithmApplier.initPositionMap(graph));
+      return MinimumAngle.getCrossingsNaiive(graph, edgesOnly, actualMap);
+    }
+  } // HELPER CLASS ENDS HERE (I always get confused)
+
   public static Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
-    return getMinimumAngleCrossing(graph, np).bind(i -> Maybe.just(i.c.angle));
+    return m.getMinimumAngle(graph, np);
   }
   public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, Maybe<IMapper<INode, PointD>> np){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph, np);
-    if(crossings.size() > 0){
-      Tuple3<LineSegment, LineSegment, Intersection> crossing = crossings.get(0);
-      highlightCrossing(crossing);
-      return Maybe.just(crossing);
-    }
-    else{
-      return Maybe.nothing();
-    } 
-  }
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, Maybe<IMapper<INode, PointD>> np){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph, np);
-    Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byAngle = 
-      (t1, t2) -> t1.c.angle.compareTo(t2.c.angle);
-    Collections.sort(crossings, byAngle);
-    return crossings;
-  }
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, Maybe<IMapper<INode, PointD>> np){
-    return getCrossings(graph, true, np);
-  }
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
-    IMapper<INode, PointD> defaultMap = ForceAlgorithmApplier.initPositionMap(graph);
-    IMapper<INode, PointD> actualMap = np.getDefault(defaultMap);
-    return getCrossingsNaiive(graph, edgesOnly, actualMap);
-  }
+    return m.getMinimumAngleCrossing(graph, np);
+  }    
+  
+  
 
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    return m.getCrossingsSorted(graph, np);
+  }
+  
+
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    return m.getCrossings(graph, np);
+  }
+  
+
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
+    return m.getCrossings(graph, edgesOnly, np);
+  }
+  
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();
@@ -62,7 +93,14 @@ public class MinimumAngle{
     return res;
   }
 
- public static void resetHighlighting(IGraph graph){
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> sortCrossings(List<Tuple3<LineSegment, LineSegment, Intersection>> crossings){
+    Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byAngle = 
+      (t1, t2) -> t1.c.angle.compareTo(t2.c.angle);
+    Collections.sort(crossings, byAngle);
+    return crossings;
+  }
+
+  public static void resetHighlighting(IGraph graph){
     for(IEdge e: graph.getEdges()){
       paintEdge(e, Pen.getBlack());
     }
