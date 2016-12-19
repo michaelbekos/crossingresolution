@@ -75,14 +75,7 @@ public class MinimumAngle {
   }
   
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallel(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
-    Set<IEdge> seenEdges = new HashSet<>();
-    return graph.getEdges().stream().flatMap(e1 -> {
-      seenEdges.add(e1);
-      return graph.getEdges().stream()
-        .filter(e2 -> !seenEdges.contains(e2))
-        .map(e2 -> new Tuple2<IEdge, IEdge>(e1, e2));
-      }).parallel().map(e1e2 -> {
+    return Util.distinctPairs(graph.getEdges().stream(), graph.getEdges().stream()).parallel().map(e1e2 -> {
         IEdge e1 = e1e2.a,
               e2 = e1e2.b;
         LineSegment l1 = new LineSegment(e1, nodePositions),
@@ -94,14 +87,7 @@ public class MinimumAngle {
   }
 
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelFlat(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
-    Set<IEdge> seenEdges = new HashSet<>();
-    return graph.getEdges().stream().flatMap(e1 -> {
-      seenEdges.add(e1);
-      return graph.getEdges().stream()
-        .filter(e2 -> !seenEdges.contains(e2))
-        .map(e2 -> new Tuple2<IEdge, IEdge>(e1, e2));
-      }).parallel().flatMap(e1e2 -> {
+    return Util.distinctPairs(graph.getEdges().stream(), graph.getEdges().stream()).parallel().flatMap(e1e2 -> {
         IEdge e1 = e1e2.a,
               e2 = e1e2.b;
         LineSegment l1 = new LineSegment(e1, nodePositions),
@@ -114,12 +100,7 @@ public class MinimumAngle {
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelSynch(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();
-    graph.getEdges().stream().flatMap(e1 -> {
-      seenEdges.add(e1);
-      return graph.getEdges().stream()
-        .filter(e2 -> !seenEdges.contains(e2))
-        .map(e2 -> new Tuple2<IEdge, IEdge>(e1, e2));
-      }).parallel().forEach(e1e2 -> {
+    Util.distinctPairs(graph.getEdges().stream(), graph.getEdges().stream()).parallel().forEach(e1e2 -> {
         IEdge e1 = e1e2.a,
               e2 = e1e2.b;
         LineSegment l1 = new LineSegment(e1, nodePositions),

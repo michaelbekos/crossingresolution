@@ -17,4 +17,12 @@ public class Tuple2<A, B>{
   public <T> Tuple2<A, T> fmap(Function<B, T> f){
     return new Tuple2<>(a, f.apply(b));
   }
+  @Override
+  public boolean equals(Object o){
+    if(o instanceof Tuple2){
+      Tuple2 oTup = (Tuple2) o;
+      return a.equals(oTup.a) && b.equals(oTup.b);
+    }
+    return false;
+  }
 }

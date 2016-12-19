@@ -116,7 +116,6 @@ public class ForceAlgorithmApplier implements Runnable {
   public void showForces(){
     this.clearDrawables();
     IMapper<INode, PointD> map = calculateAllForces();
-    System.out.println();
     this.displayVectors(map);
   }
 
