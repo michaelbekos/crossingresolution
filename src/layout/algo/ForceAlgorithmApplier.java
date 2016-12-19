@@ -120,6 +120,11 @@ public class ForceAlgorithmApplier implements Runnable {
     this.displayVectors(map);
   }
 
+  public void showNodePositions(){
+    ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    this.view.updateUI();
+  }
+
   public void run() {
     running = true;
     if (this.maxNoOfIterations == 0) {
@@ -129,13 +134,15 @@ public class ForceAlgorithmApplier implements Runnable {
     if (this.maxNoOfIterations < 0) {
       int j = 0;
       while (running){
+        long startTime = System.nanoTime();
         this.clearDrawables();
         nodePositions = applyAlgos();
         cMinimumAngle.invalidate();
         improveSolution();
-        ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        showNodePositions();
         this.currNoOfIterations = j;
-        this.view.updateUI();
+        long endTime = System.nanoTime();
+        System.out.println("Time taken: " + (endTime - startTime)/1000000 + " ms");
         try {
           Thread.sleep(1);
         } catch (InterruptedException exc) {
@@ -169,7 +176,7 @@ public class ForceAlgorithmApplier implements Runnable {
       p.setValue(0);
     });
     JOptionPane.showMessageDialog(null, displayMaxMinAngle(), "Maximal Minimum Angle", JOptionPane.INFORMATION_MESSAGE);
-    this.view.fitContent();
+    
     displayMinimumAngle(graph);
     this.view.updateUI();
     running = false;
@@ -233,9 +240,9 @@ public class ForceAlgorithmApplier implements Runnable {
   }
 
   public IMapper<INode, PointD> calculatePairwiseForces(List<NodePairForce> algos, IMapper<INode, PointD> map){
-    for(INode n1: graph.getNodes()){
+    graph.getNodes().parallelStream().forEach(n1 -> {
       PointD p1 = nodePositions.getValue(n1);
-      PointD f1 = map.getValue(n1);
+      PointD f1 = new PointD(0, 0);
       for(INode n2: graph.getNodes()){
         if(n1.equals(n2)) continue;
         PointD p2 = nodePositions.getValue(n2);
@@ -245,14 +252,18 @@ public class ForceAlgorithmApplier implements Runnable {
           f1 = PointD.add(f1, force);
         }
       }
-      map.setValue(n1, f1);
-    }
+      synchronized(map){
+        PointD f0 = map.getValue(n1);
+        map.setValue(n1, PointD.add(f0, f1));
+      }
+    });
     return map;
   }
   public IMapper<INode, PointD> calculateNeighbourForces(List<NodeNeighbourForce> algos, IMapper<INode, PointD> map){
-    for(INode n1: graph.getNodes()){
+    //for(INode n1: graph.getNodes()){
+    graph.getNodes().parallelStream().forEach(n1 -> {
       PointD p1 = nodePositions.getValue(n1);
-      PointD f1 = map.getValue(n1);
+      PointD f1 = new PointD(0, 0);
       for(INode n2: graph.neighbors(INode.class, n1)){
         PointD p2 = nodePositions.getValue(n2);
         for(NodeNeighbourForce fa: algos){
@@ -260,17 +271,21 @@ public class ForceAlgorithmApplier implements Runnable {
           f1 = PointD.add(f1, force);
         }
       }
-      map.setValue(n1, f1);
-    }
+      synchronized(map){
+        PointD f0 = map.getValue(n1);
+        map.setValue(n1, PointD.add(f0, f1));
+      }
+    });
     return map;
   }
-
+  
   public IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IMapper<INode, PointD> map) {
     //http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/
-    for (INode n1 : graph.getNodes()) {
+    //for (INode n1 : graph.getNodes()) {
+    graph.getNodes().parallelStream().forEach(n1 -> {
       PointD p1 = nodePositions.getValue(n1);
       Integer n1degree = graph.degree(n1);
-      if(n1degree < 2) continue;
+      if(n1degree < 2) return;
       //nonStrictlyEqualPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).forEach(n2n3 -> {
       List<Tuple3<INode, INode, Double>> neighboursWithAngle = 
       nonEqalPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).map(
@@ -307,8 +322,8 @@ public class ForceAlgorithmApplier implements Runnable {
         seenNodes.add(n3);
         PointD p2 = nodePositions.getValue(n2),
                p3 = nodePositions.getValue(n3);
-        PointD f2 = map.getValue(n2);
-        PointD f3 = map.getValue(n3);
+        PointD f2 = new PointD(0, 0),
+               f3 = new PointD(0, 0);
         LineSegment l1, l2;
         l1 = new LineSegment(p1, p2);
         l2 = new LineSegment(p1, p3);
@@ -322,8 +337,12 @@ public class ForceAlgorithmApplier implements Runnable {
           f2 = PointD.add(f2, forces.a);
           f3 = PointD.add(f3, forces.b);
         }
-        map.setValue(n2, f2);
-        map.setValue(n3, f3);
+        synchronized(map){
+          PointD f2_1 = map.getValue(n2),
+                 f3_1 = map.getValue(n3);
+          map.setValue(n2, PointD.add(f2_1, f2));
+          map.setValue(n3, PointD.add(f3_1, f3));
+        }
         nextFound = false;
         for(Tuple3<INode, INode, Double> next: neighboursWithAngle) {
           if(next.a.equals(n3) && !seenNodes.contains(next.b)){
@@ -333,7 +352,7 @@ public class ForceAlgorithmApplier implements Runnable {
           }
         } 
       } 
-    }
+    });
     return map;
   }
   public static <T1, T2> Stream<Tuple2<T1, T2>> allPairs(Stream<T1> s1, Stream<T2> s2){
@@ -357,7 +376,7 @@ public class ForceAlgorithmApplier implements Runnable {
     });
   }
   public IMapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, IMapper<INode, PointD> map){
-    for(Tuple3<LineSegment, LineSegment, Intersection> ci: cMinimumAngle.getCrossings(graph, Maybe.just(nodePositions))){
+    cMinimumAngle.getCrossings(graph, Maybe.just(nodePositions)).parallelStream().forEach(ci -> {
       LineSegment l1 = ci.a,
                   l2 = ci.b;
       Intersection i = ci.c;
@@ -369,10 +388,10 @@ public class ForceAlgorithmApplier implements Runnable {
              p2 = l1.p2,
              p3 = l2.p1,
              p4 = l2.p2,
-             f1 = map.getValue(n1),
-             f2 = map.getValue(n2),
-             f3 = map.getValue(n3),
-             f4 = map.getValue(n4),
+             f1 = new PointD(0, 0),
+             f2 = new PointD(0, 0),
+             f3 = new PointD(0, 0),
+             f4 = new PointD(0, 0),
              v1 = PointD.add(p1, PointD.negate(p2)),
              v2 = PointD.add(p3, PointD.negate(p4));
     // apply cosinus force
@@ -385,12 +404,17 @@ public class ForceAlgorithmApplier implements Runnable {
         f3 = PointD.add(f3, force2);
         f4 = PointD.add(f4, PointD.negate(force2));   
       }
-    
-      map.setValue(n1, f1);
-      map.setValue(n2, f2);
-      map.setValue(n3, f3);
-      map.setValue(n4, f4);
-    }
+      synchronized(map){
+        PointD f1_1 = map.getValue(n1),
+               f2_1 = map.getValue(n2),
+               f3_1 = map.getValue(n3),
+               f4_1 = map.getValue(n4);
+        map.setValue(n1, PointD.add(f1, f1_1));
+        map.setValue(n2, PointD.add(f2, f2_1));
+        map.setValue(n3, PointD.add(f3, f3_1));
+        map.setValue(n4, PointD.add(f4, f4_1));
+      }
+    });
     return map;
   }
 

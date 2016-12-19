@@ -178,15 +178,21 @@ public class MainFrame extends JFrame {
         });
 
         this.graph.addNodeLayoutChangedListener((o, u, iNodeItemEventArgs) -> {
-            movedNodes.add(u);
+            synchronized(movedNodes){
+                movedNodes.add(u);
+            }
         });
         this.view.addUpdatingListener((o, args) -> {
             MinimumAngle.resetHighlighting(this.graph);
+            Set<INode> movedNodesCP;
+            synchronized(movedNodes){
+                movedNodesCP = new HashSet<>(movedNodes);
+                movedNodes.clear();
+            }
             faa.andThen(f -> {
                 f.clearDrawables();
-                f.resetNodePositions(movedNodes);
+                f.resetNodePositions(movedNodesCP);
             });
-            movedNodes.clear();
         });
 
         /* Add two listeners two the graph */
@@ -344,6 +350,14 @@ public class MainFrame extends JFrame {
             });
         });
         sidePanel.add(showBestSolution, cSidePanel);
+
+        cSidePanel.gridy = sidePanelNextY++;
+        cSidePanel.gridx = 0;
+        JButton showForceAlgoState = new JButton("Show state");
+        showForceAlgoState.addActionListener(e -> {
+            faa.andThen(fa -> fa.showNodePositions());
+        });
+        sidePanel.add(showForceAlgoState, cSidePanel);
     }
 
     private void initMenuBar() {

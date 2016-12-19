@@ -14,7 +14,7 @@ public class Tuple3<A, B, C>{
       b = ab.b;
       c = c1;
     }
-    public Tuple3(Tuple3<A, B, C> abc, C c1){
+    public <D> Tuple3(Tuple3<A, B, D> abc, C c1){
       a = abc.a;
       b = abc.b;
       c = c1;

@@ -35,7 +35,7 @@ public class GridGenerator {
       }
     }
     for(int r = 0; r < rCount; r++){
-      for(int tryC = 0; tryC < 100; tryC++){
+      for(int tryC = 0; tryC < 100000; tryC++){
         int sourceX = rand.nextInt(xCount);
         int sourceY = rand.nextInt(yCount);
         int targetX = rand.nextInt(xCount);
