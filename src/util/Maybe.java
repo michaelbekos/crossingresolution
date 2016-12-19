@@ -1,4 +1,6 @@
 package util;
+
+import java.util.stream.*;
 import java.util.function.*;
 
 public abstract class Maybe<T>{
@@ -49,7 +51,7 @@ public abstract class Maybe<T>{
   public static <T, R> Function<Maybe<T>, Maybe<R>> lift(Function<T, R> f){
     return (m -> m.fmap(el -> f.apply(el)));
   }
-
+  public abstract Stream<T> stream();
 
 
   static class Just<T> extends Maybe<T> {
@@ -66,6 +68,9 @@ public abstract class Maybe<T>{
     public String toString(){
       return "(Just " + t + ")";
     }
+    public Stream<T> stream(){
+      return Stream.of(t);
+    }
   }
 
   static class Nothing<T> extends Maybe<T> { 
@@ -74,6 +79,9 @@ public abstract class Maybe<T>{
     @Override
     public String toString(){
       return "Nothing";
+    }
+    public Stream<T> stream(){
+      return Stream.empty();
     }
   }
 }

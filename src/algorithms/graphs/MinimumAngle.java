@@ -47,7 +47,7 @@ public class MinimumAngle {
     }
     public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
       IMapper<INode, PointD> actualMap = np.getDefault(() -> ForceAlgorithmApplier.initPositionMap(graph));
-      return MinimumAngle.getCrossingsParallelSynch(graph, edgesOnly, actualMap);
+      return MinimumAngle.getCrossingsParallelFlat(graph, edgesOnly, actualMap);
     }
   } // HELPER CLASS ENDS HERE (I always get confused)
 
@@ -88,9 +88,27 @@ public class MinimumAngle {
         LineSegment l1 = new LineSegment(e1, nodePositions),
                     l2 = new LineSegment(e2, nodePositions);
         Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
-        return new Tuple3<LineSegment, LineSegment, Maybe<Intersection>>(l1, l2, i);
-      }).filter(l1l2mi -> l1l2mi.c.hasValue())
-      .map(l1l2mi -> new Tuple3<LineSegment, LineSegment, Intersection>(l1l2mi, l1l2mi.c.get())).collect(Collectors.toList());
+        return i.bind(i1 -> Maybe.just(new Tuple3<LineSegment, LineSegment, Intersection>(l1, l2, i1)));
+      }).filter(m -> m.hasValue())
+      .map(m -> m.get()).collect(Collectors.toList());
+  }
+
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelFlat(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
+    List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
+    Set<IEdge> seenEdges = new HashSet<>();
+    return graph.getEdges().stream().flatMap(e1 -> {
+      seenEdges.add(e1);
+      return graph.getEdges().stream()
+        .filter(e2 -> !seenEdges.contains(e2))
+        .map(e2 -> new Tuple2<IEdge, IEdge>(e1, e2));
+      }).parallel().flatMap(e1e2 -> {
+        IEdge e1 = e1e2.a,
+              e2 = e1e2.b;
+        LineSegment l1 = new LineSegment(e1, nodePositions),
+                    l2 = new LineSegment(e2, nodePositions);
+        Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
+        return i.bind(i1 -> Maybe.just(new Tuple3<LineSegment, LineSegment, Intersection>(l1, l2, i1))).stream();
+      }).collect(Collectors.toList());
   }
 
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelSynch(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
