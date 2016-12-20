@@ -420,7 +420,7 @@ public class ForceAlgorithmApplier implements Runnable {
   }
 
   public static IMapper<INode, PointD> newNodePointMap(){
-    return new Mapper<>(Collections.synchronizedMap(new WeakHashMap<>()));
+    return new Mapper<>(new WeakHashMap<>());
   }
 
   public static IMapper<INode, PointD> initForceMap(IGraph g){
