@@ -46,7 +46,7 @@ public class ForceAlgorithmApplier implements Runnable {
     bestSolution = Maybe.nothing();
   }
   public static IMapper<INode, PointD> copyNodePositionsMap(IMapper<INode, PointD> im, Stream<INode> nodes){
-    IMapper<INode, PointD> res = new Mapper<>(new WeakHashMap<INode, PointD>());
+    IMapper<INode, PointD> res = newNodePointMap();
     nodes.forEach(n -> {
       PointD p1 = im.getValue(n);
       res.setValue(n, im.getValue(n));
@@ -81,7 +81,7 @@ public class ForceAlgorithmApplier implements Runnable {
   }
 
   public static IMapper<INode, PointD> initPositionMap(IGraph g){
-    IMapper<INode, PointD> nodePos = new Mapper<>(new WeakHashMap<>());
+    IMapper<INode, PointD> nodePos = newNodePointMap();
     g.getNodes().stream().forEach(n1 -> {
       PointD p1 = n1.getLayout().getCenter();
       nodePos.setValue(n1, n1.getLayout().getCenter());
@@ -135,7 +135,9 @@ public class ForceAlgorithmApplier implements Runnable {
       while (running){
         long startTime = System.nanoTime();
         this.clearDrawables();
-        nodePositions = applyAlgos();
+        synchronized(nodePositions){
+          nodePositions = applyAlgos();
+        }
         cMinimumAngle.invalidate();
         improveSolution();
         showNodePositions();
@@ -417,8 +419,12 @@ public class ForceAlgorithmApplier implements Runnable {
     return map;
   }
 
+  public static IMapper<INode, PointD> newNodePointMap(){
+    return new Mapper<>(Collections.synchronizedMap(new WeakHashMap<>()));
+  }
+
   public static IMapper<INode, PointD> initForceMap(IGraph g){
-    IMapper<INode, PointD> map = new Mapper<>(new WeakHashMap<>());
+    IMapper<INode, PointD> map = newNodePointMap();
     for(INode n1: g.getNodes()){
       map.setValue(n1, new PointD(0, 0));
     }

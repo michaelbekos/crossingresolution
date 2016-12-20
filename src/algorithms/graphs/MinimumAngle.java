@@ -49,7 +49,10 @@ public class MinimumAngle {
       IMapper<INode, PointD> actualMap = np.getDefault(() -> ForceAlgorithmApplier.initPositionMap(graph));
       return MinimumAngle.getCrossingsParallelFlat(graph, edgesOnly, actualMap);
     }
-  } // HELPER CLASS ENDS HERE (I always get confused)
+  } 
+  /* * * * * * * * * * * * * * * * * * * * * * * * * * * 
+   * HELPER CLASS ENDS HERE (I always get confused)  *
+   * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   public static Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
     return m.getMinimumAngle(graph, np);

@@ -35,7 +35,7 @@ public class CachedMinimumAngle extends MinimumAngle.MinimumAngleHelper {
     debugCacheAccessed();
     cache_getCrossings = cache_getCrossings.orElse(() -> super.getCrossings(graph, edgesOnly, np));
     // now valid
-    return cache_getCrossings.get();
+    return new ArrayList<>(cache_getCrossings.get());
   }
 
 }

@@ -6,6 +6,7 @@ import java.util.function.*;
 public abstract class Maybe<T>{
   public abstract T get();
   public abstract boolean hasValue();
+  private static Nothing nothing_singleton = new Nothing();
   public <R> Maybe<R> bind(Function<T, Maybe<R>> f){
     if(hasValue()){
       return f.apply(get());
@@ -23,8 +24,14 @@ public abstract class Maybe<T>{
   public static <T> Maybe<T> just(T t){
     return new Just<>(t);
   }
+
+  // I KNOW this doesn't typecheck, and it shouldn't, but for Java, 
+  // Nothing<T1> and Nothing<T2> are the same, even for different T1, T2, so this saves memory.
+  // this could be fixed if there was a Type ⊥: ∀ Type T: ⊥ <: T
+  @SuppressWarnings("unchecked")
   public static <T> Maybe<T> nothing(){
-    return new Nothing<>();
+    return (Maybe<T>) nothing_singleton;
+    //return new Nothing<>();
   }
   public static <T> Maybe<T> lift(T t){
     return Maybe.just(t);
