@@ -16,11 +16,34 @@ import util.graph2d.*;
  */
 public abstract class InitForceAlgorithm {
     public final static Function<PointD, PointD> rotate = (p -> new PointD(p.getY(), -p.getX()));
-
+    public static double clamp(double x, double min, double max){
+        return Math.min(max, Math.max(min, x));
+    }
     public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations, GraphComponent view, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, progressBar, infoLabel);
-        
-        fd.algos.add(new NodePairForce(p1 -> (p2 -> {
+        fd.algos.add(new NodeNeighbourForce(p1 -> p2 -> {
+            double springNaturalLength = 100;
+            PointD t = PointD.subtract(p2, p1);
+            double dist = t.getVectorLength();
+            if(dist <= G.Epsilon){
+                return new PointD(0, 0);
+            }
+            t = PointD.div(t, dist);
+            double x = dist - springNaturalLength;
+            x = x / springNaturalLength;
+            double forceStrength = Math.atan(Math.pow(x, 4)) * x;
+            if(Double.isNaN(forceStrength)) {
+                System.out.println("!NaN!");
+                System.out.println(dist);
+                return new PointD(0, 0);
+            }
+            System.out.println(forceStrength * fd.modifiers[1]);
+            t = PointD.times(t, forceStrength);
+            //return new PointD(0, 0);
+            return t;
+        }));
+
+        fd.algos.add(new NodePairForce(p1 -> p2 -> {
             double electricalRepulsion = 50000,
                     threshold = fd.modifiers[0];
             PointD t = PointD.subtract(p1, p2);
@@ -31,8 +54,8 @@ public abstract class InitForceAlgorithm {
             t = PointD.div(t, dist);
             t = PointD.times(threshold * electricalRepulsion / Math.pow(dist, 2), t);
             return t;
-        })));
-        fd.algos.add(new NodeNeighbourForce(p1 -> (p2 -> {
+        }));
+        /*fd.algos.add(new NodeNeighbourForce(p1 -> p2 -> {
             double springStiffness = 150,
                     springNaturalLength = 100,
                     threshold = fd.modifiers[1];
@@ -45,9 +68,9 @@ public abstract class InitForceAlgorithm {
             //t = PointD.times(threshold * springStiffness * Math.log(dist / springNaturalLength), t);
             t = PointD.times(t, threshold * (dist - springNaturalLength));
             return t;
-        })));
+        }));*/
 
-        fd.algos.add(new CrossingForce(e1 -> (e2 -> (angle -> {
+        fd.algos.add(new CrossingForce(e1 -> e2 -> angle -> {
             double threshold = fd.modifiers[2];
             if(e1.getVectorLength() <= G.Epsilon ||
                     e2.getVectorLength() <= G.Epsilon){
@@ -82,9 +105,9 @@ public abstract class InitForceAlgorithm {
             t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
         */
 
-        }))));
+        }));
 
-        fd.algos.add(new IncidentEdgesForce(e1 -> (e2 -> (angle -> (deg -> {
+        fd.algos.add(new IncidentEdgesForce(e1 -> e2 -> angle -> deg -> {
             if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
             double threshold = fd.modifiers[3],
                     optAngle = (360 / deg);
@@ -102,7 +125,7 @@ public abstract class InitForceAlgorithm {
             t2 = PointD.negate(t2);
             t2 = rotate.apply(t2);
             return new Tuple2<>(t1, t2);
-        })))));
+        }));
         return fd;
     }
 }
