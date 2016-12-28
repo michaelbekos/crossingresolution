@@ -4,6 +4,7 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 
+import io.ContestIOHandler;
 import util.*;
 
 import javax.swing.*;
@@ -113,6 +114,13 @@ public class InitMenuBar {
         openItem.setText("Open");
         openItem.addActionListener(this::openItemActionPerformed);
         fileMenu.add(openItem);
+
+        JMenuItem openContestItem = new JMenuItem();
+        openContestItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
+        openContestItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
+        openContestItem.setText("Open Contest File");
+        openContestItem.addActionListener(this::openContestItemActionPerformed);
+        fileMenu.add(openContestItem);
 
         JMenuItem reloadItem = new JMenuItem();
         reloadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
@@ -279,6 +287,34 @@ public class InitMenuBar {
 
             try {
                 this.view.importFromGraphML(fileNamePath);
+                this.view.fitGraphBounds();
+                this.view.updateUI();
+                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
+
+            } catch (IOException ioe) {
+                this.infoLabel.setText("An error occured while reading the input file.");
+            }
+        }
+    }
+
+    private void openContestItemActionPerformed(ActionEvent evt) {
+        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
+        chooser.setFileFilter(new FileFilter() {
+            public boolean accept(File file) {
+                return (file.isDirectory() || file.toString().toLowerCase().endsWith("txt"));
+            }
+
+            public String getDescription() {
+                return "ASCII Files [.txt]";
+            }
+
+        });
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            this.fileNamePath = chooser.getSelectedFile().toString();
+
+            try {
+                ContestIOHandler.read(this.graph, this.fileNamePath);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
