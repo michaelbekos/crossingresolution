@@ -54,12 +54,17 @@ public class ContestIOHandler extends GraphIOHandler {
     }
   }
 
+
   public static void write(IGraph graph, String outputFileName) throws IOException {
     GridPositioning.gridGraph(graph);
     BufferedWriter out = Files.newBufferedWriter(Paths.get(outputFileName));
-    out.write(graph.getNodes().size());
+    out.write("# First value is number of nodes (N)");
     out.newLine();
-
+    long size = graph.getNodes().size();
+    out.write(size + " ");
+    out.newLine();
+    out.write("# Next N numbers describe the node locations");
+    out.newLine();
     for(INode n: graph.getNodes()){
       long x, y;
       PointD pos = n.getLayout().getCenter();
@@ -68,6 +73,12 @@ public class ContestIOHandler extends GraphIOHandler {
       out.write(x + " " + y);
       out.newLine();
     }
+    out.write("# Remaining lines are the edges.");
+    out.newLine();
+    out.write("# The first value is the source node index.");
+    out.newLine();
+    out.write("# The second value is the target node index.");
+    out.newLine();
     for(IEdge e: graph.getEdges()){
       int source, target;
       // hack: get index of node by doing toString, then parsing, since nodes have their index as label by default.
@@ -77,5 +88,6 @@ public class ContestIOHandler extends GraphIOHandler {
       out.write(source + " " + target);
       out.newLine();
     }
+    out.close();
   }
 }
