@@ -23,8 +23,8 @@ public class GridPositioning {
 
     private IGraph graph;
     private static IMapper<INode, PointD> nodePositions;
-    private Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
-    private Comparator<Tuple3<PointD, PointD, Double>> byAngles = (p1, p2) -> p1.c.compareTo(p2.c);
+    private static Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
+    private static Comparator<Tuple3<PointD, PointD, Double>> byAngles = (p1, p2) -> p1.c.compareTo(p2.c);
 
 
     /**
@@ -36,6 +36,18 @@ public class GridPositioning {
         nodePositions = ForceAlgorithmApplier.initPositionMap(this.graph);
     }
 
+    public static void gridGraph(IGraph g){
+        GridPositioning grid = new GridPositioning(g);
+        boolean gridding = grid.isGridded(g);
+        
+        while (gridding == false) {
+            ForceAlgorithmApplier.applyNodePositionsToGraph(g, grid.getGridNodesRespectively());
+
+            grid.removeOverlaps(0.1);
+            gridding = grid.isGridded(g);
+        }
+        
+    }
     /**
      * Computes integer grid points respectively by crossing angle if such exists
      * Otherwise respectively to the minimum angle of the graph

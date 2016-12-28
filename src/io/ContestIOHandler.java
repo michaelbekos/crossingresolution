@@ -1,5 +1,7 @@
 package io;
 
+import algorithms.graphs.GridPositioning;
+
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.geometry.PointD;
 
@@ -53,6 +55,27 @@ public class ContestIOHandler extends GraphIOHandler {
   }
 
   public static void write(IGraph graph, String outputFileName) throws IOException {
-    
+    GridPositioning.gridGraph(graph);
+    BufferedWriter out = Files.newBufferedWriter(Paths.get(outputFileName));
+    out.write(graph.getNodes().size());
+    out.newLine();
+
+    for(INode n: graph.getNodes()){
+      long x, y;
+      PointD pos = n.getLayout().getCenter();
+      x = Math.round(pos.getX());
+      y = Math.round(pos.getY());
+      out.write(x + " " + y);
+      out.newLine();
+    }
+    for(IEdge e: graph.getEdges()){
+      int source, target;
+      // hack: get index of node by doing toString, then parsing, since nodes have their index as label by default.
+      source = Integer.parseInt(e.getSourceNode().toString());
+      target = Integer.parseInt(e.getTargetNode().toString());
+      
+      out.write(source + " " + target);
+      out.newLine();
+    }
   }
 }
