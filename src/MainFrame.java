@@ -554,19 +554,18 @@ public class MainFrame extends JFrame {
      * Implementation of actions
      ********************************************************************/
     private void gridCrossingItemActionPerformed(ActionEvent evt) {
-        GridPositioning grid = new GridPositioning(this.graph);
         boolean gridding = false;
         if(ForceAlgorithmApplier.class != null) {
             while (gridding == false) {
-                ForceAlgorithmApplier.applyNodePositionsToGraph(this.graph, grid.getGridNodesRespectively());
+                GridPositioning.gridGraph(this.graph);
                 //grid.removeOverlapsOrganic();
-                grid.removeOverlaps(0.1);
-                if(grid.isGridded(this.graph)){
+                GridPositioning.removeOverlaps(this.graph, 0.1);
+                if(GridPositioning.isGridded(this.graph)){
                     gridding = true;
                 }
             }
         }
-        System.out.println("Graph is gridded: " + grid.isGridded(this.graph));
+        System.out.println("Graph is gridded: " + GridPositioning.isGridded(this.graph));
         this.view.updateUI();
     }
 
@@ -684,8 +683,7 @@ public class MainFrame extends JFrame {
     }
 
     private void jitterItemActionPerformed(ActionEvent evt) {
-        GridPositioning grid = new GridPositioning(this.graph);
-        grid.removeOverlaps(5);
+        GridPositioning.removeOverlaps(this.graph, 5);
         this.view.updateUI();
     }
 
