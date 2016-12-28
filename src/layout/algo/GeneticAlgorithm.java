@@ -92,12 +92,21 @@ public class GeneticAlgorithm<T> implements Runnable {
       f.accept(instances.get(instances.size() - 1));
     });
   }
+  public void runRounds(int count){
+    running = true;
+    for(int i = 0; i < count && running; i++){
+      iterate();
+    } 
+  }
+  public void iterate(){
+    runRound();
+    nextGeneration();
+    notifyChanged();
+  }
   public void runIndefinitely(){
     running = true;
     while(running){
-      runRound();
-      nextGeneration();
-      notifyChanged();
+      iterate();
       try {
         Thread.sleep(1);
       } catch (InterruptedException exc) {
