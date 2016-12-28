@@ -15,9 +15,8 @@ public class GridGenerator {
       nodes[x] = new INode[yCount];
       for(int y = 0; y < yCount; y++){
         PointD pos = new PointD(500 + 50 * x, 500 + 50 * y);
-        INode n = g.createNode();
+        INode n = g.createNode(pos);
         nodes[x][y] = n;
-        g.setNodeCenter(n, pos);
       }
     }
     for(int x = 0; x < xCount - 1; x++){

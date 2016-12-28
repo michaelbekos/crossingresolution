@@ -11,8 +11,7 @@ public class HypercubeGenerator {
   public static Random rand = new Random();
   public static void generate(IGraph g, int dimension){
     g.clear();
-    INode n0 = g.createNode();
-    g.setNodeCenter(n0, new PointD(500, 500));
+    INode n0 = g.createNode(new PointD(500, 500));
     PointD dir = new PointD(0, 100);
     Matrix2D rot = Matrix2D.createRotateInstance(Math.PI / dimension);
     for (int d = 1; d <= dimension; d++){
@@ -21,11 +20,10 @@ public class HypercubeGenerator {
       INode[] newNodes = new INode[oldNodes.size()];
       int i = 0;
       for(INode nOld: oldNodes){
-        INode nNew = g.createNode();
-        newNodes[i] = nNew;
         PointD oldPos = nOld.getLayout().getCenter();
         PointD newPos = PointD.add(oldPos, dir);
-        g.setNodeCenter(nNew, newPos);
+        INode nNew = g.createNode(newPos);
+        newNodes[i] = nNew;
         g.createEdge(nOld, nNew);
         i++;
       }
