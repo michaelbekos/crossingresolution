@@ -145,7 +145,7 @@ public class MainFrame extends JFrame {
         this.graphEditorInputMode = new GraphEditorInputMode();
         this.graphEditorInputMode.setCreateNodeAllowed(true);
         this.graphEditorInputMode.setCreateEdgeAllowed(true);
-        this.graphEditorInputMode.setCreateBendAllowed(true);
+        this.graphEditorInputMode.setCreateBendAllowed(false);
         this.graphEditorInputMode.setEditLabelAllowed(true);
         this.graphEditorInputMode.addPopulateItemPopupMenuListener((o, iModelItemPopulateItemPopupMenuEventArgs) -> {
             if (iModelItemPopulateItemPopupMenuEventArgs.getItem() instanceof INode) {
@@ -204,7 +204,7 @@ public class MainFrame extends JFrame {
         this.isGridVisible = true;
         this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
         this.graphSnapContext.setNodeGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
-        this.graphSnapContext.setBendGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
+        //this.graphSnapContext.setBendGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
 
         /* Default Node Styling */
         this.defaultNodeStyle = new ShinyPlateNodeStyle();
