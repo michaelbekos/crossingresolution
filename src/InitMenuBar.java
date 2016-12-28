@@ -144,6 +144,13 @@ public class InitMenuBar {
         saveAsItem.addActionListener(this::saveAsItemActionPerformed);
         fileMenu.add(saveAsItem);
 
+        JMenuItem exportItem = new JMenuItem();
+        exportItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+        exportItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
+        exportItem.setText("Export");
+        exportItem.addActionListener(this::exportItemActionPerformed);
+        fileMenu.add(exportItem);
+
         JMenuItem quitItem = new JMenuItem();
         quitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
         quitItem.setIcon(new ImageIcon(getClass().getResource("/resources/exit-16.png")));
@@ -197,6 +204,7 @@ public class InitMenuBar {
 
         return this.mainMenuBar;
     }
+
 
 
     private void fitContentItemActionPerformed(ActionEvent evt) {
@@ -374,6 +382,43 @@ public class InitMenuBar {
             }
         }
     }
+
+    private void exportItemActionPerformed(ActionEvent evt) {
+        if (this.fileNamePath != null) {
+            try {
+                System.out.println(this.fileNamePath);
+                ContestIOHandler.write(this.graph, this.fileNamePath);
+            } catch (IOException ioe) {
+                this.infoLabel.setText("An error occured while exporting the graph.");
+            }
+        } else {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileFilter(new FileFilter() {
+                public boolean accept(File file) {
+                    return (file.isDirectory() || file.toString().toLowerCase().endsWith(".txt"));
+                }
+
+                public String getDescription() {
+                    return "ASCII Files [.txt]";
+                }
+
+            });
+            if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                this.fileNamePath = chooser.getSelectedFile().toString();
+                if (!this.fileNamePath.toLowerCase().endsWith(".txt")) {
+                    this.fileNamePath = this.fileNamePath + ".txt";
+                }
+                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
+
+                try {
+                   ContestIOHandler.write(this.graph, this.fileNamePath);
+                } catch (IOException ioe) {
+                    this.infoLabel.setText("An error occured while exporting the graph.");
+                }
+            }
+        }
+    }
+
 
     private void saveAsItemActionPerformed(ActionEvent evt) {
         JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
