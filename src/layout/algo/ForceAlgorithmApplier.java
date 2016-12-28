@@ -224,10 +224,11 @@ public class ForceAlgorithmApplier implements Runnable {
    */
   public void displayVectors(IMapper<INode, PointD> map) {
     for(INode u: graph.getNodes()){
-      YVector vector = new YVector(map.getValue(u).getX(), map.getValue(u).getY());
-      this.canvasObjects.add(this.view.getBackgroundGroup()
-            .addChild(new VectorVisual(this.view, vector, u, Color.GREEN),
-                ICanvasObjectDescriptor.VISUAL));
+      PointD vector = map.getValue(u);
+      System.out.println(vector);
+      this.canvasObjects.add(this.view.getBackgroundGroup().addChild(
+        new VectorVisual(this.view, vector, u, Color.GREEN),
+        ICanvasObjectDescriptor.VISUAL));
     }
     this.view.updateUI();
   }

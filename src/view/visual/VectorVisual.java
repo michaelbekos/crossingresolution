@@ -1,7 +1,6 @@
 package view.visual;
 
-import com.yworks.yfiles.algorithms.YPoint;
-import com.yworks.yfiles.algorithms.YVector;
+import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.IRenderContext;
@@ -19,7 +18,7 @@ public class VectorVisual implements IVisual, IVisualCreator {
 
     /** Instance Variables */
     private GraphComponent view;
-    private YVector vector;
+    private PointD vector;
     private INode node;
     private Color color;
 
@@ -27,21 +26,22 @@ public class VectorVisual implements IVisual, IVisualCreator {
      * Creates a new instance of EnclosingRectangle by setting the given
      * color as the color of it boundary.
      */
-    public VectorVisual(GraphComponent view, YVector vector, INode node, Color color)
+    public VectorVisual(GraphComponent view, PointD vector, INode node, Color color)
     {
         this.view = view;
-        this.vector = new YVector(vector);
-        this.vector.scale(100);
+        this.vector = new PointD(vector);
+        this.vector = PointD.times(100, vector);
         this.node = node;
         this.color = color;
     }
 
     @Override
     public void paint(IRenderContext iRenderContext, Graphics2D graphics2D) {
-        int bottomLeftX = (int) this.node.getLayout().getCenter().x;
-        int bottomLeftY = (int) this.node.getLayout().getCenter().y;
+        PointD p = node.getLayout().getCenter();
+        int bottomLeftX = (int) p.getX();
+        int bottomLeftY = (int) p.getY();
 
-        YPoint topRight = YVector.add(new YPoint(bottomLeftX, bottomLeftY), vector);
+        PointD topRight = PointD.add(p, vector);
 
         int topRightX = (int) topRight.getX();
         int topRightY = (int) topRight.getY();
@@ -54,12 +54,13 @@ public class VectorVisual implements IVisual, IVisualCreator {
     /**
      * Returns the bounds of this drawable.
      */
-    public java.awt.Rectangle getBounds()
-    {
-        double bottomLeftX = this.node.getLayout().getCenter().x;
-        double bottomLeftY = this.node.getLayout().getCenter().y;
+    public java.awt.Rectangle getBounds() {
+        PointD p = node.getLayout().getCenter();
+        int bottomLeftX = (int) p.getX();
+        int bottomLeftY = (int) p.getY();
 
-        YPoint topRight = YVector.add(new YPoint(bottomLeftX, bottomLeftY), vector);
+
+        PointD topRight = PointD.add(p, vector);
 
         double topRightX = topRight.getX();
         double topRightY = topRight.getY();

@@ -155,7 +155,8 @@ public abstract class ForceDirectedAlgorithm  implements Runnable
             while (it.hasNext())
             {
                 YVector temp = it.next();
-                this.canvasObjects.add(this.view.getBackgroundGroup().addChild(new VectorVisual(this.view, temp, u, Color.RED), ICanvasObjectDescriptor.VISUAL));
+                PointD temp2 = new PointD(temp.getX(), temp.getY());
+                this.canvasObjects.add(this.view.getBackgroundGroup().addChild(new VectorVisual(this.view, temp2, u, Color.RED), ICanvasObjectDescriptor.VISUAL));
                 vector.add(temp);
             }
         }
