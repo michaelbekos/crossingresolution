@@ -15,7 +15,7 @@ public abstract class InitGeneticAlgorithm {
     public static Random rand = new Random();
     
     public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(ForceAlgorithmApplier firstFAA, IGraph graph, GraphComponent view, Maybe<JLabel> infoLabel){
-          GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm = GeneticAlgorithm.newGeneticAlgorithm_FunGen(
+          GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm = new GeneticAlgorithm<>(
                   (faa -> {
                       faa.runNoDraw();
                       return faa;
@@ -36,8 +36,8 @@ public abstract class InitGeneticAlgorithm {
                               a2 = ma2.get();
                       return a1.compareTo(a2);
                   }),
-                  20,
-                  (fa -> {
+                  Maybe.just(20),
+                  Either.left(fa -> {
                       IMapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions, graph.getNodes().stream());
   
                       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossingsSorted(graph, Maybe.just(nodePositions));

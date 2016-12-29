@@ -8,6 +8,7 @@ import com.yworks.yfiles.view.input.*;
 import com.yworks.yfiles.geometry.PointD;
 
 import java.util.*;
+import java.util.function.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.file.*;
@@ -16,12 +17,33 @@ public class BatchOptimizer {
   static GraphComponent view;
   static IGraph graph;
   static int rounds = 100;
+  static int initTime = 100;
   public static Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
   public static Boolean[] algoModifiers = new Boolean[]{false, false};
+  public static void tryParse(String content, Consumer<Integer> field, String fieldName){
+    try{
+      field.accept(Integer.parseInt(content));
+    }
+    catch(Exception e){
+      printUsage();
+      System.out.println("Error parsing " + content + " as " + fieldName + ".");            
+    }
+  }
+  public static void parseArgs(String[] args, List<Tuple3<Predicate<String>, Consumer<Integer>, String>> matchArgs){
+    for(int i = 0; i < args.length - 1; i++){
+      String testString = args[i];
+      for(Tuple3<Predicate<String>, Consumer<Integer>, String> matchArg: matchArgs){
+        if(matchArg.a.test(testString)){
+          tryParse(args[i+1], matchArg.b, matchArg.c);
+          break;
+        }
+      }
+    }
+  }
 
   public static void printUsage(){
     String msg = "Usage:\n"
-    + "\tjava BatchOptimizer [-r rounds] path-to-rome-graphs\n";
+    + "\tjava BatchOptimizer [-i init-time] [-r rounds] path-to-rome-graphs\n";
     System.out.println(msg);
   }
   public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
@@ -36,20 +58,12 @@ public class BatchOptimizer {
       printUsage();
       return;
     }
-    else {
-      path = args[args.length - 1];
-      for(int i = 0; i < args.length - 1; i++){
-        if(args[i] == "-r"){
-          try{
-            rounds = Integer.parseInt(args[i + 1]);
-          }
-          catch(Exception e){
-            printUsage();
-            System.out.println("Error parsing " + args[i + 1] + " as rounds count.");            
-          }
-        }
-      }
-    }
+    path = args[args.length - 1];
+    List<Tuple3<Predicate<String>, Consumer<Integer>, String>> parsers = new LinkedList<>();
+    parsers.add(new Tuple3<>(s -> s == "-r", v -> {rounds = v;}, "rounds count"));
+    parsers.add(new Tuple3<>(s -> s == "-f", v -> {initTime = v;}, "time"));
+    parseArgs(args, parsers);
+    
     view = new GraphComponent();
     graph = view.getGraph();
     
@@ -67,7 +81,7 @@ public class BatchOptimizer {
   public static void runAlgo(Path romeGraph, Path outFile) throws IOException {
     view.importFromGraphML(romeGraph.toFile());
     ForceAlgorithmApplier.init();
-    ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(100);
+    ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
     GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAA, graph, view, Maybe.nothing());
     ga.runRounds(rounds);
     ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {

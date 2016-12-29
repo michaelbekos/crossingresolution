@@ -20,36 +20,18 @@ public class GeneticAlgorithm<T> implements Runnable {
   public boolean running = false;
   public Maybe<Consumer<T>> bestChanged = Maybe.nothing();
 
-  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_ListGen(Function<T, T> adv, Comparator<T> sf, Function<List<T>, T> gen){
-    return new GeneticAlgorithm<>(adv, sf, Maybe.nothing(), gen);
-  }
-  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Function<T, T> gen){
-    return newGeneticAlgorithm_FunGen(adv, sf, Maybe.nothing(), gen);
-  }
-  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Integer desiredIC, Function<T, T> gen){
-    GeneticAlgorithm<T> ga = newGeneticAlgorithm_FunGen(adv, sf, Maybe.just(desiredIC), gen);
-    ga.instances = new ArrayList<>(desiredIC);
-    return ga;
-  }
-  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_FunGen(Function<T, T> adv, Comparator<T> sf, Maybe<Integer> desiredIC, Function<T, T> gen){
-    Function<List<T>, T> genList = (l -> {
-      int listElemIndex = rand.nextInt(l.size());
-      T listElem = l.get(listElemIndex);
-      return gen.apply(listElem);
-    });
-    return new GeneticAlgorithm<>(adv, sf, desiredIC, genList);
-  }
-  public static <T> GeneticAlgorithm<T> newGeneticAlgorithm_ListGen(Function<T, T> adv, Comparator<T> sf, Integer desiredIC, Function<List<T>, T> gen){
-    GeneticAlgorithm<T> ga = new GeneticAlgorithm<>(adv, sf, Maybe.just(desiredIC), gen);
-    ga.instances = new ArrayList<>(desiredIC);
-    return ga;
-  }
-
-  GeneticAlgorithm(Function<T, T> adv, Comparator<T> sf, Maybe<Integer> desiredIC, Function<List<T>, T> gen){
+  public GeneticAlgorithm(Function<T, T> adv, Comparator<T> sf, Maybe<Integer> desiredIC, Either<Function<T, T>, Function<List<T>, T>> gen){
     advance = adv;
     scoring = sf;
     desiredInstanceCount = desiredIC;
-    generator = gen;
+    desiredInstanceCount.andThen(di -> instances = new ArrayList<>(di));
+    generator = gen.match(
+      left -> (l -> {
+        int listElemIndex = rand.nextInt(l.size());
+        T listElem = l.get(listElemIndex);
+        return left.apply(listElem);
+      }), 
+      right -> right);
   }
 
   public void runRound(){
