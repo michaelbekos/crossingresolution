@@ -1,10 +1,17 @@
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.LayoutUtilities;
+import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
+import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 
 import io.ContestIOHandler;
+import layout.algo.ForceDirectedAlgorithm;
+import layout.algo.ForceDirectedFactory;
+import layout.algo.event.AlgorithmEvent;
+import layout.algo.event.AlgorithmListener;
 import util.*;
 
 import javax.swing.*;
@@ -14,6 +21,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 
 /**
  * Created by khokhi on 10.12.16.
@@ -23,6 +31,7 @@ public class InitMenuBar {
     private JMenu fileMenu = new JMenu();
     private JMenuBar mainMenuBar = new JMenuBar();
     private JMenuItem newMenuItem = new JMenu();
+    private JProgressBar progressBar;
 
     private JMenu layoutMenu = new JMenu();
     private IGraph graph;
@@ -36,7 +45,7 @@ public class InitMenuBar {
     private String fileNamePath;
     private String fileNamePathFolder;
 
-    public InitMenuBar(JMenuBar mainMenuBar, JMenu layoutMenu, JMenu viewMenu, IGraph graph, JLabel infoLabel, GraphComponent view,
+    public InitMenuBar(JMenuBar mainMenuBar, JMenu layoutMenu, JMenu viewMenu, IGraph graph, JLabel infoLabel, GraphComponent view, JProgressBar progressBar,
                        GraphEditorInputMode graphEditorInputMode, OrganicLayout defaultLayouter, String filePathFolder, String filePath) {
         this.mainMenuBar = mainMenuBar;
         this.layoutMenu = layoutMenu;
@@ -48,6 +57,7 @@ public class InitMenuBar {
         this.defaultLayouter = defaultLayouter;
         this.fileNamePathFolder = filePathFolder;
         this.fileNamePath = filePath;
+        this.progressBar = progressBar;
     }
 
 
@@ -194,8 +204,41 @@ public class InitMenuBar {
 
         layoutMenu.setText("Layout");
 
+        /* View Menu */
+        JMenu yFileslayoutMenu = new JMenu();
+        yFileslayoutMenu.setText("yFiles Layout");
 
+        JMenuItem orthogonalItem = new JMenuItem();
+        orthogonalItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        orthogonalItem.setText("Orthogonal");
+        orthogonalItem.addActionListener(this::orthogonalItemActionPerformed);
+        yFileslayoutMenu.add(orthogonalItem);
 
+        JMenuItem circularItem = new JMenuItem();
+        circularItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        circularItem.setText("Circular");
+        circularItem.addActionListener(this::circularItemActionPerformed);
+        yFileslayoutMenu.add(circularItem);
+
+        JMenuItem treeItem = new JMenuItem();
+        treeItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        treeItem.setText("Tree");
+        treeItem.addActionListener(this::treeItemActionPerformed);
+        yFileslayoutMenu.add(treeItem);
+
+        JMenuItem organicItem = new JMenuItem();
+        organicItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        organicItem.setText("Organic");
+        organicItem.addActionListener(this::organicItemActionPerformed);
+        yFileslayoutMenu.add(organicItem);
+
+        JMenuItem yFilesSpringEmbedderItem = new JMenuItem();
+        yFilesSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        yFilesSpringEmbedderItem.setText("yFiles Spring Embedder");
+        yFilesSpringEmbedderItem.addActionListener(this::yFilesSpringEmbedderItemActionPerformed);
+        yFileslayoutMenu.add(yFilesSpringEmbedderItem);
+
+        mainMenuBar.add(yFileslayoutMenu);
     /*JMenuItem minimumAngleImprovementItem = new JMenuItem();
     minimumAngleImprovementItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
     minimumAngleImprovementItem.setText("Testing Improvement of Minimal Crossing Angle");
@@ -419,6 +462,44 @@ public class InitMenuBar {
         }
     }
 
+    private void yFilesSpringEmbedderItemActionPerformed(ActionEvent evt){
+        JTextField iterationsTextField = new JTextField("1000");
+        int iterations = 1000;
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                iterations = Integer.parseInt(iterationsTextField.getText());
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
+            public void calculateVectors() {
+                ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
+                ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
+            }
+        };
+        fd.addAlgorithmListener(new AlgorithmListener() {
+            public void algorithmStarted(AlgorithmEvent evt) {
+            }
+
+            public void algorithmFinished(AlgorithmEvent evt) {
+                progressBar.setValue(0);
+                view.fitContent();
+                view.updateUI();
+            }
+
+            public void algorithmStateChanged(AlgorithmEvent evt) {
+                progressBar.setValue(evt.currentStatus());
+            }
+        });
+        Thread thread = new Thread(fd);
+        thread.start();
+        this.view.updateUI();
+    }
 
     private void saveAsItemActionPerformed(ActionEvent evt) {
         JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
@@ -448,5 +529,24 @@ public class InitMenuBar {
         }
     }
 
+    private void organicItemActionPerformed(ActionEvent evt) {
+        LayoutUtilities.morphLayout(this.view, new OrganicLayout(), Duration.ofSeconds(1), null);
+    }
+
+    private void circularItemActionPerformed(ActionEvent evt) {
+        LayoutUtilities.morphLayout(this.view, new CircularLayout(), Duration.ofSeconds(1), null);
+    }
+
+    private void orthogonalItemActionPerformed(ActionEvent evt) {
+        LayoutUtilities.morphLayout(this.view, new OrthogonalLayout(), Duration.ofSeconds(1), null);
+    }
+
+    private void treeItemActionPerformed(ActionEvent evt) {
+        try {
+            LayoutUtilities.morphLayout(this.view, new TreeLayout(), Duration.ofSeconds(1), null);
+        } catch (Exception exc) {
+            this.infoLabel.setText("The input graph is not a tree or a forest.");
+        }
+    }
 
 }
