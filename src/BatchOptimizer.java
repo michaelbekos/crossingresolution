@@ -69,6 +69,10 @@ public class BatchOptimizer {
     
     Path romeFolder = Paths.get(path);
     String outFolder = path + File.separator + "out";
+    File file = new File(outFolder);
+    if(!file.isDirectory()){
+      file.mkdir();
+    }
     DirectoryStream<Path> romeFolderStream = Files.newDirectoryStream(romeFolder, "*.graphml");
     for(Path romeGraph: romeFolderStream){
       System.out.println(romeGraph);
