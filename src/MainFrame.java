@@ -18,6 +18,8 @@ import util.graph2d.*;
 import util.graph2d.LineSegment;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -64,6 +66,7 @@ public class MainFrame extends JFrame {
 
     public final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
     public final Boolean[] algoModifiers = new Boolean[]{false, false};
+    private int magicNumber = 250;
 
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
 
@@ -261,15 +264,32 @@ public class MainFrame extends JFrame {
         GridBagConstraints cSidePanel = new GridBagConstraints();
         //WARNING: POST-INCREMENT!
         cSidePanel.gridy = sidePanelNextY++;
+        cSidePanel.gridx = 0;
+        sidePanel.add(new JLabel("Genetic Instances"), cSidePanel);
+        JSlider geneticSlider = new JSlider(0, 1000);
+        geneticSlider.setSize(0, 1000);
+        geneticSlider.setValue(magicNumber);
+        geneticSlider.addChangeListener(e-> {
+            JSlider source = (JSlider) e.getSource();
+            magicNumber = source.getValue();
+            System.out.println("magic number:" + magicNumber);
+        });
+        cSidePanel.gridx = 0;
+        cSidePanel.gridy = sidePanelNextY++;
+        sidePanel.add(geneticSlider, cSidePanel);
+        cSidePanel.gridy = sidePanelNextY++;
         JButton startGenetic = new JButton("Start genetic algo"),
                 stopGenetic  = new JButton("Stop genetic algo");
         startGenetic.addActionListener(this::startGeneticClicked);
         stopGenetic.addActionListener(this::stopGeneticClicked);
-
         sidePanel.add(startGenetic, cSidePanel);
         cSidePanel.gridx = 1;
         sidePanel.add(stopGenetic, cSidePanel);
         cSidePanel.gridy = sidePanelNextY++;
+
+        cSidePanel.gridx = 0;
+        cSidePanel.gridy = sidePanelNextY++;
+
         JRadioButton forceDirectionPerpendicular = new JRadioButton("Perpendicular"),
                 forceDirectionNonPerpendicular = new JRadioButton("Non Perpendicular");
         cSidePanel.gridx = 0;
@@ -757,7 +777,7 @@ public class MainFrame extends JFrame {
     public GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
     public Thread geneticAlgorithmThread;
     public void initializeGeneticAlgorithm(){
-        ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(250);
+        ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(magicNumber);
         geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAA, graph, view, Maybe.just(infoLabel));
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
