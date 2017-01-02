@@ -60,8 +60,8 @@ public class BatchOptimizer {
     }
     path = args[args.length - 1];
     List<Tuple3<Predicate<String>, Consumer<Integer>, String>> parsers = new LinkedList<>();
-    parsers.add(new Tuple3<>(s -> s == "-r", v -> {rounds = v;}, "rounds count"));
-    parsers.add(new Tuple3<>(s -> s == "-f", v -> {initTime = v;}, "time"));
+    parsers.add(new Tuple3<>(s -> s == "-r", v -> rounds = v, "rounds count"));
+    parsers.add(new Tuple3<>(s -> s == "-f", v -> initTime = v, "time"));
     parseArgs(args, parsers);
     
     view = new GraphComponent();
