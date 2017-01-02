@@ -1,4 +1,7 @@
 
+import com.yworks.yfiles.layout.organic.OrganicLayout;
+import layout.algo.event.AlgorithmEvent;
+import layout.algo.event.AlgorithmListener;
 import util.*;
 import layout.algo.*;
 
@@ -7,6 +10,7 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import com.yworks.yfiles.geometry.PointD;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.function.*;
 import java.io.*;
@@ -84,6 +88,15 @@ public class BatchOptimizer {
   }
   public static void runAlgo(Path romeGraph, Path outFile) throws IOException {
     view.importFromGraphML(romeGraph.toFile());
+    LayoutUtilities.applyLayout(graph, new OrganicLayout());
+    /*ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, 1000) {
+      public void calculateVectors() {
+        ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
+        ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
+      }
+    };*/
+
+
     ForceAlgorithmApplier.init();
     ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
     GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAA, graph, view, Maybe.nothing());
