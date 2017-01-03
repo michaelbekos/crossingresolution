@@ -6,3 +6,6 @@
 src/yfiles-for-java.jar
 out/
 /src/*.log
+/rome/*
+!/rome/out/
+!/rome/out/*
