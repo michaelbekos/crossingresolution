@@ -15,6 +15,8 @@ import util.*;
 import util.graph2d.Intersection;
 import util.graph2d.LineSegment;
 
+import static layout.algo.ForceAlgorithmApplier.newNodePointMap;
+
 /**
  * Created by Jessica Wolz on 01.12.16.
  */
@@ -29,22 +31,37 @@ public class GridPositioning {
      * Constructor
      * @param graph - input graph
      */
-   // public GridPositioning(IGraph graph) {
-     //   this.graph = graph;
-     //   this.nodePositions =
-   // }
+    /*public GridPositioning(IGraph graph) {
+        this.graph = graph;
+        this.nodePositions =
+    }*/
 
+    /**
+     * Gridding respective to smalles angle crossing.
+     * @param g
+     */
     public static void gridGraph(IGraph g){
         IMapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
-        boolean gridding = GridPositioning.isGridded(g);
-        
-        while (gridding == false) {
-            ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.getGridNodesRespectively(g, nodePositions));
 
+        while (GridPositioning.isGridded(g) == false) {
+            ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.getGridNodesRespectively(g, nodePositions));
             GridPositioning.removeOverlaps(g, 0.1);
-            gridding = GridPositioning.isGridded(g);
         }
         
+    }
+
+    /**
+     * Fast gridding. Considers single nodes.
+     * @param g
+     */
+    public static void simpleGridGraph(IGraph g){
+        IMapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
+
+        while (GridPositioning.isGridded(g) == false) {
+            ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.getGridNodes(g, nodePositions));
+            GridPositioning.removeOverlaps(g, 0.1);
+        }
+
     }
         /**
          * Computes integer grid points respectively by crossing angle if such exists
@@ -134,7 +151,7 @@ public class GridPositioning {
     }
 
     /**
-     * Computes integer grid points node per node
+     * Computes integer grid points for each node not already contained.
      * @return nodePositions - holds new positions of all nodes
      */
     public static IMapper<INode, PointD> getGridNodes(IGraph graph, IMapper<INode, PointD> nodePositions, Set<INode> containedNodes) {
@@ -153,6 +170,18 @@ public class GridPositioning {
             }
         }
 
+        return nodePositions;
+    }
+
+    /**
+     * Computes integer grid points node per node
+     * @return nodePositions - holds new positions of all nodes
+     */
+    public static IMapper<INode, PointD> getGridNodes(IGraph graph, IMapper<INode, PointD> nodePositions) {
+
+        for (INode u : graph.getNodes()) {
+                nodePositions.setValue(u, new PointD(Math.floor(u.getLayout().getX()), Math.floor(u.getLayout().getY())));
+            }
         return nodePositions;
     }
 
@@ -272,5 +301,4 @@ public class GridPositioning {
         points.add(new PointD(Math.ceil(u.getX()), Math.ceil(u.getY())));
         return points;
     }
-
 }
