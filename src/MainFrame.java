@@ -194,7 +194,7 @@ public class MainFrame extends JFrame {
                 movedNodes.clear();
             }
             faa.andThen(f -> {
-                f.clearDrawables();
+                //f.clearDrawables();
                 f.resetNodePositions(movedNodesCP);
             });
         });
@@ -406,6 +406,11 @@ public class MainFrame extends JFrame {
         gridPositioningItem.setText("Respective Crossing Angle Gridding");
         gridPositioningItem.addActionListener(this::gridCrossingItemActionPerformed);
         layoutMenu.add(gridPositioningItem);
+        JMenuItem graphGridItem = new JMenuItem();
+        graphGridItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        graphGridItem.setText("Graph Gridding");
+        graphGridItem.addActionListener(this::graphGridItemActionPerformed);
+        layoutMenu.add(graphGridItem);
 
         JMenuItem gridItem = new JMenuItem();
         gridItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
@@ -570,6 +575,22 @@ public class MainFrame extends JFrame {
         if(ForceAlgorithmApplier.class != null) {
             while (gridding == false) {
                 GridPositioning.gridGraph(this.graph);
+                //grid.removeOverlapsOrganic();
+                GridPositioning.removeOverlaps(this.graph, 0.1);
+                if(GridPositioning.isGridded(this.graph)){
+                    gridding = true;
+                }
+            }
+        }
+        System.out.println("Graph is gridded: " + GridPositioning.isGridded(this.graph));
+        this.view.updateUI();
+    }
+
+    private void graphGridItemActionPerformed(ActionEvent evt) {
+        boolean gridding = false;
+        if(ForceAlgorithmApplier.class != null) {
+            while (gridding == false) {
+                GridPositioning.simpleGridGraph(this.graph);
                 //grid.removeOverlapsOrganic();
                 GridPositioning.removeOverlaps(this.graph, 0.1);
                 if(GridPositioning.isGridded(this.graph)){
