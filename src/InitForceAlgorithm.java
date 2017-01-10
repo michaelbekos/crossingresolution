@@ -37,7 +37,7 @@ public abstract class InitForceAlgorithm {
                 System.out.println(dist);
                 return new PointD(0, 0);
             }
-            System.out.println(forceStrength * fd.modifiers[1]);
+            //System.out.println(forceStrength * fd.modifiers[1]);
             t = PointD.times(t, forceStrength);
             //return new PointD(0, 0);
             return t;
