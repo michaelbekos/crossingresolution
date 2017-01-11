@@ -114,7 +114,10 @@ public class BatchOptimizer {
 
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
             minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
-    double initialAngle = minAngleCr.get().c.angle;
+    double initialAngle = 0.0,
+            optimizedAngle = 0.0;
+    if(minAngleCr.hasValue()){ initialAngle = minAngleCr.get().c.angle; }
+
     ForceAlgorithmApplier.init();
     ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(rounds);
     firstFAA.runBatch();
@@ -124,7 +127,9 @@ public class BatchOptimizer {
     });
 
     GridPositioning.gridGraph(graph);
-    double optimizedAngle = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing()).get().c.angle;
+    Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
+            minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+    if(minAngleOpt.hasValue()){ optimizedAngle = minAngleOpt.get().c.angle; }
     view.exportToGraphML(Files.newOutputStream(outFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE));
     System.out.println(outFile + " " + "#v: " + graph.getNodes().size()+  " #e: " + graph.getEdges().size() + " minAngleInitial: " + initialAngle + " minAngleOptimized: " + optimizedAngle);
     ;
