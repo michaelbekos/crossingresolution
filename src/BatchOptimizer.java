@@ -1,4 +1,6 @@
 
+import algorithms.graphs.GridPositioning;
+import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
@@ -9,6 +11,8 @@ import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import com.yworks.yfiles.geometry.PointD;
+import util.graph2d.Intersection;
+import util.graph2d.LineSegment;
 
 import java.time.Duration;
 import java.util.*;
@@ -97,7 +101,7 @@ public class BatchOptimizer {
     };*/
 
 
-    ForceAlgorithmApplier.init();
+    /*ForceAlgorithmApplier.init();
     ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
     GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAA, graph, view, Maybe.nothing());
     ga.runRounds(rounds);
@@ -106,8 +110,29 @@ public class BatchOptimizer {
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
     });
     System.out.println(outFile);
+    view.exportToGraphML(Files.newOutputStream(outFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE));*/
+
+    Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
+            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+    double initialAngle = minAngleCr.get().c.angle;
+    ForceAlgorithmApplier.init();
+    ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(rounds);
+    firstFAA.runBatch();
+    ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
+      IMapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
+      ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    });
+
+    GridPositioning.gridGraph(graph);
+    double optimizedAngle = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing()).get().c.angle;
     view.exportToGraphML(Files.newOutputStream(outFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE));
+    System.out.println(outFile + " " + "#v: " + graph.getNodes().size()+  " #e: " + graph.getEdges().size() + " minAngleInitial: " + initialAngle + " minAngleOptimized: " + optimizedAngle);
+    ;
+    //}
+
+
                 
   }
+
 
 }
