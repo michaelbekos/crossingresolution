@@ -24,7 +24,9 @@ public class ContestIOHandler extends GraphIOHandler {
     for(String line: lines){
       line = line.trim();
       // comment
-      if(line.charAt(0) == '#') continue;
+      if(line.isEmpty() || line.equals("") || line.equals("\n")) { continue;}
+      else if(line.charAt(0) == '#') {continue;}
+
       if(phase == 0){
         nodesCount = Integer.parseInt(line);
         nodes = new INode[nodesCount];
