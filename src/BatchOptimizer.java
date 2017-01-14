@@ -26,7 +26,8 @@ public class BatchOptimizer {
   static IGraph graph;
   static int rounds = 100;
   static int initTime = 100;
-  public static Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
+  static BufferedWriter out;
+  public static Double[] springThreshholds = new Double[]{0.1, 0.04, 0.3, 0.5};
   public static Boolean[] algoModifiers = new Boolean[]{false, false};
   public static void tryParse(String content, Consumer<Integer> field, String fieldName){
     try{
@@ -81,6 +82,7 @@ public class BatchOptimizer {
     if(!file.isDirectory()){
       file.mkdir();
     }
+    out = Files.newBufferedWriter(Paths.get(outFolder + File.separator + "romeOut"));
     DirectoryStream<Path> romeFolderStream = Files.newDirectoryStream(romeFolder, "*.graphml");
     for(Path romeGraph: romeFolderStream){
       System.out.println(romeGraph);
@@ -88,6 +90,7 @@ public class BatchOptimizer {
       Path outFile = Paths.get(outFolder + File.separator + fileName);
       runAlgo(romeGraph, outFile);
     }
+    out.close();
 
   }
   public static void runAlgo(Path romeGraph, Path outFile) throws IOException {
@@ -135,9 +138,19 @@ public class BatchOptimizer {
     ;
     //}
 
+    double area = computeArea();
 
+    out.write(outFile + " " + "#v: " + graph.getNodes().size() +
+            " #e: " + graph.getEdges().size() + " minAngleInitial: " + initialAngle + " minAngleOptimized: " + optimizedAngle +
+            " area: " + area);
+    out.newLine();
                 
   }
+
+  private static double computeArea(){
+    return 0.0;
+  }
+
 
 
 }
