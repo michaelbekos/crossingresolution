@@ -7,7 +7,7 @@ public class Intersection implements Comparable<Intersection> {
   public Double angle, orientedAngle;
   @Override 
   public String toString(){
-    return "I(" + intersectionPoint + ", " + angle + ")";
+    return "(I" + intersectionPoint + ", " + angle + ")";
   }
   public Intersection(PointD i, Double a){
     intersectionPoint = i;
