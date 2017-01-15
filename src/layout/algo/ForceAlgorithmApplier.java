@@ -10,6 +10,7 @@ import com.yworks.yfiles.utils.IEnumerable;
 
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 import java.awt.Color;
 
@@ -22,40 +23,100 @@ import algorithms.graphs.*;
 import view.visual.*;
 
 public class ForceAlgorithmApplier implements Runnable {
+  // keep track of a bestSolution across all FAAs
+  public static Maybe<Tuple4<Mapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]>> bestSolution = Maybe.nothing();
+  public static List<ICanvasObject> canvasObjects = new ArrayList<>();
+  // call this whenever the underlying graph changes structurally!
+  public static void init(){
+    bestSolution = Maybe.nothing();
+  }
+
+  public static Mapper<INode, PointD> newNodePointMap(){
+    return new Mapper<>(new WeakHashMap<>());
+  }
+  // copy all entries of im to a new map
+  public static Mapper<INode, PointD> copyNodePositionsMap(Mapper<INode, PointD> im){
+    Mapper<INode, PointD> res = newNodePointMap();
+    im.getEntries().forEach(e -> {
+      INode n = e.getKey();
+      PointD p = e.getValue();
+      res.setValue(n, p);
+    });
+    return res;
+  }
+  // initPositionMap copies all node positions of a given graph to a positionMap.
+  public static Mapper<INode, PointD> initPositionMap(IGraph g){
+    Mapper<INode, PointD> nodePos = newNodePointMap();
+    g.getNodes().stream().forEach(n1 -> {
+      PointD p1 = n1.getLayout().getCenter();
+      nodePos.setValue(n1, n1.getLayout().getCenter());
+    });
+    return nodePos;
+  }  
+  // initForceMap creates a forceMap with default force (0,0).
+  public static Mapper<INode, PointD> initForceMap(IGraph g){
+    Mapper<INode, PointD> map = newNodePointMap();
+    map.setDefaultValue(new PointD(0, 0));
+    return map;
+  }
+  // apply positions in a positionMap to a graph.
+  public static IGraph applyNodePositionsToGraph(IGraph g, Mapper<INode, PointD> nodePositions){
+    for(Map.Entry<INode, PointD> e: nodePositions.getEntries()){
+      INode n1 = e.getKey();
+      PointD p1 = e.getValue();
+      g.setNodeCenter(n1, p1);
+    }
+    return g;
+  }
+  // add all forces to the corresponding nodes
+  public static Mapper<INode, PointD> applyForces(Mapper<INode, PointD> nodePositions, Mapper<INode, PointD> forces){
+    for(Map.Entry<INode, PointD> e: nodePositions.getEntries()){
+      INode n1 = e.getKey();
+      PointD f1 = forces.getValue(n1),
+             p1 = e.getValue(),
+             p2;
+      p2 = PointD.add(f1, p1);
+      nodePositions.setValue(n1, p2);
+    }
+    return nodePositions;
+  }
+
+  //everythings fine, this is checked, the compiler just doesn't get it
+  @SuppressWarnings("unchecked")
+  public static <T1, T extends T1> List<T> filterListSubclass(List<T1> l, Class<T> type){
+    return l.parallelStream()
+      .filter(a -> type.isInstance(a))
+      .map(a -> (T) a)
+      .collect(Collectors.toList());
+  }
+
+  /* * * * * * * * * * * * *
+   * STATIC PART ENDS HERE  *
+   * * * * * * * * * * * * */
+
+  // list of algos to apply to graph
   public List<ForceAlgorithm> algos = new LinkedList<>();
+  // underlying graph info
   public GraphComponent view;
   public IGraph graph;
   public int maxNoOfIterations;
   public int currNoOfIterations;
   public int maxMinAngleIterations;
-  public static List<ICanvasObject> canvasObjects = new ArrayList<>();
   public Maybe<JProgressBar> progressBar;
   public Maybe<JLabel> infoLabel;
   public double maxMinAngle;
   public double minEdgeLength;
-  public IMapper<INode, PointD> nodePositions;
-  public static Maybe<Tuple4<IMapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]>> bestSolution = Maybe.nothing();
+  // current nodePositions, so we can calculate in the background
+  public Mapper<INode, PointD> nodePositions;
   public boolean running = false;
-
+  // modifiers for algos
   public Double[] modifiers = new Double[0];
   public Boolean[] switches = new Boolean[0];
 
   public CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
 
-  public static void init(){
-    bestSolution = Maybe.nothing();
-  }
-  public static IMapper<INode, PointD> copyNodePositionsMap(IMapper<INode, PointD> im, Stream<INode> nodes){
-    IMapper<INode, PointD> res = newNodePointMap();
-    nodes.forEach(n -> {
-      PointD p1 = im.getValue(n);
-      res.setValue(n, im.getValue(n));
-    });
-    return res;
-  }
 
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
-
     this.view = view;
     this.graph = view.getGraph();
     nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
@@ -72,7 +133,7 @@ public class ForceAlgorithmApplier implements Runnable {
   public ForceAlgorithmApplier clone(){
     ForceAlgorithmApplier ret = new ForceAlgorithmApplier(this.view, this.maxNoOfIterations, this.progressBar, this.infoLabel);
     ret.graph = this.graph;
-    ret.nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(this.nodePositions, this.graph.getNodes().stream());
+    ret.nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(this.nodePositions);
     ret.modifiers = this.modifiers.clone();
     ret.switches = this.switches.clone();
     ret.algos = this.algos;
@@ -80,32 +141,33 @@ public class ForceAlgorithmApplier implements Runnable {
     return ret;
   }
 
-  public static IMapper<INode, PointD> initPositionMap(IGraph g){
-    IMapper<INode, PointD> nodePos = newNodePointMap();
-    g.getNodes().stream().forEach(n1 -> {
-      PointD p1 = n1.getLayout().getCenter();
-      nodePos.setValue(n1, n1.getLayout().getCenter());
-    });
-    return nodePos;
-  }
-
-  public void setNodePosition(INode u, PointD p){
-    setNodePositions(Arrays.asList(new Tuple2<>(u, p)));
-  }
-
+  // set a list of node positions. takes care of cache invalidation, tracking best solutions.
   public void setNodePositions(List<Tuple2<INode, PointD>> ups){
-    for(Tuple2<INode, PointD> up: ups){
-      INode u = up.a;
-      PointD p = up.b;
-      nodePositions.setValue(u, p);
+    synchronized(nodePositions){
+      for(Tuple2<INode, PointD> up: ups){
+        INode u = up.a;
+        PointD p = up.b;
+        if(nodePositions.getValue(u) == null){
+          // new node!
+          System.out.println("! new node !");
+          nodePositions = initPositionMap(graph);
+          break;
+        }
+        nodePositions.setValue(u, p);
+      }
     }
     cMinimumAngle.invalidate();
     improveSolution();
   }
-
+  // simpler setNodePositions
+  public void setNodePosition(INode u, PointD p){
+    setNodePositions(Arrays.asList(new Tuple2<>(u, p)));
+  }
+  // simpler setNodePositions
   public void resetNodePosition(INode u){
     setNodePosition(u, u.getLayout().getCenter());
   }
+  // simpler setNodePositions
   public void resetNodePositions(Collection<INode> us){
     List<Tuple2<INode, PointD>> ups = us.stream()
       .map(u -> new Tuple2<>(u, u.getLayout().getCenter()))
@@ -113,18 +175,25 @@ public class ForceAlgorithmApplier implements Runnable {
     setNodePositions(ups);
   }
 
+  // show all forces that would be applied to nodes currently
   public void showForces(){
     this.clearDrawables();
-    IMapper<INode, PointD> map = calculateAllForces();
+    Mapper<INode, PointD> map = calculateAllForces();
     this.displayVectors(map);
   }
 
+  // apply internal position map to graph
   public void showNodePositions(){
     ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
     this.view.updateUI();
   }
 
-
+  /**
+   * run(maxNoOfIterations) has three modes:
+   * - run(0): showForces()
+   * - run(x < 0): run indefinitely
+   * - run(x): run x rounds
+   */ 
   public void run() {
     running = true;
     if (this.maxNoOfIterations == 0) {
@@ -183,25 +252,40 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
     running = false;
   }
+
+  /**
+   * improveSolution: check current node positions and last best positions (metric: minimum crossing angle). If better, update.
+   */
   public void improveSolution(){
-    IMapper<INode, PointD> sol = nodePositions;
+    Mapper<INode, PointD> sol = nodePositions;
     Maybe<Double> solutionAngle = cMinimumAngle.getMinimumAngle(graph, Maybe.just(sol));
-    Tuple4<IMapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]> thisSol = new Tuple4<>(copyNodePositionsMap(sol, graph.getNodes().stream()), solutionAngle, modifiers.clone(), switches.clone());
+    /* best solution is a tuple of:
+     * - nodePositions :: Mapper (INode, PointD)
+     * - crossingAngle (if any) :: Maybe Double
+     * - force parameters :: [Double]
+     * - force switches :: [Bool]
+     */
+    // do it lazy, since we might not need to
+    Supplier<Tuple4<Mapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]>> thisSol 
+      = (() -> new Tuple4<>(copyNodePositionsMap(sol), solutionAngle, modifiers.clone(), switches.clone()));
+    // if we hadn't had a previous best yet, update with our
     if(!bestSolution.hasValue()){
-      bestSolution = Maybe.just(thisSol);
+      bestSolution = Maybe.just(thisSol.get());
       return;
     }
-    Tuple4<IMapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]> prevBest = bestSolution.get();
-    // previous one had no crossings
+    // otherwise: previous best exists. get it...
+    Tuple4<Mapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]> prevBest = bestSolution.get();
+    // ... if previous one had no crossings, we can't be better, so we stop.
     if(!prevBest.b.hasValue()) return;
-    // this one has no crossings
+    // ... otherwise, if this one has no crossings, it must be better, so we update.
     if(!solutionAngle.hasValue()){
-      bestSolution = Maybe.just(thisSol); 
+      bestSolution = Maybe.just(thisSol.get()); 
       return;
     }
-    // previous angle was better
+    // ... if the previous angle was better, we return.
     if(prevBest.b.get() >= solutionAngle.get()) return;
-    bestSolution = Maybe.just(thisSol);
+    // ... otherwise, ours is better, so we update.
+    bestSolution = Maybe.just(thisSol.get());
     
   }
 
@@ -223,7 +307,7 @@ public class ForceAlgorithmApplier implements Runnable {
   /**
    * Displays vectors for debugging purposes
    */
-  public void displayVectors(IMapper<INode, PointD> map) {
+  public void displayVectors(Mapper<INode, PointD> map) {
     for(INode u: graph.getNodes()){
       PointD vector = map.getValue(u);
       System.out.println(vector);
@@ -242,7 +326,12 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
   }
 
-  public IMapper<INode, PointD> calculatePairwiseForces(List<NodePairForce> algos, IMapper<INode, PointD> map){
+  /* * * * * * * * * * * * *
+   * BORING STUFF ENDS HERE *
+   * * * * * * * * * * * * */
+
+  // all nodes with all nodes
+  public Mapper<INode, PointD> calculatePairwiseForces(List<NodePairForce> algos, Mapper<INode, PointD> map){
     graph.getNodes().parallelStream().forEach(n1 -> {
       PointD p1 = nodePositions.getValue(n1);
       PointD f1 = new PointD(0, 0);
@@ -262,7 +351,9 @@ public class ForceAlgorithmApplier implements Runnable {
     });
     return map;
   }
-  public IMapper<INode, PointD> calculateNeighbourForces(List<NodeNeighbourForce> algos, IMapper<INode, PointD> map){
+
+  // all nodes with their neighbours
+  public Mapper<INode, PointD> calculateNeighbourForces(List<NodeNeighbourForce> algos, Mapper<INode, PointD> map){
     //for(INode n1: graph.getNodes()){
     graph.getNodes().parallelStream().forEach(n1 -> {
       PointD p1 = nodePositions.getValue(n1);
@@ -282,7 +373,8 @@ public class ForceAlgorithmApplier implements Runnable {
     return map;
   }
   
-  public IMapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, IMapper<INode, PointD> map) {
+  // all nodes: their incident edges with each other. Forces on neighbours.
+  public Mapper<INode, PointD> calculateIncidentForces(List<IncidentEdgesForce> algos, Mapper<INode, PointD> map) {
     //http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/
     //for (INode n1 : graph.getNodes()) {
     graph.getNodes().parallelStream().forEach(n1 -> {
@@ -291,7 +383,7 @@ public class ForceAlgorithmApplier implements Runnable {
       if(n1degree < 2) return;
       //nonStrictlyEqualPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).forEach(n2n3 -> {
       List<Tuple3<INode, INode, Double>> neighboursWithAngle = 
-      nonEqalPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).map(
+      Util.nonEqalPairs(graph.neighbors(INode.class, n1).stream(), graph.neighbors(INode.class, n1).stream()).map(
         n2n3 -> {
           INode n2 = n2n3.a,
                 n3 = n2n3.b;
@@ -358,27 +450,9 @@ public class ForceAlgorithmApplier implements Runnable {
     });
     return map;
   }
-  public static <T1, T2> Stream<Tuple2<T1, T2>> allPairs(Stream<T1> s1, Stream<T2> s2){
-    List<T2> s2l = s2.collect(Collectors.toList());
-    return s1.flatMap(n1 -> {
-      return s2l.stream()
-        .map(n2 -> new Tuple2<>(n1, n2));
-    });
-  }
-  public static <T1, T2> Stream<Tuple2<T1, T2>> nonEqalPairs(Stream<T1> s1, Stream<T2> s2){
-    return allPairs(s1, s2).filter(t12 -> !t12.a.equals(t12.b));
-  }
-  public static <T1, T2> Stream<Tuple2<T1, T2>> nonStrictlyEqualPairs(Stream<T1> s1, Stream<T2> s2){
-    Set<T1> seenNodes = new HashSet<>();
-    List<T2> s2l = s2.collect(Collectors.toList());
-    return s1.flatMap(n1 -> {
-      seenNodes.add(n1);
-      return s2l.stream()
-        .filter(n2 -> !seenNodes.contains(n2))
-        .map(n2 -> new Tuple2<>(n1, n2));
-    });
-  }
-  public IMapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, IMapper<INode, PointD> map){
+  
+  // all crossings: forces on all four nodes
+  public Mapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, Mapper<INode, PointD> map){
     cMinimumAngle.getCrossings(graph, Maybe.just(nodePositions)).parallelStream().forEach(ci -> {
       LineSegment l1 = ci.a,
                   l2 = ci.b;
@@ -421,46 +495,9 @@ public class ForceAlgorithmApplier implements Runnable {
     return map;
   }
 
-  public static IMapper<INode, PointD> newNodePointMap(){
-    return new Mapper<>(new WeakHashMap<>());
-  }
+  
 
-  public static IMapper<INode, PointD> initForceMap(IGraph g){
-    IMapper<INode, PointD> map = newNodePointMap();
-    for(INode n1: g.getNodes()){
-      map.setValue(n1, new PointD(0, 0));
-    }
-    return map;
-  }
-
-  public static IGraph applyNodePositionsToGraph(IGraph g, IMapper<INode, PointD> nodePositions){
-    for(INode n1: g.getNodes()){
-      PointD p1 = nodePositions.getValue(n1);
-      g.setNodeCenter(n1, p1);
-    }
-    return g;
-  }
-  public static IMapper<INode, PointD> applyForces(IGraph g, IMapper<INode, PointD> nodePositions, IMapper<INode, PointD> map){
-    for(INode n1: g.getNodes()){
-      PointD f1 = map.getValue(n1),
-             p1 = nodePositions.getValue(n1),
-             p2;
-      p2 = PointD.add(f1, p1);
-      nodePositions.setValue(n1, p2);
-    }
-    return nodePositions;
-  }
-
-  //everythings fine, this is checked, the compiler just doesn't get it
-  @SuppressWarnings("unchecked")
-  public static <T1, T extends T1> List<T> filterListSubclass(List<T1> l, Class<T> type){
-    return l.parallelStream()
-      .filter(a -> type.isInstance(a))
-      .map(a -> (T) a)
-      .collect(Collectors.toList());
-  }
-
-  public IMapper<INode, PointD> calculateAllForces(){
+  public Mapper<INode, PointD> calculateAllForces(){
     List<NodePairForce> nodePairA = 
       ForceAlgorithmApplier.filterListSubclass(algos, NodePairForce.class);
     List<NodeNeighbourForce> nodeNeighbourA = 
@@ -470,7 +507,7 @@ public class ForceAlgorithmApplier implements Runnable {
     List<CrossingForce> edgeCrossingsA = 
       ForceAlgorithmApplier.filterListSubclass(algos, CrossingForce.class);
 
-    IMapper<INode, PointD> map = ForceAlgorithmApplier.initForceMap(graph);
+    Mapper<INode, PointD> map = ForceAlgorithmApplier.initForceMap(graph);
 
     map = calculatePairwiseForces(nodePairA, map);
     map = calculateNeighbourForces(nodeNeighbourA, map);
@@ -480,8 +517,9 @@ public class ForceAlgorithmApplier implements Runnable {
     return map;
   }
 
-  public IMapper<INode, PointD> applyAlgos(){
-    IMapper<INode, PointD> res = applyForces(graph, nodePositions, calculateAllForces());
+  // applyAlgos: calculateForces -> applyForces -> reset cache
+  public Mapper<INode, PointD> applyAlgos(){
+    Mapper<INode, PointD> res = applyForces(nodePositions, calculateAllForces());
     cMinimumAngle.invalidate();
     return res;
   }

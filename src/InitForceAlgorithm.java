@@ -22,7 +22,7 @@ public abstract class InitForceAlgorithm {
     public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations, GraphComponent view, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, progressBar, infoLabel);
         fd.algos.add(new NodeNeighbourForce(p1 -> p2 -> {
-            double springNaturalLength = 100;
+            double springNaturalLength = fd.modifiers[1];
             PointD t = PointD.subtract(p2, p1);
             double dist = t.getVectorLength();
             if(dist <= G.Epsilon){

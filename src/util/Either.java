@@ -6,6 +6,7 @@ public abstract class Either<A, B>{
   public abstract boolean isRight();
   public abstract A getLeft();
   public abstract B getRight();
+  // match allows easy processing of eithers, by specifying actions on both parts and letting the object hierarchy do the rest.
   public abstract <C> C match(Function<A, C> mLeft, Function<B, C> mRight);
   public abstract void match(Consumer<A> mLeft, Consumer<B> mRight);
 

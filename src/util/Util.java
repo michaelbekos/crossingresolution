@@ -12,6 +12,10 @@ public abstract class Util {
     return as.flatMap(a -> bsList.stream().map(b -> new Tuple2<>(a, b)));
   }
 
+  public static <T1, T2> Stream<Tuple2<T1, T2>> nonEqalPairs(Stream<T1> s1, Stream<T2> s2){
+    return pairs(s1, s2).filter(t12 -> !t12.a.equals(t12.b));
+  }
+
   public static <A> Stream<Tuple2<A, A>> distinctPairs(IListEnumerable<A> as){
     return distinctPairs(as, 0);
   }

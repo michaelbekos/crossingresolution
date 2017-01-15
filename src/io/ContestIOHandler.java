@@ -1,6 +1,6 @@
 package io;
 
-import algorithms.graphs.GridPositioning;
+import util.GridPositioning;
 
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.geometry.PointD;

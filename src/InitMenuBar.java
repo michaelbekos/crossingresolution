@@ -8,8 +8,7 @@ import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 
 import io.ContestIOHandler;
-import layout.algo.ForceDirectedAlgorithm;
-import layout.algo.ForceDirectedFactory;
+import layout.algo.*;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import util.*;
@@ -93,7 +92,9 @@ public class InitMenuBar {
             int result = JOptionPane.showOptionDialog(null, new Object[]{"Dimensions: ", dim}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (result == JOptionPane.OK_OPTION) {
                 int dimensions = Integer.parseInt(dim.getText());
+                ForceAlgorithmApplier.init();
                 HypercubeGenerator.generate(graph, dimensions);
+                view.updateUI();
             }
         });
         newMenuItem.add(hypercubeGraphItem);
@@ -110,7 +111,9 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int rC = Integer.parseInt(rCount.getText());
+                ForceAlgorithmApplier.init();
                 GridGenerator.generate(graph, xC, yC, rC);
+                view.updateUI();
             }
         });
         newMenuItem.add(gridGraphItem);
@@ -312,6 +315,7 @@ public class InitMenuBar {
                 rgg.setNodeCount(10);
                 rgg.setEdgeCount(10);
             } finally {
+                ForceAlgorithmApplier.init();
                 rgg.generate(this.graph);
                 LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
                 this.view.fitGraphBounds();
