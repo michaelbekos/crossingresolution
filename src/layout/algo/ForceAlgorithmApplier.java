@@ -147,6 +147,12 @@ public class ForceAlgorithmApplier implements Runnable {
       for(Tuple2<INode, PointD> up: ups){
         INode u = up.a;
         PointD p = up.b;
+        if(nodePositions.getValue(u) == null){
+          // new node!
+          System.out.println("! new node !");
+          nodePositions = initPositionMap(graph);
+          break;
+        }
         nodePositions.setValue(u, p);
       }
     }
