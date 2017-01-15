@@ -19,9 +19,11 @@ import util.graph2d.*;
 public class MinimumAngle {
   private static MinimumAngleHelper m = new MinimumAngleHelper();
   public static class MinimumAngleHelper{
+    // singleton object mustn't be instantiated by others
     protected MinimumAngleHelper(){ }
     
     public Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+      // Maybe (LS, LS, I) --fmap--> Maybe Double
       return this.getMinimumAngleCrossing(graph, np).fmap(i -> i.c.angle);
     }
 

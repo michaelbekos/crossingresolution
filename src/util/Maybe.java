@@ -53,10 +53,10 @@ public abstract class Maybe<T>{
     return Maybe.just(lazyT.get());
   }
   public static <T> Consumer<Maybe<T>> lift(Consumer<T> f){
-    return (m -> m.andThen(el -> f.accept(el)));
+    return (m -> m.andThen(f));
   }
   public static <T, R> Function<Maybe<T>, Maybe<R>> lift(Function<T, R> f){
-    return (m -> m.fmap(el -> f.apply(el)));
+    return (m -> m.fmap(f));
   }
   public abstract Stream<T> stream();
 

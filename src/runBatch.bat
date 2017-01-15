@@ -1,1 +1,1 @@
-java -cp ".;yfiles-for-java.jar" BatchOptimizer -f 100 -r 10 ..\rome\
+java -cp ".;yfiles-for-java.jar" BatchOptimizer -i 100 -r 10 -f ..\rome\
