@@ -1,5 +1,5 @@
 
-import algorithms.graphs.GridPositioning;
+import util.GridPositioning;
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import layout.algo.event.AlgorithmEvent;
@@ -92,6 +92,7 @@ public class BatchOptimizer {
   public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
     // we don't care about drawing/callbacks, so Maybe.nothing().
     ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view, Maybe.nothing(), Maybe.nothing());
+    springThreshholds[1] = 50 * Math.log(graph.getNodes().size());
     fd.modifiers = springThreshholds.clone();
     fd.switches = algoModifiers.clone();
     return fd;

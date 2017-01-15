@@ -1,4 +1,4 @@
-package algorithms.graphs;
+package util;
 
 import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
@@ -12,6 +12,7 @@ import com.yworks.yfiles.layout.organic.OrganicRemoveOverlapsStage;
 import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
 import layout.algo.ForceAlgorithmApplier;
 import util.*;
+import algorithms.graphs.MinimumAngle;
 import util.graph2d.Intersection;
 import util.graph2d.LineSegment;
 

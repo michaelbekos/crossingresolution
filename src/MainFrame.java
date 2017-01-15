@@ -1,4 +1,3 @@
-import algorithms.graphs.GridPositioning;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
