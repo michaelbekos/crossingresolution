@@ -65,7 +65,7 @@ public class ForceAlgorithmApplier implements Runnable {
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
-    
+    improveSolution();
   }
 
   @Override
@@ -124,15 +124,7 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
   }
 
-  public void runBatch() {
-    for (int i = 0; i < this.maxNoOfIterations; i++) {
-      this.clearDrawables();
-      nodePositions = applyAlgos();
-      ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-      this.currNoOfIterations = i;
-    }
 
-  }
   public void run() {
     running = true;
     if (this.maxNoOfIterations == 0) {

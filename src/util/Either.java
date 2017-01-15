@@ -7,6 +7,7 @@ public abstract class Either<A, B>{
   public abstract A getLeft();
   public abstract B getRight();
   public abstract <C> C match(Function<A, C> mLeft, Function<B, C> mRight);
+  public abstract void match(Consumer<A> mLeft, Consumer<B> mRight);
 
   public static <A, B> Either<A, B> left(A a){
     return new Left<>(a);
@@ -34,6 +35,10 @@ public abstract class Either<A, B>{
     public <C> C match(Function<A, C> mLeft, Function<B, C> mRight){
       return mLeft.apply(a);
     }
+    public void match(Consumer<A> mLeft, Consumer<B> mRight){
+      mLeft.accept(a);
+    }
+
   }
   static class Right<A, B> extends Either<A, B>{
     B b;
@@ -54,6 +59,9 @@ public abstract class Either<A, B>{
     }
     public <C> C match(Function<A, C> mLeft, Function<B, C> mRight){
       return mRight.apply(b);
+    }
+    public void match(Consumer<A> mLeft, Consumer<B> mRight){
+      mRight.accept(b);
     }
   }
 }
