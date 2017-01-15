@@ -38,7 +38,7 @@ public abstract class InitGeneticAlgorithm {
                   }),
                   Maybe.just(20),
                   Either.left(fa -> {
-                      IMapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions, graph.getNodes().stream());
+                      Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions);
   
                       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossingsSorted(graph, Maybe.just(nodePositions));
                       ForceAlgorithmApplier fa2 = fa.clone();

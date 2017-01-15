@@ -43,11 +43,14 @@ public class MinimumAngle {
       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph, np);
       return sortCrossings(crossings);
     }
-
+    /**
+     * getCrossings: takes a graph and optional custom node positions. Also, you can specify that you want crossings on edge ends.
+     */
     public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, Maybe<IMapper<INode, PointD>> np){
       return getCrossings(graph, true, np);
     }
     public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
+      // lazy values! :D
       IMapper<INode, PointD> actualMap = np.getDefault(() -> ForceAlgorithmApplier.initPositionMap(graph));
       return MinimumAngle.getCrossingsParallelFlat(graph, edgesOnly, actualMap);
     }

@@ -41,7 +41,7 @@ public class GridPositioning {
      * @param g
      */
     public static void gridGraph(IGraph g){
-        IMapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
+        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
 
         while (GridPositioning.isGridded(g) == false) {
             ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.getGridNodesRespectively(g, nodePositions));
@@ -55,7 +55,7 @@ public class GridPositioning {
      * @param g
      */
     public static void simpleGridGraph(IGraph g){
-        IMapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
+        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
 
         while (GridPositioning.isGridded(g) == false) {
             ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.getGridNodes(g, nodePositions));
@@ -68,10 +68,10 @@ public class GridPositioning {
          * Otherwise respectively to the minimum angle of the graph
          * @return nodePositions - integer grid node positions
          */
-    public static IMapper<INode, PointD> getGridNodesRespectively(IGraph graph, IMapper<INode, PointD> nodePositions) {
+    public static Mapper<INode, PointD> getGridNodesRespectively(IGraph graph, Mapper<INode, PointD> nodePositions) {
         Set<INode> seenNodes = new HashSet<>();
         List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(graph, Maybe.just(nodePositions));
-        IMapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(graph);
+        Mapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(graph);
 
         List<Tuple3<PointD, PointD, Double>> coordCrossing = new ArrayList<>();
         Set<INode> containedNodes = new HashSet<>();
@@ -120,7 +120,7 @@ public class GridPositioning {
      * @return coordinates - contains all minimum angles with node positions
      */
     private static List<Tuple3<PointD, PointD, Double>> addCoordinates(IGraph graph,
-                                                                       List<Tuple4<INode, PointD,INode, PointD>> coords, IMapper<INode, PointD> pos) {
+                                                                       List<Tuple4<INode, PointD,INode, PointD>> coords, Mapper<INode, PointD> pos) {
         List<Tuple3<PointD, PointD, Double>> coordinates = new ArrayList<>();
 
         for(Tuple4<INode, PointD,INode, PointD> tup : coords){
@@ -142,7 +142,7 @@ public class GridPositioning {
      * @param pos - node positions of entire graph
      * @return coordinates - contains all minimum angles with node positions
      */
-    private static List<Tuple2<PointD, Double>> addCoordinates(IGraph graph, INode u, List<PointD> gridPoints, IMapper<INode, PointD> pos) {
+    private static List<Tuple2<PointD, Double>> addCoordinates(IGraph graph, INode u, List<PointD> gridPoints, Mapper<INode, PointD> pos) {
         List<Tuple2<PointD, Double>> coordinates = new ArrayList<>();
         for(PointD p : gridPoints) {
             coordinates.add(new Tuple2<>(p, getResultingAngle(graph, pos, u, p)));
@@ -154,9 +154,9 @@ public class GridPositioning {
      * Computes integer grid points for each node not already contained.
      * @return nodePositions - holds new positions of all nodes
      */
-    public static IMapper<INode, PointD> getGridNodes(IGraph graph, IMapper<INode, PointD> nodePositions, Set<INode> containedNodes) {
+    public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions, Set<INode> containedNodes) {
 
-        IMapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(graph);
+        Mapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(graph);
         List<Tuple2<PointD, Double>> coord = new ArrayList<>();
 
         for (INode u : graph.getNodes()) {
@@ -177,7 +177,7 @@ public class GridPositioning {
      * Computes integer grid points node per node
      * @return nodePositions - holds new positions of all nodes
      */
-    public static IMapper<INode, PointD> getGridNodes(IGraph graph, IMapper<INode, PointD> nodePositions) {
+    public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions) {
 
         for (INode u : graph.getNodes()) {
                 nodePositions.setValue(u, new PointD(Math.floor(u.getLayout().getX()), Math.floor(u.getLayout().getY())));
@@ -215,7 +215,7 @@ public class GridPositioning {
      * @param posU, posV - new position of nodes
      * @return Double - computes minimum angle of new positions
      */
-    public static Double getResultingAngle(IGraph graph, IMapper<INode, PointD> map, INode u, PointD posU, INode v, PointD posV) {
+    public static Double getResultingAngle(IGraph graph, Mapper<INode, PointD> map, INode u, PointD posU, INode v, PointD posV) {
         map.setValue(u, posU);
         map.setValue(v, posV);
         return getResultingAngle(graph, map);
@@ -229,7 +229,7 @@ public class GridPositioning {
      * @param p    - new position of node
      * @return Double - computes minimum angle of new positions
      */
-    public static Double getResultingAngle(IGraph graph, IMapper<INode, PointD> map, INode node, PointD p) {
+    public static Double getResultingAngle(IGraph graph, Mapper<INode, PointD> map, INode node, PointD p) {
         map.setValue(node, p);
         return getResultingAngle(graph, map);
     }
@@ -239,7 +239,7 @@ public class GridPositioning {
      * @param map - Input node positions
      * @return Double - minimum angle of graph
      */
-    public static Double getResultingAngle(IGraph graph, IMapper<INode, PointD> map) {
+    public static Double getResultingAngle(IGraph graph, Mapper<INode, PointD> map) {
 
         Maybe<Double> tempAngle = MinimumAngle.getMinimumAngle(graph, Maybe.just(map));
         if (tempAngle.hasValue()) {
@@ -273,7 +273,7 @@ public class GridPositioning {
      * @param v - non-grid node
      * @return gridPoints - combination of u and v grid points
      */
-    public static List<Tuple4<INode, PointD, INode, PointD>> getGridPoints(INode u, INode v, IMapper<INode, PointD> nodePositions) {
+    public static List<Tuple4<INode, PointD, INode, PointD>> getGridPoints(INode u, INode v, Mapper<INode, PointD> nodePositions) {
         List<Tuple4<INode, PointD, INode, PointD>> gridPoints = new ArrayList<>();
         List<PointD> gridU = getGridPoints(u, nodePositions);
         List<PointD> gridV = getGridPoints(v, nodePositions);
@@ -292,7 +292,7 @@ public class GridPositioning {
      * @param node - non-grid node
      * @return points - List of surrounding grid points
      */
-    public static List<PointD> getGridPoints(INode node, IMapper<INode, PointD> nodePositions) {
+    public static List<PointD> getGridPoints(INode node, Mapper<INode, PointD> nodePositions) {
         List<PointD> points = new ArrayList<>();
         PointD u = nodePositions.getValue(node);
         points.add(new PointD(Math.floor(u.getX()), Math.floor(u.getY())));

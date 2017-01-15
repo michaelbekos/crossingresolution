@@ -349,7 +349,7 @@ public class MainFrame extends JFrame {
         JButton showBestSolution = new JButton("Show best");
         showBestSolution.addActionListener(e -> {
             ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
-                IMapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
+                Mapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
                 Maybe<Double> minCrossingAngle = nm_mca_da_ba.b;
                 Double[] mods = nm_mca_da_ba.c;
                 Boolean[] switchs = nm_mca_da_ba.d;

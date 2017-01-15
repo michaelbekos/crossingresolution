@@ -10,14 +10,16 @@ import util.graph2d.*;
 
 public class CachedMinimumAngle extends MinimumAngle.MinimumAngleHelper {
   int hits = 0, misses = 0;
+  
   public CachedMinimumAngle(){
     invalidate();
   }
 
+  // reset cache
   public void invalidate(){
     cache_getCrossings = Maybe.nothing();
   }
-
+  
   Maybe<List<Tuple3<LineSegment, LineSegment, Intersection>>> cache_getCrossings;
 
   void debugCacheAccessed(){
@@ -33,7 +35,7 @@ public class CachedMinimumAngle extends MinimumAngle.MinimumAngleHelper {
 
   public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
     debugCacheAccessed();
-    cache_getCrossings = cache_getCrossings.orElse(() -> super.getCrossings(graph, edgesOnly, np));
+    cache_getCrossings = cache_getCrossings.orElse(() -> Maybe.just(super.getCrossings(graph, edgesOnly, np)));
     // now valid
     return new ArrayList<>(cache_getCrossings.get());
   }

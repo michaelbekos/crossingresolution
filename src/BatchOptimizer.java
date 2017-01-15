@@ -155,7 +155,7 @@ public class BatchOptimizer {
 
     // afterwards: apply new positions to graph...
     ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
-      IMapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
+      Mapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
     });
     // ... grid it...
