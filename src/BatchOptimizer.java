@@ -27,7 +27,7 @@ public class BatchOptimizer {
   static int rounds = 100;
   static int initTime = 100;
   static BufferedWriter out;
-  public static Double[] springThreshholds = new Double[]{0.1, 0.04, 0.3, 0.5};
+  public static Double[] springThreshholds = new Double[]{0.1, 0.01, 0.4, 0.1};
   public static Boolean[] algoModifiers = new Boolean[]{false, false};
   public static void tryParse(String content, Consumer<Integer> field, String fieldName){
     try{
@@ -83,6 +83,7 @@ public class BatchOptimizer {
       file.mkdir();
     }
     out = Files.newBufferedWriter(Paths.get(outFolder + File.separator + "romeOut"));
+    System.out.println(out);
     DirectoryStream<Path> romeFolderStream = Files.newDirectoryStream(romeFolder, "*.graphml");
     for(Path romeGraph: romeFolderStream){
       System.out.println(romeGraph);
@@ -96,6 +97,7 @@ public class BatchOptimizer {
   public static void runAlgo(Path romeGraph, Path outFile) throws IOException {
     view.importFromGraphML(romeGraph.toFile());
     LayoutUtilities.applyLayout(graph, new OrganicLayout());
+    //LayoutUtilities.applyLayout(graph, new RandomLayouter());
     /*ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, 1000) {
       public void calculateVectors() {
         ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
@@ -123,7 +125,7 @@ public class BatchOptimizer {
 
     ForceAlgorithmApplier.init();
     ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(rounds);
-    firstFAA.runBatch();
+    firstFAA.runNoDraw();
     ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
       IMapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
