@@ -65,7 +65,7 @@ public class ForceAlgorithmApplier implements Runnable {
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
-    
+    improveSolution();
   }
 
   @Override
