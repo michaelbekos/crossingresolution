@@ -161,7 +161,7 @@ public class BatchOptimizer {
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
     });
     // ... grid it...
-    GridPositioning.gridGraph(graph);
+    GridPositioning.simpleGridGraph(graph);
     // ... get metrics...
     // (Maybe (LS, LS, I) --fmap--> Maybe String --getDefault--> String)
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
@@ -176,6 +176,7 @@ public class BatchOptimizer {
       + "\t#e\t" + graph.getEdges().size() 
       + "\tminAngleInitial\t" + initialAngle 
       + "\tminAngleOptimized\t" + optimizedAngle
+      /*+ "\tarea\t" + computeArea(graph)*/
       + "\n";
     System.out.print(metrics);
     // ... and write metrics to file.
