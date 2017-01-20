@@ -1,6 +1,7 @@
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.graph.styles.INodeStyle;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
@@ -186,6 +187,9 @@ public class MainFrame extends JFrame {
                 movedNodes.add(u);
             }
         });
+        //this.graph.addNodeStyleChangedListener((o, iNodeItemEventArgs) -> {
+            //view.updateUI();
+       // });
         this.view.addUpdatingListener((o, args) -> {
             MinimumAngle.resetHighlighting(this.graph);
             Set<INode> movedNodesCP;
@@ -213,12 +217,12 @@ public class MainFrame extends JFrame {
 
         /* Default Node Styling */
         this.defaultNodeStyle = new ShinyPlateNodeStyle();
-        this.defaultNodeStyle.setPaint(Color.RED);
+        this.defaultNodeStyle.setPaint(Color.GRAY);
         this.defaultNodeStyle.setPen(new Pen(Color.GRAY, 1));
         this.defaultNodeStyle.setShadowDrawingEnabled(false);
         this.graph.getNodeDefaults().setStyle(defaultNodeStyle);
         this.graph.getDecorator().getNodeDecorator().getFocusIndicatorDecorator().hideImplementation();
-        this.graph.getNodeDefaults().setSize(new SizeD(6,6));
+        this.graph.getNodeDefaults().setSize(new SizeD(15,15));
 
         /* Default Edge Styling */
         this.defaultEdgeStyle = new PolylineEdgeStyle();
@@ -428,7 +432,14 @@ public class MainFrame extends JFrame {
         minimumCrossingAngleMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
         minimumCrossingAngleMenu.setText("Minimum Angle");
         minimumCrossingAngleMenu.addActionListener(this::minimumCrossingAngleMenuActionPerformed);
+
+        JMenuItem overlappingNodesMenu = new JMenuItem();
+        overlappingNodesMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
+        overlappingNodesMenu.setText("Show Overlapping Nodes");
+        overlappingNodesMenu.addActionListener(this::overlappingNodesMenuActionPerformed);
+
         analyzeMenu.add(minimumCrossingAngleMenu);
+        analyzeMenu.add(overlappingNodesMenu);
         viewMenu.add(analyzeMenu);
         viewMenu.add(new JSeparator());
         initEditMenu(mainMenuBar);
@@ -700,6 +711,32 @@ public class MainFrame extends JFrame {
             return text;
         });
         infoLabel.setText(labText.getDefault("Graph has no crossings."));
+    }
+
+    private void overlappingNodesMenuActionPerformed(ActionEvent evt){
+        Set<Double> seenCoordinatesX = new HashSet<>();
+        Set<Double> seenCoordinatesY = new HashSet<>();
+        
+        for(INode u : this.graph.getNodes()){
+            double u_x = u.getLayout().getCenter().getX();
+            double u_y = u.getLayout().getCenter().getY();
+
+            if(seenCoordinatesX.contains(u_x) && seenCoordinatesY.contains(u_y)){
+                INodeStyle s = u.getStyle();
+                if (s instanceof ShinyPlateNodeStyle) {
+                    ((ShinyPlateNodeStyle) s).setPaint(Color.MAGENTA);
+                    ((ShinyPlateNodeStyle) s).setPen(new Pen(Color.MAGENTA,1));
+
+                } else {
+                    System.out.println(s.getClass());
+                }
+            } else {
+                seenCoordinatesX.add(u_x);
+                seenCoordinatesY.add(u_y);
+            }
+        }
+
+        view.updateUI();
     }
 
     private void forceDirectionPerpendicularActionPerformed(ActionEvent evt){    this.algoModifiers[0] = true; }
