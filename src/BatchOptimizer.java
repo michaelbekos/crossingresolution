@@ -1,4 +1,5 @@
 
+import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import util.GridPositioning;
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
@@ -134,7 +135,8 @@ public class BatchOptimizer {
   public static void runAlgo(Path romeGraph, Path outFile) throws IOException {
     view.importFromGraphML(romeGraph.toFile());
     // start with some default layouting, to work around all nodes on one point
-    LayoutUtilities.applyLayout(graph, new OrganicLayout());
+    //LayoutUtilities.applyLayout(graph, new OrganicLayout());
+    LayoutUtilities.applyLayout(graph, new OrthogonalLayout());
 
     // do some default metrics
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
@@ -176,7 +178,7 @@ public class BatchOptimizer {
       + "\t#e\t" + graph.getEdges().size() 
       + "\tminAngleInitial\t" + initialAngle 
       + "\tminAngleOptimized\t" + optimizedAngle
-      /*+ "\tarea\t" + computeArea(graph)*/
+      + "\tarea\t" + computeArea(graph)
       + "\n";
     System.out.print(metrics);
     // ... and write metrics to file.
@@ -194,8 +196,8 @@ public class BatchOptimizer {
       double y = p.getX();
       xmin = Math.min(xmin, x);
       ymin = Math.min(ymin, y);
-      xmax = Math.min(xmax, x);
-      ymax = Math.min(ymax, y);
+      xmax = Math.max(xmax, x);
+      ymax = Math.max(ymax, y);
     }
     return (xmax - xmin) * (ymax - ymin);
   }
