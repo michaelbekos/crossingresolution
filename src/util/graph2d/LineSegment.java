@@ -14,6 +14,17 @@ public class LineSegment{
   public String toString(){
     return "(LS " + p1 + " " + p2 + ")";
   }
+  @Override
+  public boolean equals(Object o){
+    if(o instanceof LineSegment){
+      LineSegment l = (LineSegment) o;
+      if((p1.distanceTo(l.p1) <= G.Epsilon && p2.distanceTo(l.p2) <= G.Epsilon) ||
+         (p1.distanceTo(l.p2) <= G.Epsilon && p2.distanceTo(l.p1) <= G.Epsilon)) 
+        return true;
+      else return false;
+    }
+    return false;
+  }
   public LineSegment(PointD p11, PointD p21){
     p1 = p11;
     p2 = p21;
