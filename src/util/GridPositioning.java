@@ -173,6 +173,7 @@ public class GridPositioning {
 
     /**
      * Computes integer grid points node per node
+     * Without considerung resulting angle
      * @return nodePositions - holds new positions of all nodes
      */
     public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions) {
@@ -185,6 +186,7 @@ public class GridPositioning {
 
     /**
      * Computes integer grid points for each node not already contained.
+     * With considering resulting angle
      * @return nodePositions - holds new positions of all nodes
      */
     public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions, Set<INode> containedNodes) {
@@ -232,41 +234,6 @@ public class GridPositioning {
             coordinates.add(new Tuple2<>(p, getResultingAngle(graph, pos, u, p)));
         }
         return coordinates;
-    }
-
-    /**
-     * Iterates over all PointD's in coords and computes minimum angle
-     * Adds this to output coordinates
-     * @param  coords - contains surrounding grid points and original nodes
-     * @param pos - node positions of entire graph
-     * @return coordinates - contains all minimum angles with node positions
-     */
-    private static List<Tuple3<PointD, PointD, Double>> addCoordinates(IGraph graph,
-                                                                       List<Tuple4<INode, PointD,INode, PointD>> coords, Mapper<INode, PointD> pos) {
-        List<Tuple3<PointD, PointD, Double>> coordinates = new ArrayList<>();
-
-        for(Tuple4<INode, PointD,INode, PointD> tup : coords){
-            PointD p_u = tup.b,
-                    p_v = tup.d;
-            INode i_u = tup.a,
-                    i_v = tup.c;
-            coordinates.add(new Tuple3<>(p_u, p_v, getResultingAngle(graph, pos, i_u, p_u, i_v, p_v)));
-        }
-
-        return coordinates;
-    }
-
-    /**
-     * Updates node positions and computes new minimum Angle of several nodes
-     * @param map   - input node positions
-     * @param u,v   - nodes to be updated
-     * @param posU, posV - new position of nodes
-     * @return Double - computes minimum angle of new positions
-     */
-    public static Double getResultingAngle(IGraph graph, Mapper<INode, PointD> map, INode u, PointD posU, INode v, PointD posV) {
-        map.setValue(u, posU);
-        map.setValue(v, posV);
-        return getResultingAngle(graph, map);
     }
 
 
