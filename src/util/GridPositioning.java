@@ -4,6 +4,8 @@ import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.yworks.yfiles.layout.CopiedLayoutGraph;
 import com.yworks.yfiles.layout.LayoutGraphAdapter;
@@ -16,6 +18,8 @@ import algorithms.graphs.MinimumAngle;
 import util.graph2d.Intersection;
 import util.graph2d.LineSegment;
 
+import javax.sound.sampled.Line;
+
 import static layout.algo.ForceAlgorithmApplier.newNodePointMap;
 
 /**
@@ -26,16 +30,8 @@ public class GridPositioning {
 
     private static Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
     private static Comparator<Tuple3<PointD, PointD, Double>> byAngles = (p1, p2) -> p1.c.compareTo(p2.c);
+    private static Comparator<Tuple3<LineSegment, LineSegment, Double>> byCrossingAngle = (p1, p2) -> p1.c.compareTo(p2.c);
 
-
-    /**
-     * Constructor
-     * @param graph - input graph
-     */
-    /*public GridPositioning(IGraph graph) {
-        this.graph = graph;
-        this.nodePositions =
-    }*/
 
     /**
      * Gridding respective to smalles angle crossing.
@@ -46,7 +42,8 @@ public class GridPositioning {
 
         while (GridPositioning.isGridded(g) == false) {
             ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.getGridNodesRespectively(g, nodePositions));
-            GridPositioning.removeOverlaps(g, 0.1);
+            GridPositioning.removeOverlaps(g, 0.0001);
+
         }
         
     }
@@ -64,53 +61,177 @@ public class GridPositioning {
         }
 
     }
-        /**
-         * Computes integer grid points respectively by crossing angle if such exists
-         * Otherwise respectively to the minimum angle of the graph
-         * @return nodePositions - integer grid node positions
-         */
-    public static Mapper<INode, PointD> getGridNodesRespectively(IGraph graph, Mapper<INode, PointD> nodePositions) {
-        Set<INode> seenNodes = new HashSet<>();
-        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(graph, Maybe.just(nodePositions));
-        Mapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(graph);
 
-        List<Tuple3<PointD, PointD, Double>> coordCrossing = new ArrayList<>();
-        Set<INode> containedNodes = new HashSet<>();
+    /**
+     * Computes integer grid points respectively by crossing angle if such exists
+     * Otherwise respectively to the minimum angle of the graph
+     * @return nodePositions - integer grid node positions
+     */
+    private static Mapper<INode, PointD> getGridNodesRespectively(IGraph graph, Mapper<INode, PointD> nodePos){
+        // take minimum crossing
+        // try not to break it
+        Mapper<INode, PointD> temp = nodePos;
+        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePos));
+        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(graph, Maybe.just(nodePos));
+        int crossingSize = crossings.size();
+        List<Tuple2<INode, PointD>> griddedCrossingNodes;
+        Set<INode> crossingNodes = new HashSet<>();
+        if(minCrossing.hasValue()) {
+            crossingNodes.add(minCrossing.get().a.n1.get());
+            crossingNodes.add(minCrossing.get().a.n2.get());
+            crossingNodes.add(minCrossing.get().b.n1.get());
+            crossingNodes.add(minCrossing.get().b.n2.get());
 
-        // computes the grid nodes respectively for single nodes or for crossing nodes
-        for (INode u : graph.getNodes()) {
-            // insures that coordinates to same node are not added twice
-            if (seenNodes.contains(u)) {
-                break;
-            }
-            seenNodes.add(u);
-            PointD currU = nodePositions.getValue(u);
 
-            for (INode v : graph.neighbors(INode.class, u)) {
-                if (seenNodes.contains(v)) {
-                    break;
-                }
-                seenNodes.add(v);
-                PointD currV = nodePositions.getValue(v);
-                LineSegment l1 = new LineSegment(currU, currV);
-                LineSegment l2 = new LineSegment(currV, currU);
-                if (crossings.contains(l1) || crossings.contains(l2)) {
-                    containedNodes.add(u);
-                    containedNodes.add(v);
-                    coordCrossing.clear();
-                    coordCrossing.addAll(addCoordinates(graph, getGridPoints(u,v, nodePositions), temp));
-                    Collections.sort(coordCrossing, byAngles);
-                    if (coordCrossing.size() > 0) {
-                        nodePositions.setValue(u, coordCrossing.get(coordCrossing.size() - 1).a);
-                        nodePositions.setValue(v, coordCrossing.get(coordCrossing.size() - 1).b);
-                    }
+
+            // compute new positions of each node from the minimum crossing
+            List<LineSegment> lines = getGridSegments(minCrossing.get().a, nodePos);
+            List<LineSegment> otherLines = getGridSegments(minCrossing.get().b, nodePos);
+            // compute new crossing angles, choose best
+            griddedCrossingNodes = getResultingAngle(lines, otherLines);
+            if (!griddedCrossingNodes.isEmpty()) {
+                for (Tuple2<INode, PointD> tup : griddedCrossingNodes) {
+                    nodePos.setValue(tup.a, tup.b);
                 }
             }
 
-           nodePositions = getGridNodes(graph, nodePositions, containedNodes);
+            // consider rest of nodes not with crossing
+            nodePos = getGridNodes(graph, nodePos, crossingNodes);
 
+        } else {
+            nodePos = getGridNodes(graph, nodePos, crossingNodes);
         }
+
+
+
+
+
+        return nodePos;
+    }
+
+    /**
+     * Computes resulting angles and chooses the maximal angle
+     * Returns then a Tuple with the containing coordinates of this crossing angle
+     * @param l1 - List of new LineSegments
+     * @param l2 - List of new LineSegments
+     * @return Tuple with the containing coordinates of this crossing angle
+     */
+    private static List<Tuple2<INode, PointD>> getResultingAngle(List<LineSegment> l1, List<LineSegment> l2){
+        Intersection inter;
+        List<Tuple3<LineSegment, LineSegment, Double>> coordCrossing = new ArrayList<>();
+        List<Tuple2<INode, PointD>> res = new ArrayList<>();
+        for(LineSegment l: l1){
+            for(LineSegment j: l2){
+                if(l.intersects(j,true).hasValue()){
+                    inter = l.intersects(j,true).get();
+                    coordCrossing.add(new Tuple3<>(l,j, inter.angle));
+                }
+                if(j.intersects(l,true).hasValue()){
+                    inter = j.intersects(l,true).get();
+                    coordCrossing.add(new Tuple3<>(j,l, inter.angle));
+                }
+            }
+        }
+
+        Collections.sort(coordCrossing, byCrossingAngle);
+        if (!coordCrossing.isEmpty()) {
+            res.add(new Tuple2(coordCrossing.get(coordCrossing.size() - 1).a.n1.get(), coordCrossing.get(coordCrossing.size() - 1).a.p1));
+            res.add(new Tuple2(coordCrossing.get(coordCrossing.size()-1).a.n2.get(), coordCrossing.get(coordCrossing.size()-1).a.p2));
+            res.add(new Tuple2(coordCrossing.get(coordCrossing.size() - 1).b.n1.get(), coordCrossing.get(coordCrossing.size() - 1).b.p1));
+            res.add(new Tuple2(coordCrossing.get(coordCrossing.size()-1).b.n2.get(), coordCrossing.get(coordCrossing.size()-1).b.p2));
+        }
+
+        return res;
+    }
+
+
+    /**
+     * Creates 8 new LineSegments with only gridded Nodes
+     * @param l
+     * @param nodePos
+     * @return
+     */
+    private static List<LineSegment> getGridSegments(LineSegment l,  Mapper<INode, PointD> nodePos){
+        assert(l.n1.hasValue() && l.n2.hasValue());
+        INode n1 = l.n1.get(),
+                n2 = l.n2.get();
+        List<PointD> n1ps = getGridPoints(n1, nodePos);
+        List<PointD> n2ps = getGridPoints(n2, nodePos);
+        List<LineSegment> segments = new ArrayList<>();
+        for(PointD v : n1ps){
+            for(PointD u : n2ps){
+                LineSegment ls = new LineSegment(n1, n2);
+                ls.p1 = v;
+                ls.p2 = u;
+                segments.add(ls);
+            }
+        }
+
+        return segments;
+    }
+
+
+    /**
+     * Computes integer grid points node per node
+     * @return nodePositions - holds new positions of all nodes
+     */
+    public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions) {
+
+        for (INode u : graph.getNodes()) {
+                nodePositions.setValue(u, new PointD(Math.floor(u.getLayout().getX()), Math.floor(u.getLayout().getY())));
+            }
         return nodePositions;
+    }
+
+    /**
+     * Computes integer grid points for each node not already contained.
+     * @return nodePositions - holds new positions of all nodes
+     */
+    public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions, Set<INode> containedNodes) {
+
+        Mapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(graph);
+        List<Tuple2<PointD, Double>> coord = new ArrayList<>();
+        if(containedNodes.isEmpty()) {
+            for (INode u : graph.getNodes()) {
+                coord.addAll(addCoordinates(graph, u, getGridPoints(u, nodePositions), temp));
+
+                Collections.sort(coord, byAngle);
+                if (coord.size() > 0) {
+                    nodePositions.setValue(u, coord.get(coord.size() - 1).a);
+                }
+            }
+        } else {
+            for (INode u : graph.getNodes()) {
+                if (containedNodes.contains(u)) {
+                    continue;
+                }
+                coord.clear();
+                coord.addAll(addCoordinates(graph, u, getGridPoints(u, nodePositions), temp));
+
+                Collections.sort(coord, byAngle);
+                if (coord.size() > 0) {
+                    nodePositions.setValue(u, coord.get(coord.size() - 1).a);
+                }
+            }
+        }
+
+        return nodePositions;
+    }
+
+    /**
+     * Iterates over all PointD's in gridPointsSingle and computes minimum angle
+     * Adds this to output coordinates
+     * @param u - original node
+     * @param gridPoints - contains surrounding grid points
+     * @param pos - node positions of entire graph
+     * @return coordinates - contains all minimum angles with node positions
+     */
+    private static List<Tuple2<PointD, Double>> addCoordinates(IGraph graph, INode u, List<PointD> gridPoints, Mapper<INode, PointD> pos) {
+        List<Tuple2<PointD, Double>> coordinates = new ArrayList<>();
+        for(PointD p : gridPoints) {
+            coordinates.add(new Tuple2<>(p, getResultingAngle(graph, pos, u, p)));
+        }
+        return coordinates;
     }
 
     /**
@@ -133,80 +254,6 @@ public class GridPositioning {
         }
 
         return coordinates;
-    }
-
-    /**
-     * Iterates over all PointD's in gridPointsSingle and computes minimum angle
-     * Adds this to output coordinates
-     * @param u - original node
-     * @param gridPoints - contains surrounding grid points
-     * @param pos - node positions of entire graph
-     * @return coordinates - contains all minimum angles with node positions
-     */
-    private static List<Tuple2<PointD, Double>> addCoordinates(IGraph graph, INode u, List<PointD> gridPoints, Mapper<INode, PointD> pos) {
-        List<Tuple2<PointD, Double>> coordinates = new ArrayList<>();
-        for(PointD p : gridPoints) {
-            coordinates.add(new Tuple2<>(p, getResultingAngle(graph, pos, u, p)));
-        }
-        return coordinates;
-    }
-
-    /**
-     * Computes integer grid points for each node not already contained.
-     * @return nodePositions - holds new positions of all nodes
-     */
-    public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions, Set<INode> containedNodes) {
-
-        Mapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(graph);
-        List<Tuple2<PointD, Double>> coord = new ArrayList<>();
-
-        for (INode u : graph.getNodes()) {
-            if(containedNodes.contains(u)){ break; }
-            coord.clear();
-            coord.addAll(addCoordinates(graph, u, getGridPoints(u, nodePositions), temp));
-
-            Collections.sort(coord, byAngle);
-            if (coord.size() > 0) {
-                nodePositions.setValue(u, coord.get(coord.size() - 1).a);
-            }
-        }
-
-        return nodePositions;
-    }
-
-    /**
-     * Computes integer grid points node per node
-     * @return nodePositions - holds new positions of all nodes
-     */
-    public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions) {
-
-        for (INode u : graph.getNodes()) {
-                nodePositions.setValue(u, new PointD(Math.floor(u.getLayout().getX()), Math.floor(u.getLayout().getY())));
-            }
-        return nodePositions;
-    }
-
-    /**
-     * Removes node overlaps.
-     */
-    public static void removeOverlapsOrganic(IGraph graph){
-        OrganicRemoveOverlapsStage removal = new OrganicRemoveOverlapsStage();
-        LayoutGraphAdapter adap = new LayoutGraphAdapter(graph);
-        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
-        removal.applyLayout(g2);
-        LayoutUtilities.applyLayout(graph, removal);
-    }
-
-
-    /**
-     * Removes node overlaps.
-     */
-    public static void removeOverlaps(IGraph graph, double dist){
-        RemoveOverlapsStage removal = new RemoveOverlapsStage(dist);
-        LayoutGraphAdapter adap = new LayoutGraphAdapter(graph);
-        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
-        removal.applyLayout(g2);
-        LayoutUtilities.applyLayout(graph, removal);
     }
 
     /**
@@ -247,6 +294,31 @@ public class GridPositioning {
             return tempAngle.get();
         }
         return 0.0;
+    }
+
+
+
+    /**
+     * Removes node overlaps.
+     */
+    public static void removeOverlapsOrganic(IGraph graph){
+        OrganicRemoveOverlapsStage removal = new OrganicRemoveOverlapsStage();
+        LayoutGraphAdapter adap = new LayoutGraphAdapter(graph);
+        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
+        removal.applyLayout(g2);
+        LayoutUtilities.applyLayout(graph, removal);
+    }
+
+
+    /**
+     * Removes node overlaps.
+     */
+    public static void removeOverlaps(IGraph graph, double dist){
+        RemoveOverlapsStage removal = new RemoveOverlapsStage(dist);
+        LayoutGraphAdapter adap = new LayoutGraphAdapter(graph);
+        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
+        removal.applyLayout(g2);
+        LayoutUtilities.applyLayout(graph, removal);
     }
 
     /**
@@ -302,4 +374,5 @@ public class GridPositioning {
         points.add(new PointD(Math.ceil(u.getX()), Math.ceil(u.getY())));
         return points;
     }
+
 }
