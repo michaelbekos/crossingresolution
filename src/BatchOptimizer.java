@@ -165,10 +165,10 @@ public class BatchOptimizer {
     // ... grid it...
     GridPositioning.simpleGridGraph(graph);
     // ... get metrics...
-    // (Maybe (LS, LS, I) --fmap--> Maybe String --getDefault--> String)
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
             minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
     double area = computeArea(graph);
+    // (Maybe (LS, LS, I) --fmap--> Maybe String --getDefault--> String)
     String optimizedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
     // ... export the computed layout...
     view.exportToGraphML(Files.newOutputStream(outFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE));

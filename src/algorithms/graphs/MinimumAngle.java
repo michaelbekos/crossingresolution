@@ -12,6 +12,10 @@ import layout.algo.ForceAlgorithmApplier;
 import util.*;
 import util.graph2d.*;
 
+import compgeom.algorithms.*;
+import compgeom.util.*;
+import compgeom.*;
+
 // to allow overriding for caching, we have an explicit singleton object, which implements all methods. Static calls just use the singleton.
 // This is because you can't derive static methods to member-methods.
 // since you can't have methods and functions with the same name, we need a helper class...
@@ -82,6 +86,30 @@ public class MinimumAngle {
     return m.getCrossings(graph, edgesOnly, np);
   }
   
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSweepline(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
+    Set<RLineSegment2D> segments = new HashSet<>();
+    for(IEdge e: graph.getEdges()){
+      INode n1, n2;
+      n1 = e.getSourceNode();
+      n2 = e.getTargetNode();
+      PointD p1 = nodePositions.getValue(n1);
+      PointD p2 = nodePositions.getValue(n2);
+      segments.add(new RLineSegment2D(e, p1, p2));
+    }
+    Map<RPoint2D, Set<RLineSegment2D>> result = BentleyOttmann.intersectionsMap(segments);
+    return result.entrySet().parallelStream().flatMap(e -> {
+      RLineSegment2D[] ar = new RLineSegment2D[e.getValue().size()];
+      return Util.distinctPairs(e.getValue().toArray(ar)).flatMap((Tuple2<RLineSegment2D, RLineSegment2D> rl1rl2) -> {
+        RLineSegment2D rl1 = rl1rl2.a, rl2 = rl1rl2.b;
+        LineSegment l1, l2;
+        l1 = new LineSegment(rl1.e);
+        l2 = new LineSegment(rl2.e);
+        Maybe<Intersection> i = l1.intersects(l2, true);
+        return i.stream().map(i1 -> new Tuple3<>(l1, l2, i1));
+      });
+    }).collect(Collectors.toList());
+  }
+
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallel(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     return Util.distinctPairs(graph.getEdges()).parallel().map(e1e2 -> {
         IEdge e1 = e1e2.a,
@@ -168,6 +196,7 @@ public class MinimumAngle {
    * Displays vectors for debugging purposes
    */
   public static void highlightCrossing(Tuple3<LineSegment, LineSegment, Intersection> crossing) {
+    System.out.println(crossing.a.e);
     crossing.a.e.andThen(e -> paintEdge(e, Pen.getRed()));
     crossing.b.e.andThen(e -> paintEdge(e, Pen.getRed()));
   }

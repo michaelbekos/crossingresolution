@@ -30,6 +30,20 @@ public abstract class Util {
     return res;
   }
 
+  public static <A> Stream<Tuple2<A, A>> distinctPairs(A[] as){
+    return distinctPairs(as, 0);
+  }
+  public static <A> Stream<Tuple2<A, A>> distinctPairs(A[] as, int skip){
+    Stream<Tuple2<A, A>> res = Stream.empty();
+    while(as.length != skip){
+      A head = as[skip];
+      Stream<A> tail = Arrays.stream(as).skip(skip);
+      res = Stream.concat(res, tail.map(a -> new Tuple2<>(head, a)));
+      skip++;
+    }
+    return res;
+  }
+
   public static <A> Stream<Tuple2<A, A>> distinctPairs(Stream<A> as, Stream<A> bs){
     List<Tuple2<A, A>> res = new LinkedList<>();
     List<A> asList = as.collect(Collectors.toList());
