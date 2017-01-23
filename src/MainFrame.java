@@ -150,6 +150,7 @@ public class MainFrame extends JFrame {
         this.graphEditorInputMode = new GraphEditorInputMode();
         this.graphEditorInputMode.setCreateNodeAllowed(true);
         this.graphEditorInputMode.setCreateEdgeAllowed(true);
+        this.graphEditorInputMode.getCreateEdgeInputMode().setCreateBendAllowed(false);
         this.graphEditorInputMode.setCreateBendAllowed(false);
         this.graphEditorInputMode.setEditLabelAllowed(true);
         this.graphEditorInputMode.addPopulateItemPopupMenuListener((o, iModelItemPopulateItemPopupMenuEventArgs) -> {
