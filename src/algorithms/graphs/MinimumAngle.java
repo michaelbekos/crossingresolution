@@ -56,7 +56,7 @@ public class MinimumAngle {
     public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
       // lazy values! :D
       IMapper<INode, PointD> actualMap = np.getDefault(() -> ForceAlgorithmApplier.initPositionMap(graph));
-      return MinimumAngle.getCrossingsParallelFlat(graph, edgesOnly, actualMap);
+      return yFilesSweepLine.getCrossings(graph, edgesOnly, actualMap);
     }
   } 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * 

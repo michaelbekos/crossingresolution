@@ -1,10 +1,16 @@
 package util.graph2d;
 
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.algorithms.IPlaneObject;
+import com.yworks.yfiles.algorithms.YRectangle;
 import com.yworks.yfiles.graph.*;
 import util.*;
 
-public class LineSegment{
+public class LineSegment implements IPlaneObject {
+  public YRectangle getBoundingBox(){
+    return bb;
+  }
+  YRectangle bb;
   public PointD p1, p2, ve;
   public Maybe<IEdge>  e = Maybe.nothing();
   public Maybe<INode> n1 = Maybe.nothing(), 
@@ -25,10 +31,21 @@ public class LineSegment{
     }
     return false;
   }
+  public void calcBB(){
+    double x1, y1;
+    x1 = p1.getX();
+    y1 = p1.getY();
+    double x2, y2;
+    x2 = p2.getX();
+    y2 = p2.getY();
+    bb = new YRectangle(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+  }
+
   public LineSegment(PointD p11, PointD p21){
     p1 = p11;
     p2 = p21;
     ve = PointD.subtract(p2, p1);
+    calcBB();
   }
   public LineSegment(INode n1, INode n2){
     this(n1.getLayout().getCenter(), n2.getLayout().getCenter());
@@ -44,6 +61,7 @@ public class LineSegment{
     p1 = np.getValue(n1.get());
     p2 = np.getValue(n2.get());
     ve = PointD.subtract(p2, p1);
+    calcBB();
   }
   public Maybe<Intersection> intersects(LineSegment o, boolean skipEqualEndpoints){
     PointD p3, p4;
