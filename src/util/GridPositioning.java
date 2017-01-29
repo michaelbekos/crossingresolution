@@ -237,10 +237,11 @@ public class GridPositioning {
 
         Collections.sort(coordCrossing, byCrossingAngle);
         if (!coordCrossing.isEmpty()) {
-            res.add(new Tuple2(coordCrossing.get(coordCrossing.size() - 1).a.n1.get(), coordCrossing.get(coordCrossing.size() - 1).a.p1));
-            res.add(new Tuple2(coordCrossing.get(coordCrossing.size()-1).a.n2.get(), coordCrossing.get(coordCrossing.size()-1).a.p2));
-            res.add(new Tuple2(coordCrossing.get(coordCrossing.size() - 1).b.n1.get(), coordCrossing.get(coordCrossing.size() - 1).b.p1));
-            res.add(new Tuple2(coordCrossing.get(coordCrossing.size()-1).b.n2.get(), coordCrossing.get(coordCrossing.size()-1).b.p2));
+            Tuple3<LineSegment, LineSegment, Double> lastCrossing = coordCrossing.get(coordCrossing.size() - 1);
+            res.add(new Tuple2<>(lastCrossing.a.n1.get(), lastCrossing.a.p1));
+            res.add(new Tuple2<>(lastCrossing.a.n2.get(), lastCrossing.a.p2));
+            res.add(new Tuple2<>(lastCrossing.b.n1.get(), lastCrossing.b.p1));
+            res.add(new Tuple2<>(lastCrossing.b.n2.get(), lastCrossing.b.p2));
         }
 
         return res;
