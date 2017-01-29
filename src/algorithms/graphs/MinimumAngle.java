@@ -196,8 +196,34 @@ public class MinimumAngle {
    * Displays vectors for debugging purposes
    */
   public static void highlightCrossing(Tuple3<LineSegment, LineSegment, Intersection> crossing) {
-    System.out.println(crossing.a.e);
+    //System.out.println(crossing.a.e);
     crossing.a.e.andThen(e -> paintEdge(e, Pen.getRed()));
     crossing.b.e.andThen(e -> paintEdge(e, Pen.getRed()));
+  }
+
+  /**
+   * Checks whether a particular edge is crossing any other edges
+   * @param e1
+   * @param graph
+   * @param nodePositions
+   * @param edgesOnly
+   * @return
+   */
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> intersectsWith(IEdge e1, IGraph graph, IMapper<INode, PointD> nodePositions, boolean edgesOnly){
+    List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
+    Set<IEdge> seenEdges = new HashSet<>();
+    seenEdges.add(e1);
+    LineSegment l1 = new LineSegment(e1, nodePositions);
+    for(IEdge e2: graph.getEdges()){
+      if(seenEdges.contains(e2)) continue;
+      LineSegment l2 = new LineSegment(e2, nodePositions);
+      Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
+      if(i.hasValue()){
+        Intersection i1 = i.get();
+        res.add(new Tuple3<>(l1,l2,i1));
+      }
+
+    }
+    return res;
   }
 }
