@@ -143,17 +143,22 @@ public class BatchOptimizer {
             minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
     // if there is a crossing, map to get the angle, then get it, otherwise "no crossings".
     String initialAngle = minAngleCr.fmap(abc->abc.c.angle.toString()).getDefault("no crossings");
-  
+    
     ForceAlgorithmApplier.init();
-    ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
+    
     long startTime = System.nanoTime();
     if(forceAlgoOnly){
       System.out.println("running FAA only");
+      ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
       firstFAA.runNoDraw();
     }
     else {
       System.out.println("running genetic");
-      GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAA, graph, view, Maybe.nothing());
+      List<ForceAlgorithmApplier> initials = new LinkedList<>();
+      initials.add(defaultForceAlgorithmApplier(initTime));
+      LayoutUtilities.applyLayout(graph, new OrganicLayout());
+      initials.add(defaultForceAlgorithmApplier(initTime));
+      GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view, Maybe.nothing());
       ga.runRounds(rounds);
     }
 

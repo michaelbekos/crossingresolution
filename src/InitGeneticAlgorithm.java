@@ -13,8 +13,12 @@ import algorithms.graphs.*;
 
 public abstract class InitGeneticAlgorithm {
     public static Random rand = new Random();
-    
     public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(ForceAlgorithmApplier firstFAA, IGraph graph, GraphComponent view, Maybe<JLabel> infoLabel){
+      List<ForceAlgorithmApplier> firstFAAs = new LinkedList<ForceAlgorithmApplier>();
+      firstFAAs.add(firstFAA);
+      return defaultGeneticAlgorithm(firstFAAs, graph, view, infoLabel);
+    }
+    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(List<ForceAlgorithmApplier> firstFAAs, IGraph graph, GraphComponent view, Maybe<JLabel> infoLabel){
           GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm = new GeneticAlgorithm<>(
                   (faa -> {
                       faa.runNoDraw();
@@ -123,7 +127,7 @@ public abstract class InitGeneticAlgorithm {
               faa.draw(graph);
           });
           
-          geneticAlgorithm.instances.add(firstFAA);
+          geneticAlgorithm.instances.addAll(firstFAAs);
           return geneticAlgorithm;
       }
 }
