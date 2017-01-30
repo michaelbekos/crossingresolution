@@ -146,7 +146,7 @@ public class BatchOptimizer {
   
     ForceAlgorithmApplier.init();
     ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
-    
+    long startTime = System.nanoTime();
     if(forceAlgoOnly){
       System.out.println("running FAA only");
       firstFAA.runNoDraw();
@@ -162,14 +162,17 @@ public class BatchOptimizer {
       Mapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
     });
-    // ... grid it...
-    GridPositioning.simpleGridGraph(graph);
-    // ... get metrics...
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
             minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+    String optimizedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
+    // ... grid it...
+    GridPositioning.simpleGridGraph(graph);
+    long endTime = System.nanoTime();
+    // ... get metrics...
+    minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
     double area = computeArea(graph);
     // (Maybe (LS, LS, I) --fmap--> Maybe String --getDefault--> String)
-    String optimizedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
+    String griddedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
     // ... export the computed layout...
     view.exportToGraphML(Files.newOutputStream(outFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE));
     // ... show metrics...
@@ -178,7 +181,9 @@ public class BatchOptimizer {
       + "\t#e\t" + graph.getEdges().size() 
       + "\tminAngleInitial\t" + initialAngle 
       + "\tminAngleOptimized\t" + optimizedAngle
+      + "\tminAngleGridded\t" + griddedAngle
       + "\tarea\t" + computeArea(graph)
+      + "\ttime\t" + (endTime - startTime)
       + "\n";
     System.out.print(metrics);
     // ... and write metrics to file.

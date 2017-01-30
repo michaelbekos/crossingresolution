@@ -57,11 +57,10 @@ public class GridPositioning {
     public static void simpleGridGraph(IGraph g){
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
 
-       // while (GridPositioning.isGridded(g) == false) {
+       while (GridPositioning.isGridded(g) == false) {
             ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.getGridNodesFast(g, nodePositions));
             GridPositioning.removeOverlaps(g, 0.001);
-            System.out.println(GridPositioning.isGridded(g));
-       // }
+       }
 
     }
 
@@ -224,14 +223,9 @@ public class GridPositioning {
         List<Tuple2<INode, PointD>> res = new ArrayList<>();
         for(LineSegment l: l1){
             for(LineSegment j: l2){
-                if(l.intersects(j,true).hasValue()){
-                    inter = l.intersects(j,true).get();
-                    coordCrossing.add(new Tuple3<>(l,j, inter.angle));
-                }
-                if(j.intersects(l,true).hasValue()){
-                    inter = j.intersects(l,true).get();
-                    coordCrossing.add(new Tuple3<>(j,l, inter.angle));
-                }
+                l.intersects(j,true).andThen(i -> {
+                    coordCrossing.add(new Tuple3<>(l,j, i.angle));
+                });
             }
         }
 
