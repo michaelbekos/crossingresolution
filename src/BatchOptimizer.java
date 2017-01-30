@@ -127,7 +127,17 @@ public class BatchOptimizer {
       System.out.println(romeGraph);
       String fileName = romeGraph.getFileName().toString();
       Path outFile = Paths.get(outFolder + File.separator + fileName);
-      runAlgo(romeGraph, outFile);
+
+      int tries = 10;
+      for(int i = 0; i < tries; i++){
+        try {
+          runAlgo(romeGraph, outFile);
+          break;
+        }
+        catch(Exception e) {
+
+        }
+      }
     }
     out.close();
 
