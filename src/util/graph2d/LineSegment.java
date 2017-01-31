@@ -7,30 +7,19 @@ import com.yworks.yfiles.graph.*;
 import util.*;
 
 public class LineSegment implements IPlaneObject {
-  public YRectangle getBoundingBox(){
-    return bb;
-  }
   YRectangle bb;
   public PointD p1, p2, ve;
   public Maybe<IEdge>  e = Maybe.nothing();
   public Maybe<INode> n1 = Maybe.nothing(), 
                       n2 = Maybe.nothing();
-  public Double key;
-  @Override
-  public String toString(){
-    return "(LS " + p1 + " " + p2 + ")";
+
+  public YRectangle getBoundingBox(){
+    return bb;
   }
-  @Override
-  public boolean equals(Object o){
-    if(o instanceof LineSegment){
-      LineSegment l = (LineSegment) o;
-      if((p1.distanceTo(l.p1) <= G.Epsilon && p2.distanceTo(l.p2) <= G.Epsilon) ||
-         (p1.distanceTo(l.p2) <= G.Epsilon && p2.distanceTo(l.p1) <= G.Epsilon)) 
-        return true;
-      else return false;
-    }
-    return false;
-  }
+
+  /**
+   * Calculate the Bounding Box of each Line Segment
+   */
   public void calcBB(){
     double x1, y1;
     x1 = p1.getX();
@@ -41,21 +30,36 @@ public class LineSegment implements IPlaneObject {
     bb = new YRectangle(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
   }
 
+  /**
+   * Initialize LineSegment with two PointDs p11 & p21
+   */
   public LineSegment(PointD p11, PointD p21){
     p1 = p11;
     p2 = p21;
     ve = PointD.subtract(p2, p1);
     calcBB();
   }
+
+  /**
+   * Initialize LineSegment with two Nodes n1 & n2
+   */
   public LineSegment(INode n1, INode n2){
     this(n1.getLayout().getCenter(), n2.getLayout().getCenter());
     this.n1 = Maybe.just(n1);
     this.n2 = Maybe.just(n2);
   }
+
+  /**
+   * Initialize LineSegment with Edge e
+   */
   public LineSegment(IEdge e){
     this(e.getSourceNode(), e.getTargetNode());
     this.e = Maybe.just(e);
   }
+
+  /**
+   * Initialize LineSegment with Edge e and node Positions np
+   */
   public LineSegment(IEdge e, IMapper<INode, PointD> np){
     this(e);
     p1 = np.getValue(n1.get());
@@ -63,6 +67,13 @@ public class LineSegment implements IPlaneObject {
     ve = PointD.subtract(p2, p1);
     calcBB();
   }
+
+  /**
+   * Compute intersections of this line segment with another line segment
+   * @param o - other line segment
+   * @param skipEqualEndpoints - true if endpoints can be equal
+   * @return Return Intersection of there is one
+   */
   public Maybe<Intersection> intersects(LineSegment o, boolean skipEqualEndpoints){
     PointD p3, p4;
     p3 = o.p1;
@@ -86,7 +97,32 @@ public class LineSegment implements IPlaneObject {
     Double crossingsAngle = Math.toDegrees(Math.acos(PointD.scalarProduct(r, s) / (r.getVectorLength() * s.getVectorLength())));
     return Maybe.just(new Intersection(crossingPoint, crossingsAngle));
   }
+
+  // compute cross product of two points
   public static double crossProduct(PointD p1, PointD p2){
     return p1.getX() * p2.getY() - p1.getY() * p2.getX();
   }
+
+  @Override
+  public String toString(){
+    return "(LS " + p1 + " " + p2 + ")";
+  }
+
+  /**
+   * Compare if two linesegments are equal
+   * @return true if linesegments are equal
+   */
+  @Override
+  public boolean equals(Object o){
+    if(o instanceof LineSegment){
+      LineSegment l = (LineSegment) o;
+      if((p1.distanceTo(l.p1) <= G.Epsilon && p2.distanceTo(l.p2) <= G.Epsilon) ||
+              (p1.distanceTo(l.p2) <= G.Epsilon && p2.distanceTo(l.p1) <= G.Epsilon))
+        return true;
+      else return false;
+    }
+    return false;
+  }
+
+
 }

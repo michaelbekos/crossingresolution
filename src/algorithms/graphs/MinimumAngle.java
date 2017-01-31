@@ -171,6 +171,11 @@ public class MinimumAngle {
     return res;
   }
 
+  /**
+   * Sort the crossings ascending with comparator
+   * @param crossings - Crossings list to sort
+   * @return Sorted List of Crossings
+   */
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> sortCrossings(List<Tuple3<LineSegment, LineSegment, Intersection>> crossings){
     Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byAngle = 
       (t1, t2) -> t1.c.angle.compareTo(t2.c.angle);
@@ -178,12 +183,21 @@ public class MinimumAngle {
     return crossings;
   }
 
+  /**
+   * Removes highlight of all edges in input graph
+   * @param graph - input graph
+   */
   public static void resetHighlighting(IGraph graph){
     for(IEdge e: graph.getEdges()){
       paintEdge(e, Pen.getBlack());
     }
   }
 
+  /**
+   * Paints edge e certain
+   * @param e - edge to color
+   * @param p - use p for coloring
+   */
   public static void paintEdge(IEdge e, Pen p){
     IEdgeStyle s = e.getStyle();
     if(s instanceof PolylineEdgeStyle) {
@@ -192,6 +206,7 @@ public class MinimumAngle {
       System.out.println(s.getClass());
     }
   }
+
   /**
    * Displays vectors for debugging purposes
    */
