@@ -9,3 +9,4 @@ out/
 /rome/*
 !/rome/out/
 !/rome/out/*
+/rome/out

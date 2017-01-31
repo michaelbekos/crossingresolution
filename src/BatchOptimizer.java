@@ -181,7 +181,7 @@ public class BatchOptimizer {
             minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
     String optimizedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
     // ... grid it...
-    GridPositioning.simpleGridGraph(graph);
+    GridPositioning.gridGraph(graph);
     long endTime = System.nanoTime();
     // ... get metrics...
     minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
