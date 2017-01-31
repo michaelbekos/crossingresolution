@@ -7,10 +7,17 @@ import com.yworks.yfiles.geometry.PointD;
 
 import java.util.*;
 import java.io.*;
-import java.nio.*;
 import java.nio.file.*;
 
+/**
+ * Handles the contest format files
+ */
 public class ContestIOHandler extends GraphIOHandler {
+
+  /**
+   * Parsing inputFile in contest format
+   * Ignore Comments & Whitespaces & Empty Lines
+   */
   public static void read(IGraph g, String inputFileName) throws IOException {
     Path path = Paths.get(inputFileName);
     List<String> lines = Files.readAllLines(path);
@@ -23,15 +30,17 @@ public class ContestIOHandler extends GraphIOHandler {
     INode[] nodes = new INode[0];
     for(String line: lines){
       line = line.trim();
-      // comment
+      // ignore whitespaces or leading empty lines
       if(line.isEmpty() || line.equals("") || line.equals("\n")) { continue;}
       else if(line.charAt(0) == '#') {continue;}
 
+      // phase 0 contains nodes count
       if(phase == 0){
         nodesCount = Integer.parseInt(line);
         nodes = new INode[nodesCount];
         phase = 1;
       }
+      // phase 1 contains all the nodes in the graph
       else if(phase == 1){
         try {
           int x, y;
@@ -44,6 +53,7 @@ public class ContestIOHandler extends GraphIOHandler {
           if(nodesAdded >= nodesCount) phase = 2;
         } catch(Exception e){}
       }
+      // phase 2 contains all the edges in the graph
       else if(phase == 2){
         try {
           int i1, i2;
@@ -57,14 +67,22 @@ public class ContestIOHandler extends GraphIOHandler {
   }
 
 
+  /**
+   * Writing graph in file with contest format
+   */
   public static void write(IGraph graph, String outputFileName) throws IOException {
-    GridPositioning.gridGraph(graph);
+    // grid the graph before writing it out
+    // necessary here? gridding may be part of other processing steps
+    // GridPositioning.gridGraph(graph);
+
+    // phase 0 contains number of nodes
     BufferedWriter out = Files.newBufferedWriter(Paths.get(outputFileName));
     out.write("# First value is number of nodes (N)");
     out.newLine();
     long size = graph.getNodes().size();
     out.write(size + " ");
     out.newLine();
+    // phase 1 contains nodes contained in graph
     out.write("# Next N numbers describe the node locations");
     out.newLine();
     for(INode n: graph.getNodes()){
@@ -75,6 +93,7 @@ public class ContestIOHandler extends GraphIOHandler {
       out.write(x + " " + y);
       out.newLine();
     }
+    // phase 2 contains edges contained in graph
     out.write("# Remaining lines are the edges.");
     out.newLine();
     out.write("# The first value is the source node index.");
