@@ -202,19 +202,18 @@ public class MinimumAngle {
   }
 
   /**
-   * Checks whether a particular edge is crossing any other edges
-   * @param e1
-   * @param graph
-   * @param nodePositions
+   * Checks whether a particular edge e1 is crossing any other edges in Graph graph
    * @param edgesOnly
-   * @return
+   * @return List of Crossings with e1
    */
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> intersectsWith(IEdge e1, IGraph graph, IMapper<INode, PointD> nodePositions, boolean edgesOnly){
     List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();
     seenEdges.add(e1);
     LineSegment l1 = new LineSegment(e1, nodePositions);
+    // for every other edge check if the line segment von e1 is crossing line segment of e2
     for(IEdge e2: graph.getEdges()){
+      // do not consider e1 twice
       if(seenEdges.contains(e2)) continue;
       LineSegment l2 = new LineSegment(e2, nodePositions);
       Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
@@ -222,7 +221,6 @@ public class MinimumAngle {
         Intersection i1 = i.get();
         res.add(new Tuple3<>(l1,l2,i1));
       }
-
     }
     return res;
   }
