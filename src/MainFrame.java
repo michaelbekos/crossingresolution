@@ -10,16 +10,12 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.*;
 import algorithms.graphs.MinimumAngle;
-import layout.algo.event.AlgorithmEvent;
-import layout.algo.event.AlgorithmListener;
 import util.*;
 import util.interaction.*;
 import util.graph2d.*;
 import util.graph2d.LineSegment;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -590,12 +586,12 @@ public class MainFrame extends JFrame {
                 GridPositioning.gridGraph(this.graph);
                 //grid.removeOverlapsOrganic();
                 GridPositioning.removeOverlaps(this.graph, 0.1);
-                if(GridPositioning.isGridded(this.graph)){
+                if(GridPositioning.isGridGraph(this.graph)){
                     gridding = true;
                 }
             }
         }
-        System.out.println("Graph is gridded: " + GridPositioning.isGridded(this.graph));
+        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
         this.view.updateUI();
     }
 
@@ -603,15 +599,15 @@ public class MainFrame extends JFrame {
         boolean gridding = false;
         if(ForceAlgorithmApplier.class != null) {
             while (gridding == false) {
-                GridPositioning.simpleGridGraph(this.graph);
+                GridPositioning.gridGraphFast(this.graph);
                 //grid.removeOverlapsOrganic();
                 GridPositioning.removeOverlaps(this.graph, 0.1);
-                if(GridPositioning.isGridded(this.graph)){
+                if(GridPositioning.isGridGraph(this.graph)){
                     gridding = true;
                 }
             }
         }
-        System.out.println("Graph is gridded: " + GridPositioning.isGridded(this.graph));
+        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
         this.view.updateUI();
     }
 
