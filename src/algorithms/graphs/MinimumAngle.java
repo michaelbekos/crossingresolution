@@ -12,10 +12,6 @@ import layout.algo.ForceAlgorithmApplier;
 import util.*;
 import util.graph2d.*;
 
-import compgeom.algorithms.*;
-import compgeom.util.*;
-import compgeom.*;
-
 // to allow overriding for caching, we have an explicit singleton object, which implements all methods. Static calls just use the singleton.
 // This is because you can't derive static methods to member-methods.
 // since you can't have methods and functions with the same name, we need a helper class...
@@ -86,7 +82,7 @@ public class MinimumAngle {
     return m.getCrossings(graph, edgesOnly, np);
   }
   
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSweepline(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
+  /*public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSweepline(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     Set<RLineSegment2D> segments = new HashSet<>();
     for(IEdge e: graph.getEdges()){
       INode n1, n2;
@@ -108,7 +104,7 @@ public class MinimumAngle {
         return i.stream().map(i1 -> new Tuple3<>(l1, l2, i1));
       });
     }).collect(Collectors.toList());
-  }
+  }*/
 
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallel(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     return Util.distinctPairs(graph.getEdges()).parallel().map(e1e2 -> {
