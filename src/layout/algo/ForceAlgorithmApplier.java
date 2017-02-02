@@ -188,6 +188,14 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
   }
 
+  // apply internal position map to graph
+  public void showNodePositions(int j){
+    ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    // update only every 20 iterations
+    if(j % 10 == 0) {
+      this.view.updateUI();
+    }
+  }
   /**
    * run(maxNoOfIterations) has three modes:
    * - run(0): showForces()
@@ -195,6 +203,7 @@ public class ForceAlgorithmApplier implements Runnable {
    * - run(x): run x rounds
    */ 
   public void run() {
+    int nodes = this.graph.getNodes().size();
     running = true;
     if (this.maxNoOfIterations == 0) {
       showForces();
@@ -210,7 +219,14 @@ public class ForceAlgorithmApplier implements Runnable {
         }
         cMinimumAngle.invalidate();
         improveSolution();
-        showNodePositions();
+        // update of ui not every time when more than 200 nodes
+        if(nodes > 200){
+         // if( j % 20 == 0){ showNodePositions(); }
+          showNodePositions(j);
+        } else {
+          showNodePositions();
+        }
+
         this.currNoOfIterations = j;
         long endTime = System.nanoTime();
         System.out.println("Time taken: " + (endTime - startTime)/1000000 + " ms");
@@ -229,7 +245,12 @@ public class ForceAlgorithmApplier implements Runnable {
         nodePositions = applyAlgos();
         ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.currNoOfIterations = i;
-        this.view.updateUI();
+        // update only every 10 iterations
+        if(nodes > 200){
+          if(i % 10 == 0){ this.view.updateUI();}
+        } else {
+          this.view.updateUI();
+        }
         try {
           Thread.sleep(1);
         } catch (InterruptedException exc) {
