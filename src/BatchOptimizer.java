@@ -1,8 +1,8 @@
 
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
+import com.yworks.yfiles.layout.organic.OrganicLayout;
 import util.GridPositioning;
 import algorithms.graphs.MinimumAngle;
-import com.yworks.yfiles.layout.organic.OrganicLayout;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import util.*;
