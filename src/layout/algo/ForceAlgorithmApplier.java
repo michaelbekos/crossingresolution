@@ -90,9 +90,9 @@ public class ForceAlgorithmApplier implements Runnable {
       .collect(Collectors.toList());
   }
 
-  /* * * * * * * * * * * * *
+  /* * * * * * * * * * * * * *
    * STATIC PART ENDS HERE  *
-   * * * * * * * * * * * * */
+   * * * * * * * * * * * * * */
 
   // list of algos to apply to graph
   public List<ForceAlgorithm> algos = new LinkedList<>();
