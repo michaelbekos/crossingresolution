@@ -22,11 +22,13 @@ public class MinimumAngle {
     // singleton object mustn't be instantiated by others
     protected MinimumAngleHelper(){ }
     
+    // return the worst angle
     public Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
       // Maybe (LS, LS, I) --fmap--> Maybe Double
       return this.getMinimumAngleCrossing(graph, np).fmap(i -> i.c.angle);
     }
 
+    // return the worst crossing, if any
     public Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, Maybe<IMapper<INode, PointD>> np){
       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph, np);
       if(crossings.size() > 0){
@@ -39,6 +41,7 @@ public class MinimumAngle {
       } 
     }
 
+    // return a list of all crossings
     public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, Maybe<IMapper<INode, PointD>> np){
       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph, np);
       return sortCrossings(crossings);
@@ -59,6 +62,7 @@ public class MinimumAngle {
    * HELPER CLASS ENDS HERE (I always get confused)  *
    * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+  // and now for some wrappers (or rappers?)
   public static Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
     return m.getMinimumAngle(graph, np);
   }
@@ -66,8 +70,6 @@ public class MinimumAngle {
     return m.getMinimumAngleCrossing(graph, np);
   }    
   
-  
-
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, Maybe<IMapper<INode, PointD>> np){
     return m.getCrossingsSorted(graph, np);
   }
@@ -77,35 +79,11 @@ public class MinimumAngle {
     return m.getCrossings(graph, np);
   }
   
-
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
     return m.getCrossings(graph, edgesOnly, np);
   }
   
-  /*public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSweepline(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
-    Set<RLineSegment2D> segments = new HashSet<>();
-    for(IEdge e: graph.getEdges()){
-      INode n1, n2;
-      n1 = e.getSourceNode();
-      n2 = e.getTargetNode();
-      PointD p1 = nodePositions.getValue(n1);
-      PointD p2 = nodePositions.getValue(n2);
-      segments.add(new RLineSegment2D(e, p1, p2));
-    }
-    Map<RPoint2D, Set<RLineSegment2D>> result = BentleyOttmann.intersectionsMap(segments);
-    return result.entrySet().parallelStream().flatMap(e -> {
-      RLineSegment2D[] ar = new RLineSegment2D[e.getValue().size()];
-      return Util.distinctPairs(e.getValue().toArray(ar)).flatMap((Tuple2<RLineSegment2D, RLineSegment2D> rl1rl2) -> {
-        RLineSegment2D rl1 = rl1rl2.a, rl2 = rl1rl2.b;
-        LineSegment l1, l2;
-        l1 = new LineSegment(rl1.e);
-        l2 = new LineSegment(rl2.e);
-        Maybe<Intersection> i = l1.intersects(l2, true);
-        return i.stream().map(i1 -> new Tuple3<>(l1, l2, i1));
-      });
-    }).collect(Collectors.toList());
-  }*/
-
+  // variant: use parallel map with maybe return values.
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallel(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     return Util.distinctPairs(graph.getEdges()).parallel().map(e1e2 -> {
         IEdge e1 = e1e2.a,
@@ -118,6 +96,7 @@ public class MinimumAngle {
       .map(m -> m.get()).collect(Collectors.toList());
   }
 
+  // variant: use parallel flatmap, also maybes.
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelFlat(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     return Util.distinctPairs(graph.getEdges()).parallel().flatMap(e1e2 -> {
         IEdge e1 = e1e2.a,
@@ -129,6 +108,7 @@ public class MinimumAngle {
       }).collect(Collectors.toList());
   }
 
+  // variant: parallel, with synchronized list append
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelSynch(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();
@@ -147,6 +127,7 @@ public class MinimumAngle {
       return res;
   }
 
+  // variant: serial 
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();

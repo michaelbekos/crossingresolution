@@ -8,6 +8,8 @@ import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
+import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
+
 import layout.algo.*;
 import algorithms.graphs.MinimumAngle;
 import util.*;
@@ -787,8 +789,13 @@ public class MainFrame extends JFrame {
     public GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
     public Thread geneticAlgorithmThread;
     public void initializeGeneticAlgorithm(){
-        ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(faaRunningTimeGenetic);
-        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAA, graph, view, Maybe.just(infoLabel));
+        LinkedList<ForceAlgorithmApplier> firstFAAs = new LinkedList<>();
+        firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
+        LayoutUtilities.applyLayout(graph, new OrthogonalLayout());
+        firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
+        LayoutUtilities.applyLayout(graph, new OrganicLayout());
+        firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
+        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, graph, view, Maybe.just(infoLabel));
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
     
