@@ -33,7 +33,7 @@ public class yFilesSweepLine {
       LineSegment s1 = (LineSegment) o1;
       LineSegment s2 = (LineSegment) o2;
 
-      //check if we have a real intersection
+      //check if we really have a intersection
       Maybe<Intersection> mi = s1.intersects(s2, eo);
       mi.andThen(i -> crossings.add(new Tuple3<>(s1, s2, i)));
     }
