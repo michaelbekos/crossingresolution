@@ -321,9 +321,10 @@ public class ForceAlgorithmApplier implements Runnable {
 
   public void draw(IGraph g){
     ForceAlgorithmApplier.applyNodePositionsToGraph(g, nodePositions);
+    displayMinimumAngle(g);
     this.view.updateUI();
-    //displayMinimumAngle(g); 
-    infoLabel.andThen(p -> p.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/));
+    infoLabel.andThen(p -> p.setText(displayMinimumAngle(g) /*+ displayEdgeLength(graph)*/));
+    this.view.updateUI();
   }
   /**
    * Displays vectors for debugging purposes
@@ -553,13 +554,13 @@ public class ForceAlgorithmApplier implements Runnable {
   public String displayMinimumAngle(IGraph graph) {
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = cMinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions));
 
-
+    MinimumAngle.resetHighlighting(graph);
     Maybe<String> s = crossing.fmap(currCross -> {
       if(currCross.c.angle > this.maxMinAngle){
         this.maxMinAngle = currCross.c.angle;
         this.maxMinAngleIterations = this.currNoOfIterations;
       }
-      MinimumAngle.resetHighlighting(this.graph);
+      
       MinimumAngle.highlightCrossing(currCross);
       return DisplayMessagesGui.createMinimumAngleMsg(currCross);
     });
