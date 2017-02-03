@@ -118,6 +118,25 @@ public class InitMenuBar {
         });
         newMenuItem.add(gridGraphItem);
 
+        JMenuItem layeredGridGraphItem = new JMenuItem();
+        layeredGridGraphItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
+        layeredGridGraphItem.setText("Layered Grid graph");
+        layeredGridGraphItem.addActionListener(e -> {
+            JTextField xCount = new JTextField("4");
+            JTextField yCount = new JTextField("4");
+            JTextField layers = new JTextField("2");
+            int result = JOptionPane.showOptionDialog(null, new Object[]{"xCount: ", xCount, "yCount: ", yCount, "layersCount: ", layers}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (result == JOptionPane.OK_OPTION) {
+                int xC = Integer.parseInt(xCount.getText());
+                int yC = Integer.parseInt(yCount.getText());
+                int lC = Integer.parseInt(layers.getText());
+                ForceAlgorithmApplier.init();
+                LayeredGridGenerator.generate(graph, xC, yC, lC);
+                view.updateUI();
+            }
+        });
+        newMenuItem.add(layeredGridGraphItem);
+
         fileMenu.add(newMenuItem);
         fileMenu.add(new JSeparator());
 
