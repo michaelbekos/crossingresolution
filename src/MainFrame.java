@@ -61,7 +61,8 @@ public class MainFrame extends JFrame {
     private boolean perpendicular = true;
     private boolean createNodeAllowed = true;
     private boolean optimizingNinty = true;
-    JSlider[] sliders;
+    //JSlider[] sliders;
+    JSpinner[] sliders;
 
     public final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
     public final Boolean[] algoModifiers = new Boolean[]{false, false};
@@ -254,7 +255,8 @@ public class MainFrame extends JFrame {
     Set<INode> movedNodes = new HashSet<>();
 
     private void initSidePanel(JPanel mainPanel, GridBagConstraints c) {
-        Tuple3<JPanel, JSlider[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Spring force", "not used right now", "Crossing force", "Incident edges force"});
+        Tuple3<JPanel, JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", "not used right now", "Crossing force", "Incident edges force"});
+        //Tuple3<JPanel, JSlider[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", "not used right now", "Crossing force", "Incident edges force"});
         this.sidePanel = slidPanelSlidersCount.a;
         this.sliders = slidPanelSlidersCount.b;
         sidePanelNextY = slidPanelSlidersCount.c;
