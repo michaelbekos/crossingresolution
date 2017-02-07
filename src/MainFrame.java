@@ -255,10 +255,11 @@ public class MainFrame extends JFrame {
     Set<INode> movedNodes = new HashSet<>();
 
     private void initSidePanel(JPanel mainPanel, GridBagConstraints c) {
-        Tuple3<JPanel, JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", "not used right now", "Crossing force", "Incident edges force"});
-        //Tuple3<JPanel, JSlider[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", "not used right now", "Crossing force", "Incident edges force"});
+        Tuple3<JPanel, JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
+        //Tuple3<JPanel, JSlider[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
         this.sidePanel = slidPanelSlidersCount.a;
         this.sliders = slidPanelSlidersCount.b;
+        sliders[1].setVisible(false);
         sidePanelNextY = slidPanelSlidersCount.c;
         c.gridy = 1;
         c.gridx = 1;
@@ -274,7 +275,7 @@ public class MainFrame extends JFrame {
         cSidePanel.gridx = 0;
         sidePanel.add(new JLabel("Genetic FAA round time"), cSidePanel);
         JSlider geneticSlider = new JSlider(0, 1000);
-        geneticSlider.setSize(0, 1000);
+        geneticSlider.setSize(0, 500);
         geneticSlider.setValue(faaRunningTimeGenetic);
         geneticSlider.addChangeListener(e-> {
             JSlider source = (JSlider) e.getSource();

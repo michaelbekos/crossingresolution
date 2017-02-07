@@ -40,7 +40,7 @@ public abstract class InitGeneticAlgorithm {
                               a2 = ma2.get();
                       return a1.compareTo(a2);
                   }),
-                  Maybe.just(20),
+                  Maybe.just(5),
                   Either.left(fa -> {
                       Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions);
   
