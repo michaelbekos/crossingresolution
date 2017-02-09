@@ -12,6 +12,7 @@ import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 
 import layout.algo.*;
 import algorithms.graphs.MinimumAngle;
+import layout.algo.NodeSwapper;
 import util.*;
 import util.interaction.*;
 import util.graph2d.*;
@@ -408,6 +409,13 @@ public class MainFrame extends JFrame {
         jitterItem.addActionListener(this::jitterItemActionPerformed);
         layoutMenu.add(jitterItem);
 
+
+        JMenuItem swapperItem = new JMenuItem();
+        swapperItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        swapperItem.setText("Nodes Swapper");
+        swapperItem.addActionListener(this::swapperItemActionPerformed);
+        layoutMenu.add(swapperItem);
+
         JMenuItem gridPositioningItem = new JMenuItem();
         gridPositioningItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         gridPositioningItem.setText("Respective Crossing Angle Gridding");
@@ -422,7 +430,7 @@ public class MainFrame extends JFrame {
         JMenuItem gridItem = new JMenuItem();
         gridItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
         gridItem.setIcon(new ImageIcon(getClass().getResource("/resources/grid-16.png")));
-        gridItem.setText("Grid");
+        gridItem.setText("Grid On/Off");
         gridItem.addActionListener(this::gridItemActionPerformed);
         viewMenu.add(gridItem);
 
@@ -689,6 +697,33 @@ public class MainFrame extends JFrame {
         }
         this.gridVisualCreator.setVisible(this.isGridVisible);
         this.view.updateUI();
+    }
+
+    private void swapperItemActionPerformed(ActionEvent evt){
+        JTextField nodesTextField = new JTextField("2");
+        int nodes = 2;
+
+        JCheckBox checkbox = new JCheckBox("Nodes from Minimum Crossing");
+        boolean crossing;
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes to swap: ", nodesTextField, checkbox}, "Swapping Algorithm", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+        crossing = checkbox.isSelected();
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                nodes = Integer.parseInt(nodesTextField.getText());
+                if(nodes > 4 && crossing) {
+                    JOptionPane.showMessageDialog(null, "No more than four nodes contained in Crossing.\nThe number of nodes to swap will be set to 2. ", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                    nodes = 2;
+                }
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of nodes to swap will be set to 2.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else return;
+
+        NodeSwapper.swapNodes(this.graph, nodes, crossing);
+        this.view.updateUI();
+
     }
 
     private void jitterItemActionPerformed(ActionEvent evt) {

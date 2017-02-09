@@ -1,10 +1,11 @@
-package layout.algo.event;
+package layout.algo;
 
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.IMapper;
 import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.Mapper;
 import util.Maybe;
 import util.Tuple3;
 import util.graph2d.Intersection;
@@ -18,14 +19,23 @@ import java.util.Random;
 public class NodeSwapper {
 
 
-    public static void swapCrossingNodes(IGraph g, IMapper<INode, PointD> nodePos, int amount) {
+    public static void swapNodes(IGraph g, int amount, boolean crossing){
+        Mapper<INode, PointD> nodePos = ForceAlgorithmApplier.initPositionMap(g);
+        if(amount <= 4 && crossing){
+            ForceAlgorithmApplier.applyNodePositionsToGraph(g, swapCrossingNodes(g, nodePos, amount));
+        } else {
+            ForceAlgorithmApplier.applyNodePositionsToGraph(g, swapRandomNodes(g, nodePos, amount));
+        }
+    }
+
+    private static Mapper<INode, PointD> swapCrossingNodes(IGraph g, Mapper<INode, PointD> nodePos, int amount) {
         Tuple3<LineSegment, LineSegment, Intersection> cross = MinimumAngle.getMinimumAngleCrossing(g, Maybe.just(nodePos)).get();
 
         if(cross != null){
             if(amount == 2){
                 PointD temp = cross.a.p1;
-                nodePos.setValue(cross.a.n1.get(), cross.b.p2);
-                nodePos.setValue(cross.b.n2.get(), temp);
+                nodePos.setValue(cross.a.n1.get(), cross.b.p1);
+                nodePos.setValue(cross.b.n1.get(), temp);
             }
             if(amount == 3){
                 PointD temp = cross.a.p1;
@@ -46,7 +56,7 @@ public class NodeSwapper {
         }
     }
 
-    public static void swapRandomNodes(IGraph g, IMapper<INode, PointD> nodePos, int amount){
+    private static Mapper<INode, PointD> swapRandomNodes(IGraph g, Mapper<INode, PointD> nodePos, int amount){
         Random rand = new Random();
         int nodes = g.getNodes().size();
         if(amount < nodes) {
@@ -61,9 +71,9 @@ public class NodeSwapper {
             for(int i = 0; i < amount-1; i++){
                 nodePos.setValue(swapNodes[i], swapPoints[i+1]);
             }
-            nodePos.setValue(swapNodes[amount], temp);
+            nodePos.setValue(swapNodes[amount-1], temp);
 
-
+        ForceAlgorithmApplier.applyNodePositionsToGraph(g, nodePos);
         } else {System.out.println("Not enough nodes in the graph to swap.");}
     }
 
