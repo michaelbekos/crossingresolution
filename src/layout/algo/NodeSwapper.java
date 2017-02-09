@@ -19,6 +19,12 @@ import java.util.Random;
 public class NodeSwapper {
 
 
+    /**
+     * Calls the swapping functions depending on amount of nodes & if the crossing nodes should be used
+     * @param g - input graph
+     * @param amount - how many nodes should be swapped
+     * @param crossing - true if crossing nodes should be swapped
+     */
     public static void swapNodes(IGraph g, int amount, boolean crossing){
         Mapper<INode, PointD> nodePos = ForceAlgorithmApplier.initPositionMap(g);
         if(amount <= 4 && crossing){
@@ -28,6 +34,10 @@ public class NodeSwapper {
         }
     }
 
+    /**
+     * Swaps only nodes from the minimum crossing
+     * @return Positions with swapped nodes
+     */
     private static Mapper<INode, PointD> swapCrossingNodes(IGraph g, Mapper<INode, PointD> nodePos, int amount) {
         Tuple3<LineSegment, LineSegment, Intersection> cross = MinimumAngle.getMinimumAngleCrossing(g, Maybe.just(nodePos)).get();
 
@@ -54,8 +64,13 @@ public class NodeSwapper {
                 nodePos.setValue(cross.b.n2.get(), temp2);
             }
         }
+        return nodePos;
     }
 
+    /**
+     * Swaps random nodes in graph
+     * @return Positions with swapped nodes
+     */
     private static Mapper<INode, PointD> swapRandomNodes(IGraph g, Mapper<INode, PointD> nodePos, int amount){
         Random rand = new Random();
         int nodes = g.getNodes().size();
@@ -75,6 +90,8 @@ public class NodeSwapper {
 
         ForceAlgorithmApplier.applyNodePositionsToGraph(g, nodePos);
         } else {System.out.println("Not enough nodes in the graph to swap.");}
+
+        return nodePos;
     }
 
 }
