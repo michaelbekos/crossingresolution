@@ -62,9 +62,8 @@ public class MainFrame extends JFrame {
     private boolean perpendicular = true;
     private boolean createNodeAllowed = true;
     private boolean optimizingNinty = true;
-    //JSlider[] sliders;
-    JSpinner[] sliders;
-
+    JSlider[] sliders;
+    
     public final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
     public final Boolean[] algoModifiers = new Boolean[]{false, false};
     private int faaRunningTimeGenetic = 250;
@@ -131,13 +130,15 @@ public class MainFrame extends JFrame {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 2;
-        c. insets = new Insets(5, 0, 5, 0);
+        c.insets = new Insets(5, 0, 5, 0);
         mainPanel.add(progressBarPanel, c);
         //mainPanel.add(progressBarPanel, BorderLayout.PAGE_END);
 
         this.view = new GraphComponent();
         this.view.setSize(330, 330);
         this.view.requestFocus();
+        view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        view.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         c.fill = GridBagConstraints.BOTH;
         c.gridy = 1;
         c.weightx = 0.8;
@@ -256,12 +257,12 @@ public class MainFrame extends JFrame {
     Set<INode> movedNodes = new HashSet<>();
 
     private void initSidePanel(JPanel mainPanel, GridBagConstraints c) {
-        Tuple3<JPanel, JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
-        //Tuple3<JPanel, JSlider[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
+        Tuple4<JPanel, JSlider[], JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
         this.sidePanel = slidPanelSlidersCount.a;
         this.sliders = slidPanelSlidersCount.b;
+        slidPanelSlidersCount.c[1].setVisible(false);
         sliders[1].setVisible(false);
-        sidePanelNextY = slidPanelSlidersCount.c;
+        sidePanelNextY = slidPanelSlidersCount.d;
         c.gridy = 1;
         c.gridx = 1;
         c.weighty = 1;
