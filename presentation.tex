@@ -108,7 +108,7 @@
 \item Calculate force for each node
 \item Try to bring the graph into a minimum energy state
 \item Assume time discrete 
-\item[$\implies$] Each time step until convergence, add force vectors to node positions
+\item[$\implies$] Each time step until convergence add force vectors to node positions
 \end{itemize}
 \end{frame}
 \begin{frame}{Forces}
@@ -121,7 +121,7 @@ $$\implies f_{sp}(n_1, n_2) = \epsilon_{sp}\cdot(\dist{n_1, n_2} - l_{sp})~~\for
 \item Increase crossing angles 
 $$\implies f_{cr}(\vec{e_1}, \vec{e_2}, \theta) = (\hat{e_1}, \hat{e_2})\cdot\epsilon_{cr}\cos(\theta)~~\forall e_1, e_2\in \text{Crossings}\subseteq E\times E$$
 \item Evenly distribute edges around nodes 
-$$f_{n_1}(n_2, n_3, \phi)=\epsilon_{nb}\cdot\sin\left(\frac{\phi-\theta}2\right)~~\forall n_1\in V, n_2, n_3\in\text{Neighbours}(n_1)$$
+$$\implies f_{n_1}(n_2, n_3, \phi)=\epsilon_{nb}\cdot\sin\left(\frac{\phi-\theta}2\right)~~\forall n_1\in V, n_2, n_3\in\text{Neighbours}(n_1)$$
 \end{itemize}
 \end{frame}
 \begin{frame}{Problems and solutions}
@@ -129,7 +129,7 @@ $$f_{n_1}(n_2, n_3, \phi)=\epsilon_{nb}\cdot\sin\left(\frac{\phi-\theta}2\right)
 \item For large graphs this produces small drawings
 \item Springs are too inflexible
 $$l \sim \log(|N|), ~~ \epsilon_{sp}' = \frac{\dist{n_1, n_2} - l}l$$
-$$\implies f_{sp}'(n_1, n_2) = \epsilon_{sp}'\cdot\tan^{-1}\left({\epsilon_{sp}'}^4\right);~~\forall e=(n_1, n_2)\in E$$
+$$\implies f_{sp}'(n_1, n_2) = \epsilon_{sp}'\cdot\tan^{-1}\left({\epsilon_{sp}'}^4\right)~~\forall e=(n_1, n_2)\in E$$
 \item Spring embedder converges to local minimum
 \item[$\implies$] Change embedding locally, keep good changes
 \item[$\implies$] Genetic algorithm
