@@ -72,14 +72,14 @@
 
 \begin{document}
 
-\frame{
-	\frametitle{Outline}
-	\tableofcontents
+%\frame{
+	%\frametitle{Outline}
+	%\tableofcontents
 %um Pausen zwischen den sections beim Vorlesen der Uebersicht zu erzeugen
 %	[pausesections]
-}
+%}
 
-\section{Contest Problem}
+\section{Graph Drawing Contest}
 %\subsection{Scope}
 %\frame{
 %	\frametitle{}
@@ -94,7 +94,13 @@
 
 \subsection{What is the problem of the contest?}
 \frame{
-	\frametitle{Minimizing the Crossing Angle}
+	\frametitle{Crossing Angle Maximaztion}
+	\begin{itemize}
+	\item Maximizing the smallest angle between any pair of crossing edges
+	\item Straight-line embedding
+	\item Input graphs are arbitrary undirected graphs
+	\end{itemize}
+	
 }
 \subsection{Classic spring embedder / BIGANGLE}
 \begin{frame}{General idea}
@@ -139,6 +145,7 @@ $$\implies f_{sp}'(n_1, n_2) = \epsilon_{sp}'\cdot\tan^{-1}\left({\epsilon_{sp}'
 \begin{frame}{Some data}
 \includegraphics[width=\textwidth, trim={0 0 0 8.7cm}, clip]{data_force_vs_genetic.pdf}
 \end{frame}
+\subsection{Create Integer Grid Points}
 \frame{
 	\frametitle{Gridding the graph}\begin{center}
 	
