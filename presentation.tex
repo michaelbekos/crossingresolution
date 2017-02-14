@@ -68,6 +68,7 @@
 %\logo{\includegraphics[width=1cm]{emblem_rainbow.jpg}}
 %\titlegraphic{\includegraphics[width=1cm]{emblem_rainbow.jpg}}
 
+\newcommand{\dist}[1]{\ensuremath\text{d}\left(#1\right)}
 
 \begin{document}
 
@@ -95,7 +96,46 @@
 \frame{
 	\frametitle{Minimizing the Crossing Angle}
 }
-
+\subsection{Classic spring embedder / BIGANGLE}
+\begin{frame}{General idea}
+\begin{itemize}
+\item Calculate force for each node
+\item Try to bring the graph into a minimum energy state
+\item Assume time discrete 
+\item[$\implies$] Each time step until convergence, add force vectors to node positions
+\end{itemize}
+\end{frame}
+\begin{frame}{Forces}
+$G = (V, E)$
+\begin{itemize}
+\item Nodes are charged particles 
+$$\implies f_{el}(n_1, n_2) = \frac{\epsilon_{el}}{\dist{n_1, n_2}}~~\forall n_1, n_2\in V$$
+\item Edges are springs 
+$$\implies f_{sp}(n_1, n_2) = \epsilon_{sp}\cdot(\dist{n_1, n_2} - l_{sp})~~\forall e=(n_1, n_2)\in E$$
+\item Increase crossing angles 
+$$\implies f_{cr}(\vec{e_1}, \vec{e_2}, \theta) = (\hat{e_1}, \hat{e_2})\cdot\epsilon_{cr}\cos(\theta)~~\forall e_1, e_2\in \text{Crossings}\subseteq E\times E$$
+\item Evenly distribute edges around nodes 
+$$f_{n_1}(n_2, n_3, \phi)=\epsilon_{nb}\cdot\sin\left(\frac{\phi-\theta}2\right)~~\forall n_1\in V, n_2, n_3\in\text{Neighbours}(n_1)$$
+\end{itemize}
+\end{frame}
+\begin{frame}{Problems and solutions}
+\begin{itemize}
+\item For large graphs this produces small drawings
+\item Springs are too inflexible
+$$l \sim \log(|N|), ~~ \epsilon_{sp}' = \frac{\dist{n_1, n_2} - l}l$$
+$$\implies f_{sp}'(n_1, n_2) = \epsilon_{sp}'\cdot\tan^{-1}\left({\epsilon_{sp}'}^4\right);~~\forall e=(n_1, n_2)\in E$$
+\item Spring embedder converges to local minimum
+\item[$\implies$] Change embedding locally, keep good changes
+\item[$\implies$] Genetic algorithm
+\end{itemize}
+\end{frame}
+\begin{frame}{Mutation strategies}
+\begin{itemize}
+\item Change parameters of forces 
+\item Exchange force variants
+\item Remove crossing with worst crossing angle by swapping node positions
+\end{itemize}
+\end{frame}
 \frame{
 	\frametitle{Gridding the graph}\begin{center}
 	
