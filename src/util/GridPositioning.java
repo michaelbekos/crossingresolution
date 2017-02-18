@@ -35,7 +35,7 @@ public class GridPositioning {
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
 
         while (GridPositioning.isGridGraph(g) == false) {
-            ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.respectiveCrossingGrid(g, nodePositions));
+            ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.respectiveCrossingGrid(g, nodePositions)));
             GridPositioning.removeOverlaps(g, 0.0001);
 
         }
@@ -50,12 +50,35 @@ public class GridPositioning {
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
 
        while (GridPositioning.isGridGraph(g) == false) {
-            ForceAlgorithmApplier.applyNodePositionsToGraph(g, GridPositioning.respectiveNodeGrid(g, nodePositions));
+            ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.respectiveNodeGrid(g, nodePositions)));
             GridPositioning.removeOverlaps(g, 0.001);
        }
 
+
     }
 
+    /**
+     * PostProcess creates positive grid points by moving the graph to the right or up
+     * @return positive grid points
+     */
+    private static Mapper<INode, PointD> postProcess(IGraph g, Mapper<INode, PointD> nodePos){
+        double posX = 0;
+        double posY = 0;
+        for(INode u : g.getNodes()){
+            if(posX > u.getLayout().getCenter().getX()){
+                posX = u.getLayout().getCenter().getX();
+            }
+            if(posY > u.getLayout().getCenter().getX()){
+                posY = u.getLayout().getCenter().getY();
+            }
+        }
+
+        for(INode u : g.getNodes()) {
+            nodePos.setValue(u, new PointD(u.getLayout().getCenter().getX() - posX, u.getLayout().getCenter().getY() - posY));
+        }
+
+        return nodePos;
+    }
     /**
      * Checks if edge with new coordinates p1 crosses any other edges with angle > crossing angle
      * @return List of grid points with crossing angle
@@ -93,6 +116,10 @@ public class GridPositioning {
      */
     public static Mapper<INode, PointD> respectiveNodeGrid(IGraph g, Mapper<INode, PointD> nodePos){
         Maybe<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(g, Maybe.just(nodePos));
+
+        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(g,Maybe.just(nodePos));
+        int crossingCount = crossings.size();
+
         Mapper<INode, PointD> temp = GridPositioning.getGridNodes(g, nodePos);
 
         // no crossings exist, just do simple gridding
@@ -151,7 +178,7 @@ public class GridPositioning {
                         crossingAngle = goodGridPoints.get(goodGridPoints.size()-1).b;
                     }
                 } else {
-                    nodePos.setValue(n1, new PointD((double)Math.round(n1.getLayout().getX()), (double)Math.round(n1.getLayout().getY())));
+                    nodePos.setValue(n1, new PointD((double)Math.round(n1.getLayout().getCenter().getX()), (double)Math.round(n1.getLayout().getCenter().getY())));
                 }
 
             }
@@ -270,7 +297,7 @@ public class GridPositioning {
      */
     public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions) {
         for (INode u : graph.getNodes()) {
-                nodePositions.setValue(u, new PointD((double)Math.round(u.getLayout().getX()), (double)Math.round(u.getLayout().getY())));
+                nodePositions.setValue(u, new PointD((double)Math.round(u.getLayout().getCenter().getX()), (double)Math.round(u.getLayout().getCenter().getY())));
             }
         return nodePositions;
     }
