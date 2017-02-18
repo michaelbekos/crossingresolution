@@ -68,7 +68,7 @@ public class GridPositioning {
             if(posX > u.getLayout().getCenter().getX()){
                 posX = u.getLayout().getCenter().getX();
             }
-            if(posY > u.getLayout().getCenter().getX()){
+            if(posY > u.getLayout().getCenter().getY()){
                 posY = u.getLayout().getCenter().getY();
             }
         }
