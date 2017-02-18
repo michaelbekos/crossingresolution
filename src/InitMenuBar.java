@@ -8,6 +8,7 @@ import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 
 import io.ContestIOHandler;
+import javafx.stage.FileChooser;
 import layout.algo.*;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
@@ -450,37 +451,28 @@ public class InitMenuBar {
     }
 
     private void exportItemActionPerformed(ActionEvent evt) {
-        if (this.fileNamePath != null) {
+        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
+        chooser.setFileFilter(new FileFilter() {
+        public boolean accept(File file) {
+            return (file.isDirectory() || file.toString().toLowerCase().endsWith(".txt"));
+
+        }
+        public String getDescription() {
+                    return "ASCII Files [.txt]";
+                }
+        });
+
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            this.fileNamePath = chooser.getSelectedFile().toString();
+            if (!this.fileNamePath.toLowerCase().endsWith(".txt")) {
+                this.fileNamePath = this.fileNamePath + ".txt";
+            }
+            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
+
             try {
-                System.out.println(this.fileNamePath);
                 ContestIOHandler.write(this.graph, this.fileNamePath);
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while exporting the graph.");
-            }
-        } else {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setFileFilter(new FileFilter() {
-                public boolean accept(File file) {
-                    return (file.isDirectory() || file.toString().toLowerCase().endsWith(".txt"));
-                }
-
-                public String getDescription() {
-                    return "ASCII Files [.txt]";
-                }
-
-            });
-            if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                this.fileNamePath = chooser.getSelectedFile().toString();
-                if (!this.fileNamePath.toLowerCase().endsWith(".txt")) {
-                    this.fileNamePath = this.fileNamePath + ".txt";
-                }
-                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-
-                try {
-                   ContestIOHandler.write(this.graph, this.fileNamePath);
-                } catch (IOException ioe) {
-                    this.infoLabel.setText("An error occured while exporting the graph.");
-                }
             }
         }
     }
