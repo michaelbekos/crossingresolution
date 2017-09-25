@@ -428,6 +428,12 @@ public class MainFrame extends JFrame {
         graphGridItem.addActionListener(this::graphGridItemActionPerformed);
         layoutMenu.add(graphGridItem);
 
+        JMenuItem dirtyGridPositioningItem = new JMenuItem();
+        dirtyGridPositioningItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        dirtyGridPositioningItem.setText("Quick and Dirty Gridding");
+        dirtyGridPositioningItem.addActionListener(this::quickAndDirtyGridItemActionPerformed);
+        layoutMenu.add(dirtyGridPositioningItem);
+
         JMenuItem gridItem = new JMenuItem();
         gridItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
         gridItem.setIcon(new ImageIcon(getClass().getResource("/resources/grid-16.png")));
@@ -603,6 +609,17 @@ public class MainFrame extends JFrame {
                 if(GridPositioning.isGridGraph(this.graph)){
                     gridding = true;
                 }
+            }
+        }
+        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
+        this.view.updateUI();
+    }
+
+    private void quickAndDirtyGridItemActionPerformed(ActionEvent evt){
+        if(ForceAlgorithmApplier.class != null){
+            GridPositioning.gridQuickAndDirty(this.graph);
+            if(!GridPositioning.isGridGraph(this.graph)){
+                System.out.println("Error occured with the gridding of the graph");
             }
         }
         System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));

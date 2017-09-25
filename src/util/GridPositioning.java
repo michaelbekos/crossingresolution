@@ -42,6 +42,15 @@ public class GridPositioning {
         
     }
 
+    public static void gridQuickAndDirty(IGraph g){
+        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
+
+        while(GridPositioning.isGridGraph(g) == false){
+            ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.quickAndDirtyGridding(g, nodePositions)));
+            GridPositioning.removeOverlaps(g, 0.0001);
+        }
+    }
+
     /**
      * Fast gridding. Considers single nodes only.
      * @param g - Input Graph
@@ -105,6 +114,39 @@ public class GridPositioning {
             return goodGridPoints;
         }
         return badGridPoints;
+    }
+
+    public static Mapper<INode, PointD> quickAndDirtyGridding(IGraph g, Mapper<INode, PointD> nodePos){
+        Random rand = new Random();
+        Mapper<INode, PointD> temp = GridPositioning.getGridNodes(g, nodePos);
+
+        Set<INode> seenNodes = new HashSet<>();
+        for(INode n1 : g.getNodes()){
+            if(seenNodes.contains(n1)) continue;
+            seenNodes.add(n1);
+
+            // create the grid position randomly
+            double rangeMin = 0;
+            double rangeMax = 1;
+            double nextRand = rangeMin + (rangeMax - rangeMin) * rand.nextDouble();
+            //TODO QUICK AND DIRTY
+            PointD u = nodePos.getValue(n1);
+            if(nextRand >= 0 && nextRand < 0.25){
+                temp.setValue(n1, new PointD(Math.floor(u.getX()), Math.floor(u.getY())));
+            } else if (nextRand >= 0.25 && nextRand < 0.5){
+                temp.setValue(n1, new PointD(Math.ceil(u.getX()), Math.floor(u.getY())));
+            } else if (nextRand >= 0.5 && nextRand < 0.75){
+                temp.setValue(n1, new PointD(Math.floor(u.getX()), Math.ceil(u.getY())));
+            } else if (nextRand >= 0.75 && nextRand <= 1){
+                temp.setValue(n1, new PointD(Math.ceil(u.getX()), Math.ceil(u.getY())));
+            } else {
+                System.out.println("Error in creating random variable for fast and dirty gridding.");
+            }
+        }
+
+        seenNodes.clear();
+        temp.clear();
+        return temp;
     }
 
     /**
