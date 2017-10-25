@@ -1,0 +1,55 @@
+# category: automatic
+# problem: 2
+# Lines starting with # are comments and ignored
+# First value is the number of nodes(N)
+12
+# Next N numbers describe the node locations.
+40 31
+47 36
+34 36
+34 45
+47 45
+40 50
+30 20
+50 20
+50 60
+30 60
+20 40
+60 40
+# Remaining lines are the edges.
+0 2
+0 1
+1 4
+4 5
+3 5
+2 3
+1 2
+1 5
+2 5
+0 3
+0 4
+3 4
+6 10
+6 7
+7 11
+8 11
+8 9
+9 10
+9 11
+6 11
+6 9
+8 10
+7 8
+7 10
+2 6
+0 6
+1 7
+0 7
+1 11
+4 11
+4 8
+5 8
+3 9
+5 9
+3 10
+2 10
