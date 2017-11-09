@@ -67,6 +67,17 @@ public class GridPositioning {
     }
 
     /**
+     * Multiply the Coord. from each Node with the factor scaleValue
+     * @return scaled grid points with scaleValue factor
+     */
+    public static  Mapper<INode, PointD> scaleUpProcess(IGraph g, Mapper<INode,PointD> nodePose, double scaleValue){
+        for(INode u : g.getNodes()){
+            nodePose.setValue(u, new PointD(u.getLayout().getCenter().getX() * scaleValue, u.getLayout().getCenter().getY() * scaleValue));
+        }
+        return nodePose;
+    }
+
+    /**
      * PostProcess creates positive grid points by moving the graph to the right or up
      * @return positive grid points
      */

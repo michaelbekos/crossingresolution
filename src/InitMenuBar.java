@@ -1,5 +1,8 @@
+import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
+import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
@@ -220,6 +223,23 @@ public class InitMenuBar {
         fitContentItem.addActionListener(this::fitContentItemActionPerformed);
         viewMenu.add(fitContentItem);
 
+        /**
+         *  Graph Scale
+         */
+        JMenuItem scaleUpItem = new JMenuItem();
+        scaleUpItem .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.ALT_MASK));
+        scaleUpItem .setIcon(new ImageIcon(getClass().getResource("/resources/snap-16.png"))); // test Image
+        scaleUpItem .setText("Scale-up Graph");
+        scaleUpItem .addActionListener(this::scaleUpGraphItemActionPerformed);
+        viewMenu.add(scaleUpItem);
+
+        JMenuItem scaleDownItem = new JMenuItem();
+        scaleDownItem .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.ALT_MASK));
+        scaleDownItem .setIcon(new ImageIcon(getClass().getResource("/resources/snap-16.png"))); // test Image
+        scaleDownItem .setText("Scale-down Graph");
+        scaleDownItem .addActionListener(this::scaleDownGraphItemActionPerformed);
+        viewMenu.add(scaleDownItem);
+
         viewMenu.add(new JSeparator());
         mainMenuBar.add(viewMenu);
 
@@ -272,6 +292,18 @@ public class InitMenuBar {
     }
 
 
+    private void scaleUpGraphItemActionPerformed(ActionEvent evt) {
+
+        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+        nodePositions = GridPositioning.scaleUpProcess(graph,nodePositions, 2.0);
+        this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    }
+    private void scaleDownGraphItemActionPerformed(ActionEvent evt) {
+
+        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+        nodePositions = GridPositioning.scaleUpProcess(graph,nodePositions, 0.5);
+        this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    }
 
     private void fitContentItemActionPerformed(ActionEvent evt) {
         this.view.fitGraphBounds();
