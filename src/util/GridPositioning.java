@@ -28,6 +28,67 @@ public class GridPositioning {
 
 
     /**
+     * Removes numVertices number of  nodes with the highest degree from graph g
+     * @param g
+     * @param numVertices
+     * @return
+     */
+    public static INode[][] removeVertices(IGraph g, int numVertices) {
+        INode[] maxDegVertex = new INode[numVertices];
+        Arrays.fill(maxDegVertex, g.getNodes().first());    //TODO fix (first can be largest); also if multiple same degree, currently just last one
+
+        for(INode u: g.getNodes()) {
+            if (u.getPorts().size() > maxDegVertex[0].getPorts().size()) {
+                maxDegVertex[0] = u;
+                Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));
+            }
+        }
+
+        INode [][] verticesAndEdges = new INode[numVertices][]; //First element in each subarray is the removed node, subsequent nodes are endpoints for edges to the removed node
+        for (int i = 0; i < numVertices; i++) {
+            verticesAndEdges[i] = new INode[maxDegVertex[i].getPorts().size()+1];
+            verticesAndEdges[i][0] = maxDegVertex[i];
+        }
+
+        for (int i = 0 ; i < verticesAndEdges.length; i++) {
+            int j = 1;  //TODO check one loop more inside (can only remove 1 node)
+            for (IPort p : verticesAndEdges[i][0].getPorts()) {
+                for (IEdge e : g.edgesAt(p)) {
+                    if (e.getSourceNode().equals(verticesAndEdges[i][0])) {
+                        verticesAndEdges[i][j] = e.getTargetNode();
+                    } else {
+                        verticesAndEdges[i][j] = e.getSourceNode();
+                    }
+                    j++;
+                }
+            }
+        }
+
+        for (int i = 0; i < verticesAndEdges.length; i++) {
+            g.remove(verticesAndEdges[i][0]);
+        }
+
+        return verticesAndEdges;
+    }
+
+    /**
+     * Reinserts the previously removed nodes
+     * @param g
+     * @param vertices
+     */
+    public static void reinsertVertices(IGraph g, INode[][] vertices) {
+
+        for (int i = 0; i < vertices.length; i++) {
+            INode reinsertedNode = g.createNode(vertices[i][0].getLayout().toRectD());
+            for (int j = 1; j < vertices[i].length; j++) {
+                g.createEdge(reinsertedNode, vertices[i][j]);
+            }
+        }
+
+
+    }
+
+    /**
      * Gridding respective to smalles angle crossing.
      * @param g - Input Graph
      */

@@ -49,8 +49,11 @@ public class InitMenuBar {
     private String fileNamePath;
     private String fileNamePathFolder;
 
+    /* Object that tracks removed/replaced Vertices */
+    private INode[][] removedVertices;
+
     public InitMenuBar(JMenuBar mainMenuBar, JMenu layoutMenu, JMenu editMenu, JMenu viewMenu, IGraph graph, JLabel infoLabel, GraphComponent view, JProgressBar progressBar,
-                       GraphEditorInputMode graphEditorInputMode, OrganicLayout defaultLayouter, String filePathFolder, String filePath) {
+                       GraphEditorInputMode graphEditorInputMode, OrganicLayout defaultLayouter, String filePathFolder, String filePath, INode[][] removedVertices) {
         this.mainMenuBar = mainMenuBar;
         this.layoutMenu = layoutMenu;
         this.viewMenu = viewMenu;
@@ -63,6 +66,7 @@ public class InitMenuBar {
         this.fileNamePathFolder = filePathFolder;
         this.fileNamePath = filePath;
         this.progressBar = progressBar;
+        this.removedVertices = removedVertices;
     }
 
 
@@ -313,6 +317,23 @@ public class InitMenuBar {
         scaleDownItem .addActionListener(this::scaleDownGraphItemActionPerformed);
         viewMenu.add(scaleDownItem);
 
+        /**
+         * Remove/reinsert vertices
+         */
+        JMenuItem removeVerticesItem = new JMenuItem();
+        removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.ALT_MASK));
+        removeVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/snap-16.png"))); // test Image
+        removeVerticesItem.setText("Remove High Degree Vertices");
+        removeVerticesItem.addActionListener(this::removeVerticesItemActionPerformed);
+        viewMenu.add(removeVerticesItem);
+
+        JMenuItem reinsertVerticesItem = new JMenuItem();
+        reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_MASK));
+        reinsertVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/snap-16.png"))); // test Image
+        reinsertVerticesItem.setText("Reinsert High Degree Vertices");
+        reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
+        viewMenu.add(reinsertVerticesItem);
+
         viewMenu.add(new JSeparator());
         mainMenuBar.add(viewMenu);
 
@@ -376,6 +397,34 @@ public class InitMenuBar {
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
         nodePositions = GridPositioning.scaleUpProcess(graph,nodePositions, 0.5);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    }
+
+    private void removeVerticesItemActionPerformed(ActionEvent evt) {
+        //TODO: more than 1 vertex
+//        JTextField vertexCount = new JTextField("1");
+//
+//        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Remove: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+//        int numVertices = 1;
+//        if (result == JOptionPane.OK_OPTION) {
+//            try {
+//                numVertices = Integer.parseInt(vertexCount.getText());
+//            } catch (NumberFormatException exc) {   //TODO: catch num vertex > graph
+//                JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+//                numVertices = 1;
+//            } finally {
+//                this.removedVertices = GridPositioning.removeVertices(this.graph, numVertices);
+//
+//            }
+//        }
+
+        this.removedVertices = GridPositioning.removeVertices(this.graph, 1);
+
+    }
+    private void reinsertVerticesItemActionPerformed(ActionEvent evt) {
+        if (this.removedVertices != null){
+            GridPositioning.reinsertVertices(this.graph, this.removedVertices);
+            this.removedVertices = null;
+        }
     }
 
     private void fitContentItemActionPerformed(ActionEvent evt) {
