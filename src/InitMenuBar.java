@@ -250,6 +250,7 @@ public class InitMenuBar {
         clearSelectedItem.addActionListener(this::clearSelectedItemActionPerformed);
         editMenu.add(clearSelectedItem);
 
+
         JMenuItem clearAllItem = new JMenuItem();
         clearAllItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         clearAllItem.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
