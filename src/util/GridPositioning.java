@@ -9,6 +9,7 @@ import com.yworks.yfiles.layout.CopiedLayoutGraph;
 import com.yworks.yfiles.layout.LayoutGraphAdapter;
 
 import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
+import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.ForceAlgorithmApplier;
 
 import algorithms.graphs.MinimumAngle;
@@ -21,11 +22,13 @@ import util.graph2d.LineSegment;
 
 public class GridPositioning {
 
+    
     private static Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
     private static Comparator<Tuple3<PointD, PointD, Double>> byAngles = (p1, p2) -> p1.c.compareTo(p2.c);
     private static Comparator<Tuple3<LineSegment, LineSegment, Double>> byCrossingAngle = (p1, p2) -> p1.c.compareTo(p2.c);
     private static Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byIntersectionAngle = (p1, p2) -> p1.c.angle.compareTo(p2.c.angle);
 
+    private static int[][] testReinsert;  //TODO non static  (or better solution)
 
     /**
      * Removes numVertices number of  nodes with the highest degree from graph g
@@ -33,38 +36,58 @@ public class GridPositioning {
      * @param numVertices
      * @return
      */
-    public static INode[][] removeVertices(IGraph g, int numVertices) {
+    public static INode[][] removeVertices(IGraph g, int numVertices, ISelectionModel<INode> selection) {
+        if(numVertices > selection.getCount()){
+            numVertices = selection.getCount();
+        }
         INode[] maxDegVertex = new INode[numVertices];
-        Arrays.fill(maxDegVertex, g.getNodes().first());    //TODO fix (first can be largest); also if multiple same degree, currently just last one
+        int nodeArrayCounter = 0;
+        for(INode u: g.getNodes()){
+            if (selection.isSelected(u)){
+                maxDegVertex[nodeArrayCounter] = u;
+                nodeArrayCounter++;
+                if(nodeArrayCounter >= numVertices){
+                    break;
+                }
+            }
+        }
+        Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));
+        for(int i = nodeArrayCounter; i<g.getNodes().size(); i++){
+            if (g.getNodes().getItem(i).getPorts().size() > maxDegVertex[0].getPorts().size() && selection.isSelected(g.getNodes().getItem(i))) {
 
-        for(INode u: g.getNodes()) {
-            if (u.getPorts().size() > maxDegVertex[0].getPorts().size()) {
-                maxDegVertex[0] = u;
+                maxDegVertex[0] = g.getNodes().getItem(i);
                 Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));
             }
         }
-
+        testReinsert = new int[numVertices][numVertices];
         INode [][] verticesAndEdges = new INode[numVertices][]; //First element in each subarray is the removed node, subsequent nodes are endpoints for edges to the removed node
         for (int i = 0; i < numVertices; i++) {
             verticesAndEdges[i] = new INode[maxDegVertex[i].getPorts().size()+1];
             verticesAndEdges[i][0] = maxDegVertex[i];
         }
-
-        for (int i = 0 ; i < verticesAndEdges.length; i++) {
-            int j = 1;  //TODO check one loop more inside (can only remove 1 node)
+        for (int i = numVertices-1 ; i >= 0; i--) { //remove first thr Vert. with the highest degree
+            int j = 1;
             for (IPort p : verticesAndEdges[i][0].getPorts()) {
                 for (IEdge e : g.edgesAt(p)) {
                     if (e.getSourceNode().equals(verticesAndEdges[i][0])) {
+                        System.out.println(verticesAndEdges[i][j]);
                         verticesAndEdges[i][j] = e.getTargetNode();
                     } else {
                         verticesAndEdges[i][j] = e.getSourceNode();
                     }
-                    j++;
+                    boolean deletNode = false;
+                    for(int k=i; k >= 0; k--){  //check if the vertices before wich have edges to this one
+                        if(verticesAndEdges[k][0].equals(verticesAndEdges[i][j])){
+                            verticesAndEdges[i][j] = null;
+                            testReinsert[i][k] = 1;
+                            deletNode = true;
+                        }
+                    }
+                    if(!deletNode){
+                        j++;
+                    }
                 }
             }
-        }
-
-        for (int i = 0; i < verticesAndEdges.length; i++) {
             g.remove(verticesAndEdges[i][0]);
         }
 
@@ -76,16 +99,29 @@ public class GridPositioning {
      * @param g
      * @param vertices
      */
-    public static void reinsertVertices(IGraph g, INode[][] vertices) {
+    public static INode[][] reinsertVertices(IGraph g, INode[][] vertices) { //TODO: reinsert only a subset and not all
 
+        INode[] reinsertedNodes = new INode[vertices.length];
         for (int i = 0; i < vertices.length; i++) {
-            INode reinsertedNode = g.createNode(vertices[i][0].getLayout().toRectD());
+
+            reinsertedNodes[i] =  g.createNode(vertices[i][0].getLayout().toRectD(), vertices[i][0].getStyle(), vertices[i][0].getTag());
+        }
+        for (int i = 0; i < vertices.length; i++) {                     //edges to old nodes
             for (int j = 1; j < vertices[i].length; j++) {
-                g.createEdge(reinsertedNode, vertices[i][j]);
+                if (!(vertices[i][j]==null)) {
+                    g.createEdge(reinsertedNodes[i], vertices[i][j]);
+                }
+            }
+            for(int j = 0; j < testReinsert[i].length; j++){            //edges to new nodes
+                if (testReinsert[i][j] == 1){
+                      g.createEdge(reinsertedNodes[i], reinsertedNodes[j]);
+                }
             }
         }
+        testReinsert = null;
 
 
+    return null;
     }
 
     /**

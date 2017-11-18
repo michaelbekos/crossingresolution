@@ -11,7 +11,6 @@ import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 
 import io.ContestIOHandler;
-import javafx.stage.FileChooser;
 import layout.algo.*;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
@@ -43,6 +42,7 @@ public class InitMenuBar {
     private GraphEditorInputMode graphEditorInputMode = new GraphEditorInputMode();
     private JMenu editMenu = new JMenu();
     private JMenu viewMenu = new JMenu();
+    private JMenu graphOpsMenu = new JMenu();
     private OrganicLayout defaultLayouter = new OrganicLayout();
 
     /* Object that keeps track of the latest open/saved file */
@@ -52,12 +52,13 @@ public class InitMenuBar {
     /* Object that tracks removed/replaced Vertices */
     private INode[][] removedVertices;
 
-    public InitMenuBar(JMenuBar mainMenuBar, JMenu layoutMenu, JMenu editMenu, JMenu viewMenu, IGraph graph, JLabel infoLabel, GraphComponent view, JProgressBar progressBar,
+    public InitMenuBar(JMenuBar mainMenuBar, JMenu layoutMenu, JMenu editMenu, JMenu viewMenu, JMenu graphOpsMenu,  IGraph graph, JLabel infoLabel, GraphComponent view, JProgressBar progressBar,
                        GraphEditorInputMode graphEditorInputMode, OrganicLayout defaultLayouter, String filePathFolder, String filePath, INode[][] removedVertices) {
         this.mainMenuBar = mainMenuBar;
         this.layoutMenu = layoutMenu;
         this.viewMenu = viewMenu;
         this.editMenu = editMenu;
+        this.graphOpsMenu = graphOpsMenu;
         this.graph = graph;
         this.infoLabel = infoLabel;
         this.view = view;
@@ -72,9 +73,9 @@ public class InitMenuBar {
 
     public JMenuBar initMenuBar() {
 
+
         /* File Menu */
         fileMenu.setText("File");
-        mainMenuBar.add(fileMenu);
 
         newMenuItem.setIcon(new ImageIcon(getClass().getResource("/resources/new-document-16.png")));
         newMenuItem.setText("New");
@@ -301,42 +302,48 @@ public class InitMenuBar {
         fitContentItem.addActionListener(this::fitContentItemActionPerformed);
         viewMenu.add(fitContentItem);
 
+
+
+        viewMenu.add(new JSeparator());
+        mainMenuBar.add(viewMenu);
+
+        /* Graph operation Menu */
+        graphOpsMenu.setText("Graph Ops.");
         /**
          *  Graph Scale
          */
         JMenuItem scaleUpItem = new JMenuItem();
         scaleUpItem .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.ALT_MASK));
-        scaleUpItem .setIcon(new ImageIcon(getClass().getResource("/resources/snap-16.png"))); // test Image
+        scaleUpItem .setIcon(new ImageIcon(getClass().getResource("/resources/scaleUp.png"))); // test Image
         scaleUpItem .setText("Scale-up Graph");
         scaleUpItem .addActionListener(this::scaleUpGraphItemActionPerformed);
-        viewMenu.add(scaleUpItem);
+        graphOpsMenu.add(scaleUpItem);
 
         JMenuItem scaleDownItem = new JMenuItem();
         scaleDownItem .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.ALT_MASK));
-        scaleDownItem .setIcon(new ImageIcon(getClass().getResource("/resources/snap-16.png"))); // test Image
+        scaleDownItem .setIcon(new ImageIcon(getClass().getResource("/resources/scaleDown.png"))); // test Image
         scaleDownItem .setText("Scale-down Graph");
         scaleDownItem .addActionListener(this::scaleDownGraphItemActionPerformed);
-        viewMenu.add(scaleDownItem);
+        graphOpsMenu.add(scaleDownItem);
 
         /**
          * Remove/reinsert vertices
          */
         JMenuItem removeVerticesItem = new JMenuItem();
         removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.ALT_MASK));
-        removeVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/snap-16.png"))); // test Image
+        removeVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/removeNode.png"))); // test Image
         removeVerticesItem.setText("Remove High Degree Vertices");
         removeVerticesItem.addActionListener(this::removeVerticesItemActionPerformed);
-        viewMenu.add(removeVerticesItem);
+        graphOpsMenu.add(removeVerticesItem);
 
         JMenuItem reinsertVerticesItem = new JMenuItem();
         reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_MASK));
-        reinsertVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/snap-16.png"))); // test Image
+        reinsertVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/reinsertNode.png"))); // test Image
         reinsertVerticesItem.setText("Reinsert High Degree Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
-        viewMenu.add(reinsertVerticesItem);
+        graphOpsMenu.add(reinsertVerticesItem);
 
-        viewMenu.add(new JSeparator());
-        mainMenuBar.add(viewMenu);
+        mainMenuBar.add(graphOpsMenu);
 
        /* View Menu */
 
@@ -392,39 +399,39 @@ public class InitMenuBar {
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
         nodePositions = GridPositioning.scaleUpProcess(graph,nodePositions, 2.0);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.view.fitGraphBounds();
     }
     private void scaleDownGraphItemActionPerformed(ActionEvent evt) {
 
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
         nodePositions = GridPositioning.scaleUpProcess(graph,nodePositions, 0.5);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.view.fitGraphBounds();
     }
 
     private void removeVerticesItemActionPerformed(ActionEvent evt) {
         //TODO: more than 1 vertex
-//        JTextField vertexCount = new JTextField("1");
-//
-//        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Remove: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-//        int numVertices = 1;
-//        if (result == JOptionPane.OK_OPTION) {
-//            try {
-//                numVertices = Integer.parseInt(vertexCount.getText());
-//            } catch (NumberFormatException exc) {   //TODO: catch num vertex > graph
-//                JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-//                numVertices = 1;
-//            } finally {
-//                this.removedVertices = GridPositioning.removeVertices(this.graph, numVertices);
-//
-//            }
-//        }
+        JTextField vertexCount = new JTextField("1");
 
-        this.removedVertices = GridPositioning.removeVertices(this.graph, 1);
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Remove: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+        int numVertices = 1;
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                numVertices = Integer.parseInt(vertexCount.getText());
+            } catch (NumberFormatException exc) {   //TODO: catch num vertex > graph
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                numVertices = 1;
+            } finally {
+                this.removedVertices = GridPositioning.removeVertices(this.graph, numVertices, this.view.getSelection().getSelectedNodes());
+            }
+        }
+
+//        this.removedVertices = GridPositioning.removeVertices(this.graph, 5, this.view.getSelection().getSelectedNodes());
 
     }
     private void reinsertVerticesItemActionPerformed(ActionEvent evt) {
         if (this.removedVertices != null){
-            GridPositioning.reinsertVertices(this.graph, this.removedVertices);
-            this.removedVertices = null;
+            this.removedVertices = GridPositioning.reinsertVertices(this.graph, this.removedVertices);
         }
     }
 

@@ -398,8 +398,9 @@ public class MainFrame extends JFrame {
         JMenu layoutMenu = new JMenu();
         JMenu viewMenu = new JMenu();
         JMenu editMenu = new JMenu();
+        JMenu graphOpsMenu = new JMenu();
 
-        InitMenuBar menuBar = new InitMenuBar(mainMenuBar, layoutMenu, editMenu, viewMenu, this.graph, this.infoLabel, this.view, this.progressBar, this.graphEditorInputMode,
+        InitMenuBar menuBar = new InitMenuBar(mainMenuBar, layoutMenu, editMenu, viewMenu, graphOpsMenu, this.graph, this.infoLabel, this.view, this.progressBar, this.graphEditorInputMode,
                 this.defaultLayouter, this.fileNamePathFolder, this.fileNamePath, this.removedVertices);
         mainMenuBar = menuBar.initMenuBar();
         JMenuItem springEmbedderItem = new JMenuItem();
@@ -495,7 +496,7 @@ public class MainFrame extends JFrame {
 
     private void populateNodePopupMenu(PopulateItemPopupMenuEventArgs<IModelItem> args) {
         ISelectionModel<INode> selection = this.view.getSelection().getSelectedNodes();
-        if (args.getItem() instanceof INode) {
+            if (args.getItem() instanceof INode) {
             INode node = (INode) args.getItem();
             selection.clear();
             selection.setSelected(node, true);
