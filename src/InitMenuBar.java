@@ -1,19 +1,21 @@
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.layout.*;
+import com.yworks.yfiles.layout.ILayoutAlgorithm;
+import com.yworks.yfiles.layout.LayoutExecutor;
 import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.partial.PartialLayout;
-import com.yworks.yfiles.layout.partial.PartialLayoutData;
+import com.yworks.yfiles.layout.partial.SubgraphPlacement;
 import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
-
 import io.ContestIOHandler;
-import layout.algo.*;
+import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceDirectedAlgorithm;
+import layout.algo.ForceDirectedFactory;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import util.*;
@@ -741,11 +743,15 @@ public class InitMenuBar {
         FilteredGraphWrapper selectedGraph = new FilteredGraphWrapper(graph, selectedNodes::isSelected,
             iEdge -> selectedNodes.isSelected(iEdge.getSourceNode()) || selectedNodes.isSelected(iEdge.getTargetNode()));
 
-        LayoutExecutor executor = new LayoutExecutor(view, selectedGraph, new PartialLayout(layout));
+        PartialLayout partialLayout = new PartialLayout(layout);
+        partialLayout.setSubgraphPlacement(SubgraphPlacement.FROM_SKETCH);
+
+        LayoutExecutor executor = new LayoutExecutor(view, selectedGraph, partialLayout);
         executor.setDuration(Duration.ofSeconds(1));
         executor.setViewportAnimationEnabled(true);
         executor.setEasedAnimationEnabled(true);
         executor.setContentRectUpdatingEnabled(true);
+
         executor.start();
     }
 
