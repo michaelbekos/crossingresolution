@@ -1,13 +1,15 @@
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.graph.LayoutUtilities;
-import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.layout.*;
 import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
+import com.yworks.yfiles.layout.partial.PartialLayout;
+import com.yworks.yfiles.layout.partial.PartialLayoutData;
 import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.GraphComponent;
+import com.yworks.yfiles.view.IGraphSelection;
+import com.yworks.yfiles.view.ISelectionModel;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 
 import io.ContestIOHandler;
@@ -707,23 +709,44 @@ public class InitMenuBar {
     }
 
     private void organicItemActionPerformed(ActionEvent evt) {
-        LayoutUtilities.morphLayout(this.view, new OrganicLayout(), Duration.ofSeconds(1), null);
+        applyLayoutToSelection(new OrganicLayout());
     }
 
     private void circularItemActionPerformed(ActionEvent evt) {
-        LayoutUtilities.morphLayout(this.view, new CircularLayout(), Duration.ofSeconds(1), null);
+        applyLayoutToSelection(new CircularLayout());
     }
 
     private void orthogonalItemActionPerformed(ActionEvent evt) {
-        LayoutUtilities.morphLayout(this.view, new OrthogonalLayout(), Duration.ofSeconds(1), null);
+        applyLayoutToSelection(new OrthogonalLayout());
+
     }
 
     private void treeItemActionPerformed(ActionEvent evt) {
         try {
-            LayoutUtilities.morphLayout(this.view, new TreeLayout(), Duration.ofSeconds(1), null);
+            applyLayoutToSelection(new TreeLayout());
         } catch (Exception exc) {
             this.infoLabel.setText("The input graph is not a tree or a forest.");
         }
+    }
+
+    private void applyLayoutToSelection(ILayoutAlgorithm layout) {
+        IGraphSelection selection = graphEditorInputMode.getGraphSelection();
+        ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
+
+        if (selectedNodes.getCount() == 0) {
+            LayoutUtilities.morphLayout(this.view, layout, Duration.ofSeconds(1), null);
+            return;
+        }
+
+        FilteredGraphWrapper selectedGraph = new FilteredGraphWrapper(graph, selectedNodes::isSelected,
+            iEdge -> selectedNodes.isSelected(iEdge.getSourceNode()) || selectedNodes.isSelected(iEdge.getTargetNode()));
+
+        LayoutExecutor executor = new LayoutExecutor(view, selectedGraph, new PartialLayout(layout));
+        executor.setDuration(Duration.ofSeconds(1));
+        executor.setViewportAnimationEnabled(true);
+        executor.setEasedAnimationEnabled(true);
+        executor.setContentRectUpdatingEnabled(true);
+        executor.start();
     }
 
     //edit menu actions
