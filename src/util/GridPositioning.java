@@ -9,7 +9,6 @@ import com.yworks.yfiles.layout.CopiedLayoutGraph;
 import com.yworks.yfiles.layout.LayoutGraphAdapter;
 
 import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
-import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.ForceAlgorithmApplier;
 
 import algorithms.graphs.MinimumAngle;
@@ -28,101 +27,6 @@ public class GridPositioning {
     private static Comparator<Tuple3<LineSegment, LineSegment, Double>> byCrossingAngle = (p1, p2) -> p1.c.compareTo(p2.c);
     private static Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byIntersectionAngle = (p1, p2) -> p1.c.angle.compareTo(p2.c.angle);
 
-    private static int[][] testReinsert;  //TODO non static  (or better solution)
-
-    /**
-     * Removes numVertices number of  nodes with the highest degree from graph g
-     * @param g
-     * @param numVertices
-     * @return
-     */
-    public static INode[][] removeVertices(IGraph g, int numVertices, ISelectionModel<INode> selection) {
-        if(numVertices > selection.getCount()){
-            numVertices = selection.getCount();
-        }
-        INode[] maxDegVertex = new INode[numVertices];
-        int nodeArrayCounter = 0;
-        for(INode u: g.getNodes()){
-            if (selection.isSelected(u)){
-                maxDegVertex[nodeArrayCounter] = u;
-                nodeArrayCounter++;
-                if(nodeArrayCounter >= numVertices){
-                    break;
-                }
-            }
-        }
-        Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));
-        for(int i = nodeArrayCounter; i<g.getNodes().size(); i++){
-            if (g.getNodes().getItem(i).getPorts().size() > maxDegVertex[0].getPorts().size() && selection.isSelected(g.getNodes().getItem(i))) {
-
-                maxDegVertex[0] = g.getNodes().getItem(i);
-                Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));
-            }
-        }
-        testReinsert = new int[numVertices][numVertices];
-        INode [][] verticesAndEdges = new INode[numVertices][]; //First element in each subarray is the removed node, subsequent nodes are endpoints for edges to the removed node
-        for (int i = 0; i < numVertices; i++) {
-            verticesAndEdges[i] = new INode[maxDegVertex[i].getPorts().size()+1];
-            verticesAndEdges[i][0] = maxDegVertex[i];
-        }
-        for (int i = numVertices-1 ; i >= 0; i--) { //remove first thr Vert. with the highest degree
-            int j = 1;
-            for (IPort p : verticesAndEdges[i][0].getPorts()) {
-                for (IEdge e : g.edgesAt(p)) {
-                    if (e.getSourceNode().equals(verticesAndEdges[i][0])) {
-                        System.out.println(verticesAndEdges[i][j]);
-                        verticesAndEdges[i][j] = e.getTargetNode();
-                    } else {
-                        verticesAndEdges[i][j] = e.getSourceNode();
-                    }
-                    boolean deletNode = false;
-                    for(int k=i; k >= 0; k--){  //check if the vertices before wich have edges to this one
-                        if(verticesAndEdges[k][0].equals(verticesAndEdges[i][j])){
-                            verticesAndEdges[i][j] = null;
-                            testReinsert[i][k] = 1;
-                            deletNode = true;
-                        }
-                    }
-                    if(!deletNode){
-                        j++;
-                    }
-                }
-            }
-            g.remove(verticesAndEdges[i][0]);
-        }
-
-        return verticesAndEdges;
-    }
-
-    /**
-     * Reinserts the previously removed nodes
-     * @param g
-     * @param vertices
-     */
-    public static INode[][] reinsertVertices(IGraph g, INode[][] vertices) { //TODO: reinsert only a subset and not all
-
-        INode[] reinsertedNodes = new INode[vertices.length];
-        for (int i = 0; i < vertices.length; i++) {
-
-            reinsertedNodes[i] =  g.createNode(vertices[i][0].getLayout().toRectD(), vertices[i][0].getStyle(), vertices[i][0].getTag());
-        }
-        for (int i = 0; i < vertices.length; i++) {                     //edges to old nodes
-            for (int j = 1; j < vertices[i].length; j++) {
-                if (!(vertices[i][j]==null)) {
-                    g.createEdge(reinsertedNodes[i], vertices[i][j]);
-                }
-            }
-            for(int j = 0; j < testReinsert[i].length; j++){            //edges to new nodes
-                if (testReinsert[i][j] == 1){
-                      g.createEdge(reinsertedNodes[i], reinsertedNodes[j]);
-                }
-            }
-        }
-        testReinsert = null;
-
-
-    return null;
-    }
 
     /**
      * Gridding respective to smalles angle crossing.
@@ -161,17 +65,6 @@ public class GridPositioning {
        }
 
 
-    }
-
-    /**
-     * Multiply the Coord. from each Node with the factor scaleValue
-     * @return scaled grid points with scaleValue factor
-     */
-    public static  Mapper<INode, PointD> scaleUpProcess(IGraph g, Mapper<INode,PointD> nodePose, double scaleValue){
-        for(INode u : g.getNodes()){
-            nodePose.setValue(u, new PointD(u.getLayout().getCenter().getX() * scaleValue, u.getLayout().getCenter().getY() * scaleValue));
-        }
-        return nodePose;
     }
 
     /**

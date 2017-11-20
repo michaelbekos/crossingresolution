@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 
+
 /**
  * Created by khokhi on 10.12.16.
  */
@@ -50,10 +51,10 @@ public class InitMenuBar {
     private String fileNamePathFolder;
 
     /* Object that tracks removed/replaced Vertices */
-    private INode[][] removedVertices;
+    private VertexStack removedVertices;
 
     public InitMenuBar(JMenuBar mainMenuBar, JMenu layoutMenu, JMenu editMenu, JMenu viewMenu, JMenu graphOpsMenu,  IGraph graph, JLabel infoLabel, GraphComponent view, JProgressBar progressBar,
-                       GraphEditorInputMode graphEditorInputMode, OrganicLayout defaultLayouter, String filePathFolder, String filePath, INode[][] removedVertices) {
+                       GraphEditorInputMode graphEditorInputMode, OrganicLayout defaultLayouter, String filePathFolder, String filePath, VertexStack removedVertices) {
         this.mainMenuBar = mainMenuBar;
         this.layoutMenu = layoutMenu;
         this.viewMenu = viewMenu;
@@ -397,41 +398,41 @@ public class InitMenuBar {
     private void scaleUpGraphItemActionPerformed(ActionEvent evt) {
 
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
-        nodePositions = GridPositioning.scaleUpProcess(graph,nodePositions, 2.0);
+        nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 2.0);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
     private void scaleDownGraphItemActionPerformed(ActionEvent evt) {
 
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
-        nodePositions = GridPositioning.scaleUpProcess(graph,nodePositions, 0.5);
+        nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.5);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
 
     private void removeVerticesItemActionPerformed(ActionEvent evt) {
-        //TODO: more than 1 vertex
         JTextField vertexCount = new JTextField("1");
 
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Remove: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-        int numVertices = 1;
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                numVertices = Integer.parseInt(vertexCount.getText());
-            } catch (NumberFormatException exc) {   //TODO: catch num vertex > graph
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                numVertices = 1;
-            } finally {
-                this.removedVertices = GridPositioning.removeVertices(this.graph, numVertices, this.view.getSelection().getSelectedNodes());
+        if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
+            this.removedVertices = GraphOperations.removeVertices(this.graph, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
+        } else {
+            int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Remove: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            int numVertices = 1;
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    numVertices = Integer.parseInt(vertexCount.getText());
+                } catch (NumberFormatException exc) {   //TODO: catch num vertex > graph
+                    JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                    numVertices = 1;
+                } finally {
+                    this.removedVertices = GraphOperations.removeVertices(this.graph, numVertices, null, this.removedVertices);
+                }
             }
         }
-
-//        this.removedVertices = GridPositioning.removeVertices(this.graph, 5, this.view.getSelection().getSelectedNodes());
-
     }
     private void reinsertVerticesItemActionPerformed(ActionEvent evt) {
         if (this.removedVertices != null){
-            this.removedVertices = GridPositioning.reinsertVertices(this.graph, this.removedVertices);
+            this.removedVertices = GraphOperations.reinsertVertices(this.graph, this.removedVertices);
         }
     }
 
@@ -615,13 +616,13 @@ public class InitMenuBar {
     private void exportItemActionPerformed(ActionEvent evt) {
         JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
         chooser.setFileFilter(new FileFilter() {
-        public boolean accept(File file) {
-            return (file.isDirectory() || file.toString().toLowerCase().endsWith(".txt"));
+            public boolean accept(File file) {
+                return (file.isDirectory() || file.toString().toLowerCase().endsWith(".txt"));
 
-        }
-        public String getDescription() {
-                    return "ASCII Files [.txt]";
-                }
+            }
+            public String getDescription() {
+                return "ASCII Files [.txt]";
+            }
         });
 
         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {

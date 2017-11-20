@@ -71,7 +71,7 @@ public class MainFrame extends JFrame {
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
 
     /* Object that tracks removed/replaced Vertices */
-    private INode[][] removedVertices;
+    private VertexStack removedVertices;
 
     public static final Consumer<Maybe<ForceAlgorithmApplier>> finalizeFAA = Maybe.lift(f -> {
         f.running = false;
@@ -401,7 +401,7 @@ public class MainFrame extends JFrame {
         JMenu graphOpsMenu = new JMenu();
 
         InitMenuBar menuBar = new InitMenuBar(mainMenuBar, layoutMenu, editMenu, viewMenu, graphOpsMenu, this.graph, this.infoLabel, this.view, this.progressBar, this.graphEditorInputMode,
-                this.defaultLayouter, this.fileNamePathFolder, this.fileNamePath, this.removedVertices);
+                                                this.defaultLayouter, this.fileNamePathFolder, this.fileNamePath, this.removedVertices);
         mainMenuBar = menuBar.initMenuBar();
         JMenuItem springEmbedderItem = new JMenuItem();
         springEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
