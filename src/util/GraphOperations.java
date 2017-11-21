@@ -17,6 +17,10 @@ public class GraphOperations {
      */
     public static VertexStack removeVertices(IGraph g, int numVertices, ISelectionModel<INode> selection, VertexStack removedVertices) {
 
+        if(numVertices <= 0){
+            return removedVertices;
+        }
+
         INode[] maxDegVertex = new INode[numVertices];
 
         if (selection != null) {
@@ -28,21 +32,35 @@ public class GraphOperations {
                 }
             }
         } else {
-            INode minDegVertex = g.getNodes().first();
+          //  INode minDegVertex = g.getNodes().first();
+            int i = 0;
             for (INode u: g.getNodes()) {
-                if (u.getPorts().size() > minDegVertex.getPorts().size()) {
-                    minDegVertex = u;
+                maxDegVertex[i] = u;
+                i++;
+                if(i >= numVertices){
+                    break;
                 }
+             //   if (u.getPorts().size() > minDegVertex.getPorts().size()) {
+             //       minDegVertex = u;
+             //   }
             }
-            Arrays.fill(maxDegVertex, minDegVertex);   //init with smallest
+         //   Arrays.fill(maxDegVertex, minDegVertex);   //init with smallest
 
             //fill array maxDegVertex with n largest degree vertices (largest->smallest)
-            for (INode u : g.getNodes()) {
-                if (u.getPorts().size() > maxDegVertex[maxDegVertex.length-1].getPorts().size()) {
-                    maxDegVertex[maxDegVertex.length-1] =  u;
+            Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));
+            while(i<g.getNodes().size()){
+                if (g.getNodes().getItem(i).getPorts().size() > maxDegVertex[maxDegVertex.length-1].getPorts().size()) {
+                    maxDegVertex[maxDegVertex.length-1] =  g.getNodes().getItem(i);
                     Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));  //todo check sorting large->small
                 }
+                i++;
             }
+//            for (INode u : g.getNodes()) {
+//                if (u.getPorts().size() > maxDegVertex[maxDegVertex.length-1].getPorts().size()) {
+//                    maxDegVertex[maxDegVertex.length-1] =  u;
+//                    Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));  //todo check sorting large->small
+//                }
+//            }
         }
 
 
@@ -114,7 +132,7 @@ public class GraphOperations {
         INode[][] vertices = removedVertices.verticesAndEdges_tmp;
         for (int i = 0; i < vertices.length; i++) {                     //edges to old nodes
             for (int j = 1; j < vertices[i].length; j++) {
-                if (!(vertices[i][j]==null)) {
+                if (!(vertices[i][j] == null)) {
                     g.createEdge(reinsertedNodes[i], vertices[i][j]);
                 }
             }

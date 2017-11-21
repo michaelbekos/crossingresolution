@@ -425,11 +425,19 @@ public class InitMenuBar {
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     numVertices = Integer.parseInt(vertexCount.getText());
+                    if(numVertices > graph.getNodes().size()){
+                        numVertices = graph.getNodes().size();
+                       if( 0 != JOptionPane.showConfirmDialog(null, "Input is greater than the number of all nodes.\n Remove all nodes?")){
+                             numVertices = 0;
+                       }
+                    }
                 } catch (NumberFormatException exc) {   //TODO: catch num vertex > graph
-                    JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                    numVertices = 1;
-                } finally {
-                    this.removedVertices = GraphOperations.removeVertices(this.graph, numVertices, null, this.removedVertices);
+//                    JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                    numVertices = 0;
+                }
+                    finally {
+                        this.removedVertices = GraphOperations.removeVertices(this.graph, numVertices, null, this.removedVertices);
                 }
             }
         }
