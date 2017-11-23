@@ -70,6 +70,10 @@ public class MainFrame extends JFrame {
 
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
 
+    /* Worker that continuous show the minimum angle */
+    SwingWorker<Void, Void> displayMinimumAngleWorker;
+    private boolean showMinimumAngle = false;
+
     /* Object that tracks removed/replaced Vertices */
     private VertexStack removedVertices;
 
@@ -77,6 +81,7 @@ public class MainFrame extends JFrame {
         f.running = false;
         f.clearDrawables();
     });
+
 
     // for this class, we can instantiate defaultForceAlgorithmApplier and do some post-initializing
     public ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
@@ -391,7 +396,25 @@ public class MainFrame extends JFrame {
             faa.andThen(fa -> fa.showNodePositions());
         });
         sidePanel.add(showForceAlgoState, cSidePanel);
+
+
+        cSidePanel.gridy = sidePanelNextY++;
+
+        JRadioButton enableMinimumAngleDisplay = new JRadioButton("ON                      Show minimum Angle"),
+                disableMinimumAngleDisplay = new JRadioButton("OFF");
+        cSidePanel.gridx = 0;
+        sidePanel.add(enableMinimumAngleDisplay,cSidePanel);
+        enableMinimumAngleDisplay.setSelected(false);
+        enableMinimumAngleDisplay.addActionListener(this::minimumAngleDisplayEnabled);
+        cSidePanel.gridx = 1;
+        sidePanel.add(disableMinimumAngleDisplay,cSidePanel);
+        disableMinimumAngleDisplay.setSelected(true);
+        disableMinimumAngleDisplay.addActionListener(this::minimumAngleDisplayDisabled);
+        ButtonGroup minimumAngleGroup = new ButtonGroup();
+        minimumAngleGroup.add(enableMinimumAngleDisplay);
+        minimumAngleGroup.add(disableMinimumAngleDisplay);
     }
+
 
     private void initMenuBar() {
 
@@ -680,6 +703,39 @@ public class MainFrame extends JFrame {
         this.view.updateUI();
     }
 
+    private void minimumAngleDisplayEnabled(ActionEvent evt) {
+        this.showMinimumAngle = true;
+        this.displayMinimumAngleWorker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                // Simulate doing something useful.
+                while(showMinimumAngle) {
+                    Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
+                            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+                    Maybe<String> labText = minAngleCr.fmap(cr -> {
+                        String text = "Minimum Angle: " + cr.c.angle.toString();
+                        if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
+                            text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
+                            text += " , " +  cr.a.n2.get().getLabels().first().getText();
+                            text += " | " +  cr.b.n1.get().getLabels().first().getText();
+                            text += " , " +  cr.b.n2.get().getLabels().first().getText();
+                        }
+                        MinimumAngle.resetHighlighting(graph);
+                        MinimumAngle.highlightCrossing(cr);
+                        view.updateUI();
+                        return text;
+                    });
+                    infoLabel.setText(labText.getDefault("Graph has no crossings."));
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+        };
+        displayMinimumAngleWorker.execute();
+        }
+    private void minimumAngleDisplayDisabled(ActionEvent evt) {
+        this.showMinimumAngle = false;
+    }
     private void minimumCrossingAngleMenuActionPerformed(ActionEvent evt){
         Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
                 minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
@@ -721,7 +777,6 @@ public class MainFrame extends JFrame {
                 seenCoordinatesY.add(u_y);
             }
         }
-
         view.updateUI();
     }
 
@@ -744,7 +799,7 @@ public class MainFrame extends JFrame {
         geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, graph, view, Maybe.just(infoLabel));
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
-    
+
 
     /**
      * @param args the command line arguments
@@ -761,6 +816,7 @@ public class MainFrame extends JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
+
     }
 
 
