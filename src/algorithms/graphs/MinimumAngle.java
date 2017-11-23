@@ -33,7 +33,7 @@ public class MinimumAngle {
       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph, np);
       if(crossings.size() > 0){
         Tuple3<LineSegment, LineSegment, Intersection> crossing = crossings.get(0);
-        highlightCrossing(crossing);
+        //highlightCrossing(crossing);
         return Maybe.just(crossing);
       }
       else{

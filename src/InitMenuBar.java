@@ -342,7 +342,7 @@ public class InitMenuBar {
         graphOpsMenu.add(removeVerticesItem);
 
         JMenuItem reinsertVerticesItem = new JMenuItem();
-        reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_MASK));
+        reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK));
         reinsertVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/reinsertNode.png"))); // test Image
         reinsertVerticesItem.setText("Reinsert High Degree Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);

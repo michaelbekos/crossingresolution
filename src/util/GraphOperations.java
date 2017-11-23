@@ -2,12 +2,7 @@ package util;
 
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
-import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.graph.styles.DefaultEdgePathCropper;
-import com.yworks.yfiles.graph.styles.INodeStyle;
-import com.yworks.yfiles.graph.styles.IShapeGeometry;
-import com.yworks.yfiles.graph.styles.ShapeNodeStyle;
 import com.yworks.yfiles.view.ISelectionModel;
 
 import java.util.*;
@@ -161,10 +156,6 @@ public class GraphOperations {
         for(INode u : g.getNodes()){
             nodePose.setValue(u, new PointD(u.getLayout().getCenter().getX() * scaleValue, u.getLayout().getCenter().getY() * scaleValue));
             g.setNodeLayout(u, new RectD(u.getLayout().getX()*scaleValue,u.getLayout().getY()*scaleValue,u.getLayout().getWidth()*scaleValue,u.getLayout().getHeight()*scaleValue));
-
-            //System.out.println("Height: " + u.getLayout().toRectD().getHeight() + "   Woidtg: " + u.getLayout().toRectD().getWidth());
-           // System.out.println("H: " + u.getLayout().toRectD().getX() + "   Wo: " + u.getLayout().toRectD().getY());
-            //g.setStyle(u, u.getStyle().getRenderer().getShapeGeometry().);
         }
         return nodePose;
     }

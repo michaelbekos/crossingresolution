@@ -475,6 +475,7 @@ public class MainFrame extends JFrame {
 
         JMenuItem minimumCrossingAngleMenu = new JMenuItem();
         minimumCrossingAngleMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
+        minimumCrossingAngleMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,  InputEvent.ALT_MASK));
         minimumCrossingAngleMenu.setText("Minimum Angle");
         minimumCrossingAngleMenu.addActionListener(this::minimumCrossingAngleMenuActionPerformed);
 
@@ -726,7 +727,7 @@ public class MainFrame extends JFrame {
                         return text;
                     });
                     infoLabel.setText(labText.getDefault("Graph has no crossings."));
-                    Thread.sleep(100);
+                    Thread.sleep(100); // if not sleeping,  the computer will work so hard, that the crossing edges are shining red
                 }
                 return null;
             }
@@ -742,6 +743,7 @@ public class MainFrame extends JFrame {
         Maybe<String> labText = minAngleCr.fmap(cr -> {
             String text = "Minimum Angle: " + cr.c.angle.toString();
             if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
+                view.setCenter(cr.c.intersectionPoint);
                 text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
                 text += " , " +  cr.a.n2.get().getLabels().first().getText();
                 text += " | " +  cr.b.n1.get().getLabels().first().getText();
