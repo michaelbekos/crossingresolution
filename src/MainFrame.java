@@ -413,6 +413,13 @@ public class MainFrame extends JFrame {
         ButtonGroup minimumAngleGroup = new ButtonGroup();
         minimumAngleGroup.add(enableMinimumAngleDisplay);
         minimumAngleGroup.add(disableMinimumAngleDisplay);
+
+        JCheckBox allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+        cSidePanel.gridx = 0;
+        cSidePanel.gridy = sidePanelNextY++;
+        sidePanel.add(allowClickCreateNodeEdge, cSidePanel);
+        allowClickCreateNodeEdge.setSelected(false);
+        allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
     }
 
 
@@ -733,10 +740,19 @@ public class MainFrame extends JFrame {
             }
         };
         displayMinimumAngleWorker.execute();
-        }
+    }
+
     private void minimumAngleDisplayDisabled(ActionEvent evt) {
         this.showMinimumAngle = false;
     }
+
+    private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
+        this.graphEditorInputMode.setCreateNodeAllowed((evt.getStateChange() == ItemEvent.DESELECTED));     //no new nodes
+        this.graphEditorInputMode.setCreateEdgeAllowed((evt.getStateChange() == ItemEvent.DESELECTED));     //no new edges
+        this.graphEditorInputMode.setEditLabelAllowed((evt.getStateChange() == ItemEvent.DESELECTED));      //no editing of labels
+        this.graphEditorInputMode.setShowHandleItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports or edges
+    }
+
     private void minimumCrossingAngleMenuActionPerformed(ActionEvent evt){
         Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
                 minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
