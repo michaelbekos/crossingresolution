@@ -48,6 +48,7 @@ public class ContestIOHandler extends GraphIOHandler {
           x = Integer.parseInt(sxy[0]);
           y = Integer.parseInt(sxy[1]);
           INode node = g.createNode(new PointD(x, y));
+          node.setTag(nodesAdded);
           nodes[nodesAdded] = node;
           nodesAdded++;
           if(nodesAdded >= nodesCount) phase = 2;
@@ -103,8 +104,8 @@ public class ContestIOHandler extends GraphIOHandler {
     for(IEdge e: graph.getEdges()){
       int source, target;
       // hack: get index of node by doing toString, then parsing, since nodes have their index as label by default.
-      source = Integer.parseInt(e.getSourceNode().toString());
-      target = Integer.parseInt(e.getTargetNode().toString());
+      source = Integer.parseInt(e.getSourceNode().getTag().toString());
+      target = Integer.parseInt(e.getTargetNode().getTag().toString());
       
       out.write(source + " " + target);
       out.newLine();

@@ -6,14 +6,19 @@ import java.util.ArrayList;
 
 public class VertexStack{
     public ArrayList<Vertex> stack;
-    public ArrayList<Integer> edgesBetweenDeletedNodes;
-    public INode[][] verticesAndEdges_tmp;
-    public int[][] temp;             //testReinsert
-    //TODO remove temp & verticesAndEdges_tmp
+    public int[][] edgeList;
+    private IGraph g;
 
-    public VertexStack() {
+    public VertexStack(IGraph g) {
+        this.g = g;
         this.stack = new ArrayList<Vertex>();
-        this.edgesBetweenDeletedNodes = new ArrayList<Integer>();
+        this.edgeList = new int[this.g.getEdges().size()][2];
+        int i = 0;
+        for (IEdge e : this.g.getEdges()) {
+            this.edgeList[i][0] = Integer.parseInt(e.getSourceNode().getTag().toString());
+            this.edgeList[i][1] = Integer.parseInt(e.getTargetNode().getTag().toString());
+            i++;
+        }
     }
 
     public boolean isEmpty() {
@@ -21,7 +26,7 @@ public class VertexStack{
     }
 
     public void push(INode node, IGraph g) {
-        Vertex vertex = new Vertex(node, g);
+        Vertex vertex = new Vertex(node, this.g);
         this.stack.add(vertex);
     }
 
@@ -29,7 +34,6 @@ public class VertexStack{
         if (!this.stack.isEmpty()) {
             Vertex res = this.stack.get(this.stack.size()-1);
             this.stack.remove(this.stack.size()-1);
-            this.edgesBetweenDeletedNodes.remove(this.edgesBetweenDeletedNodes.size()-1);
             return res;
         } else {
             return null;//todo
@@ -52,16 +56,9 @@ public class VertexStack{
 
 class Vertex{
     public INode vertex;
-    public ArrayList<IEdge> edgeList;
 
     public Vertex(INode node, IGraph g) {
         this.vertex = node;
-        this.edgeList = new ArrayList<IEdge>();
-        for (IPort p : this.vertex.getPorts()) {
-            for (IEdge e : g.edgesAt(p)) {
-                this.edgeList.add(e);
-            }
-        }
     }
 
 }

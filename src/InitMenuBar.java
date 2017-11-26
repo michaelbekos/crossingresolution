@@ -431,7 +431,7 @@ public class InitMenuBar {
                              numVertices = 0;
                        }
                     }
-                } catch (NumberFormatException exc) {   //TODO: catch num vertex > graph
+                } catch (NumberFormatException exc) {
 //                    JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                     numVertices = 0;
@@ -444,7 +444,23 @@ public class InitMenuBar {
     }
     private void reinsertVerticesItemActionPerformed(ActionEvent evt) {
         if (this.removedVertices != null){
-            this.removedVertices = GraphOperations.reinsertVertices(this.graph, this.removedVertices);
+            JTextField vertexCount = new JTextField(Integer.toString(removedVertices.size()));
+
+            int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Reinsert: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            int numVertices = removedVertices.size();
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    numVertices = Integer.parseInt(vertexCount.getText());
+                    if(numVertices > removedVertices.size()){
+                        numVertices = removedVertices.size();
+                    }
+                } catch (NumberFormatException exc) {
+                    numVertices = removedVertices.size();
+                }
+                finally {
+                    this.removedVertices = GraphOperations.reinsertVertices(this.graph, numVertices, this.removedVertices);
+                }
+            }
         }
     }
 
@@ -464,6 +480,7 @@ public class InitMenuBar {
 
     private void blankGraphItemGraphItemActionPerformed(ActionEvent evt) {
         this.graph.clear();
+        this.removedVertices = null;
         this.view.updateUI();
     }
 
@@ -515,6 +532,7 @@ public class InitMenuBar {
                 LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
+                this.removedVertices = null;
             }
         }
     }
@@ -539,6 +557,7 @@ public class InitMenuBar {
                 this.view.importFromGraphML(fileNamePath);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
+                this.removedVertices = null;
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
 
             } catch (IOException ioe) {
@@ -567,6 +586,7 @@ public class InitMenuBar {
                 ContestIOHandler.read(this.graph, this.fileNamePath);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
+                this.removedVertices = null;
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
 
             } catch (IOException ioe) {
@@ -579,9 +599,11 @@ public class InitMenuBar {
         if (this.fileNamePath != null) {
             try {
                 this.graph.clear();
+                this.removedVertices = null;
                 this.view.importFromGraphML(this.fileNamePath);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
+                this.removedVertices = null;
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             }
@@ -775,6 +797,7 @@ public class InitMenuBar {
 
     private void clearAllItemActionPerformed(ActionEvent evt) {
         this.graph.clear();
+        this.removedVertices = null;
     }
 
     private void clearSelectedItemActionPerformed(ActionEvent evt) {

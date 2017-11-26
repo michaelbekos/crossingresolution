@@ -10,6 +10,8 @@ import java.util.*;
 public class GraphOperations {
 
 
+    private static Comparator<INode> byPortSize = Comparator.<INode>comparingInt(p -> p.getPorts().size());
+
     /**
      * Removes numVertices number of  nodes with the highest degree from graph g
      * @param g
@@ -18,8 +20,12 @@ public class GraphOperations {
      */
     public static VertexStack removeVertices(IGraph g, int numVertices, ISelectionModel<INode> selection, VertexStack removedVertices) {
 
-        if(numVertices <= 0){
-            return removedVertices;
+        int tagNum = 0;
+        for (INode u : g.getNodes()) {
+            if (u.getTag() == null) {
+               u.setTag(tagNum);
+            }
+            tagNum++;
         }
 
         INode[] maxDegVertex = new INode[numVertices];
@@ -33,7 +39,6 @@ public class GraphOperations {
                 }
             }
         } else {
-          //  INode minDegVertex = g.getNodes().first();
             int i = 0;
             for (INode u: g.getNodes()) {
                 maxDegVertex[i] = u;
@@ -41,78 +46,27 @@ public class GraphOperations {
                 if(i >= numVertices){
                     break;
                 }
-             //   if (u.getPorts().size() > minDegVertex.getPorts().size()) {
-             //       minDegVertex = u;
-             //   }
             }
-         //   Arrays.fill(maxDegVertex, minDegVertex);   //init with smallest
 
             //fill array maxDegVertex with n largest degree vertices (largest->smallest)
-            Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));
+            Arrays.sort(maxDegVertex, byPortSize);
             while(i<g.getNodes().size()){
                 if (g.getNodes().getItem(i).getPorts().size() > maxDegVertex[maxDegVertex.length-1].getPorts().size()) {
                     maxDegVertex[maxDegVertex.length-1] =  g.getNodes().getItem(i);
-                    Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));  //todo check sorting large->small
+                    Arrays.sort(maxDegVertex, byPortSize);
                 }
                 i++;
             }
-//            for (INode u : g.getNodes()) {
-//                if (u.getPorts().size() > maxDegVertex[maxDegVertex.length-1].getPorts().size()) {
-//                    maxDegVertex[maxDegVertex.length-1] =  u;
-//                    Arrays.sort(maxDegVertex, (a,b) -> Integer.compare(a.getPorts().size(), b.getPorts().size()));  //todo check sorting large->small
-//                }
-//            }
         }
 
-
-
         if (removedVertices == null) {
-            removedVertices = new VertexStack();
+            removedVertices = new VertexStack(g);
         }
 
         for (int i = 0; i < numVertices; i++) {
             removedVertices.push(maxDegVertex[i], g);
+            g.remove(maxDegVertex[i]);
         }
-
-        int[][] testReinsert = new int[numVertices][numVertices];
-
-        INode [][] verticesAndEdges = new INode[numVertices][]; //First element in each subarray is the removed node, subsequent nodes are endpoints for edges to the removed node
-
-        //initialize verticesAndEdges
-        for (int i = 0; i < numVertices; i++) {
-
-            verticesAndEdges[i] = new INode[maxDegVertex[i].getPorts().size()+1];
-            verticesAndEdges[i][0] = maxDegVertex[i];
-        }
-
-        for (int i = numVertices-1 ; i >= 0; i--) { //remove first thr Vert. with the highest degree
-            int j = 1;
-            for (IPort p : verticesAndEdges[i][0].getPorts()) {
-                for (IEdge e : g.edgesAt(p)) {
-                    if (e.getSourceNode().equals(verticesAndEdges[i][0])) {
-                        verticesAndEdges[i][j] = e.getTargetNode();
-                    } else {
-                        verticesAndEdges[i][j] = e.getSourceNode();
-                    }
-                    boolean deletNode = false;
-                    for(int k=i; k >= 0; k--){  //check if the vertices before wich have edges to this one
-                        if(verticesAndEdges[k][0].equals(verticesAndEdges[i][j])){
-                            verticesAndEdges[i][j] = null;
-                            testReinsert[i][k] = 1;
-                            deletNode = true;
-                        }
-                    }
-                    if(!deletNode){
-                        j++;
-                    }
-                }
-            }
-            g.remove(verticesAndEdges[i][0]);
-        }
-
-
-        removedVertices.temp = testReinsert;
-        removedVertices.verticesAndEdges_tmp = verticesAndEdges;
 
         return removedVertices;
 
@@ -123,28 +77,49 @@ public class GraphOperations {
      * @param g
      * @param removedVertices
      */
-    public static VertexStack reinsertVertices(IGraph g, VertexStack removedVertices) {
+    public static VertexStack reinsertVertices(IGraph g, int numVertices, VertexStack removedVertices) {
 
-        INode[] reinsertedNodes = new INode[removedVertices.size()];
-        int[][] testReinsert = removedVertices.temp;
-        for (int i = 0; i < removedVertices.size(); i++) {
-            reinsertedNodes[i] =  g.createNode(removedVertices.get(i).vertex.getLayout().toRectD(), removedVertices.get(i).vertex.getStyle(), removedVertices.get(i).vertex.getTag());
+        INode[] reinsertedNodes = new INode[numVertices];
+        for (int i = 0; i < numVertices; i++) {
+            INode removedNode = removedVertices.pop().vertex;
+            reinsertedNodes[i] =  g.createNode(removedNode.getLayout().toRectD(), removedNode.getStyle(), removedNode.getTag());
         }
-        INode[][] vertices = removedVertices.verticesAndEdges_tmp;
-        for (int i = 0; i < vertices.length; i++) {                     //edges to old nodes
-            for (int j = 1; j < vertices[i].length; j++) {
-                if (!(vertices[i][j] == null)) {
-                    g.createEdge(reinsertedNodes[i], vertices[i][j]);
+        int uc = 0;
+        for (INode u : reinsertedNodes) { //todo: fix, create map for nodes so static lookup based on tag
+            int tag = Integer.parseInt(u.getTag().toString());
+            for (int i = 0; i < removedVertices.edgeList.length; i++) {
+                if (tag == removedVertices.edgeList[i][0]) {    //u = source node
+                    for (INode n : g.getNodes()) {  //find node with tag
+                        breaklabel1:
+                        if (Integer.parseInt(n.getTag().toString()) == removedVertices.edgeList[i][1]) {
+                            for (int j = uc; j >= 0; --j) {  //already added edge (no duplicate edges)
+                                if (reinsertedNodes[j].equals(n)) {
+                                    break breaklabel1;
+                                }
+                            }
+                            g.createEdge(u, n);
+                            break;
+                        }
+                    }
+                } else if (tag == removedVertices.edgeList[i][1]) { //u = target node
+                    for (INode n : g.getNodes()) {  //find node with tag
+                        breaklabel2:
+                        if (Integer.parseInt(n.getTag().toString()) == removedVertices.edgeList[i][0]) {
+                            for (int j = uc; j >= 0; --j) {  //already added edge (no duplicate edges)
+                                if (reinsertedNodes[j].equals(n)) {
+                                    break breaklabel2;
+                                }
+                            }
+                            g.createEdge(n, u);
+                            break;
+                        }
+                    }
                 }
             }
-            for(int j = 0; j < testReinsert[i].length; j++){            //edges to new nodes
-                if (testReinsert[i][j] == 1){
-                    g.createEdge(reinsertedNodes[i], reinsertedNodes[j]);
-                }
-            }
+            uc++;
         }
-        removedVertices.temp = null;
-        return null;
+
+        return removedVertices;
     }
 
 
