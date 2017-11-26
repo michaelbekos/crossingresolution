@@ -335,14 +335,14 @@ public class InitMenuBar {
          * Remove/reinsert vertices
          */
         JMenuItem removeVerticesItem = new JMenuItem();
-        removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.ALT_MASK));
+        removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_MASK));
         removeVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/removeNode.png"))); // test Image
         removeVerticesItem.setText("Remove High Degree Vertices");
         removeVerticesItem.addActionListener(this::removeVerticesItemActionPerformed);
         graphOpsMenu.add(removeVerticesItem);
 
         JMenuItem reinsertVerticesItem = new JMenuItem();
-        reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK));
+        reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
         reinsertVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/reinsertNode.png"))); // test Image
         reinsertVerticesItem.setText("Reinsert High Degree Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
@@ -599,7 +599,6 @@ public class InitMenuBar {
         if (this.fileNamePath != null) {
             try {
                 this.graph.clear();
-                this.removedVertices = null;
                 this.view.importFromGraphML(this.fileNamePath);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
