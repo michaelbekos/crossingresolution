@@ -24,6 +24,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -469,6 +470,12 @@ public class MainFrame extends JFrame {
         dirtyGridPositioningItem.addActionListener(this::quickAndDirtyGridItemActionPerformed);
         layoutMenu.add(dirtyGridPositioningItem);
 
+        JMenuItem clinchLayout = new JMenuItem();
+        clinchLayout.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        clinchLayout.setText("Clinch nodes");
+        clinchLayout.addActionListener(this::clinchNodesActionPerformed);
+        layoutMenu.add(clinchLayout);
+
         JMenuItem gridItem = new JMenuItem();
         gridItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
         gridItem.setIcon(new ImageIcon(getClass().getResource("/resources/grid-16.png")));
@@ -586,6 +593,23 @@ public class MainFrame extends JFrame {
         }
         System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
         this.view.updateUI();
+    }
+
+    private void clinchNodesActionPerformed(ActionEvent event) {
+        IGraphSelection selection = graphEditorInputMode.getGraphSelection();
+        ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
+
+        if (selectedNodes.getCount() == 2) {
+
+            PointD[] anchors = selectedNodes.stream()
+                .map(node -> node.getLayout().getCenter())
+                .toArray(PointD[]::new);
+
+            FilteredGraphWrapper innerGraph = new FilteredGraphWrapper(graph, node -> !selectedNodes.isSelected(node),
+                iEdge -> true);
+
+            new ClinchLayout(innerGraph, anchors[0], anchors[1]).apply();
+        }
     }
 
     private void graphGridItemActionPerformed(ActionEvent evt) {
