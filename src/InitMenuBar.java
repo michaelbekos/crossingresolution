@@ -335,7 +335,7 @@ public class InitMenuBar {
          * Remove/reinsert vertices
          */
         JMenuItem removeVerticesItem = new JMenuItem();
-        removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.SHIFT_MASK));
+        removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
         removeVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/removeNode.png"))); // test Image
         removeVerticesItem.setText("Remove High Degree Vertices");
         removeVerticesItem.addActionListener(this::removeVerticesItemActionPerformed);
