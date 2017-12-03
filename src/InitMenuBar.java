@@ -22,9 +22,7 @@ import util.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -406,6 +404,7 @@ public class InitMenuBar {
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
+
     private void scaleDownGraphItemActionPerformed(ActionEvent evt) {
 
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
@@ -419,7 +418,7 @@ public class InitMenuBar {
 
         if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
             this.removedVertices = GraphOperations.removeVertices(this.graph, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
-        } else {
+        } else  if (this.graph.getNodes().size() > 0){
             int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Remove: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             int numVertices = 1;
             if (result == JOptionPane.OK_OPTION) {
@@ -432,7 +431,6 @@ public class InitMenuBar {
                        }
                     }
                 } catch (NumberFormatException exc) {
-//                    JOptionPane.showMessageDialog(null, "Incorrect input.\nOnly 1 vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                     numVertices = 0;
                 }
@@ -442,23 +440,60 @@ public class InitMenuBar {
             }
         }
     }
-    private void reinsertVerticesItemActionPerformed(ActionEvent evt) {
-        if (this.removedVertices != null){
-            JTextField vertexCount = new JTextField(Integer.toString(removedVertices.size()));
 
-            int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Reinsert: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-            int numVertices = removedVertices.size();
+    private void reinsertVerticesItemActionPerformed(ActionEvent evt) {
+        if (this.removedVertices != null && !this.removedVertices.isEmpty()){
+            JTextField vertexComponentCount = new JTextField();
+            vertexComponentCount.setText(Integer.toString(removedVertices.size()));
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            JRadioButton useVertices = new JRadioButton("Use Vertices"),
+                    useComponents = new JRadioButton("Use Components");
+            ButtonGroup bg = new ButtonGroup();
+            bg.add(useVertices);
+            bg.add(useComponents);
+            JLabel label = new JLabel();
+            String component = "Number of components to reinsert: ";
+            String vertex = "Number of vertices to reinsert:        ";
+            label.setText(vertex);
+            panel.add(label);
+            panel.add(vertexComponentCount);
+            panel.add(useVertices);
+            panel.add(useComponents);
+            useVertices.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent itemEvent) {
+                    if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                        label.setText(vertex);
+                        vertexComponentCount.setText(Integer.toString(removedVertices.size()));
+                    } else if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
+                        label.setText(component);
+                        vertexComponentCount.setText(Integer.toString(removedVertices.componentStack.size()));
+                    }
+                }
+            });
+            useVertices.setSelected(true);
+            useComponents.setSelected(false);
+
+            int result = JOptionPane.showOptionDialog(null, panel, "Reinsert Vertices or Components", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            int numVertices = useVertices.isSelected() ? removedVertices.size() : removedVertices.componentStack.size();
             if (result == JOptionPane.OK_OPTION) {
                 try {
-                    numVertices = Integer.parseInt(vertexCount.getText());
-                    if(numVertices > removedVertices.size()){
+                    numVertices = Integer.parseInt(vertexComponentCount.getText());
+                    if(useVertices.isSelected() && numVertices > removedVertices.size()){
                         numVertices = removedVertices.size();
+                    } else if (useComponents.isSelected() && numVertices > removedVertices.componentStack.size()) {
+                        numVertices = removedVertices.componentStack.size();
                     }
                 } catch (NumberFormatException exc) {
-                    numVertices = removedVertices.size();
+                    if (useVertices.isSelected()) {
+                        numVertices = removedVertices.size();
+                    } else if (useComponents.isSelected()) {
+                        numVertices = removedVertices.componentStack.size();
+                    }
                 }
                 finally {
-                    this.removedVertices = GraphOperations.reinsertVertices(this.graph, numVertices, this.removedVertices);
+                    this.removedVertices = GraphOperations.reinsertVertices(this.graph, useVertices.isSelected(), numVertices, this.removedVertices);
                 }
             }
         }

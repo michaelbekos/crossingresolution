@@ -27,7 +27,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.prefs.NodeChangeListener;
 
 
 /**
@@ -412,34 +411,18 @@ public class MainFrame extends JFrame {
 
         cSidePanel.gridy = sidePanelNextY++;
 
-        /*
-        JRadioButton enableMinimumAngleDisplay = new JRadioButton("ON                      Show minimum Angle"),
-                disableMinimumAngleDisplay = new JRadioButton("OFF");
-        cSidePanel.gridx = 0;
-        sidePanel.add(enableMinimumAngleDisplay,cSidePanel);
-        enableMinimumAngleDisplay.setSelected(false);
-        enableMinimumAngleDisplay.addActionListener(this::minimumAngleDisplayEnabled);
-        cSidePanel.gridx = 1;
-        sidePanel.add(disableMinimumAngleDisplay,cSidePanel);
-        disableMinimumAngleDisplay.setSelected(true);
-        disableMinimumAngleDisplay.addActionListener(this::minimumAngleDisplayDisabled);
-        ButtonGroup minimumAngleGroup = new ButtonGroup();
-        minimumAngleGroup.add(enableMinimumAngleDisplay);
-        minimumAngleGroup.add(disableMinimumAngleDisplay);
-
-*/
-        JCheckBox enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+        JCheckBox enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
         cSidePanel.gridx = 0;
         cSidePanel.gridy = sidePanelNextY++;
         sidePanel.add(enableMinimumAngleDisplay, cSidePanel);
-        enableMinimumAngleDisplay.setSelected(false);
         enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
+        enableMinimumAngleDisplay.setSelected(false);
 
         JCheckBox allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
         cSidePanel.gridx = 1;
         sidePanel.add(allowClickCreateNodeEdge, cSidePanel);
-        allowClickCreateNodeEdge.setSelected(true);
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
+        allowClickCreateNodeEdge.setSelected(true);
     }
 
 
@@ -741,19 +724,18 @@ public class MainFrame extends JFrame {
 
     private void minimumAngleDisplayEnabled(ItemEvent evt) {
         if(evt.getStateChange() == ItemEvent.SELECTED){
-            graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
-            graph.addEdgeCreatedListener(minimumAngleEdgeCreatedListener);
-            graph.addEdgeRemovedListener(minimumAngleEdgeRemovedListener);
-            graph.addNodeCreatedListener(minimumAngleNodeCreatedListener);
-            graph.addNodeRemovedListener(minimumAngleNodeRemovedListener);
+            this.graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
+            this.graph.addEdgeCreatedListener(minimumAngleEdgeCreatedListener);
+            this.graph.addEdgeRemovedListener(minimumAngleEdgeRemovedListener);
+            this.graph.addNodeCreatedListener(minimumAngleNodeCreatedListener);
+            this.graph.addNodeRemovedListener(minimumAngleNodeRemovedListener);
         } else if(evt.getStateChange() == ItemEvent.DESELECTED){
-            graph.removeNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
-            graph.removeEdgeCreatedListener(minimumAngleEdgeCreatedListener);
-            graph.removeEdgeRemovedListener(minimumAngleEdgeRemovedListener);
-            graph.removeNodeCreatedListener(minimumAngleNodeCreatedListener);
-            graph.removeNodeRemovedListener(minimumAngleNodeRemovedListener);
+            this.graph.removeNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
+            this.graph.removeEdgeCreatedListener(minimumAngleEdgeCreatedListener);
+            this.graph.removeEdgeRemovedListener(minimumAngleEdgeRemovedListener);
+            this.graph.removeNodeCreatedListener(minimumAngleNodeCreatedListener);
+            this.graph.removeNodeRemovedListener(minimumAngleNodeRemovedListener);
             MinimumAngle.resetHighlighting(this.graph);
-
         }
 
     }
@@ -763,7 +745,9 @@ public class MainFrame extends JFrame {
         this.graphEditorInputMode.setCreateNodeAllowed((evt.getStateChange() == ItemEvent.DESELECTED));     //no new nodes
         this.graphEditorInputMode.setCreateEdgeAllowed((evt.getStateChange() == ItemEvent.DESELECTED));     //no new edges
         this.graphEditorInputMode.setEditLabelAllowed((evt.getStateChange() == ItemEvent.DESELECTED));      //no editing of labels
-        this.graphEditorInputMode.setShowHandleItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports or edges
+        this.graphEditorInputMode.setShowHandleItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports
+        this.graphEditorInputMode.setDeletableItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
+        this.graphEditorInputMode.setSelectableItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
     }
 
 
