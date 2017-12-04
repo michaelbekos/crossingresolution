@@ -1,32 +1,37 @@
+import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.graph.styles.INodeStyle;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
-import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-
-import layout.algo.*;
-import algorithms.graphs.MinimumAngle;
-import layout.algo.NodeSwapper;
-import util.*;
-import util.interaction.*;
-import util.graph2d.*;
+import layout.algo.ForceAlgorithmApplier;
+import layout.algo.GeneticAlgorithm;
+import util.Maybe;
+import util.Tuple3;
+import util.Tuple4;
+import util.VertexStack;
+import util.graph2d.Intersection;
 import util.graph2d.LineSegment;
+import util.interaction.ThresholdSliders;
 
 import javax.swing.*;
-
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.function.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.function.Consumer;
 
 
 /**
@@ -41,7 +46,6 @@ public class MainFrame extends JFrame {
     private GraphEditorInputMode graphEditorInputMode;
     private GridVisualCreator gridVisualCreator;
     private GraphSnapContext graphSnapContext;
-    private boolean isGridVisible;
 
     /* Default Styles */
     private ShinyPlateNodeStyle defaultNodeStyle;
@@ -56,7 +60,6 @@ public class MainFrame extends JFrame {
     private JLabel infoLabel;
     private JProgressBar progressBar;
     private JMenu editMenu = new JMenu();
-    public JMenuBar mainMenuBar = new JMenuBar();
 
     private JPanel sidePanel;
     private int sidePanelFirstY = 0, sidePanelNextY;
@@ -231,7 +234,6 @@ public class MainFrame extends JFrame {
         GridInfo gridInfo = new GridInfo();
         this.gridVisualCreator = new GridVisualCreator(gridInfo);
         this.view.getBackgroundGroup().addChild(this.gridVisualCreator, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE);
-        this.isGridVisible = true;
         this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
         this.graphSnapContext.setNodeGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
         //this.graphSnapContext.setBendGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
@@ -427,79 +429,21 @@ public class MainFrame extends JFrame {
 
 
     private void initMenuBar() {
-
-        JMenu layoutMenu = new JMenu();
-        JMenu viewMenu = new JMenu();
-        JMenu editMenu = new JMenu();
-        JMenu graphOpsMenu = new JMenu();
-
-        InitMenuBar menuBar = new InitMenuBar(mainMenuBar, layoutMenu, editMenu, viewMenu, graphOpsMenu, this.graph, this.infoLabel, this.view, this.progressBar, this.graphEditorInputMode,
-                                                this.defaultLayouter, this.fileNamePathFolder, this.fileNamePath, this.removedVertices);
-        mainMenuBar = menuBar.initMenuBar();
-        JMenuItem springEmbedderItem = new JMenuItem();
-        springEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        springEmbedderItem.setText("Spring Embedder");
-        springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
-        layoutMenu.add(springEmbedderItem);
-
-        JMenuItem jitterItem = new JMenuItem();
-        jitterItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        jitterItem.setText("Jitter");
-        jitterItem.addActionListener(this::jitterItemActionPerformed);
-        layoutMenu.add(jitterItem);
-
-
-        JMenuItem swapperItem = new JMenuItem();
-        swapperItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        swapperItem.setText("Nodes Swapper");
-        swapperItem.addActionListener(this::swapperItemActionPerformed);
-        layoutMenu.add(swapperItem);
-
-        JMenuItem gridPositioningItem = new JMenuItem();
-        gridPositioningItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        gridPositioningItem.setText("Respective Crossing Angle Gridding");
-        gridPositioningItem.addActionListener(this::gridCrossingItemActionPerformed);
-        layoutMenu.add(gridPositioningItem);
-        JMenuItem graphGridItem = new JMenuItem();
-        graphGridItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        graphGridItem.setText("Graph Gridding");
-        graphGridItem.addActionListener(this::graphGridItemActionPerformed);
-        layoutMenu.add(graphGridItem);
-
-        JMenuItem dirtyGridPositioningItem = new JMenuItem();
-        dirtyGridPositioningItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        dirtyGridPositioningItem.setText("Quick and Dirty Gridding");
-        dirtyGridPositioningItem.addActionListener(this::quickAndDirtyGridItemActionPerformed);
-        layoutMenu.add(dirtyGridPositioningItem);
-
-        JMenuItem gridItem = new JMenuItem();
-        gridItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
-        gridItem.setIcon(new ImageIcon(getClass().getResource("/resources/grid-16.png")));
-        gridItem.setText("Grid On/Off");
-        gridItem.addActionListener(this::gridItemActionPerformed);
-        viewMenu.add(gridItem);
-
-        JMenu analyzeMenu = new JMenu();
-        analyzeMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        analyzeMenu.setText("Analyze Graph");
-
-        JMenuItem minimumCrossingAngleMenu = new JMenuItem();
-        minimumCrossingAngleMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        minimumCrossingAngleMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,  InputEvent.ALT_MASK));
-        minimumCrossingAngleMenu.setText("Minimum Angle");
-        minimumCrossingAngleMenu.addActionListener(this::minimumCrossingAngleMenuActionPerformed);
-
-        JMenuItem overlappingNodesMenu = new JMenuItem();
-        overlappingNodesMenu.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-        overlappingNodesMenu.setText("Show Overlapping Nodes");
-        overlappingNodesMenu.addActionListener(this::overlappingNodesMenuActionPerformed);
-
-        analyzeMenu.add(minimumCrossingAngleMenu);
-        analyzeMenu.add(overlappingNodesMenu);
-        viewMenu.add(analyzeMenu);
-        viewMenu.add(new JSeparator());
-        mainMenuBar.add(layoutMenu);
-        super.setJMenuBar(mainMenuBar);
+        InitMenuBar menuBar = new InitMenuBar(
+            this,
+            graph,
+            infoLabel,
+            view,
+            progressBar,
+            graphEditorInputMode,
+            defaultLayouter,
+            fileNamePathFolder,
+            fileNamePath,
+            removedVertices,
+            graphSnapContext,
+            gridVisualCreator
+        );
+        super.setJMenuBar(menuBar.initMenuBar());
     }
 
 
@@ -565,48 +509,6 @@ public class MainFrame extends JFrame {
     /*********************************************************************
      * Implementation of actions
      ********************************************************************/
-    private void gridCrossingItemActionPerformed(ActionEvent evt) {
-        boolean gridding = false;
-        if(ForceAlgorithmApplier.class != null) {
-            while (gridding == false) {
-                GridPositioning.gridGraph(this.graph);
-                //grid.removeOverlapsOrganic();
-                GridPositioning.removeOverlaps(this.graph, 0.1);
-                if(GridPositioning.isGridGraph(this.graph)){
-                    gridding = true;
-                }
-            }
-        }
-        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
-        this.view.updateUI();
-    }
-
-    private void quickAndDirtyGridItemActionPerformed(ActionEvent evt){
-        if(ForceAlgorithmApplier.class != null){
-            GridPositioning.gridQuickAndDirty(this.graph);
-            if(!GridPositioning.isGridGraph(this.graph)){
-                System.out.println("Error occured with the gridding of the graph");
-            }
-        }
-        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
-        this.view.updateUI();
-    }
-
-    private void graphGridItemActionPerformed(ActionEvent evt) {
-        boolean gridding = false;
-        if(ForceAlgorithmApplier.class != null) {
-            while (gridding == false) {
-                GridPositioning.gridGraphFast(this.graph);
-                //grid.removeOverlapsOrganic();
-                GridPositioning.removeOverlaps(this.graph, 0.1);
-                if(GridPositioning.isGridGraph(this.graph)){
-                    gridding = true;
-                }
-            }
-        }
-        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
-        this.view.updateUI();
-    }
 
     public void startGeneticClicked(ActionEvent e){
         if(geneticAlgorithm == null || geneticAlgorithm.running == false){
@@ -646,7 +548,7 @@ public class MainFrame extends JFrame {
     }
 
 
-    private void springEmbedderItemActionPerformed(ActionEvent evt) {
+    void springEmbedderItemActionPerformed(ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
         int iterations = 1000;
 
@@ -668,50 +570,6 @@ public class MainFrame extends JFrame {
 
         Thread thread = new Thread(fd);
         thread.start();
-        this.view.updateUI();
-    }
-
-    private void gridItemActionPerformed(ActionEvent evt) {
-        if (this.isGridVisible) {
-            this.isGridVisible = false;
-            this.graphSnapContext.setGridSnapType(GridSnapTypes.NONE);
-        } else {
-            this.isGridVisible = true;
-            this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
-        }
-        this.gridVisualCreator.setVisible(this.isGridVisible);
-        this.view.updateUI();
-    }
-
-    private void swapperItemActionPerformed(ActionEvent evt){
-        JTextField nodesTextField = new JTextField("2");
-        int nodes = 2;
-
-        JCheckBox checkbox = new JCheckBox("Nodes from Minimum Crossing");
-        boolean crossing;
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes to swap: ", nodesTextField, checkbox}, "Swapping Algorithm", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-        crossing = checkbox.isSelected();
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                nodes = Integer.parseInt(nodesTextField.getText());
-                if(nodes > 4 && crossing) {
-                    JOptionPane.showMessageDialog(null, "No more than four nodes contained in Crossing.\nThe number of nodes to swap will be set to 2. ", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                    nodes = 2;
-                }
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of nodes to swap will be set to 2.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        else return;
-
-        NodeSwapper.swapNodes(this.graph, nodes, crossing);
-        this.view.updateUI();
-
-    }
-
-    private void jitterItemActionPerformed(ActionEvent evt) {
-        GridPositioning.removeOverlaps(this.graph, 5);
         this.view.updateUI();
     }
 
@@ -750,37 +608,6 @@ public class MainFrame extends JFrame {
         this.graphEditorInputMode.setSelectableItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
     }
 
-
-
-    private void minimumCrossingAngleMenuActionPerformed(ActionEvent evt){
-        showMinimumAngle(true);
-    }
-
-    private void overlappingNodesMenuActionPerformed(ActionEvent evt){
-        Set<Double> seenCoordinatesX = new HashSet<>();
-        Set<Double> seenCoordinatesY = new HashSet<>();
-        
-        for(INode u : this.graph.getNodes()){
-            double u_x = u.getLayout().getCenter().getX();
-            double u_y = u.getLayout().getCenter().getY();
-
-            if(seenCoordinatesX.contains(u_x) && seenCoordinatesY.contains(u_y)){
-                INodeStyle s = u.getStyle();
-                if (s instanceof ShinyPlateNodeStyle) {
-                    ((ShinyPlateNodeStyle) s).setPaint(Color.MAGENTA);
-                    ((ShinyPlateNodeStyle) s).setPen(new Pen(Color.MAGENTA,1));
-
-                } else {
-                    System.out.println(s.getClass());
-                }
-            } else {
-                seenCoordinatesX.add(u_x);
-                seenCoordinatesY.add(u_y);
-            }
-        }
-        view.updateUI();
-    }
-
     private void forceDirectionPerpendicularActionPerformed(ActionEvent evt){    this.algoModifiers[0] = true; }
     private void forceDirectionNonPerpendicularActionPerformed(ActionEvent evt){ this.algoModifiers[0] = false; }
 
@@ -801,32 +628,31 @@ public class MainFrame extends JFrame {
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
 
-/**
- *  Minimum Crossing Angle Method
- */
-
-private void showMinimumAngle(boolean centering){
-    MinimumAngle.resetHighlighting(graph);
-    Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
-            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
-    Maybe<String> labText = minAngleCr.fmap(cr -> {
-        String text = "Minimum Angle: " + cr.c.angle.toString();
-        if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
-            if(centering){
-                view.setCenter(cr.c.intersectionPoint);
+    /**
+     *  Minimum Crossing Angle Method
+     */
+    void showMinimumAngle(boolean centering) {
+        MinimumAngle.resetHighlighting(graph);
+        Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
+                minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+        Maybe<String> labText = minAngleCr.fmap(cr -> {
+            String text = "Minimum Angle: " + cr.c.angle.toString();
+            if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
+                if(centering){
+                    view.setCenter(cr.c.intersectionPoint);
+                }
+                text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
+                text += " , " +  cr.a.n2.get().getLabels().first().getText();
+                text += " | " +  cr.b.n1.get().getLabels().first().getText();
+                text += " , " +  cr.b.n2.get().getLabels().first().getText();
             }
-            text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
-            text += " , " +  cr.a.n2.get().getLabels().first().getText();
-            text += " | " +  cr.b.n1.get().getLabels().first().getText();
-            text += " , " +  cr.b.n2.get().getLabels().first().getText();
-        }
-        MinimumAngle.resetHighlighting(this.graph);
-        MinimumAngle.highlightCrossing(cr);
-        view.updateUI();
-        return text;
-    });
-    infoLabel.setText(labText.getDefault("Graph has no crossings."));
-}
+            MinimumAngle.resetHighlighting(this.graph);
+            MinimumAngle.highlightCrossing(cr);
+            view.updateUI();
+            return text;
+        });
+        infoLabel.setText(labText.getDefault("Graph has no crossings."));
+    }
     /**
      * @param args the command line arguments
      */
