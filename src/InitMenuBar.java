@@ -37,7 +37,6 @@ import java.util.Set;
 /**
  * Created by khokhi on 10.12.16.
  */
-@SuppressWarnings("unused") // for all the unused "evt" arguments
 public class InitMenuBar {
     private MainFrame mainFrame;
 
@@ -480,7 +479,7 @@ public class InitMenuBar {
         return fileMenu;
     }
 
-    private void scaleUpGraphItemActionPerformed(ActionEvent evt) {
+    private void scaleUpGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 2.0);
@@ -488,7 +487,7 @@ public class InitMenuBar {
         this.view.fitGraphBounds();
     }
 
-    private void scaleDownGraphItemActionPerformed(ActionEvent evt) {
+    private void scaleDownGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
         Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.5);
@@ -496,7 +495,7 @@ public class InitMenuBar {
         this.view.fitGraphBounds();
     }
 
-    private void removeVerticesItemActionPerformed(ActionEvent evt) {
+    private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         JTextField vertexCount = new JTextField("1");
 
         if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
@@ -524,7 +523,7 @@ public class InitMenuBar {
         }
     }
 
-    private void reinsertVerticesItemActionPerformed(ActionEvent evt) {
+    private void reinsertVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.removedVertices != null && !this.removedVertices.isEmpty()){
             JTextField vertexComponentCount = new JTextField();
             vertexComponentCount.setText(Integer.toString(removedVertices.size()));
@@ -579,27 +578,27 @@ public class InitMenuBar {
         }
     }
 
-    private void fitContentItemActionPerformed(ActionEvent evt) {
+    private void fitContentItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.view.fitGraphBounds();
     }
 
-    private void zoomOutItemActionPerformed(ActionEvent evt) {
+    private void zoomOutItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.view.setZoom(this.view.getZoom() - 0.2);
     }
 
-    private void zoomInItemActionPerformed(ActionEvent evt) {
+    private void zoomInItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.view.setZoom(this.view.getZoom() + 0.2);
     }
 
 
 
-    private void blankGraphItemGraphItemActionPerformed(ActionEvent evt) {
+    private void blankGraphItemGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.graph.clear();
         this.removedVertices = null;
         this.view.updateUI();
     }
 
-    private void randomGraphItemActionPerformed(ActionEvent evt) {
+    private void randomGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         RandomGraphGenerator rgg = new RandomGraphGenerator();
         rgg.allowMultipleEdges(false);
         rgg.allowCycles(true);
@@ -629,7 +628,7 @@ public class InitMenuBar {
         }
     }
 
-    private void openItemActionPerformed(ActionEvent evt) {
+    private void openItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
         chooser.setFileFilter(new FileFilter() {
             public boolean accept(File file) {
@@ -658,7 +657,7 @@ public class InitMenuBar {
         }
     }
 
-    private void openContestItemActionPerformed(ActionEvent evt) {
+    private void openContestItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
         chooser.setFileFilter(new FileFilter() {
             public boolean accept(File file) {
@@ -687,7 +686,7 @@ public class InitMenuBar {
         }
     }
 
-    private void reloadItemActionPerformed(ActionEvent evt) {
+    private void reloadItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.fileNamePath != null) {
             try {
                 this.graph.clear();
@@ -703,7 +702,7 @@ public class InitMenuBar {
         }
     }
 
-    private void saveItemActionPerformed(ActionEvent evt) {
+    private void saveItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.fileNamePath != null) {
             try {
                 this.view.exportToGraphML(this.fileNamePath);
@@ -741,7 +740,7 @@ public class InitMenuBar {
         }
     }
 
-    private void exportItemActionPerformed(ActionEvent evt) {
+    private void exportItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
         chooser.setFileFilter(new FileFilter() {
             public boolean accept(File file) {
@@ -768,7 +767,7 @@ public class InitMenuBar {
         }
     }
 
-    private void yFilesSpringEmbedderItemActionPerformed(ActionEvent evt){
+    private void yFilesSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt){
         JTextField iterationsTextField = new JTextField("1000");
         int iterations = 1000;
 
@@ -807,24 +806,24 @@ public class InitMenuBar {
         this.view.updateUI();
     }
 
-    private void saveAsItemActionPerformed(ActionEvent evt) {
+    private void saveAsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         showFileChooser(new JFileChooser(this.fileNamePathFolder));
     }
 
-    private void organicItemActionPerformed(ActionEvent evt) {
+    private void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         applyLayoutToSelection(new OrganicLayout());
     }
 
-    private void circularItemActionPerformed(ActionEvent evt) {
+    private void circularItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         applyLayoutToSelection(new CircularLayout());
     }
 
-    private void orthogonalItemActionPerformed(ActionEvent evt) {
+    private void orthogonalItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         applyLayoutToSelection(new OrthogonalLayout());
 
     }
 
-    private void treeItemActionPerformed(ActionEvent evt) {
+    private void treeItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         try {
             applyLayoutToSelection(new TreeLayout());
         } catch (Exception exc) {
@@ -857,55 +856,55 @@ public class InitMenuBar {
     }
 
     //edit menu actions
-    private void deselectAllItemActionPerformed(ActionEvent evt) {
+    private void deselectAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.graphEditorInputMode.clearSelection();
     }
 
-    private void selectAllItemActionPerformed(ActionEvent evt) {
+    private void selectAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.graphEditorInputMode.selectAll();
     }
 
-    private void clearAllItemActionPerformed(ActionEvent evt) {
+    private void clearAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.graph.clear();
         this.removedVertices = null;
     }
 
-    private void clearSelectedItemActionPerformed(ActionEvent evt) {
+    private void clearSelectedItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.graphEditorInputMode.isClearSelectionAllowed()) {
             this.graphEditorInputMode.clearSelection();
         }
     }
 
-    private void pasteItemActionPerformed(ActionEvent evt) {
+    private void pasteItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.graphEditorInputMode.paste();
     }
 
-    private void copyItemActionPerformed(ActionEvent evt) {
+    private void copyItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.graphEditorInputMode.copy();
     }
 
-    private void cutItemActionPerformed(ActionEvent evt) {
+    private void cutItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         this.graphEditorInputMode.cut();
     }
 
-    private void redoItemActionPerformed(ActionEvent evt) {
+    private void redoItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.graphEditorInputMode.isUndoOperationsAllowed()) {
             this.graphEditorInputMode.redo();
         }
     }
 
-    private void undoItemActionPerformed(ActionEvent evt) {
+    private void undoItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.graphEditorInputMode.isUndoOperationsAllowed()) {
             this.graphEditorInputMode.undo();
         }
     }
 
-    private void jitterItemActionPerformed(ActionEvent evt) {
+    private void jitterItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         GridPositioning.removeOverlaps(this.graph, 5);
         this.view.updateUI();
     }
 
-    private void swapperItemActionPerformed(ActionEvent evt) {
+    private void swapperItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         JTextField nodesTextField = new JTextField("2");
         int nodes = 2;
 
@@ -934,7 +933,7 @@ public class InitMenuBar {
 
     }
 
-    private void gridCrossingItemActionPerformed(ActionEvent evt) {
+    private void gridCrossingItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         do {
             GridPositioning.gridGraph(this.graph);
             GridPositioning.removeOverlaps(this.graph, 0.1);
@@ -945,7 +944,7 @@ public class InitMenuBar {
     }
 
 
-    private void graphGridItemActionPerformed(ActionEvent evt) {
+    private void graphGridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         do {
             GridPositioning.gridGraphFast(this.graph);
             GridPositioning.removeOverlaps(this.graph, 0.1);
@@ -955,7 +954,7 @@ public class InitMenuBar {
         this.view.updateUI();
     }
 
-    private void quickAndDirtyGridItemActionPerformed(ActionEvent evt) {
+    private void quickAndDirtyGridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         GridPositioning.gridQuickAndDirty(this.graph);
         if (!GridPositioning.isGridGraph(this.graph)) {
             System.out.println("Error occured with the gridding of the graph");
@@ -964,7 +963,7 @@ public class InitMenuBar {
         this.view.updateUI();
     }
 
-    private void gridItemActionPerformed(ActionEvent evt) {
+    private void gridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.isGridVisible) {
             this.isGridVisible = false;
             this.graphSnapContext.setGridSnapType(GridSnapTypes.NONE);
@@ -976,11 +975,11 @@ public class InitMenuBar {
         this.view.updateUI();
     }
 
-    private void minimumCrossingAngleMenuActionPerformed(ActionEvent evt) {
+    private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.showMinimumAngle(true);
     }
 
-    private void overlappingNodesMenuActionPerformed(ActionEvent evt) {
+    private void overlappingNodesMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         Set<Double> seenCoordinatesX = new HashSet<>();
         Set<Double> seenCoordinatesY = new HashSet<>();
 
