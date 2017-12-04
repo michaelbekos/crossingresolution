@@ -59,6 +59,8 @@ public class InitMenuBar {
     private GraphSnapContext graphSnapContext;
     private GridVisualCreator gridVisualCreator;
 
+    private MinimumAngleMonitor minimumAngleMonitor;
+
     InitMenuBar(MainFrame mainFrame,
                 IGraph graph,
                 JLabel infoLabel,
@@ -70,7 +72,8 @@ public class InitMenuBar {
                 String filePath,
                 VertexStack removedVertices,
                 GraphSnapContext graphSnapContext,
-                GridVisualCreator gridVisualCreator) {
+                GridVisualCreator gridVisualCreator,
+                MinimumAngleMonitor minimumAngleMonitor) {
 
         this.mainFrame = mainFrame;
         this.graph = graph;
@@ -84,6 +87,7 @@ public class InitMenuBar {
         this.removedVertices = removedVertices;
         this.graphSnapContext = graphSnapContext;
         this.gridVisualCreator = gridVisualCreator;
+        this.minimumAngleMonitor = minimumAngleMonitor;
     }
 
 
@@ -976,7 +980,7 @@ public class InitMenuBar {
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        mainFrame.showMinimumAngle(true);
+        minimumAngleMonitor.showMinimumAngle(graph, view, infoLabel);
     }
 
     private void overlappingNodesMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

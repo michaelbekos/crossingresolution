@@ -1,6 +1,4 @@
-import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
@@ -8,18 +6,13 @@ import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import com.yworks.yfiles.utils.IEventListener;
-import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithmApplier;
 import layout.algo.GeneticAlgorithm;
 import util.Maybe;
-import util.Tuple3;
 import util.Tuple4;
 import util.VertexStack;
-import util.graph2d.Intersection;
-import util.graph2d.LineSegment;
 import util.interaction.ThresholdSliders;
 
 import javax.swing.*;
@@ -64,6 +57,7 @@ public class MainFrame extends JFrame {
     private JPanel sidePanel;
     private int sidePanelFirstY = 0, sidePanelNextY;
 
+    private MinimumAngleMonitor minimumAngleMonitor;
 
     private boolean perpendicular = true;
     private boolean createNodeAllowed = true;
@@ -76,12 +70,6 @@ public class MainFrame extends JFrame {
 
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
 
-
-
-    INodeLayoutChangedHandler minimumAngleLayoutChangedHandler;
-
-
-
     /* Object that tracks removed/replaced Vertices */
     private VertexStack removedVertices;
 
@@ -89,7 +77,6 @@ public class MainFrame extends JFrame {
         f.running = false;
         f.clearDrawables();
     });
-
 
     // for this class, we can instantiate defaultForceAlgorithmApplier and do some post-initializing
     public ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
@@ -222,12 +209,6 @@ public class MainFrame extends JFrame {
             });
         });
 
-        minimumAngleLayoutChangedHandler = new INodeLayoutChangedHandler() {
-            @Override
-            public void onNodeLayoutChanged(Object o, INode iNode, RectD rectD) {
-                showMinimumAngle(false);
-            }
-        };
         /* Add two listeners two the graph */
         this.graphSnapContext = new GraphSnapContext();
         this.graphEditorInputMode.setSnapContext(this.graphSnapContext);
@@ -271,6 +252,8 @@ public class MainFrame extends JFrame {
         this.defaultLayouter = new OrganicLayout();
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
+
+        this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel);
 
         initSidePanel(mainPanel, c);
     }
@@ -441,7 +424,8 @@ public class MainFrame extends JFrame {
             fileNamePath,
             removedVertices,
             graphSnapContext,
-            gridVisualCreator
+            gridVisualCreator,
+            minimumAngleMonitor
         );
         super.setJMenuBar(menuBar.initMenuBar());
     }
@@ -573,31 +557,13 @@ public class MainFrame extends JFrame {
         this.view.updateUI();
     }
 
-    private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o,ItemEventArgs) -> {showMinimumAngle(false);};
-    private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o,EdgeEventArgs) -> {showMinimumAngle(false);};
-    private IEventListener<ItemEventArgs<INode>> minimumAngleNodeCreatedListener = (o,ItemEventArgs) -> {showMinimumAngle(false);};
-    private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o,NodeEventArgs) -> {showMinimumAngle(false);};
-
-
-
     private void minimumAngleDisplayEnabled(ItemEvent evt) {
-        if(evt.getStateChange() == ItemEvent.SELECTED){
-            this.graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
-            this.graph.addEdgeCreatedListener(minimumAngleEdgeCreatedListener);
-            this.graph.addEdgeRemovedListener(minimumAngleEdgeRemovedListener);
-            this.graph.addNodeCreatedListener(minimumAngleNodeCreatedListener);
-            this.graph.addNodeRemovedListener(minimumAngleNodeRemovedListener);
-        } else if(evt.getStateChange() == ItemEvent.DESELECTED){
-            this.graph.removeNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
-            this.graph.removeEdgeCreatedListener(minimumAngleEdgeCreatedListener);
-            this.graph.removeEdgeRemovedListener(minimumAngleEdgeRemovedListener);
-            this.graph.removeNodeCreatedListener(minimumAngleNodeCreatedListener);
-            this.graph.removeNodeRemovedListener(minimumAngleNodeRemovedListener);
-            MinimumAngle.resetHighlighting(this.graph);
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            minimumAngleMonitor.registerGraphChangedListeners();
+        } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
+            minimumAngleMonitor.removeGraphChangedListeners();
         }
-
     }
-
 
     private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
         this.graphEditorInputMode.setCreateNodeAllowed((evt.getStateChange() == ItemEvent.DESELECTED));     //no new nodes
@@ -628,31 +594,6 @@ public class MainFrame extends JFrame {
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
 
-    /**
-     *  Minimum Crossing Angle Method
-     */
-    void showMinimumAngle(boolean centering) {
-        MinimumAngle.resetHighlighting(graph);
-        Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
-                minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
-        Maybe<String> labText = minAngleCr.fmap(cr -> {
-            String text = "Minimum Angle: " + cr.c.angle.toString();
-            if(cr.a.n1.hasValue() && cr.b.n1.hasValue()){
-                if(centering){
-                    view.setCenter(cr.c.intersectionPoint);
-                }
-                text += " | Nodes: " + cr.a.n1.get().getLabels().first().getText();
-                text += " , " +  cr.a.n2.get().getLabels().first().getText();
-                text += " | " +  cr.b.n1.get().getLabels().first().getText();
-                text += " , " +  cr.b.n2.get().getLabels().first().getText();
-            }
-            MinimumAngle.resetHighlighting(this.graph);
-            MinimumAngle.highlightCrossing(cr);
-            view.updateUI();
-            return text;
-        });
-        infoLabel.setText(labText.getDefault("Graph has no crossings."));
-    }
     /**
      * @param args the command line arguments
      */
