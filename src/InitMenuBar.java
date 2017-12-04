@@ -68,9 +68,6 @@ public class InitMenuBar {
                 JProgressBar progressBar,
                 GraphEditorInputMode graphEditorInputMode,
                 OrganicLayout defaultLayouter,
-                String filePathFolder,
-                String filePath,
-                VertexStack removedVertices,
                 GraphSnapContext graphSnapContext,
                 GridVisualCreator gridVisualCreator,
                 MinimumAngleMonitor minimumAngleMonitor) {
@@ -81,10 +78,7 @@ public class InitMenuBar {
         this.view = view;
         this.graphEditorInputMode = graphEditorInputMode;
         this.defaultLayouter = defaultLayouter;
-        this.fileNamePathFolder = filePathFolder;
-        this.fileNamePath = filePath;
         this.progressBar = progressBar;
-        this.removedVertices = removedVertices;
         this.graphSnapContext = graphSnapContext;
         this.gridVisualCreator = gridVisualCreator;
         this.minimumAngleMonitor = minimumAngleMonitor;

@@ -12,7 +12,6 @@ import layout.algo.ForceAlgorithmApplier;
 import layout.algo.GeneticAlgorithm;
 import util.Maybe;
 import util.Tuple4;
-import util.VertexStack;
 import util.interaction.ThresholdSliders;
 
 import javax.swing.*;
@@ -45,44 +44,30 @@ public class MainFrame extends JFrame {
     private PolylineEdgeStyle defaultEdgeStyle;
     private SimpleLabelStyle defaultLabelStyle;
 
-    /* Object that keeps track of the latest open/saved file */
-    private String fileNamePath;
-    private String fileNamePathFolder;
-
     /* Central gui elements */
     private JLabel infoLabel;
     private JProgressBar progressBar;
-    private JMenu editMenu = new JMenu();
-
-    private JPanel sidePanel;
-    private int sidePanelFirstY = 0, sidePanelNextY;
 
     private MinimumAngleMonitor minimumAngleMonitor;
 
-    private boolean perpendicular = true;
-    private boolean createNodeAllowed = true;
-    private boolean optimizingNinty = true;
-    JSlider[] sliders;
+    private JSlider[] sliders;
     
-    public final Double[] springThreshholds = new Double[]{0.01, 0.01, 0.01, 0.1};
-    public final Boolean[] algoModifiers = new Boolean[]{false, false};
+    private final Double[] springThresholds = {0.01, 0.01, 0.01, 0.1};
+    private final Boolean[] algoModifiers = {false, false};
     private int faaRunningTimeGenetic = 250;
 
     private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
 
-    /* Object that tracks removed/replaced Vertices */
-    private VertexStack removedVertices;
-
-    public static final Consumer<Maybe<ForceAlgorithmApplier>> finalizeFAA = Maybe.lift(f -> {
+    private static final Consumer<Maybe<ForceAlgorithmApplier>> finalizeFAA = Maybe.lift(f -> {
         f.running = false;
         f.clearDrawables();
     });
 
     // for this class, we can instantiate defaultForceAlgorithmApplier and do some post-initializing
-    public ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
+    private ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations) {
         ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view, Maybe.just(progressBar), Maybe.just(infoLabel));
-        springThreshholds[1] = 50 * Math.log(graph.getNodes().size());
-        fd.modifiers = springThreshholds.clone();
+        springThresholds[1] = 50 * Math.log(graph.getNodes().size());
+        fd.modifiers = springThresholds.clone();
         fd.switches = algoModifiers.clone();
         return fd;
     }
@@ -179,13 +164,13 @@ public class MainFrame extends JFrame {
             this.graph.setStyle(iNodeItemEventArgs.getItem(), this.defaultEdgeStyle.clone());
             infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size());
         });
-        this.graph.addNodeRemovedListener((o, iNodeItemEventArgs) -> {
-            infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size());
-        });
+        this.graph.addNodeRemovedListener((o, iNodeItemEventArgs) ->
+            infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size()
+        ));
 
-        this.graph.addEdgeRemovedListener((o, iNodeItemEventArgs) -> {
-            infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size());
-        });
+        this.graph.addEdgeRemovedListener((o, iNodeItemEventArgs) ->
+            infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size()
+        ));
 
         this.graph.addNodeLayoutChangedListener((o, u, iNodeItemEventArgs) -> {
             synchronized(movedNodes){
@@ -258,15 +243,15 @@ public class MainFrame extends JFrame {
         initSidePanel(mainPanel, c);
     }
 
-    Set<INode> movedNodes = new HashSet<>();
+    private final Set<INode> movedNodes = new HashSet<>();
 
     private void initSidePanel(JPanel mainPanel, GridBagConstraints c) {
-        Tuple4<JPanel, JSlider[], JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThreshholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
-        this.sidePanel = slidPanelSlidersCount.a;
+        Tuple4<JPanel, JSlider[], JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThresholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
+        JPanel sidePanel = slidPanelSlidersCount.a;
         this.sliders = slidPanelSlidersCount.b;
         slidPanelSlidersCount.c[1].setVisible(false);
         sliders[1].setVisible(false);
-        sidePanelNextY = slidPanelSlidersCount.d;
+        int sidePanelNextY = slidPanelSlidersCount.d;
         c.gridy = 1;
         c.gridx = 1;
         c.weighty = 1;
@@ -360,37 +345,35 @@ public class MainFrame extends JFrame {
 
         cSidePanel.gridx = 1;
         JButton showBestSolution = new JButton("Show best");
-        showBestSolution.addActionListener(e -> {
-            ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
-                Mapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
-                Maybe<Double> minCrossingAngle = nm_mca_da_ba.b;
-                Double[] mods = nm_mca_da_ba.c;
-                Boolean[] switchs = nm_mca_da_ba.d;
-                ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-                String msg = minCrossingAngle.fmap(d -> "Minimum crossing angle: " + d.toString()).getDefault("No crossings!");
-                msg += "\n";
-                msg += "Modifiers:\n";
-                for(int i = 0; i < mods.length; i++){
-                    Double d = mods[i];
-                    sliders[i].setValue((int) (1000 * d));
-                    msg += "\t" + d.toString() + "\n";
-                }
-                msg += "\n";
-                msg += "Switches:\n";
-                for(Boolean b: switchs){
-                    msg += "\n\t" + b.toString() + "\n";
-                }
-                JOptionPane.showMessageDialog(null, msg);
-            });
-        });
+        showBestSolution.addActionListener(e -> ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
+            Mapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
+            Maybe<Double> minCrossingAngle = nm_mca_da_ba.b;
+            Double[] mods = nm_mca_da_ba.c;
+            Boolean[] switchs = nm_mca_da_ba.d;
+            ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+            String msg = minCrossingAngle.fmap(d -> "Minimum crossing angle: " + d.toString()).getDefault("No crossings!");
+            msg += "\n";
+            msg += "Modifiers:\n";
+            for(int i = 0; i < mods.length; i++){
+                Double d = mods[i];
+                sliders[i].setValue((int) (1000 * d));
+                //noinspection StringConcatenationInLoop
+                msg += "\t" + d.toString() + "\n";
+            }
+            msg += "\n";
+            msg += "Switches:\n";
+            for(Boolean b: switchs){
+                //noinspection StringConcatenationInLoop
+                msg += "\n\t" + b.toString() + "\n";
+            }
+            JOptionPane.showMessageDialog(null, msg);
+        }));
         sidePanel.add(showBestSolution, cSidePanel);
 
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
         JButton showForceAlgoState = new JButton("Show state");
-        showForceAlgoState.addActionListener(e -> {
-            faa.andThen(fa -> fa.showNodePositions());
-        });
+        showForceAlgoState.addActionListener(e -> faa.andThen(ForceAlgorithmApplier::showNodePositions));
         sidePanel.add(showForceAlgoState, cSidePanel);
 
 
@@ -398,7 +381,7 @@ public class MainFrame extends JFrame {
 
         JCheckBox enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
         cSidePanel.gridx = 0;
-        cSidePanel.gridy = sidePanelNextY++;
+        cSidePanel.gridy = sidePanelNextY;
         sidePanel.add(enableMinimumAngleDisplay, cSidePanel);
         enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
         enableMinimumAngleDisplay.setSelected(false);
@@ -420,9 +403,6 @@ public class MainFrame extends JFrame {
             progressBar,
             graphEditorInputMode,
             defaultLayouter,
-            fileNamePathFolder,
-            fileNamePath,
-            removedVertices,
             graphSnapContext,
             gridVisualCreator,
             minimumAngleMonitor
@@ -494,8 +474,8 @@ public class MainFrame extends JFrame {
      * Implementation of actions
      ********************************************************************/
 
-    public void startGeneticClicked(ActionEvent e){
-        if(geneticAlgorithm == null || geneticAlgorithm.running == false){
+    private void startGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
+        if(geneticAlgorithm == null || !geneticAlgorithm.running){
             ForceAlgorithmApplier.init();
             initializeGeneticAlgorithm();
             this.graphEditorInputMode.setCreateNodeAllowed(false);
@@ -503,16 +483,16 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public void stopGeneticClicked(ActionEvent e){
+    private void stopGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
         geneticAlgorithm.running = false;
         this.graphEditorInputMode.setCreateNodeAllowed(true);
     }
 
-    public void startForceClicked(ActionEvent e){
-        if(!faa.hasValue() || faa.get().running == false){
+    private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
+        if(!faa.hasValue() || !faa.get().running){
             ForceAlgorithmApplier.init();
             ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
-            fd.modifiers = springThreshholds;
+            fd.modifiers = springThresholds;
             fd.switches = algoModifiers;
             MainFrame.finalizeFAA.accept(faa);
             faa = Maybe.just(fd);
@@ -523,7 +503,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public void stopForceClicked(ActionEvent e){
+    private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){
         faa.andThen(f -> {
             f.running = false;
             this.graphEditorInputMode.setCreateNodeAllowed(true);
@@ -532,7 +512,7 @@ public class MainFrame extends JFrame {
     }
 
 
-    void springEmbedderItemActionPerformed(ActionEvent evt) {
+    void springEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
         int iterations = 1000;
 
@@ -574,16 +554,16 @@ public class MainFrame extends JFrame {
         this.graphEditorInputMode.setSelectableItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
     }
 
-    private void forceDirectionPerpendicularActionPerformed(ActionEvent evt){    this.algoModifiers[0] = true; }
-    private void forceDirectionNonPerpendicularActionPerformed(ActionEvent evt){ this.algoModifiers[0] = false; }
+    private void forceDirectionPerpendicularActionPerformed(@SuppressWarnings("unused") ActionEvent evt){    this.algoModifiers[0] = true; }
+    private void forceDirectionNonPerpendicularActionPerformed(@SuppressWarnings("unused") ActionEvent evt){ this.algoModifiers[0] = false; }
 
-    private void optimizingAngleNintyActionPerformed(ActionEvent actionEvent) { this.algoModifiers[1] = true; }
-    private void optimizingAngleSixtyActionPerformed(ActionEvent actionEvent) { this.algoModifiers[1] = false; }
+    private void optimizingAngleNintyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { this.algoModifiers[1] = true; }
+    private void optimizingAngleSixtyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { this.algoModifiers[1] = false; }
 
     
-    public GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
-    public Thread geneticAlgorithmThread;
-    public void initializeGeneticAlgorithm(){
+    private GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
+    private Thread geneticAlgorithmThread;
+    private void initializeGeneticAlgorithm(){
         LinkedList<ForceAlgorithmApplier> firstFAAs = new LinkedList<>();
         firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
         LayoutUtilities.applyLayout(graph, new OrthogonalLayout());
