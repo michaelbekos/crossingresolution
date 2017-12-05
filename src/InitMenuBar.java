@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -987,10 +988,7 @@ public class InitMenuBar {
                 .map(node -> node.getLayout().getCenter())
                 .toArray(PointD[]::new);
 
-            FilteredGraphWrapper innerGraph = new FilteredGraphWrapper(graph, node -> !selectedNodes.isSelected(node),
-                iEdge -> true);
-
-            new ClinchLayout(innerGraph, anchors[0], anchors[1]).apply();
+            new ClinchLayout(graph, anchors[0], anchors[1], selectedNodes.stream().collect(Collectors.toSet())).apply();
         }
     }
 
