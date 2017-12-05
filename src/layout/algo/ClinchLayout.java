@@ -7,7 +7,6 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import util.Maybe;
-import util.Tuple2;
 
 import java.util.*;
 
@@ -16,6 +15,7 @@ public class ClinchLayout {
   private static final int MAX_ITERATIONS = 2500;
   private static final double CLOSE_ENOUGH = STEP_SIZE * 1.5;
   private static final int NUMBER_OF_SAMPLES = 10;
+  private static final double COMPARISON_EPSILON = 0.001;
 
   private IGraph graph;
   private PointD anchor1;
@@ -31,7 +31,7 @@ public class ClinchLayout {
 
   public void apply() {
     Mapper<INode, PointD> positions = initPositions();
-    Mapper<INode, Collection<PointD>> projections = computeProjections();
+    Mapper<INode, Collection<Sample>> projections = computeProjections();
 
     boolean changed;
     int iterations = 0;
@@ -53,24 +53,26 @@ public class ClinchLayout {
     return positions;
   }
 
-  private Mapper<INode, Collection<PointD>> computeProjections() {
-    Mapper<INode, Collection<PointD>> projections = new Mapper<>(new WeakHashMap<>());
+  private Mapper<INode, Collection<Sample>> computeProjections() {
+    Mapper<INode, Collection<Sample>> projections = new Mapper<>(new WeakHashMap<>());
 
     PointD lineDirection = PointD.subtract(anchor2, anchor1).getNormalized();
 
-    Collection<PointD> leftRotations = new ArrayList<>();
-    Collection<PointD> rightRotations = new ArrayList<>();
+    Collection<Sample> leftRotations = new ArrayList<>();
+    Collection<Sample> rightRotations = new ArrayList<>();
 
     for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
       Matrix2D rotationMatrix = new Matrix2D();
-      rotationMatrix.rotate(i * Math.PI / NUMBER_OF_SAMPLES);
-      rightRotations.add(rotationMatrix.transform(lineDirection));
+      double angle = i * Math.PI / NUMBER_OF_SAMPLES;
+      rotationMatrix.rotate(angle);
+      rightRotations.add(new Sample(rotationMatrix.transform(lineDirection), angle));
     }
 
     for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
       Matrix2D rotationMatrix = new Matrix2D();
-      rotationMatrix.rotate(-i * Math.PI / NUMBER_OF_SAMPLES);
-      leftRotations.add(rotationMatrix.transform(lineDirection));
+      double angle = -i * Math.PI / NUMBER_OF_SAMPLES;
+      rotationMatrix.rotate(angle);
+      leftRotations.add(new Sample(rotationMatrix.transform(lineDirection), angle));
     }
 
     for (INode node : graph.getNodes()) {
@@ -95,7 +97,7 @@ public class ClinchLayout {
     }
   }
 
-  private boolean tryMoveNodesCloserToLine(Mapper<INode, PointD> positions, Mapper<INode, Collection<PointD>> projections) {
+  private boolean tryMoveNodesCloserToLine(Mapper<INode, PointD> positions, Mapper<INode, Collection<Sample>> projections) {
     boolean changed = false;
 
     for (INode node : graph.getNodes()) {
@@ -110,20 +112,26 @@ public class ClinchLayout {
 
       double minAngle = getMinimumAngle(positions);
 
-      Collection<PointD> samples = projections.getValue(node);
+      Collection<Sample> samples = projections.getValue(node);
       @SuppressWarnings("ConstantConditions")
-      Tuple2<PointD, Double> bestPosition = samples.stream()
-          .map(dir -> {
-            PointD newPosition = stepInDirection(oldPosition, dir);
+      Sample bestSample = samples.stream()
+          .peek(sample -> {
+            PointD newPosition = stepInDirection(oldPosition, sample.direction);
             positions.setValue(node, newPosition);
-            return new Tuple2<>(newPosition, getMinimumAngle(positions));
+            sample.position = newPosition;
+            sample.minimumAngle = getMinimumAngle(positions);
           })
-          // TODO: prefer directions that are orthogonal to the line
-          .max(Comparator.comparingDouble(pos -> pos.b))
+          .max((s1, s2) -> {
+            if (Math.abs(s1.minimumAngle - s2.minimumAngle) < COMPARISON_EPSILON) {
+              return Double.compare(distanceTo90Degrees(s1.angle), distanceTo90Degrees(s2.angle));
+            } else {
+              return Double.compare(s1.minimumAngle, s2.minimumAngle);
+            }
+          })
           .get();
 
-      if (bestPosition.b >= minAngle) {
-        positions.setValue(node, bestPosition.a);
+      if (bestSample.minimumAngle >= minAngle) {
+        positions.setValue(node, bestSample.position);
         changed = true;
       } else {
         positions.setValue(node, oldPosition);
@@ -131,6 +139,10 @@ public class ClinchLayout {
     }
 
     return changed;
+  }
+
+  private double distanceTo90Degrees(double angle) {
+    return Math.abs(angle - Math.PI / 2);
   }
 
   private double getMinimumAngle(Mapper<INode, PointD> positions) {
@@ -142,5 +154,17 @@ public class ClinchLayout {
         oldPosition.getX() + STEP_SIZE * direction.getX(),
         oldPosition.getY() + STEP_SIZE * direction.getY()
     );
+  }
+
+  private static class Sample {
+    PointD direction;
+    double angle;
+    double minimumAngle;
+    PointD position;
+
+    Sample(PointD direction, double angle) {
+      this.direction = direction;
+      this.angle = angle;
+    }
   }
 }
