@@ -988,7 +988,11 @@ public class InitMenuBar {
                 .map(node -> node.getLayout().getCenter())
                 .toArray(PointD[]::new);
 
-            new ClinchLayout(graph, anchors[0], anchors[1], selectedNodes.stream().collect(Collectors.toSet())).apply();
+            Set<INode> fixNodes = selectedNodes.stream().collect(Collectors.toSet());
+
+            ClinchLayout clinchLayout = new ClinchLayout(graph, anchors[0], anchors[1], fixNodes);
+            new IGraphLayoutExecutor(clinchLayout, graph, progressBar, 1000, 20)
+                .run();
         }
     }
 

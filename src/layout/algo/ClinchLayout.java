@@ -10,9 +10,8 @@ import util.Maybe;
 
 import java.util.*;
 
-public class ClinchLayout {
+public class ClinchLayout implements ILayout {
   private static final double STEP_SIZE = 2.5;
-  private static final int MAX_ITERATIONS = 2500;
   private static final double CLOSE_ENOUGH = STEP_SIZE * 1.5;
   private static final int NUMBER_OF_SAMPLES = 10;
   private static final double COMPARISON_EPSILON = 0.001;
@@ -21,6 +20,8 @@ public class ClinchLayout {
   private PointD anchor1;
   private PointD anchor2;
   private Set<INode> fixNodes;
+  private Mapper<INode, PointD> positions;
+  private Mapper<INode, Collection<Sample>> sampleDirections;
 
   public ClinchLayout(IGraph graph, PointD anchor1, PointD anchor2, Set<INode> fixNodes) {
     this.graph = graph;
@@ -29,18 +30,20 @@ public class ClinchLayout {
     this.fixNodes = fixNodes;
   }
 
-  public void apply() {
-    Mapper<INode, PointD> positions = initPositions();
-    Mapper<INode, Collection<Sample>> projections = computeProjections();
+  @Override
+  public void init() {
+    positions = initPositions();
+    sampleDirections = preComputeSamples();
+  }
 
-    boolean changed;
-    int iterations = 0;
-    do {
-      changed = tryMoveNodesCloserToLine(positions, projections);
-      System.out.println("Iteration: " + iterations + ", minimum angle: " + getMinimumAngle(positions));
-    } while (iterations++ < MAX_ITERATIONS && changed);
+  @Override
+  public boolean executeStep(int iteration) {
+    return !tryMoveNodesCloserToLine();
+  }
 
-    applyPositions(positions);
+  @Override
+  public Mapper<INode, PointD> getNodePositions() {
+    return positions;
   }
 
   private Mapper<INode, PointD> initPositions() {
@@ -53,7 +56,7 @@ public class ClinchLayout {
     return positions;
   }
 
-  private Mapper<INode, Collection<Sample>> computeProjections() {
+  private Mapper<INode, Collection<Sample>> preComputeSamples() {
     Mapper<INode, Collection<Sample>> projections = new Mapper<>(new WeakHashMap<>());
 
     PointD lineDirection = PointD.subtract(anchor2, anchor1).getNormalized();
@@ -91,13 +94,7 @@ public class ClinchLayout {
     return v1.getX() * v2.getY() - v1.getY() * v2.getX();
   }
 
-  private void applyPositions(Mapper<INode, PointD> positions) {
-    for (Map.Entry<INode, PointD> entry : positions.getEntries()) {
-      graph.setNodeCenter(entry.getKey(), entry.getValue());
-    }
-  }
-
-  private boolean tryMoveNodesCloserToLine(Mapper<INode, PointD> positions, Mapper<INode, Collection<Sample>> projections) {
+  private boolean tryMoveNodesCloserToLine() {
     boolean changed = false;
 
     for (INode node : graph.getNodes()) {
@@ -112,7 +109,7 @@ public class ClinchLayout {
 
       double minAngle = getMinimumAngle(positions);
 
-      Collection<Sample> samples = projections.getValue(node);
+      Collection<Sample> samples = sampleDirections.getValue(node);
       @SuppressWarnings("ConstantConditions")
       Sample bestSample = samples.stream()
           .peek(sample -> {
