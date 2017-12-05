@@ -7,12 +7,14 @@ import java.util.ArrayList;
 public class VertexStack{
     public ArrayList<Vertex> stack;
     public int[][] edgeList;
+    public ArrayList<Integer> componentStack;
     private IGraph g;
 
     public VertexStack(IGraph g) {
         this.g = g;
         this.stack = new ArrayList<Vertex>();
         this.edgeList = new int[this.g.getEdges().size()][2];
+        this.componentStack = new ArrayList<Integer>();
         int i = 0;
         for (IEdge e : this.g.getEdges()) {
             this.edgeList[i][0] = Integer.parseInt(e.getSourceNode().getTag().toString());
@@ -36,6 +38,8 @@ public class VertexStack{
             this.stack.remove(this.stack.size()-1);
             return res;
         } else {
+            this.stack.clear();
+            this.componentStack.clear();
             return null;//todo
         }
     }

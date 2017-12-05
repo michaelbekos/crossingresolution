@@ -67,6 +67,7 @@ public class GraphOperations {
             removedVertices.push(maxDegVertex[i], g);
             g.remove(maxDegVertex[i]);
         }
+        removedVertices.componentStack.add(numVertices);
 
         return removedVertices;
 
@@ -77,7 +78,29 @@ public class GraphOperations {
      * @param g
      * @param removedVertices
      */
-    public static VertexStack reinsertVertices(IGraph g, int numVertices, VertexStack removedVertices) {
+    public static VertexStack reinsertVertices(IGraph g, boolean useVertices, int numVerticesComponents, VertexStack removedVertices) {
+        int numVertices = 0;
+        if (useVertices) {  //reinsert vertices
+            numVertices = numVerticesComponents;
+            int diff = -numVertices;
+            for (int i = removedVertices.componentStack.size(); i >= 0 ; --i) {         //fix component stack for vertices removed
+                diff += removedVertices.componentStack.get(removedVertices.componentStack.size() - 1);
+                if (diff < 0) {
+                    removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
+                } else if (diff == 0) {
+                    removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
+                    break;
+                } else {
+                    removedVertices.componentStack.set(removedVertices.componentStack.size() - 1, diff);
+                    break;
+                }
+            }
+        } else {            //reinsert components
+            for (int i = 0; i < numVerticesComponents; i++) {
+                numVertices += removedVertices.componentStack.get(removedVertices.componentStack.size() - 1);
+                removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
+            }
+        }
 
         INode[] reinsertedNodes = new INode[numVertices];
         for (int i = 0; i < numVertices; i++) {

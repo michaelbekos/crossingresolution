@@ -1,5 +1,6 @@
 package io;
 
+import com.yworks.yfiles.utils.IListEnumerable;
 import util.GridPositioning;
 
 import com.yworks.yfiles.graph.*;
@@ -14,13 +15,15 @@ import java.nio.file.*;
  */
 public class ContestIOHandler extends GraphIOHandler {
 
-  /**
+
+  static List<String> lines;
+   /**
    * Parsing inputFile in contest format
    * Ignore Comments & Whitespaces & Empty Lines
    */
   public static void read(IGraph g, String inputFileName) throws IOException {
     Path path = Paths.get(inputFileName);
-    List<String> lines = Files.readAllLines(path);
+    lines = Files.readAllLines(path);
 
     g.clear();
     int phase = 0;
@@ -75,41 +78,93 @@ public class ContestIOHandler extends GraphIOHandler {
     // grid the graph before writing it out
     // necessary here? gridding may be part of other processing steps
     // GridPositioning.gridGraph(graph);
+    boolean isFromContestFile = true;
 
-    // phase 0 contains number of nodes
-    BufferedWriter out = Files.newBufferedWriter(Paths.get(outputFileName));
-    out.write("# First value is number of nodes (N)");
-    out.newLine();
-    long size = graph.getNodes().size();
-    out.write(size + " ");
-    out.newLine();
-    // phase 1 contains nodes contained in graph
-    out.write("# Next N numbers describe the node locations");
-    out.newLine();
-    for(INode n: graph.getNodes()){
-      long x, y;
-      PointD pos = n.getLayout().getCenter();
-      x = Math.round(pos.getX());
-      y = Math.round(pos.getY());
-      out.write(x + " " + y);
-      out.newLine();
+    if(lines == null){
+      System.out.println("No line was read!");
+      isFromContestFile = false;
+    } else {
+      for(INode n: graph.getNodes()){
+        if(n.getTag() == null){
+            isFromContestFile = false;
+            System.out.println("Found node without tag!");
+        }
+      }
     }
-    // phase 2 contains edges contained in graph
-    out.write("# Remaining lines are the edges.");
-    out.newLine();
-    out.write("# The first value is the source node index.");
-    out.newLine();
-    out.write("# The second value is the target node index.");
-    out.newLine();
-    for(IEdge e: graph.getEdges()){
-      int source, target;
-      // hack: get index of node by doing toString, then parsing, since nodes have their index as label by default.
-      source = Integer.parseInt(e.getSourceNode().getTag().toString());
-      target = Integer.parseInt(e.getTargetNode().getTag().toString());
-      
-      out.write(source + " " + target);
+    if(isFromContestFile){
+      // phase 0 contains number of nodes
+      BufferedWriter out = Files.newBufferedWriter(Paths.get(outputFileName));
+      out.write("# First value is number of nodes (N)");
       out.newLine();
+      long size = graph.getNodes().size();
+      out.write(size + " ");
+      out.newLine();
+      // phase 1 contains nodes contained in graph
+      out.write("# Next N numbers describe the node locations");
+      out.newLine();
+      for(int i = 0; i < graph.getNodes().size(); i++){
+        for(INode n: graph.getNodes()){
+          if(i == n.getTag().hashCode()) {
+            long x, y;
+            PointD pos = n.getLayout().getCenter();
+            x = Math.round(pos.getX());
+            y = Math.round(pos.getY());
+            out.write(x + " " + y);
+            out.newLine();
+          }
+        }
+      }
+      // phase 2 contains edges contained in graph
+      boolean reachedEdgeLine = false;
+      for(String line: lines) {
+        // line = line.trim();
+        // ignore whitespaces or leading empty lines
+        if (reachedEdgeLine|| line.equals("# Remaining lines are the edges.") ) {
+          out.write(line);
+          out.newLine();
+          reachedEdgeLine = true;
+        }
+      }
+      out.close();
+
+    }else {
+      // phase 0 contains number of nodes
+      BufferedWriter out = Files.newBufferedWriter(Paths.get(outputFileName));
+      out.write("# First value is number of nodes (N)");
+      out.newLine();
+      long size = graph.getNodes().size();
+      out.write(size + " ");
+      out.newLine();
+      // phase 1 contains nodes contained in graph
+      out.write("# Next N numbers describe the node locations");
+      out.newLine();
+      for(INode n: graph.getNodes()){
+        long x, y;
+        PointD pos = n.getLayout().getCenter();
+        x = Math.round(pos.getX());
+        y = Math.round(pos.getY());
+        out.write(x + " " + y);
+        out.newLine();
+      }
+      // phase 2 contains edges contained in graph
+      out.write("# Remaining lines are the edges.");
+      out.newLine();
+      out.write("# The first value is the source node index.");
+      out.newLine();
+      out.write("# The second value is the target node index.");
+      out.newLine();
+      for(IEdge e: graph.getEdges()){
+        int source, target;
+        // hack: get index of node by doing toString, then parsing, since nodes have their index as label by default.
+        source = Integer.parseInt(e.getSourceNode().getTag().toString());
+        target = Integer.parseInt(e.getTargetNode().getTag().toString());
+
+        out.write(source + " " + target);
+        out.newLine();
+      }
+      out.close();
     }
-    out.close();
+
+
   }
 }
