@@ -6,13 +6,11 @@ import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import com.yworks.yfiles.layout.ILayoutAlgorithm;
-import com.yworks.yfiles.layout.LayoutGraph;
 
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class ClinchLayout implements ILayoutAlgorithm {
+public class ClinchLayout {
   private static final double STEP_SIZE = 2.5;
   private static final int MAX_ITERATIONS = 2500;
   private static final double CLOSE_ENOUGH = STEP_SIZE * 1.5;
@@ -25,16 +23,6 @@ public class ClinchLayout implements ILayoutAlgorithm {
     this.graph = graph;
     this.anchor1 = anchor1;
     this.anchor2 = anchor2;
-  }
-
-  /**
-   * Simple wrapper to be able to run this layout as a proper yfiles layout.
-   *
-   * @param layoutGraph ignored, works directly on the IGraph instance passed to the constructor.
-   */
-  @Override
-  public void applyLayout(LayoutGraph layoutGraph) {
-    apply();
   }
 
   public void apply() {
