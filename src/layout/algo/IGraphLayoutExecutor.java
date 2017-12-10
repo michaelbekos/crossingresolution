@@ -41,6 +41,7 @@ public class IGraphLayoutExecutor {
       }
 
       updateProgressBar(0);
+      updateView(layout.getNodePositions());
     }).start();
   }
 
