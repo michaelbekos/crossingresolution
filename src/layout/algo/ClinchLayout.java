@@ -11,9 +11,12 @@ import util.Maybe;
 import java.util.*;
 
 public class ClinchLayout implements ILayout {
-  private static final double STEP_SIZE = 2.5;
-  private static final double CLOSE_ENOUGH = STEP_SIZE * 1.5;
+  private static final double INITIAL_STEP_SIZE = 2.5;
+  private static final double STEP_SIZE_MULTIPLIER = 1.5;
+  private static final double CLOSE_ENOUGH = INITIAL_STEP_SIZE * 1.5;
+
   private static final int NUMBER_OF_SAMPLES = 10;
+
   private static final double COMPARISON_EPSILON = 0.001;
 
   private IGraph graph;
@@ -22,6 +25,7 @@ public class ClinchLayout implements ILayout {
   private Set<INode> fixNodes;
   private Mapper<INode, PointD> positions;
   private Mapper<INode, Collection<Sample>> sampleDirections;
+  private Mapper<INode, Double> stepSizes;
 
   public ClinchLayout(IGraph graph, PointD anchor1, PointD anchor2, Set<INode> fixNodes) {
     this.graph = graph;
@@ -33,8 +37,10 @@ public class ClinchLayout implements ILayout {
   @Override
   public void init() {
     positions = initPositions();
+    stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
   }
+
 
   @Override
   public boolean executeStep(int iteration) {
@@ -54,6 +60,16 @@ public class ClinchLayout implements ILayout {
     }
 
     return positions;
+  }
+
+  private Mapper<INode, Double> initStepSizes() {
+    final Mapper<INode, Double> stepSizes = new Mapper<>(new WeakHashMap<>());
+
+    for (INode node : graph.getNodes()) {
+      stepSizes.setValue(node, INITIAL_STEP_SIZE);
+    }
+
+    return stepSizes;
   }
 
   private Mapper<INode, Collection<Sample>> preComputeSamples() {
@@ -103,17 +119,19 @@ public class ClinchLayout implements ILayout {
       }
 
       PointD oldPosition = positions.getValue(node);
-      if (oldPosition.getProjectionOnSegment(anchor1, anchor2).distanceTo(oldPosition) < CLOSE_ENOUGH) {
+      final double distanceToLine = oldPosition.getProjectionOnSegment(anchor1, anchor2).distanceTo(oldPosition);
+      if (distanceToLine < CLOSE_ENOUGH) {
         continue;
       }
 
       double minAngle = getMinimumAngle(positions);
-
+      final Double stepSize = stepSizes.getValue(node);
       Collection<Sample> samples = sampleDirections.getValue(node);
+
       @SuppressWarnings("ConstantConditions")
       Sample bestSample = samples.stream()
           .peek(sample -> {
-            PointD newPosition = stepInDirection(oldPosition, sample.direction);
+            PointD newPosition = stepInDirection(oldPosition, sample.direction, stepSize);
             positions.setValue(node, newPosition);
             sample.position = newPosition;
             sample.minimumAngle = getMinimumAngle(positions);
@@ -129,8 +147,10 @@ public class ClinchLayout implements ILayout {
 
       if (bestSample.minimumAngle >= minAngle) {
         positions.setValue(node, bestSample.position);
+        stepSizes.setValue(node, Math.min(stepSize * STEP_SIZE_MULTIPLIER, distanceToLine - stepSize));
         changed = true;
       } else {
+        stepSizes.setValue(node, INITIAL_STEP_SIZE);
         positions.setValue(node, oldPosition);
       }
     }
@@ -146,10 +166,10 @@ public class ClinchLayout implements ILayout {
     return MinimumAngle.getMinimumAngle(graph, Maybe.just(positions)).getDefault(Double.POSITIVE_INFINITY);
   }
 
-  private PointD stepInDirection(PointD oldPosition, PointD direction) {
+  private PointD stepInDirection(PointD oldPosition, PointD direction, double stepSize) {
     return new PointD(
-        oldPosition.getX() + STEP_SIZE * direction.getX(),
-        oldPosition.getY() + STEP_SIZE * direction.getY()
+        oldPosition.getX() + stepSize * direction.getX(),
+        oldPosition.getY() + stepSize * direction.getY()
     );
   }
 
