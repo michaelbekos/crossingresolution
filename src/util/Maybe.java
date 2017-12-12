@@ -1,7 +1,10 @@
 package util;
 
-import java.util.stream.*;
-import java.util.function.*;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public abstract class Maybe<T>{
   public abstract T get();
@@ -37,6 +40,11 @@ public abstract class Maybe<T>{
     return (Maybe<T>) nothing_singleton;
     //return new Nothing<>();
   }
+
+  public static <T> Maybe<T> fromOptional(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<T> optional) {
+    return optional.map(Maybe::just).orElseGet(Maybe::nothing);
+  }
+
   // lift: just construct a maybe around the value
   // lift :: a -> Maybe a
   public static <T> Maybe<T> lift(T t){

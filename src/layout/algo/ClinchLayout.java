@@ -124,7 +124,7 @@ public class ClinchLayout implements ILayout {
         continue;
       }
 
-      double minAngle = getMinimumAngle(positions);
+      double minAngle = getMinimumAngleForNode(positions, node);
       final Double stepSize = stepSizes.getValue(node);
       Collection<Sample> samples = sampleDirections.getValue(node);
 
@@ -134,7 +134,7 @@ public class ClinchLayout implements ILayout {
             PointD newPosition = stepInDirection(oldPosition, sample.direction, stepSize);
             positions.setValue(node, newPosition);
             sample.position = newPosition;
-            sample.minimumAngle = getMinimumAngle(positions);
+            sample.minimumAngle = getMinimumAngleForNode(positions, node);
           })
           .max((s1, s2) -> {
             if (Math.abs(s1.minimumAngle - s2.minimumAngle) < COMPARISON_EPSILON) {
@@ -162,8 +162,8 @@ public class ClinchLayout implements ILayout {
     return Math.abs(angle - Math.PI / 2);
   }
 
-  private double getMinimumAngle(Mapper<INode, PointD> positions) {
-    return MinimumAngle.getMinimumAngle(graph, Maybe.just(positions)).getDefault(Double.POSITIVE_INFINITY);
+  private double getMinimumAngleForNode(Mapper<INode, PointD> positions, INode node) {
+    return MinimumAngle.getMinimumAngleForNode(graph, node, Maybe.just(positions)).getDefault(Double.POSITIVE_INFINITY);
   }
 
   private PointD stepInDirection(PointD oldPosition, PointD direction, double stepSize) {
