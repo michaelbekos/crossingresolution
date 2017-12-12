@@ -9,8 +9,7 @@ import java.util.*;
 
 public class GraphOperations {
 
-
-    private static Comparator<INode> byPortSize = Comparator.<INode>comparingInt(p -> p.getPorts().size());
+	private static Comparator<INode> byPortSize = Comparator.<INode>comparingInt(p -> p.getPorts().size());
 
     /**
      * Removes numVertices number of  nodes with the highest degree from graph g
@@ -151,8 +150,17 @@ public class GraphOperations {
      * @return scaled grid points with scaleValue factor
      */
     public static  Mapper<INode, PointD> scaleUpProcess(IGraph g, Mapper<INode,PointD> nodePose, double scaleValue){
+    	double minX=-1, minY=-1;
+    	for(INode u : g.getNodes()){
+    		if(u.getLayout().getCenter().getX()<minX || minX==-1){
+        		minX=u.getLayout().getCenter().getX();
+        	}
+        	if(u.getLayout().getCenter().getY()<minY|| minY==-1){
+        		minY=u.getLayout().getCenter().getY();
+        	}
+        }    	
         for(INode u : g.getNodes()){
-            nodePose.setValue(u, new PointD(u.getLayout().getCenter().getX() * scaleValue, u.getLayout().getCenter().getY() * scaleValue));
+            nodePose.setValue(u, new PointD((u.getLayout().getCenter().getX()-minX) * scaleValue, (u.getLayout().getCenter().getY()-minY) * scaleValue));
             g.setNodeLayout(u, new RectD(u.getLayout().getX()*scaleValue,u.getLayout().getY()*scaleValue,u.getLayout().getWidth()*scaleValue,u.getLayout().getHeight()*scaleValue));
         }
         return nodePose;
