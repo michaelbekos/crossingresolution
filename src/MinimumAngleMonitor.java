@@ -31,7 +31,7 @@ public class MinimumAngleMonitor {
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel) {
     MinimumAngle.resetHighlighting(graph);
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
-        minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+        minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
     Maybe<String> labText = minAngleCr.fmap(cr -> {
       String text = DisplayMessagesGui.createMinimumAngleMsg(cr);

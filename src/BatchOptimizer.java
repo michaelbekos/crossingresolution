@@ -150,7 +150,7 @@ public class BatchOptimizer {
 
     // do some default metrics
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
-            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
     // if there is a crossing, map to get the angle, then get it, otherwise "no crossings".
     String initialAngle = minAngleCr.fmap(abc->abc.c.angle.toString()).getDefault("no crossings");
     
@@ -168,7 +168,7 @@ public class BatchOptimizer {
       initials.add(defaultForceAlgorithmApplier(initTime));
       LayoutUtilities.applyLayout(graph, new OrganicLayout());
       initials.add(defaultForceAlgorithmApplier(initTime));
-      GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view, Maybe.nothing());
+      GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view);
       ga.runRounds(rounds);
     }
 
@@ -178,13 +178,13 @@ public class BatchOptimizer {
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
     }
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
-            minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+            minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph);
     String optimizedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
     // ... grid it...
     GridPositioning.gridGraph(graph);
     long endTime = System.nanoTime();
     // ... get metrics...
-    minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+    minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph);
     double area = computeArea(graph);
     // (Maybe (LS, LS, I) --fmap--> Maybe String --getDefault--> String)
     String griddedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");

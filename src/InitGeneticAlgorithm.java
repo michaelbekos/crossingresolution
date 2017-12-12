@@ -1,6 +1,4 @@
 import java.util.*;
-import java.util.function.*;
-import javax.swing.JLabel;
 
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
@@ -13,20 +11,25 @@ import algorithms.graphs.*;
 
 public abstract class InitGeneticAlgorithm {
     public static Random rand = new Random();
-    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(ForceAlgorithmApplier firstFAA, IGraph graph, GraphComponent view, Maybe<JLabel> infoLabel){
+
+    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(List<ForceAlgorithmApplier> firstFAA, IGraph graph, GraphComponent view) {
+        return defaultGeneticAlgorithm(firstFAA, graph);
+    }
+
+    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(ForceAlgorithmApplier firstFAA, IGraph graph){
       List<ForceAlgorithmApplier> firstFAAs = new LinkedList<ForceAlgorithmApplier>();
       firstFAAs.add(firstFAA);
-      return defaultGeneticAlgorithm(firstFAAs, graph, view, infoLabel);
+      return defaultGeneticAlgorithm(firstFAAs, graph);
     }
-    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(List<ForceAlgorithmApplier> firstFAAs, IGraph graph, GraphComponent view, Maybe<JLabel> infoLabel){
+    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(List<ForceAlgorithmApplier> firstFAAs, IGraph graph){
           GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm = new GeneticAlgorithm<>(
                   (faa -> {
                       faa.runNoDraw();
                       return faa;
                   }),
                   ((faa1, faa2) -> {
-                      Maybe<Double> ma1 = faa1.cMinimumAngle.getMinimumAngle(graph, Maybe.just(faa1.nodePositions)),
-                          ma2 = faa2.cMinimumAngle.getMinimumAngle(graph, Maybe.just(faa2.nodePositions));
+                      Maybe<Double> ma1 = faa1.cMinimumAngle.getMinimumAngle(graph, faa1.nodePositions),
+                          ma2 = faa2.cMinimumAngle.getMinimumAngle(graph, faa2.nodePositions);
                       if(ma1.hasValue() && !ma2.hasValue()){
                           return -1;
                       }
@@ -44,7 +47,7 @@ public abstract class InitGeneticAlgorithm {
                   Either.left(fa -> {
                       Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions);
   
-                      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossingsSorted(graph, Maybe.just(nodePositions));
+                      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossingsSorted(graph, nodePositions);
                       ForceAlgorithmApplier fa2 = fa.clone();
                       if(crossings.size() == 0) {
                           return fa2;

@@ -163,7 +163,7 @@ public class ClinchLayout implements ILayout {
   }
 
   private double getMinimumAngleForNode(Mapper<INode, PointD> positions, INode node) {
-    return MinimumAngle.getMinimumAngleForNode(graph, node, Maybe.just(positions)).getDefault(Double.POSITIVE_INFINITY);
+    return MinimumAngle.getMinimumAngleForNode(graph, node, positions).getDefault(Double.POSITIVE_INFINITY);
   }
 
   private PointD stepInDirection(PointD oldPosition, PointD direction, double stepSize) {

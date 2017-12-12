@@ -128,7 +128,7 @@ public class ForceAlgorithmApplier implements Runnable {
     nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
     this.maxNoOfIterations = maxNoOfIterations;
     this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).fmap(x -> x.b).getDefault(0.0);
-    this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions)).fmap(t -> t.c.angle).getDefault(0.0);
+    this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions).fmap(t -> t.c.angle).getDefault(0.0);
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
@@ -291,7 +291,7 @@ public class ForceAlgorithmApplier implements Runnable {
    */
   public void improveSolution(){
     Mapper<INode, PointD> sol = nodePositions;
-    Maybe<Double> solutionAngle = cMinimumAngle.getMinimumAngle(graph, Maybe.just(sol));
+    Maybe<Double> solutionAngle = cMinimumAngle.getMinimumAngle(graph, sol);
     /* best solution is a tuple of:
      * - nodePositions :: Mapper (INode, PointD)
      * - crossingAngle (if any) :: Maybe Double
@@ -489,7 +489,7 @@ public class ForceAlgorithmApplier implements Runnable {
   
   // all crossings: forces on all four nodes
   public Mapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, Mapper<INode, PointD> map){
-    cMinimumAngle.getCrossings(graph, Maybe.just(nodePositions)).parallelStream().forEach(ci -> {
+    cMinimumAngle.getCrossings(graph, nodePositions).parallelStream().forEach(ci -> {
       LineSegment l1 = ci.a,
                   l2 = ci.b;
       Intersection i = ci.c;
@@ -566,7 +566,7 @@ public class ForceAlgorithmApplier implements Runnable {
    * @return text - text to be displayed in gui
    */
   public String displayMinimumAngle(IGraph graph) {
-    Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = cMinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions));
+    Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions);
 
     MinimumAngle.resetHighlighting(graph);
     Maybe<String> s = crossing.fmap(currCross -> {

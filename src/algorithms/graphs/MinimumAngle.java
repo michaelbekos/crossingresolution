@@ -1,5 +1,6 @@
 package algorithms.graphs;
 
+import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.*;
@@ -23,18 +24,20 @@ public class MinimumAngle {
     protected MinimumAngleHelper(){ }
     
     // return the worst angle
-    public Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    public Maybe<Double> getMinimumAngle(IGraph graph, @Nullable IMapper<INode, PointD> np){
       // Maybe (LS, LS, I) --fmap--> Maybe Double
       return this.getMinimumAngleCrossing(graph, np).fmap(i -> i.c.angle);
     }
 
-    Maybe<Double> getMinimumAngleForNode(IGraph graph, INode node, Maybe<Mapper<INode, PointD>> nodePositions) {
+    Maybe<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
       return this.getMinimumAngleCrossingForNode(graph, node, nodePositions).fmap(i -> i.c.angle);
     }
 
-    private Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossingForNode(IGraph graph, INode node, Maybe<Mapper<INode, PointD>> nodePositions) {
-      IMapper<INode, PointD> actualMap = nodePositions.getDefault(() -> ForceAlgorithmApplier.initPositionMap(graph));
-      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsForNode(graph, node, actualMap);
+    private Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossingForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
+      if (nodePositions == null) {
+        nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+      }
+      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsForNode(graph, node, nodePositions);
 
       return Maybe.fromOptional(crossings.stream().min(Comparator.comparingDouble(crossing -> crossing.c.angle)));
     }
@@ -59,7 +62,7 @@ public class MinimumAngle {
     }
 
     // return the worst crossing, if any
-    public Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    public Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph, np);
       if(crossings.size() > 0){
         Tuple3<LineSegment, LineSegment, Intersection> crossing = crossings.get(0);
@@ -71,21 +74,20 @@ public class MinimumAngle {
       } 
     }
 
-    // return a list of all crossings
-    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, @Nullable IMapper<INode, PointD> np){
       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph, np);
       return sortCrossings(crossings);
     }
-    /**
-     * getCrossings: takes a graph and optional custom node positions. Also, you can specify that you want crossings on edge ends.
-     */
-    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+
+    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, @Nullable IMapper<INode, PointD> np){
       return getCrossings(graph, true, np);
     }
-    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
-      // lazy values! :D
-      IMapper<INode, PointD> actualMap = np.getDefault(() -> ForceAlgorithmApplier.initPositionMap(graph));
-      return yFilesSweepLine.getCrossings(graph, edgesOnly, actualMap);
+
+    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, @Nullable IMapper<INode, PointD> np){
+      if (np == null) {
+        np = ForceAlgorithmApplier.initPositionMap(graph);
+      }
+      return yFilesSweepLine.getCrossings(graph, edgesOnly, np);
     }
   } 
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -93,31 +95,31 @@ public class MinimumAngle {
    * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   // and now for some wrappers (or rappers?)
-  public static Maybe<Double> getMinimumAngle(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+  public static Maybe<Double> getMinimumAngle(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getMinimumAngle(graph, np);
   }
 
-  public static Maybe<Double> getMinimumAngleForNode(IGraph graph, INode node, Maybe<Mapper<INode, PointD>> nodePositions) {
+  public static Maybe<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
     return m.getMinimumAngleForNode(graph, node, nodePositions);
   }
 
-  public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+  public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph) {
+    return getMinimumAngleCrossing(graph, null);
+  }
+
+  public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getMinimumAngleCrossing(graph, np);
-  }    
-  
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+  }
+
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getCrossingsSorted(graph, np);
   }
-  
 
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, Maybe<IMapper<INode, PointD>> np){
+
+  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getCrossings(graph, np);
   }
-  
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
-    return m.getCrossings(graph, edgesOnly, np);
-  }
-  
+
   // variant: use parallel map with maybe return values.
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallel(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     return Util.distinctPairs(graph.getEdges()).parallel().map(e1e2 -> {

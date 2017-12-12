@@ -158,9 +158,9 @@ public class GridPositioning {
      * @return gridded node positions
      */
     public static Mapper<INode, PointD> respectiveNodeGrid(IGraph g, Mapper<INode, PointD> nodePos){
-        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(g, Maybe.just(nodePos));
+        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(g, nodePos);
 
-        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(g,Maybe.just(nodePos));
+        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(g, nodePos);
         int crossingCount = crossings.size();
 
         Mapper<INode, PointD> temp = GridPositioning.getGridNodes(g, nodePos);
@@ -239,8 +239,8 @@ public class GridPositioning {
     private static Mapper<INode, PointD> respectiveCrossingGrid(IGraph graph, Mapper<INode, PointD> nodePos){
         // take minimum crossing
         // try not to break it
-        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePos));
-        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(graph, Maybe.just(nodePos));
+        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(graph, nodePos);
+        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(graph, nodePos);
         int crossingSize = crossings.size();
         List<Tuple2<INode, PointD>> griddedCrossingNodes;
         Set<INode> crossingNodes = new HashSet<>();
@@ -411,7 +411,7 @@ public class GridPositioning {
     public static Double getResultingAngle(IGraph graph, Mapper<INode, PointD> map, INode node, PointD p) {
         map.setValue(node, p);
 
-        Maybe<Double> tempAngle = MinimumAngle.getMinimumAngle(graph, Maybe.just(map));
+        Maybe<Double> tempAngle = MinimumAngle.getMinimumAngle(graph, map);
         if (tempAngle.hasValue()) {
             return tempAngle.get();
         }

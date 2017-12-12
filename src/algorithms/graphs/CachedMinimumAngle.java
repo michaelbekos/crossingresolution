@@ -40,7 +40,7 @@ public class CachedMinimumAngle extends MinimumAngle.MinimumAngleHelper {
     }
   }
 
-  public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, Maybe<IMapper<INode, PointD>> np){
+  public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, @Nullable IMapper<INode, PointD> np){
     debugCacheAccessed();
 
     if (cache_getCrossings == null) {

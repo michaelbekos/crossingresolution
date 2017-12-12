@@ -573,7 +573,7 @@ public class MainFrame extends JFrame {
         firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
         LayoutUtilities.applyLayout(graph, new OrganicLayout());
         firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
-        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, graph, view, Maybe.just(infoLabel));
+        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, graph);
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
 

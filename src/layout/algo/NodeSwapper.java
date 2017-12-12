@@ -39,7 +39,7 @@ public class NodeSwapper {
      * @return Positions with swapped nodes
      */
     private static Mapper<INode, PointD> swapCrossingNodes(IGraph g, Mapper<INode, PointD> nodePos, int amount) {
-        Tuple3<LineSegment, LineSegment, Intersection> cross = MinimumAngle.getMinimumAngleCrossing(g, Maybe.just(nodePos)).get();
+        Tuple3<LineSegment, LineSegment, Intersection> cross = MinimumAngle.getMinimumAngleCrossing(g, nodePos).get();
 
         if(cross != null){
             if(amount == 2){
