@@ -15,13 +15,11 @@ import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import com.yworks.yfiles.view.input.GraphSnapContext;
 import com.yworks.yfiles.view.input.GridSnapTypes;
 import io.ContestIOHandler;
-import layout.algo.ForceAlgorithmApplier;
-import layout.algo.ForceDirectedAlgorithm;
-import layout.algo.ForceDirectedFactory;
-import layout.algo.NodeSwapper;
+import layout.algo.*;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import util.*;
+import view.visual.InitClinchLayout;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -32,6 +30,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -137,6 +136,13 @@ public class InitMenuBar {
         dirtyGridPositioningItem.setText("Quick and Dirty Gridding");
         dirtyGridPositioningItem.addActionListener(this::quickAndDirtyGridItemActionPerformed);
         layoutMenu.add(dirtyGridPositioningItem);
+
+        JMenuItem clinchLayout = new JMenuItem();
+        clinchLayout.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        clinchLayout.setText("Clinch nodes");
+        clinchLayout.addActionListener(this::clinchNodesActionPerformed);
+        layoutMenu.add(clinchLayout);
+
         return layoutMenu;
     }
 
@@ -971,6 +977,11 @@ public class InitMenuBar {
         }
         this.gridVisualCreator.setVisible(this.isGridVisible);
         this.view.updateUI();
+    }
+
+    private void clinchNodesActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        IGraphSelection selection = graphEditorInputMode.getGraphSelection();
+        InitClinchLayout.run(graph, selection, progressBar);
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
