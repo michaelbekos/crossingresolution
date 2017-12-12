@@ -311,8 +311,6 @@ public class GridPositioning {
      * @return list of created grid line segments
      */
     private static List<LineSegment> getGridSegments(LineSegment l,  Mapper<INode, PointD> nodePos){
-        // asume line segment not empty
-        assert(l.n1 != null && l.n2 != null);
         INode n1 = l.n1,
                 n2 = l.n2;
         // create grid points for both end points of the line segment l

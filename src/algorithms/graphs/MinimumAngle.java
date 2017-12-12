@@ -224,12 +224,8 @@ public class MinimumAngle {
    * Displays vectors for debugging purposes
    */
   public static void highlightCrossing(Intersection crossing) {
-    if (crossing.segment1.e != null) {
       paintEdge(crossing.segment1.e, Pen.getRed());
-    }
-    if (crossing.segment2.e != null) {
       paintEdge(crossing.segment2.e, Pen.getRed());
-    }
   }
 
   /**

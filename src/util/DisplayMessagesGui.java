@@ -2,7 +2,6 @@ package util;
 
 import com.yworks.yfiles.graph.IGraph;
 import util.graph2d.Intersection;
-import util.graph2d.LineSegment;
 
 /**
  * Created by Jessica Wolz on 24.11.16.
@@ -15,12 +14,10 @@ public class DisplayMessagesGui {
     public static String createMinimumAngleMsg(Intersection currCross) {
 
         String text = "Minimum Angle: " + currCross.angle.toString();
-        if(currCross.segment1.n1 != null && currCross.segment2.n1 != null){
-            text += " | Nodes: " + currCross.segment1.n1.getLabels().first().getText();
-            text += " , " +  currCross.segment1.n2.getLabels().first().getText();
-            text += " | " +  currCross.segment2.n1.getLabels().first().getText();
-            text += " , " +  currCross.segment2.n2.getLabels().first().getText();
-        }
+        text += " | Nodes: " + currCross.segment1.n1.getLabels().first().getText();
+        text += " , " +  currCross.segment1.n2.getLabels().first().getText();
+        text += " | " +  currCross.segment2.n1.getLabels().first().getText();
+        text += " , " +  currCross.segment2.n2.getLabels().first().getText();
         return text;
     }
 
@@ -34,16 +31,6 @@ public class DisplayMessagesGui {
     public static String createMaxMinAngleMsg(double angle, double iterations) {
         String text = "Maximal Minimum Angle: " + angle +
                 " after " + (iterations +1) + " iterations.";
-        return text;
-    }
-
-    /**
-     * Creates Message for Minimal Edge length of Graph
-     * @param length - holds minimal edge length
-     */
-    public static String createEdgeLengthMsg(double length, LineSegment edge){
-        String text = "Minimal Edgelength: " + length
-                        + "| Nodes " + edge.p1 + "," + edge.p2;
         return text;
     }
 }

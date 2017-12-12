@@ -243,7 +243,7 @@ public class ForceAlgorithmApplier implements Runnable {
           //Do nothing...
         }
         if (infoLabel != null) {
-          infoLabel.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/);
+          infoLabel.setText(displayMinimumAngle(graph));
         }
         j++;
       }
@@ -270,7 +270,7 @@ public class ForceAlgorithmApplier implements Runnable {
           progressBar.setValue(progress);
         }
         if (infoLabel != null) {
-          infoLabel.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/);
+          infoLabel.setText(displayMinimumAngle(graph));
         }
         running = false;
       }
@@ -336,7 +336,7 @@ public class ForceAlgorithmApplier implements Runnable {
     displayMinimumAngle(g);
     this.view.updateUI();
     if (infoLabel != null) {
-      infoLabel.setText(displayMinimumAngle(g) /*+ displayEdgeLength(graph)*/);
+      infoLabel.setText(displayMinimumAngle(g));
     }
     this.view.updateUI();
   }
@@ -425,10 +425,10 @@ public class ForceAlgorithmApplier implements Runnable {
                 n3 = n2n3.b;
           PointD p2 = nodePositions.getValue(n2),
                  p3 = nodePositions.getValue(n3);
-          LineSegment l1, l2;
-          l1 = new LineSegment(p1, p2);
-          l2 = new LineSegment(p1, p3);
-          Double angle = Math.toDegrees(Math.atan2(l2.ve.getY(), l2.ve.getX()) - Math.atan2(l1.ve.getY(), l1.ve.getX()));
+          PointD v1 = PointD.subtract(p2, p1);
+          PointD v2 = PointD.subtract(p3, p1);
+
+          Double angle = Math.toDegrees(Math.atan2(v2.getY(), v2.getX()) - Math.atan2(v1.getY(), v1.getX()));
           return new Tuple3<>(n2n3, angle);
         })
         .map(n2n3d -> {
@@ -455,14 +455,13 @@ public class ForceAlgorithmApplier implements Runnable {
                p3 = nodePositions.getValue(n3);
         PointD f2 = new PointD(0, 0),
                f3 = new PointD(0, 0);
-        LineSegment l1, l2;
-        l1 = new LineSegment(p1, p2);
-        l2 = new LineSegment(p1, p3);
+        PointD v1 = PointD.subtract(p2, p1);
+        PointD v2 = PointD.subtract(p3, p1);
         Double angle = n2n3.c;
         for (IncidentEdgesForce fa : algos) {
           Tuple2<PointD, PointD> forces = fa
-                  .apply(l1.ve)
-                  .apply(l2.ve)
+                  .apply(v1)
+                  .apply(v2)
                   .apply(angle)
                   .apply(n1degree);
           f2 = PointD.add(f2, forces.a);
@@ -590,22 +589,6 @@ public class ForceAlgorithmApplier implements Runnable {
     return DisplayMessagesGui.createMaxMinAngleMsg(this.maxMinAngle, this.maxMinAngleIterations);
   }
 
-  public String displayEdgeLength(IGraph graph){
-    Optional<Tuple2<LineSegment, Double>> edges = ShortestEdgeLength.getShortestEdge(graph);
-    LineSegment line = new LineSegment(new PointD(0,0), new PointD(0,0));
-    double currLength = 0.0;
-    if(edges.isPresent()){
-      line = edges.get().a;
-      currLength = edges.get().b;
-    }
-    if(currLength < this.minEdgeLength){
-      this.minEdgeLength = currLength;
 
-    }
-    return DisplayMessagesGui.createEdgeLengthMsg(this.minEdgeLength, line);
-  }
-
-
-  
 }
 

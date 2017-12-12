@@ -1,20 +1,19 @@
 package util.graph2d;
 
-import com.sun.istack.internal.Nullable;
-import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.algorithms.IPlaneObject;
 import com.yworks.yfiles.algorithms.YRectangle;
-import com.yworks.yfiles.graph.*;
-import util.*;
+import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.graph.IEdge;
+import com.yworks.yfiles.graph.IMapper;
+import com.yworks.yfiles.graph.INode;
+import util.G;
 
 import java.util.Optional;
 
 public class LineSegment implements IPlaneObject {
-  YRectangle bb;
+  private YRectangle bb;
   public PointD p1, p2, ve;
-  @Nullable
   public IEdge e;
-  @Nullable
   public INode n1, n2;
 
   public YRectangle getBoundingBox(){
@@ -24,7 +23,7 @@ public class LineSegment implements IPlaneObject {
   /**
    * Calculate the Bounding Box of each Line Segment
    */
-  public void calcBB(){
+  private void calcBB(){
     double x1, y1;
     x1 = p1.getX();
     y1 = p1.getY();
@@ -37,7 +36,7 @@ public class LineSegment implements IPlaneObject {
   /**
    * Initialize LineSegment with two PointDs p11 & p21
    */
-  public LineSegment(PointD p11, PointD p21){
+  private LineSegment(PointD p11, PointD p21){
     p1 = p11;
     p2 = p21;
     ve = PointD.subtract(p2, p1);
@@ -103,7 +102,7 @@ public class LineSegment implements IPlaneObject {
   }
 
   // compute cross product of two points
-  public static double crossProduct(PointD p1, PointD p2){
+  private static double crossProduct(PointD p1, PointD p2){
     return p1.getX() * p2.getY() - p1.getY() * p2.getX();
   }
 
@@ -120,10 +119,8 @@ public class LineSegment implements IPlaneObject {
   public boolean equals(Object o){
     if(o instanceof LineSegment){
       LineSegment l = (LineSegment) o;
-      if((p1.distanceTo(l.p1) <= G.Epsilon && p2.distanceTo(l.p2) <= G.Epsilon) ||
-              (p1.distanceTo(l.p2) <= G.Epsilon && p2.distanceTo(l.p1) <= G.Epsilon))
-        return true;
-      else return false;
+      return (p1.distanceTo(l.p1) <= G.Epsilon && p2.distanceTo(l.p2) <= G.Epsilon) ||
+          (p1.distanceTo(l.p2) <= G.Epsilon && p2.distanceTo(l.p1) <= G.Epsilon);
     }
     return false;
   }
