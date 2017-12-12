@@ -224,8 +224,12 @@ public class MinimumAngle {
    */
   public static void highlightCrossing(Tuple3<LineSegment, LineSegment, Intersection> crossing) {
     //System.out.println(crossing.a.e);
-    crossing.a.e.andThen(e -> paintEdge(e, Pen.getRed()));
-    crossing.b.e.andThen(e -> paintEdge(e, Pen.getRed()));
+    if (crossing.a.e != null) {
+      paintEdge(crossing.b.e, Pen.getRed());
+    }
+    if (crossing.b.e != null) {
+      paintEdge(crossing.b.e, Pen.getRed());
+    }
   }
 
   /**

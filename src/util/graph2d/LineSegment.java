@@ -1,5 +1,6 @@
 package util.graph2d;
 
+import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.algorithms.IPlaneObject;
 import com.yworks.yfiles.algorithms.YRectangle;
@@ -9,9 +10,10 @@ import util.*;
 public class LineSegment implements IPlaneObject {
   YRectangle bb;
   public PointD p1, p2, ve;
-  public Maybe<IEdge>  e = Maybe.nothing();
-  public Maybe<INode> n1 = Maybe.nothing(), 
-                      n2 = Maybe.nothing();
+  @Nullable
+  public IEdge e;
+  @Nullable
+  public INode n1, n2;
 
   public YRectangle getBoundingBox(){
     return bb;
@@ -45,8 +47,8 @@ public class LineSegment implements IPlaneObject {
    */
   public LineSegment(INode n1, INode n2){
     this(n1.getLayout().getCenter(), n2.getLayout().getCenter());
-    this.n1 = Maybe.just(n1);
-    this.n2 = Maybe.just(n2);
+    this.n1 = n1;
+    this.n2 = n2;
   }
 
   /**
@@ -54,7 +56,7 @@ public class LineSegment implements IPlaneObject {
    */
   public LineSegment(IEdge e){
     this(e.getSourceNode(), e.getTargetNode());
-    this.e = Maybe.just(e);
+    this.e = e;
   }
 
   /**
@@ -62,8 +64,8 @@ public class LineSegment implements IPlaneObject {
    */
   public LineSegment(IEdge e, IMapper<INode, PointD> np){
     this(e);
-    p1 = np.getValue(n1.get());
-    p2 = np.getValue(n2.get());
+    p1 = np.getValue(n1);
+    p2 = np.getValue(n2);
     ve = PointD.subtract(p2, p1);
     calcBB();
   }

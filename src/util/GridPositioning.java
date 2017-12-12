@@ -246,10 +246,10 @@ public class GridPositioning {
         Set<INode> crossingNodes = new HashSet<>();
         if(minCrossing.hasValue()) {
             // adding the nodes that are contained in minimum crossing
-            crossingNodes.add(minCrossing.get().a.n1.get());
-            crossingNodes.add(minCrossing.get().a.n2.get());
-            crossingNodes.add(minCrossing.get().b.n1.get());
-            crossingNodes.add(minCrossing.get().b.n2.get());
+            crossingNodes.add(minCrossing.get().a.n1);
+            crossingNodes.add(minCrossing.get().a.n2);
+            crossingNodes.add(minCrossing.get().b.n1);
+            crossingNodes.add(minCrossing.get().b.n2);
 
             // compute new positions of each node from the minimum crossing
             List<LineSegment> lines = getGridSegments(minCrossing.get().a, nodePos);
@@ -295,10 +295,10 @@ public class GridPositioning {
         if (!coordCrossing.isEmpty()) {
             // add the crossing nodes and their coordinates
             Tuple3<LineSegment, LineSegment, Double> lastCrossing = coordCrossing.get(coordCrossing.size() - 1);
-            res.add(new Tuple2<>(lastCrossing.a.n1.get(), lastCrossing.a.p1));
-            res.add(new Tuple2<>(lastCrossing.a.n2.get(), lastCrossing.a.p2));
-            res.add(new Tuple2<>(lastCrossing.b.n1.get(), lastCrossing.b.p1));
-            res.add(new Tuple2<>(lastCrossing.b.n2.get(), lastCrossing.b.p2));
+            res.add(new Tuple2<>(lastCrossing.a.n1, lastCrossing.a.p1));
+            res.add(new Tuple2<>(lastCrossing.a.n2, lastCrossing.a.p2));
+            res.add(new Tuple2<>(lastCrossing.b.n1, lastCrossing.b.p1));
+            res.add(new Tuple2<>(lastCrossing.b.n2, lastCrossing.b.p2));
         }
         return res;
     }
@@ -312,9 +312,9 @@ public class GridPositioning {
      */
     private static List<LineSegment> getGridSegments(LineSegment l,  Mapper<INode, PointD> nodePos){
         // asume line segment not empty
-        assert(l.n1.hasValue() && l.n2.hasValue());
-        INode n1 = l.n1.get(),
-                n2 = l.n2.get();
+        assert(l.n1 != null && l.n2 != null);
+        INode n1 = l.n1,
+                n2 = l.n2;
         // create grid points for both end points of the line segment l
         List<PointD> n1ps = getSurroundingGridPos(n1, nodePos);
         List<PointD> n2ps = getSurroundingGridPos(n2, nodePos);

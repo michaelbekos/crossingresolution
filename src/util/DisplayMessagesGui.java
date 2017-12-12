@@ -15,11 +15,11 @@ public class DisplayMessagesGui {
     public static String createMinimumAngleMsg(Tuple3<LineSegment, LineSegment, Intersection> currCross) {
 
         String text = "Minimum Angle: " + currCross.c.angle.toString();
-        if(currCross.a.n1.hasValue() && currCross.b.n1.hasValue()){
-            text += " | Nodes: " + currCross.a.n1.get().getLabels().first().getText();
-            text += " , " +  currCross.a.n2.get().getLabels().first().getText();
-            text += " | " +  currCross.b.n1.get().getLabels().first().getText();
-            text += " , " +  currCross.b.n2.get().getLabels().first().getText();
+        if(currCross.a.n1 != null && currCross.b.n1 != null){
+            text += " | Nodes: " + currCross.a.n1.getLabels().first().getText();
+            text += " , " +  currCross.a.n2.getLabels().first().getText();
+            text += " | " +  currCross.b.n1.getLabels().first().getText();
+            text += " , " +  currCross.b.n2.getLabels().first().getText();
         }
         return text;
     }

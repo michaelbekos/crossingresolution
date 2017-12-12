@@ -40,7 +40,7 @@ public abstract class InitGeneticAlgorithm {
                               a2 = ma2.get();
                       return a1.compareTo(a2);
                   }),
-                  Maybe.just(5),
+                  5,
                   Either.left(fa -> {
                       Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions);
   
@@ -65,10 +65,10 @@ public abstract class InitGeneticAlgorithm {
                       nodeCrossing = mostInteresting.get(crossingIndex);
                       whichNode = rand.nextInt(4);
                       INode[] nodes = new INode[]{
-                              nodeCrossing.a.n1.get(),
-                              nodeCrossing.a.n2.get(),
-                              nodeCrossing.b.n1.get(),
-                              nodeCrossing.b.n2.get()
+                              nodeCrossing.a.n1,
+                              nodeCrossing.a.n2,
+                              nodeCrossing.b.n1,
+                              nodeCrossing.b.n2
                       };
                       node = nodes[whichNode];
   
@@ -123,9 +123,7 @@ public abstract class InitGeneticAlgorithm {
                       }
                       return fa2;
                   }));
-          geneticAlgorithm.bestChanged = Maybe.just(faa -> {
-              faa.draw(graph);
-          });
+          geneticAlgorithm.bestChanged = faa -> faa.draw(graph);
           
           geneticAlgorithm.instances.addAll(firstFAAs);
           return geneticAlgorithm;

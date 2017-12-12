@@ -92,7 +92,7 @@ public class BatchOptimizer {
   // easier instantiation of FAA
   public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
     // we don't care about drawing/callbacks, so Maybe.nothing().
-    ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view, Maybe.nothing(), Maybe.nothing());
+    ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view);
     springThreshholds[1] = 50 * Math.log(graph.getNodes().size());
     fd.modifiers = springThreshholds.clone();
     fd.switches = algoModifiers.clone();
@@ -173,10 +173,10 @@ public class BatchOptimizer {
     }
 
     // afterwards: apply new positions to graph...
-    ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
-      Mapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
+    if (ForceAlgorithmApplier.bestSolution != null) {
+      Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.bestSolution.a;
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-    });
+    }
     Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
             minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
     String optimizedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
