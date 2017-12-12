@@ -3,23 +3,17 @@ import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import util.GridPositioning;
 import algorithms.graphs.MinimumAngle;
-import layout.algo.event.AlgorithmEvent;
-import layout.algo.event.AlgorithmListener;
 import util.*;
 import layout.algo.*;
 
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.view.*;
-import com.yworks.yfiles.view.input.*;
 import com.yworks.yfiles.geometry.PointD;
 import util.graph2d.Intersection;
-import util.graph2d.LineSegment;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.function.*;
 import java.io.*;
-import java.nio.*;
 import java.nio.file.*;
 
 public class BatchOptimizer {
@@ -148,10 +142,10 @@ public class BatchOptimizer {
     LayoutUtilities.applyLayout(graph, new OrthogonalLayout());
 
     // do some default metrics
-    Optional<Tuple3<LineSegment, LineSegment, Intersection>>
+    Optional<Intersection>
             minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
     // if there is a crossing, map to get the angle, then get it, otherwise "no crossings".
-    String initialAngle = minAngleCr.map(abc->abc.c.angle.toString()).orElse("no crossings");
+    String initialAngle = minAngleCr.map(intersection->intersection.angle.toString()).orElse("no crossings");
     
     ForceAlgorithmApplier.init();
     
@@ -176,16 +170,16 @@ public class BatchOptimizer {
       Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.bestSolution.a;
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
     }
-    Optional<Tuple3<LineSegment, LineSegment, Intersection>>
+    Optional<Intersection>
             minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph);
-    String optimizedAngle = minAngleOpt.map(m -> m.c.angle.toString()).orElse("no crossings");
+    String optimizedAngle = minAngleOpt.map(intersection -> intersection.angle.toString()).orElse("no crossings");
     // ... grid it...
     GridPositioning.gridGraph(graph);
     long endTime = System.nanoTime();
     // ... get metrics...
     minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph);
     double area = computeArea(graph);
-    String griddedAngle = minAngleOpt.map(m -> m.c.angle.toString()).orElse("no crossings");
+    String griddedAngle = minAngleOpt.map(intersection -> intersection.angle.toString()).orElse("no crossings");
     // ... export the computed layout...
     view.exportToGraphML(Files.newOutputStream(outFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE));
     // ... show metrics...

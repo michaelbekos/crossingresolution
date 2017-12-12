@@ -4,9 +4,7 @@ import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
 import util.DisplayMessagesGui;
-import util.Tuple3;
 import util.graph2d.Intersection;
-import util.graph2d.LineSegment;
 
 import javax.swing.*;
 import java.util.Optional;
@@ -30,7 +28,7 @@ public class MinimumAngleMonitor {
 
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel) {
     MinimumAngle.resetHighlighting(graph);
-    Optional<Tuple3<LineSegment, LineSegment, Intersection>>
+    Optional<Intersection>
         minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
     Optional<String> labText = minAngleCr.map(cr -> {

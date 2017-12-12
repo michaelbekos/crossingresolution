@@ -1,13 +1,15 @@
 package algorithms.graphs;
 
-import java.util.*;
-
 import com.sun.istack.internal.Nullable;
-import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.IMapper;
+import com.yworks.yfiles.graph.INode;
+import util.G;
+import util.graph2d.Intersection;
 
-import util.*;
-import util.graph2d.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CachedMinimumAngle extends MinimumAngle.MinimumAngleHelper {
   int hits = 0, misses = 0;
@@ -22,7 +24,7 @@ public class CachedMinimumAngle extends MinimumAngle.MinimumAngleHelper {
   }
   
   @Nullable
-  List<Tuple3<LineSegment, LineSegment, Intersection>> cache_getCrossings;
+  List<Intersection> cache_getCrossings;
 
   // log stuff, if debug enabled
   void debugCacheAccessed(){
@@ -36,7 +38,7 @@ public class CachedMinimumAngle extends MinimumAngle.MinimumAngleHelper {
     }
   }
 
-  public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, @Nullable IMapper<INode, PointD> np){
+  public List<Intersection> getCrossings(IGraph graph, boolean edgesOnly, @Nullable IMapper<INode, PointD> np){
     debugCacheAccessed();
 
     if (cache_getCrossings == null) {

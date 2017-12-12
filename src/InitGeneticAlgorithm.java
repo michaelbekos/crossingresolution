@@ -47,31 +47,30 @@ public abstract class InitGeneticAlgorithm {
                   Either.left(fa -> {
                       Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions);
   
-                      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossingsSorted(graph, nodePositions);
+                      List<Intersection> crossings = MinimumAngle.getCrossingsSorted(graph, nodePositions);
                       ForceAlgorithmApplier fa2 = fa.clone();
                       if(crossings.size() == 0) {
                           return fa2;
                       }
   
-                      List<Tuple3<LineSegment, LineSegment, Intersection>> mostInteresting = crossings.subList(0, (int) Math.ceil(crossings.size() / 50.0));
+                      List<Intersection> mostInteresting = crossings.subList(0, (int) Math.ceil(crossings.size() / 50.0));
   
                       //random choice
                       //int nodeIndex = rand.nextInt(graph.getNodes().size());
                       //INode node = graph.getNodes().getItem(nodeIndex);
                       INode node = null;
                       int nodeDegree = Integer.MAX_VALUE;
-                      Tuple3<LineSegment, LineSegment, Intersection> nodeCrossing = null;
                       int whichNode = -1;
   
                       //random crossing
                       int crossingIndex = rand.nextInt(mostInteresting.size());
-                      nodeCrossing = mostInteresting.get(crossingIndex);
+                      Intersection nodeCrossing = mostInteresting.get(crossingIndex);
                       whichNode = rand.nextInt(4);
                       INode[] nodes = new INode[]{
-                              nodeCrossing.a.n1,
-                              nodeCrossing.a.n2,
-                              nodeCrossing.b.n1,
-                              nodeCrossing.b.n2
+                              nodeCrossing.segment1.n1,
+                              nodeCrossing.segment1.n2,
+                              nodeCrossing.segment2.n1,
+                              nodeCrossing.segment2.n2
                       };
                       node = nodes[whichNode];
   
@@ -80,19 +79,19 @@ public abstract class InitGeneticAlgorithm {
                           return fa2;
                       }
                       //PointD pos = nodePositions.getValue(node);
-                      PointD pos = nodeCrossing.c.intersectionPoint;
+                      PointD pos = nodeCrossing.intersectionPoint;
                       PointD direction = new PointD(0, 0);
                       switch(whichNode){
-                          case 0: direction = PointD.negate(nodeCrossing.b.ve);
+                          case 0: direction = PointD.negate(nodeCrossing.segment2.ve);
                               break;
-                          case 1: direction = nodeCrossing.b.ve;
+                          case 1: direction = nodeCrossing.segment2.ve;
                               break;
-                          case 2: direction = PointD.negate(nodeCrossing.a.ve);
+                          case 2: direction = PointD.negate(nodeCrossing.segment1.ve);
                               break;
-                          case 3: direction = nodeCrossing.a.ve;
+                          case 3: direction = nodeCrossing.segment1.ve;
                               break;
                       }
-                      if(nodeCrossing.c.orientedAngle > 90){
+                      if(nodeCrossing.orientedAngle > 90){
                           direction = PointD.negate(direction);
                       }
                       if(direction.getVectorLength() <= G.Epsilon){

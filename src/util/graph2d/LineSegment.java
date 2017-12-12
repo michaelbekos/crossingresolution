@@ -99,7 +99,7 @@ public class LineSegment implements IPlaneObject {
     if(t < 0 || u < 0 || t > 1 || u > 1) return Optional.empty();
     PointD crossingPoint = PointD.add(p1, PointD.times(t, r));
     Double crossingsAngle = Math.toDegrees(Math.acos(PointD.scalarProduct(r, s) / (r.getVectorLength() * s.getVectorLength())));
-    return Optional.of(new Intersection(crossingPoint, crossingsAngle));
+    return Optional.of(new Intersection(crossingPoint, crossingsAngle, this, o));
   }
 
   // compute cross product of two points

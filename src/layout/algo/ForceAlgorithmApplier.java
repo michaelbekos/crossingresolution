@@ -128,7 +128,7 @@ public class ForceAlgorithmApplier implements Runnable {
     nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
     this.maxNoOfIterations = maxNoOfIterations;
     this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).map(x -> x.b).orElse(0.0);
-    this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions).map(t -> t.c.angle).orElse(0.0);
+    this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions).map(t -> t.angle).orElse(0.0);
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
@@ -489,10 +489,9 @@ public class ForceAlgorithmApplier implements Runnable {
   
   // all crossings: forces on all four nodes
   public Mapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, Mapper<INode, PointD> map){
-    cMinimumAngle.getCrossings(graph, nodePositions).parallelStream().forEach(ci -> {
-      LineSegment l1 = ci.a,
-                  l2 = ci.b;
-      Intersection i = ci.c;
+    cMinimumAngle.getCrossings(graph, nodePositions).parallelStream().forEach(intersection -> {
+      LineSegment l1 = intersection.segment1,
+                  l2 = intersection.segment2;
       INode n1 = l1.n1,
             n2 = l1.n2,
             n3 = l2.n1,
@@ -510,7 +509,7 @@ public class ForceAlgorithmApplier implements Runnable {
     // apply cosinus force
       for(CrossingForce fa: algos){
         Tuple2<PointD, PointD> forces =
-          fa.apply(v1).apply(v2).apply(i.orientedAngle);
+          fa.apply(v1).apply(v2).apply(intersection.orientedAngle);
         PointD force1 = forces.a, force2 = forces.b;
         f1 = PointD.add(f1, force1);
         f2 = PointD.add(f2, PointD.negate(force1));
@@ -566,12 +565,12 @@ public class ForceAlgorithmApplier implements Runnable {
    * @return text - text to be displayed in gui
    */
   public String displayMinimumAngle(IGraph graph) {
-    Optional<Tuple3<LineSegment, LineSegment, Intersection>> crossing = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions);
+    Optional<Intersection> crossing = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions);
 
     MinimumAngle.resetHighlighting(graph);
     Optional<String> s = crossing.map(currCross -> {
-      if(currCross.c.angle > this.maxMinAngle){
-        this.maxMinAngle = currCross.c.angle;
+      if(currCross.angle > this.maxMinAngle){
+        this.maxMinAngle = currCross.angle;
         this.maxMinAngleIterations = this.currNoOfIterations;
       }
       

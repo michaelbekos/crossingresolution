@@ -25,7 +25,7 @@ public class GridPositioning {
     private static Comparator<Tuple2<PointD, Double>> byAngle = (p1, p2) -> p1.b.compareTo(p2.b);
     private static Comparator<Tuple3<PointD, PointD, Double>> byAngles = (p1, p2) -> p1.c.compareTo(p2.c);
     private static Comparator<Tuple3<LineSegment, LineSegment, Double>> byCrossingAngle = (p1, p2) -> p1.c.compareTo(p2.c);
-    private static Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byIntersectionAngle = (p1, p2) -> p1.c.angle.compareTo(p2.c.angle);
+    private static Comparator<Intersection> byIntersectionAngle = Comparator.comparing(intersection -> intersection.angle);
 
 
     /**
@@ -101,10 +101,10 @@ public class GridPositioning {
         List<Tuple2<PointD, Double>> goodGridPoints = new ArrayList<>();
         List<Tuple2<PointD, Double>> badGridPoints = new ArrayList<>();
 
-        List<Tuple3<LineSegment, LineSegment, Intersection>> intersectList = MinimumAngle.intersectsWith(e1, g, temp, true);
+        List<Intersection> intersectList = MinimumAngle.intersectsWith(e1, g, temp, true);
         if(!intersectList.isEmpty()) {
             Collections.sort(intersectList, byIntersectionAngle);
-            interAngle = intersectList.get(intersectList.size() - 1).c.angle;
+            interAngle = intersectList.get(intersectList.size() - 1).angle;
             // if created angle better than crossing angle, these are good grid points
             if (interAngle > crossingAngle) { goodGridPoints.add(new Tuple2<>(p1, interAngle));}
             // else bad grid points
@@ -158,9 +158,9 @@ public class GridPositioning {
      * @return gridded node positions
      */
     public static Mapper<INode, PointD> respectiveNodeGrid(IGraph g, Mapper<INode, PointD> nodePos){
-        Optional<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(g, nodePos);
+        Optional<Intersection> minCrossing = MinimumAngle.getMinimumAngleCrossing(g, nodePos);
 
-        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(g, nodePos);
+        List<Intersection> crossings = MinimumAngle.getCrossings(g, nodePos);
         int crossingCount = crossings.size();
 
         Mapper<INode, PointD> temp = GridPositioning.getGridNodes(g, nodePos);
@@ -170,7 +170,7 @@ public class GridPositioning {
 
         List<Tuple2<PointD, Double>> goodGridPoints = new ArrayList<>();
 
-        double crossingAngle = minCrossing.get().c.angle;
+        double crossingAngle = minCrossing.get().angle;
 
         Set<INode> seenNodes = new HashSet<>();
         for(INode n1 : g.getNodes()){
@@ -239,21 +239,21 @@ public class GridPositioning {
     private static Mapper<INode, PointD> respectiveCrossingGrid(IGraph graph, Mapper<INode, PointD> nodePos){
         // take minimum crossing
         // try not to break it
-        Optional<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(graph, nodePos);
-        List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(graph, nodePos);
+        Optional<Intersection> minCrossing = MinimumAngle.getMinimumAngleCrossing(graph, nodePos);
+        List<Intersection> crossings = MinimumAngle.getCrossings(graph, nodePos);
         int crossingSize = crossings.size();
         List<Tuple2<INode, PointD>> griddedCrossingNodes;
         Set<INode> crossingNodes = new HashSet<>();
         if(minCrossing.isPresent()) {
             // adding the nodes that are contained in minimum crossing
-            crossingNodes.add(minCrossing.get().a.n1);
-            crossingNodes.add(minCrossing.get().a.n2);
-            crossingNodes.add(minCrossing.get().b.n1);
-            crossingNodes.add(minCrossing.get().b.n2);
+            crossingNodes.add(minCrossing.get().segment1.n1);
+            crossingNodes.add(minCrossing.get().segment1.n2);
+            crossingNodes.add(minCrossing.get().segment2.n1);
+            crossingNodes.add(minCrossing.get().segment2.n2);
 
             // compute new positions of each node from the minimum crossing
-            List<LineSegment> lines = getGridSegments(minCrossing.get().a, nodePos);
-            List<LineSegment> otherLines = getGridSegments(minCrossing.get().b, nodePos);
+            List<LineSegment> lines = getGridSegments(minCrossing.get().segment1, nodePos);
+            List<LineSegment> otherLines = getGridSegments(minCrossing.get().segment2, nodePos);
             // compute new crossing angles, choose best
             griddedCrossingNodes = getResultingAngle(lines, otherLines);
             if (!griddedCrossingNodes.isEmpty()) {

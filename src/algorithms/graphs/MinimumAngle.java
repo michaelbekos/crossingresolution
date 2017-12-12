@@ -25,27 +25,27 @@ public class MinimumAngle {
     
     // return the worst angle
     public Optional<Double> getMinimumAngle(IGraph graph, @Nullable IMapper<INode, PointD> np){
-      return this.getMinimumAngleCrossing(graph, np).map(i -> i.c.angle);
+      return this.getMinimumAngleCrossing(graph, np).map(i -> i.angle);
     }
 
     Optional<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
-      return this.getMinimumAngleCrossingForNode(graph, node, nodePositions).map(i -> i.c.angle);
+      return this.getMinimumAngleCrossingForNode(graph, node, nodePositions).map(i -> i.angle);
     }
 
-    private Optional<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossingForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
+    private Optional<Intersection> getMinimumAngleCrossingForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
       if (nodePositions == null) {
         nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
       }
-      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsForNode(graph, node, nodePositions);
+      List<Intersection> crossings = getCrossingsForNode(graph, node, nodePositions);
 
-      return crossings.stream().min(Comparator.comparingDouble(crossing -> crossing.c.angle));
+      return crossings.stream().min(Comparator.comparingDouble(crossing -> crossing.angle));
     }
 
     /**
      * This implementation does not use a sweep line but simply checks all combinations of neighbor edges of <code>node</code>
      * and all the edges of the whole graph.
      */
-    private List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsForNode(IGraph graph, INode node, IMapper<INode, PointD> nodePositions) {
+    private List<Intersection> getCrossingsForNode(IGraph graph, INode node, IMapper<INode, PointD> nodePositions) {
       final List<LineSegment> neighborEdges = graph.getEdges().stream()
           .filter(edge -> edge.getSourceNode() == node || edge.getTargetNode() == node)
           .map(e -> new LineSegment(e, nodePositions))
@@ -54,17 +54,17 @@ public class MinimumAngle {
       return graph.getEdges().stream()
           .map(e -> new LineSegment(e, nodePositions))
           .flatMap(s1 -> neighborEdges.stream()
-              .map(s2 -> new Tuple3<>(s1, s2, s1.intersects(s2, true)))
-              .filter(intersection -> intersection.c.isPresent())
-              .map(intersection -> new Tuple3<>(intersection.a, intersection.b, intersection.c.get())))
+              .map(s2 -> s1.intersects(s2, true)))
+              .filter(Optional::isPresent)
+              .map(Optional::get)
           .collect(Collectors.toList());
     }
 
     // return the worst crossing, if any
-    public Optional<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
-      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph, np);
+    public Optional<Intersection> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
+      List<Intersection> crossings = getCrossingsSorted(graph, np);
       if(crossings.size() > 0){
-        Tuple3<LineSegment, LineSegment, Intersection> crossing = crossings.get(0);
+        Intersection crossing = crossings.get(0);
         //highlightCrossing(crossing);
         return Optional.of(crossing);
       }
@@ -73,16 +73,16 @@ public class MinimumAngle {
       } 
     }
 
-    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, @Nullable IMapper<INode, PointD> np){
-      List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossings(graph, np);
+    public List<Intersection> getCrossingsSorted(IGraph graph, @Nullable IMapper<INode, PointD> np){
+      List<Intersection> crossings = getCrossings(graph, np);
       return sortCrossings(crossings);
     }
 
-    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, @Nullable IMapper<INode, PointD> np){
+    public List<Intersection> getCrossings(IGraph graph, @Nullable IMapper<INode, PointD> np){
       return getCrossings(graph, true, np);
     }
 
-    public List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, boolean edgesOnly, @Nullable IMapper<INode, PointD> np){
+    public List<Intersection> getCrossings(IGraph graph, boolean edgesOnly, @Nullable IMapper<INode, PointD> np){
       if (np == null) {
         np = ForceAlgorithmApplier.initPositionMap(graph);
       }
@@ -102,25 +102,25 @@ public class MinimumAngle {
     return m.getMinimumAngleForNode(graph, node, nodePositions);
   }
 
-  public static Optional<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph) {
+  public static Optional<Intersection> getMinimumAngleCrossing(IGraph graph) {
     return getMinimumAngleCrossing(graph, null);
   }
 
-  public static Optional<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
+  public static Optional<Intersection> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getMinimumAngleCrossing(graph, np);
   }
 
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsSorted(IGraph graph, @Nullable IMapper<INode, PointD> np){
+  public static List<Intersection> getCrossingsSorted(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getCrossingsSorted(graph, np);
   }
 
 
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossings(IGraph graph, @Nullable IMapper<INode, PointD> np){
+  public static List<Intersection> getCrossings(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getCrossings(graph, np);
   }
 
   // variant: use parallel map with maybe return values.
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallel(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
+  public static List<Intersection> getCrossingsParallel(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     return Util.distinctPairs(graph.getEdges())
         .parallel()
         .map(e1e2 -> {
@@ -128,15 +128,14 @@ public class MinimumAngle {
           IEdge e2 = e1e2.b;
           LineSegment l1 = new LineSegment(e1, nodePositions);
           LineSegment l2 = new LineSegment(e2, nodePositions);
-          Optional<Intersection> i = l1.intersects(l2, edgesOnly);
-          return i.map(i1 -> new Tuple3<>(l1, l2, i1));
+          return l1.intersects(l2, edgesOnly);
         }).filter(Optional::isPresent)
         .map(Optional::get)
         .collect(Collectors.toList());
   }
 
   // variant: use parallel flatmap, also maybes.
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelFlat(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
+  public static List<Intersection> getCrossingsParallelFlat(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
     return Util.distinctPairs(graph.getEdges())
         .parallel()
         .flatMap(e1e2 -> {
@@ -145,13 +144,13 @@ public class MinimumAngle {
           LineSegment l1 = new LineSegment(e1, nodePositions);
           LineSegment l2 = new LineSegment(e2, nodePositions);
           Optional<Intersection> i = l1.intersects(l2, edgesOnly);
-          return i.map(intersection -> Stream.of(new Tuple3<>(l1, l2, intersection))).orElseGet(Stream::empty);
+          return i.map(Stream::of).orElseGet(Stream::empty);
       }).collect(Collectors.toList());
   }
 
   // variant: parallel, with synchronized list append
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelSynch(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
+  public static List<Intersection> getCrossingsParallelSynch(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
+    List<Intersection> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();
     Util.distinctPairs(graph.getEdges()).parallel().forEach(e1e2 -> {
         IEdge e1 = e1e2.a,
@@ -161,7 +160,7 @@ public class MinimumAngle {
         Optional<Intersection> i = l1.intersects(l2, edgesOnly);
         i.ifPresent(i1 -> {
           synchronized(res){
-            res.add(new Tuple3<>(l1, l2, i1));
+            res.add(i1);
           }
         });
       });
@@ -169,8 +168,8 @@ public class MinimumAngle {
   }
 
   // variant: serial 
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsNaiive(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
+  public static List<Intersection> getCrossingsNaiive(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
+    List<Intersection> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();
     for (IEdge e1 : graph.getEdges()){
       LineSegment l1 = new LineSegment(e1, nodePositions);
@@ -180,10 +179,7 @@ public class MinimumAngle {
         if(seenEdges.contains(e2)) continue;
         LineSegment l2 = new LineSegment(e2, nodePositions);
         Optional<Intersection> i = l1.intersects(l2, edgesOnly);
-        if(i.isPresent()){
-          Intersection i1 = i.get();
-          res.add(new Tuple3<>(l1, l2, i1));
-        }
+        i.ifPresent(res::add);
       }
     }
     return res;
@@ -194,9 +190,8 @@ public class MinimumAngle {
    * @param crossings - Crossings list to sort
    * @return Sorted List of Crossings
    */
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> sortCrossings(List<Tuple3<LineSegment, LineSegment, Intersection>> crossings){
-    Comparator<Tuple3<LineSegment, LineSegment, Intersection>> byAngle = 
-      (t1, t2) -> t1.c.angle.compareTo(t2.c.angle);
+  public static List<Intersection> sortCrossings(List<Intersection> crossings){
+    Comparator<Intersection> byAngle = Comparator.comparingDouble(intersection -> intersection.angle);
     Collections.sort(crossings, byAngle);
     return crossings;
   }
@@ -228,13 +223,12 @@ public class MinimumAngle {
   /**
    * Displays vectors for debugging purposes
    */
-  public static void highlightCrossing(Tuple3<LineSegment, LineSegment, Intersection> crossing) {
-    //System.out.println(crossing.a.e);
-    if (crossing.a.e != null) {
-      paintEdge(crossing.b.e, Pen.getRed());
+  public static void highlightCrossing(Intersection crossing) {
+    if (crossing.segment1.e != null) {
+      paintEdge(crossing.segment1.e, Pen.getRed());
     }
-    if (crossing.b.e != null) {
-      paintEdge(crossing.b.e, Pen.getRed());
+    if (crossing.segment2.e != null) {
+      paintEdge(crossing.segment2.e, Pen.getRed());
     }
   }
 
@@ -243,8 +237,8 @@ public class MinimumAngle {
    * @param edgesOnly
    * @return List of Crossings with e1
    */
-  public static List<Tuple3<LineSegment, LineSegment, Intersection>> intersectsWith(IEdge e1, IGraph graph, IMapper<INode, PointD> nodePositions, boolean edgesOnly){
-    List<Tuple3<LineSegment, LineSegment, Intersection>> res = new LinkedList<>();
+  public static List<Intersection> intersectsWith(IEdge e1, IGraph graph, IMapper<INode, PointD> nodePositions, boolean edgesOnly){
+    List<Intersection> res = new LinkedList<>();
     Set<IEdge> seenEdges = new HashSet<>();
     seenEdges.add(e1);
     LineSegment l1 = new LineSegment(e1, nodePositions);
@@ -254,11 +248,9 @@ public class MinimumAngle {
       if(seenEdges.contains(e2)) continue;
       LineSegment l2 = new LineSegment(e2, nodePositions);
       Optional<Intersection> i = l1.intersects(l2, edgesOnly);
-      if(i.isPresent()){
-        Intersection i1 = i.get();
-        res.add(new Tuple3<>(l1,l2,i1));
-      }
+      i.ifPresent(res::add);
     }
     return res;
   }
+
 }

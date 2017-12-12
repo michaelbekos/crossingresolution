@@ -12,14 +12,14 @@ public class DisplayMessagesGui {
     public static String createNumberEdgesVertices(IGraph graph){
         return "Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size();
     }
-    public static String createMinimumAngleMsg(Tuple3<LineSegment, LineSegment, Intersection> currCross) {
+    public static String createMinimumAngleMsg(Intersection currCross) {
 
-        String text = "Minimum Angle: " + currCross.c.angle.toString();
-        if(currCross.a.n1 != null && currCross.b.n1 != null){
-            text += " | Nodes: " + currCross.a.n1.getLabels().first().getText();
-            text += " , " +  currCross.a.n2.getLabels().first().getText();
-            text += " | " +  currCross.b.n1.getLabels().first().getText();
-            text += " , " +  currCross.b.n2.getLabels().first().getText();
+        String text = "Minimum Angle: " + currCross.angle.toString();
+        if(currCross.segment1.n1 != null && currCross.segment2.n1 != null){
+            text += " | Nodes: " + currCross.segment1.n1.getLabels().first().getText();
+            text += " , " +  currCross.segment1.n2.getLabels().first().getText();
+            text += " | " +  currCross.segment2.n1.getLabels().first().getText();
+            text += " , " +  currCross.segment2.n2.getLabels().first().getText();
         }
         return text;
     }
