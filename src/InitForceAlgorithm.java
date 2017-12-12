@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.util.*;
 import java.util.function.*;
 
+import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.view.*;
@@ -19,7 +20,11 @@ public abstract class InitForceAlgorithm {
     public static double clamp(double x, double min, double max){
         return Math.min(max, Math.max(min, x));
     }
-    public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations, GraphComponent view, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
+    public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations, GraphComponent view){
+        return defaultForceAlgorithmApplier(iterations, view, null, null);
+    }
+
+    public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations, GraphComponent view, @Nullable JProgressBar progressBar, @Nullable JLabel infoLabel){
         ForceAlgorithmApplier fd = new ForceAlgorithmApplier(view, iterations, progressBar, infoLabel);
         fd.algos.add(new NodeNeighbourForce(p1 -> p2 -> {
             double springNaturalLength = fd.modifiers[1];

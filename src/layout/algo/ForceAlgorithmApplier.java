@@ -1,5 +1,6 @@
 package layout.algo;
 
+import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.algorithms.YVector;
 import com.yworks.yfiles.geometry.*;
 import com.yworks.yfiles.graph.*;
@@ -24,11 +25,11 @@ import view.visual.*;
 
 public class ForceAlgorithmApplier implements Runnable {
   // keep track of a bestSolution across all FAAs
-  public static Maybe<Tuple4<Mapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]>> bestSolution = Maybe.nothing();
+  public static Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]> bestSolution = null;
   public static List<ICanvasObject> canvasObjects = new ArrayList<>();
   // call this whenever the underlying graph changes structurally!
   public static void init(){
-    bestSolution = Maybe.nothing();
+    bestSolution = null;
   }
 
   public static Mapper<INode, PointD> newNodePointMap(){
@@ -102,8 +103,10 @@ public class ForceAlgorithmApplier implements Runnable {
   public int maxNoOfIterations;
   public int currNoOfIterations;
   public int maxMinAngleIterations;
-  public Maybe<JProgressBar> progressBar;
-  public Maybe<JLabel> infoLabel;
+  @Nullable
+  private JProgressBar progressBar;
+  @Nullable
+  private JLabel infoLabel;
   public double maxMinAngle;
   public double minEdgeLength;
   // current nodePositions, so we can calculate in the background
@@ -115,14 +118,17 @@ public class ForceAlgorithmApplier implements Runnable {
 
   public CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
 
+  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations) {
+    this(view, maxNoOfIterations, null, null);
+  }
 
-  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, Maybe<JProgressBar> progressBar, Maybe<JLabel> infoLabel){
+  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, JProgressBar progressBar, JLabel infoLabel){
     this.view = view;
     this.graph = view.getGraph();
     nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
     this.maxNoOfIterations = maxNoOfIterations;
-    this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).fmap(x -> x.b).getDefault(0.0);
-    this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions)).fmap(t -> t.c.angle).getDefault(0.0);
+    this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).map(x -> x.b).orElse(0.0);
+    this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions).map(t -> t.c.angle).orElse(0.0);
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
@@ -236,7 +242,9 @@ public class ForceAlgorithmApplier implements Runnable {
           System.out.println("Sleep interrupted!");
           //Do nothing...
         }
-        infoLabel.andThen(p -> p.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/));
+        if (infoLabel != null) {
+          infoLabel.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/);
+        }
         j++;
       }
     } else {
@@ -258,15 +266,19 @@ public class ForceAlgorithmApplier implements Runnable {
           //Do nothing...
         }
         int progress = Math.round(100 * i / this.maxNoOfIterations);
-        progressBar.andThen(p -> p.setValue(progress));
-        infoLabel.andThen(p -> p.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/));
+        if (progressBar != null) {
+          progressBar.setValue(progress);
+        }
+        if (infoLabel != null) {
+          infoLabel.setText(displayMinimumAngle(graph) /*+ displayEdgeLength(graph)*/);
+        }
         running = false;
       }
     }
 
-    progressBar.andThen(p -> {
-      p.setValue(0);
-    });
+    if (progressBar != null) {
+      progressBar.setValue(0);
+    }
     JOptionPane.showMessageDialog(null, displayMaxMinAngle(), "Maximal Minimum Angle", JOptionPane.INFORMATION_MESSAGE);
     
     displayMinimumAngle(graph);
@@ -279,34 +291,34 @@ public class ForceAlgorithmApplier implements Runnable {
    */
   public void improveSolution(){
     Mapper<INode, PointD> sol = nodePositions;
-    Maybe<Double> solutionAngle = cMinimumAngle.getMinimumAngle(graph, Maybe.just(sol));
+    Optional<Double> solutionAngle = cMinimumAngle.getMinimumAngle(graph, sol);
     /* best solution is a tuple of:
      * - nodePositions :: Mapper (INode, PointD)
-     * - crossingAngle (if any) :: Maybe Double
+     * - crossingAngle (if any) :: Optional Double
      * - force parameters :: [Double]
      * - force switches :: [Bool]
      */
     // do it lazy, since we might not need to
-    Supplier<Tuple4<Mapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]>> thisSol 
+    Supplier<Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]>> thisSol
       = (() -> new Tuple4<>(copyNodePositionsMap(sol), solutionAngle, modifiers.clone(), switches.clone()));
     // if we hadn't had a previous best yet, update with our
-    if(!bestSolution.hasValue()){
-      bestSolution = Maybe.just(thisSol.get());
+    if (bestSolution == null) {
+      bestSolution = thisSol.get();
       return;
     }
     // otherwise: previous best exists. get it...
-    Tuple4<Mapper<INode, PointD>, Maybe<Double>, Double[], Boolean[]> prevBest = bestSolution.get();
+    Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]> prevBest = bestSolution;
     // ... if previous one had no crossings, we can't be better, so we stop.
-    if(!prevBest.b.hasValue()) return;
+    if(!prevBest.b.isPresent()) return;
     // ... otherwise, if this one has no crossings, it must be better, so we update.
-    if(!solutionAngle.hasValue()){
-      bestSolution = Maybe.just(thisSol.get()); 
+    if(!solutionAngle.isPresent()){
+      bestSolution = thisSol.get();
       return;
     }
     // ... if the previous angle was better, we return.
     if(prevBest.b.get() >= solutionAngle.get()) return;
     // ... otherwise, ours is better, so we update.
-    bestSolution = Maybe.just(thisSol.get());
+    bestSolution = thisSol.get();
     
   }
 
@@ -323,7 +335,9 @@ public class ForceAlgorithmApplier implements Runnable {
     ForceAlgorithmApplier.applyNodePositionsToGraph(g, nodePositions);
     displayMinimumAngle(g);
     this.view.updateUI();
-    infoLabel.andThen(p -> p.setText(displayMinimumAngle(g) /*+ displayEdgeLength(graph)*/));
+    if (infoLabel != null) {
+      infoLabel.setText(displayMinimumAngle(g) /*+ displayEdgeLength(graph)*/);
+    }
     this.view.updateUI();
   }
   /**
@@ -475,14 +489,14 @@ public class ForceAlgorithmApplier implements Runnable {
   
   // all crossings: forces on all four nodes
   public Mapper<INode, PointD> calculateCrossingForces(List<CrossingForce> algos, Mapper<INode, PointD> map){
-    cMinimumAngle.getCrossings(graph, Maybe.just(nodePositions)).parallelStream().forEach(ci -> {
+    cMinimumAngle.getCrossings(graph, nodePositions).parallelStream().forEach(ci -> {
       LineSegment l1 = ci.a,
                   l2 = ci.b;
       Intersection i = ci.c;
-      INode n1 = l1.n1.get(),
-            n2 = l1.n2.get(),
-            n3 = l2.n1.get(),
-            n4 = l2.n2.get();
+      INode n1 = l1.n1,
+            n2 = l1.n2,
+            n3 = l2.n1,
+            n4 = l2.n2;
       PointD p1 = l1.p1,
              p2 = l1.p2,
              p3 = l2.p1,
@@ -552,10 +566,10 @@ public class ForceAlgorithmApplier implements Runnable {
    * @return text - text to be displayed in gui
    */
   public String displayMinimumAngle(IGraph graph) {
-    Maybe<Tuple3<LineSegment, LineSegment, Intersection>> crossing = cMinimumAngle.getMinimumAngleCrossing(graph, Maybe.just(nodePositions));
+    Optional<Tuple3<LineSegment, LineSegment, Intersection>> crossing = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions);
 
     MinimumAngle.resetHighlighting(graph);
-    Maybe<String> s = crossing.fmap(currCross -> {
+    Optional<String> s = crossing.map(currCross -> {
       if(currCross.c.angle > this.maxMinAngle){
         this.maxMinAngle = currCross.c.angle;
         this.maxMinAngleIterations = this.currNoOfIterations;
@@ -564,7 +578,7 @@ public class ForceAlgorithmApplier implements Runnable {
       MinimumAngle.highlightCrossing(currCross);
       return DisplayMessagesGui.createMinimumAngleMsg(currCross);
     });
-    return s.getDefault("No crossings!");
+    return s.orElse("No crossings!");
     
   }
 
@@ -578,10 +592,10 @@ public class ForceAlgorithmApplier implements Runnable {
   }
 
   public String displayEdgeLength(IGraph graph){
-    Maybe<Tuple2<LineSegment, Double>> edges = ShortestEdgeLength.getShortestEdge(graph);
+    Optional<Tuple2<LineSegment, Double>> edges = ShortestEdgeLength.getShortestEdge(graph);
     LineSegment line = new LineSegment(new PointD(0,0), new PointD(0,0));
     double currLength = 0.0;
-    if(edges.hasValue()){
+    if(edges.isPresent()){
       line = edges.get().a;
       currLength = edges.get().b;
     }

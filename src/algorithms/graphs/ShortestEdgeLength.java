@@ -2,14 +2,10 @@ package algorithms.graphs;
 
 import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
-import util.Maybe;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-
 import util.Tuple2;
 import util.graph2d.LineSegment;
+
+import java.util.*;
 
 /**
  * Created by Jessica Wolz on 24.11.16.
@@ -21,8 +17,8 @@ public class ShortestEdgeLength {
      * @param graph - input graph
      * @return Shortest edge length, if there is an edge
      */
-    public static Maybe<Double> getShortestEdgeLength(IGraph graph){
-        return getShortestEdge(graph).fmap(i -> i.b);
+    public static Optional<Double> getShortestEdgeLength(IGraph graph){
+        return getShortestEdge(graph).map(i -> i.b);
     }
 
     /**
@@ -30,14 +26,14 @@ public class ShortestEdgeLength {
      * @param graph - input graph
      * @return Tuple of Linesegment and edge length
      */
-    public static Maybe<Tuple2<LineSegment, Double>> getShortestEdge(IGraph graph){
+    public static Optional<Tuple2<LineSegment, Double>> getShortestEdge(IGraph graph){
         List<Tuple2<LineSegment, Double>> edges = getEdges(graph);
         Comparator<Tuple2<LineSegment, Double>> byLength = (l1, l2) -> l1.b.compareTo(l2.b);
         Collections.sort(edges, byLength);
         if(edges.size() > 0){
-            return Maybe.just(edges.get(0));
+            return Optional.of(edges.get(0));
         } else {
-            return Maybe.nothing();
+            return Optional.empty();
         }
 
     }

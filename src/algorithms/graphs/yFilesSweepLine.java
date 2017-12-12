@@ -34,8 +34,8 @@ public class yFilesSweepLine {
       LineSegment s2 = (LineSegment) o2;
 
       //check if we really have a intersection
-      Maybe<Intersection> mi = s1.intersects(s2, eo);
-      mi.andThen(i -> crossings.add(new Tuple3<>(s1, s2, i)));
+      Optional<Intersection> mi = s1.intersects(s2, eo);
+      mi.ifPresent(i -> crossings.add(new Tuple3<>(s1, s2, i)));
     }
   }
 }

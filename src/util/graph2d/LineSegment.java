@@ -1,17 +1,21 @@
 package util.graph2d;
 
+import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.algorithms.IPlaneObject;
 import com.yworks.yfiles.algorithms.YRectangle;
 import com.yworks.yfiles.graph.*;
 import util.*;
 
+import java.util.Optional;
+
 public class LineSegment implements IPlaneObject {
   YRectangle bb;
   public PointD p1, p2, ve;
-  public Maybe<IEdge>  e = Maybe.nothing();
-  public Maybe<INode> n1 = Maybe.nothing(), 
-                      n2 = Maybe.nothing();
+  @Nullable
+  public IEdge e;
+  @Nullable
+  public INode n1, n2;
 
   public YRectangle getBoundingBox(){
     return bb;
@@ -45,8 +49,8 @@ public class LineSegment implements IPlaneObject {
    */
   public LineSegment(INode n1, INode n2){
     this(n1.getLayout().getCenter(), n2.getLayout().getCenter());
-    this.n1 = Maybe.just(n1);
-    this.n2 = Maybe.just(n2);
+    this.n1 = n1;
+    this.n2 = n2;
   }
 
   /**
@@ -54,7 +58,7 @@ public class LineSegment implements IPlaneObject {
    */
   public LineSegment(IEdge e){
     this(e.getSourceNode(), e.getTargetNode());
-    this.e = Maybe.just(e);
+    this.e = e;
   }
 
   /**
@@ -62,8 +66,8 @@ public class LineSegment implements IPlaneObject {
    */
   public LineSegment(IEdge e, IMapper<INode, PointD> np){
     this(e);
-    p1 = np.getValue(n1.get());
-    p2 = np.getValue(n2.get());
+    p1 = np.getValue(n1);
+    p2 = np.getValue(n2);
     ve = PointD.subtract(p2, p1);
     calcBB();
   }
@@ -74,28 +78,28 @@ public class LineSegment implements IPlaneObject {
    * @param skipEqualEndpoints - true if endpoints can be equal
    * @return Return Intersection of there is one
    */
-  public Maybe<Intersection> intersects(LineSegment o, boolean skipEqualEndpoints){
+  public Optional<Intersection> intersects(LineSegment o, boolean skipEqualEndpoints){
     PointD p3, p4;
     p3 = o.p1;
     p4 = o.p2;
     // skip equal endpoints
     if(skipEqualEndpoints &&  
       (p1.equals(p3) || p1.equals(p4) ||
-       p2.equals(p3) || p2.equals(p4))) return Maybe.nothing();
+       p2.equals(p3) || p2.equals(p4))) return Optional.empty();
     // http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
     PointD r = ve;
     PointD s = o.ve;
     double rTimesS = crossProduct(r, s);
     // lines parallel
-    if(rTimesS == 0) return Maybe.nothing();
+    if(rTimesS == 0) return Optional.empty();
     double t, u;
     t = crossProduct(PointD.subtract(p3, p1), s) / rTimesS;
     u = crossProduct(PointD.subtract(p3, p1), r) / rTimesS;
     // intersection not on line segments
-    if(t < 0 || u < 0 || t > 1 || u > 1) return Maybe.nothing();
+    if(t < 0 || u < 0 || t > 1 || u > 1) return Optional.empty();
     PointD crossingPoint = PointD.add(p1, PointD.times(t, r));
     Double crossingsAngle = Math.toDegrees(Math.acos(PointD.scalarProduct(r, s) / (r.getVectorLength() * s.getVectorLength())));
-    return Maybe.just(new Intersection(crossingPoint, crossingsAngle));
+    return Optional.of(new Intersection(crossingPoint, crossingsAngle));
   }
 
   // compute cross product of two points

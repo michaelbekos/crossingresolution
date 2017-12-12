@@ -1,3 +1,4 @@
+import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
@@ -10,7 +11,6 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithmApplier;
 import layout.algo.GeneticAlgorithm;
-import util.Maybe;
 import util.Tuple4;
 import util.interaction.ThresholdSliders;
 
@@ -22,8 +22,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
+
+import static layout.algo.ForceAlgorithmApplier.bestSolution;
 
 
 /**
@@ -56,16 +58,19 @@ public class MainFrame extends JFrame {
     private final Boolean[] algoModifiers = {false, false};
     private int faaRunningTimeGenetic = 250;
 
-    private Maybe<ForceAlgorithmApplier> faa = Maybe.nothing();
+    @Nullable
+    private ForceAlgorithmApplier faa = null;
 
-    private static final Consumer<Maybe<ForceAlgorithmApplier>> finalizeFAA = Maybe.lift(f -> {
-        f.running = false;
-        f.clearDrawables();
-    });
+    private void finalizeFAA (@Nullable ForceAlgorithmApplier faa) {
+        if (faa != null) {
+            faa.running = false;
+            faa.clearDrawables();
+        }
+    }
 
     // for this class, we can instantiate defaultForceAlgorithmApplier and do some post-initializing
     private ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations) {
-        ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view, Maybe.just(progressBar), Maybe.just(infoLabel));
+        ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view, progressBar, infoLabel);
         springThresholds[1] = 50 * Math.log(graph.getNodes().size());
         fd.modifiers = springThresholds.clone();
         fd.switches = algoModifiers.clone();
@@ -185,10 +190,9 @@ public class MainFrame extends JFrame {
                 movedNodesCP = new HashSet<>(movedNodes);
                 movedNodes.clear();
             }
-            faa.andThen(f -> {
-                //f.clearDrawables();
-                f.resetNodePositions(movedNodesCP);
-            });
+            if (faa != null) {
+                faa.resetNodePositions(movedNodesCP);
+            }
         });
 
         /* Add two listeners two the graph */
@@ -333,22 +337,26 @@ public class MainFrame extends JFrame {
         cSidePanel.gridx = 0;
         JButton showForces = new JButton("Show forces");
         showForces.addActionListener(e -> {
-            if(!faa.hasValue()){
-                faa = Maybe.just(defaultForceAlgorithmApplier(0));
+            if (faa == null) {
+                faa = defaultForceAlgorithmApplier(0);
             }
-            faa.get().showForces();
+            faa.showForces();
         });
         sidePanel.add(showForces, cSidePanel);
 
         cSidePanel.gridx = 1;
         JButton showBestSolution = new JButton("Show best");
-        showBestSolution.addActionListener(e -> ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
-            Mapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
-            Maybe<Double> minCrossingAngle = nm_mca_da_ba.b;
-            Double[] mods = nm_mca_da_ba.c;
-            Boolean[] switchs = nm_mca_da_ba.d;
+        showBestSolution.addActionListener(e -> {
+            if (bestSolution == null) {
+                return;
+            }
+
+            Mapper<INode, PointD> nodePositions = bestSolution.a;
+            Optional<Double> minCrossingAngle = bestSolution.b;
+            Double[] mods = bestSolution.c;
+            Boolean[] switchs = bestSolution.d;
             ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-            String msg = minCrossingAngle.fmap(d -> "Minimum crossing angle: " + d.toString()).getDefault("No crossings!");
+            String msg = minCrossingAngle.map(d -> "Minimum crossing angle: " + d.toString()).orElse("No crossings!");
             msg += "\n";
             msg += "Modifiers:\n";
             for(int i = 0; i < mods.length; i++){
@@ -364,13 +372,13 @@ public class MainFrame extends JFrame {
                 msg += "\n\t" + b.toString() + "\n";
             }
             JOptionPane.showMessageDialog(null, msg);
-        }));
+        });
         sidePanel.add(showBestSolution, cSidePanel);
 
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
         JButton showForceAlgoState = new JButton("Show state");
-        showForceAlgoState.addActionListener(e -> faa.andThen(ForceAlgorithmApplier::showNodePositions));
+        showForceAlgoState.addActionListener(e -> faa.showNodePositions());
         sidePanel.add(showForceAlgoState, cSidePanel);
 
 
@@ -485,13 +493,13 @@ public class MainFrame extends JFrame {
     }
 
     private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(!faa.hasValue() || !faa.get().running){
+        if(faa == null || !faa.running){
             ForceAlgorithmApplier.init();
             ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
             fd.modifiers = springThresholds;
             fd.switches = algoModifiers;
-            MainFrame.finalizeFAA.accept(faa);
-            faa = Maybe.just(fd);
+            finalizeFAA(faa);
+            faa = fd;
             Thread thread = new Thread(fd);
             this.graphEditorInputMode.setCreateNodeAllowed(false);
             thread.start();
@@ -500,11 +508,10 @@ public class MainFrame extends JFrame {
     }
 
     private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        faa.andThen(f -> {
-            f.running = false;
+        if (faa != null) {
+            faa.running = false;
             this.graphEditorInputMode.setCreateNodeAllowed(true);
-        });
-
+        }
     }
 
 
@@ -524,8 +531,8 @@ public class MainFrame extends JFrame {
         else return;
 
         ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(iterations);
-        MainFrame.finalizeFAA.accept(faa);
-        faa = Maybe.just(fd);
+        finalizeFAA(faa);
+        faa = fd;
 
 
         Thread thread = new Thread(fd);
@@ -566,7 +573,7 @@ public class MainFrame extends JFrame {
         firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
         LayoutUtilities.applyLayout(graph, new OrganicLayout());
         firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
-        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, graph, view, Maybe.just(infoLabel));
+        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, graph);
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
 

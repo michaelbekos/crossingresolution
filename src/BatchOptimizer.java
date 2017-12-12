@@ -91,8 +91,7 @@ public class BatchOptimizer {
   }
   // easier instantiation of FAA
   public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
-    // we don't care about drawing/callbacks, so Maybe.nothing().
-    ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view, Maybe.nothing(), Maybe.nothing());
+    ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view);
     springThreshholds[1] = 50 * Math.log(graph.getNodes().size());
     fd.modifiers = springThreshholds.clone();
     fd.switches = algoModifiers.clone();
@@ -149,10 +148,10 @@ public class BatchOptimizer {
     LayoutUtilities.applyLayout(graph, new OrthogonalLayout());
 
     // do some default metrics
-    Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
-            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+    Optional<Tuple3<LineSegment, LineSegment, Intersection>>
+            minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
     // if there is a crossing, map to get the angle, then get it, otherwise "no crossings".
-    String initialAngle = minAngleCr.fmap(abc->abc.c.angle.toString()).getDefault("no crossings");
+    String initialAngle = minAngleCr.map(abc->abc.c.angle.toString()).orElse("no crossings");
     
     ForceAlgorithmApplier.init();
     
@@ -168,26 +167,25 @@ public class BatchOptimizer {
       initials.add(defaultForceAlgorithmApplier(initTime));
       LayoutUtilities.applyLayout(graph, new OrganicLayout());
       initials.add(defaultForceAlgorithmApplier(initTime));
-      GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view, Maybe.nothing());
+      GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view);
       ga.runRounds(rounds);
     }
 
     // afterwards: apply new positions to graph...
-    ForceAlgorithmApplier.bestSolution.andThen(nm_mca_da_ba -> {
-      Mapper<INode, PointD> nodePositions = nm_mca_da_ba.a;
+    if (ForceAlgorithmApplier.bestSolution != null) {
+      Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.bestSolution.a;
       ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-    });
-    Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
-            minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
-    String optimizedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
+    }
+    Optional<Tuple3<LineSegment, LineSegment, Intersection>>
+            minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph);
+    String optimizedAngle = minAngleOpt.map(m -> m.c.angle.toString()).orElse("no crossings");
     // ... grid it...
     GridPositioning.gridGraph(graph);
     long endTime = System.nanoTime();
     // ... get metrics...
-    minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph, Maybe.nothing());
+    minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph);
     double area = computeArea(graph);
-    // (Maybe (LS, LS, I) --fmap--> Maybe String --getDefault--> String)
-    String griddedAngle = minAngleOpt.fmap(m -> m.c.angle.toString()).getDefault("no crossings");
+    String griddedAngle = minAngleOpt.map(m -> m.c.angle.toString()).orElse("no crossings");
     // ... export the computed layout...
     view.exportToGraphML(Files.newOutputStream(outFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE));
     // ... show metrics...

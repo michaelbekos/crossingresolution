@@ -1,5 +1,6 @@
 package layout.algo;
 
+import com.sun.istack.internal.Nullable;
 import util.*;
 
 import java.util.*;
@@ -13,17 +14,18 @@ public class GeneticAlgorithm<T> implements Runnable {
   public static Random rand = new Random();
 
   public List<T> instances = new LinkedList<T>();
-  public Maybe<Integer> desiredInstanceCount;
+  public int desiredInstanceCount;
   Comparator<T> scoring;
   Function<List<T>, T> generator;
   Function<T, T> advance;
   public boolean running = false;
-  public Maybe<Consumer<T>> bestChanged = Maybe.nothing();
+  @Nullable
+  public Consumer<T> bestChanged;
 
   /* GeneticAlgorithm: keeps a set of instances T. Each iteration, Ts live/advance, some die, some reproduce.
    * adv:       Function to advance a T (~ "time passes" for each t ∈ T)
    * sf:        Comparator to score Ts. Is used to sort all instances in the current generation and determine the worst instances.
-   * desiredIC: An integer specifying how many instances should be alive at any time. If none is supplied, the algorithm just keeps the set of instances at a constant size.
+   * desiredIC: An integer specifying how many instances should be alive at any time. If zero is supplied, the algorithm just keeps the set of instances at a constant size.
    * gen:       A function to generate new instances. Is either:
    *            - a function taking a T and producing a mutated T out of that
    *            - a function taking all Ts and mutating some to produce a new T
@@ -32,11 +34,11 @@ public class GeneticAlgorithm<T> implements Runnable {
    * All above functions should be relatively pure.
    */
 
-  public GeneticAlgorithm(Function<T, T> adv, Comparator<T> sf, Maybe<Integer> desiredIC, Either<Function<T, T>, Function<List<T>, T>> gen){
+  public GeneticAlgorithm(Function<T, T> adv, Comparator<T> sf, int desiredIC, Either<Function<T, T>, Function<List<T>, T>> gen){
     advance = adv;
     scoring = sf;
     desiredInstanceCount = desiredIC;
-    desiredInstanceCount.andThen(di -> instances = new ArrayList<>(di));
+    instances = new ArrayList<>(desiredInstanceCount);
     generator = gen.match(
       left -> (l -> {
         int listElemIndex = rand.nextInt(l.size());
@@ -56,11 +58,11 @@ public class GeneticAlgorithm<T> implements Runnable {
   }
   /* assertInstances: produce instances until at least desiredInstanceCount is alive. Check if at least one instance exists. */
   public void assertInstances(){
-    desiredInstanceCount.andThen(ic -> {
-      while(instances.size() < ic){
+    if (desiredInstanceCount > 0) {
+      while(instances.size() < desiredInstanceCount){
         newInstance();
       }
-    });
+    }
     if(instances.isEmpty()){
       throw new IllegalStateException();
     }
@@ -89,10 +91,10 @@ public class GeneticAlgorithm<T> implements Runnable {
   }
   /* notifyChanged: If there is a handler for nextInstance, produce to it the best instance. */
   private void notifyChanged(){
-    bestChanged.andThen(f -> {
+    if (bestChanged != null) {
       Collections.sort(instances, scoring);
-      f.accept(instances.get(instances.size() - 1));
-    });
+      bestChanged.accept(instances.get(instances.size() - 1));
+    }
   }
   /* runRounds: run the specified number of rounds, i.e. iterate(). */
   public void runRounds(int count){
