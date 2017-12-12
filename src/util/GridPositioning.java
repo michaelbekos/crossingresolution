@@ -158,7 +158,7 @@ public class GridPositioning {
      * @return gridded node positions
      */
     public static Mapper<INode, PointD> respectiveNodeGrid(IGraph g, Mapper<INode, PointD> nodePos){
-        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(g, nodePos);
+        Optional<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(g, nodePos);
 
         List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(g, nodePos);
         int crossingCount = crossings.size();
@@ -166,7 +166,7 @@ public class GridPositioning {
         Mapper<INode, PointD> temp = GridPositioning.getGridNodes(g, nodePos);
 
         // no crossings exist, just do simple gridding
-        if(!minCrossing.hasValue()) { return temp; }
+        if(!minCrossing.isPresent()) { return temp; }
 
         List<Tuple2<PointD, Double>> goodGridPoints = new ArrayList<>();
 
@@ -239,12 +239,12 @@ public class GridPositioning {
     private static Mapper<INode, PointD> respectiveCrossingGrid(IGraph graph, Mapper<INode, PointD> nodePos){
         // take minimum crossing
         // try not to break it
-        Maybe<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(graph, nodePos);
+        Optional<Tuple3<LineSegment, LineSegment, Intersection>> minCrossing = MinimumAngle.getMinimumAngleCrossing(graph, nodePos);
         List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = MinimumAngle.getCrossings(graph, nodePos);
         int crossingSize = crossings.size();
         List<Tuple2<INode, PointD>> griddedCrossingNodes;
         Set<INode> crossingNodes = new HashSet<>();
-        if(minCrossing.hasValue()) {
+        if(minCrossing.isPresent()) {
             // adding the nodes that are contained in minimum crossing
             crossingNodes.add(minCrossing.get().a.n1);
             crossingNodes.add(minCrossing.get().a.n2);
@@ -285,7 +285,7 @@ public class GridPositioning {
         // compute the intersection between all line segments in l1 and l2
         for(LineSegment l: l1){
             for(LineSegment j: l2){
-                l.intersects(j,true).andThen(i -> {
+                l.intersects(j,true).ifPresent(i -> {
                     coordCrossing.add(new Tuple3<>(l,j, i.angle));
                 });
             }
@@ -411,11 +411,8 @@ public class GridPositioning {
     public static Double getResultingAngle(IGraph graph, Mapper<INode, PointD> map, INode node, PointD p) {
         map.setValue(node, p);
 
-        Maybe<Double> tempAngle = MinimumAngle.getMinimumAngle(graph, map);
-        if (tempAngle.hasValue()) {
-            return tempAngle.get();
-        }
-        return 0.0;
+        Optional<Double> tempAngle = MinimumAngle.getMinimumAngle(graph, map);
+        return tempAngle.orElse(0.0);
     }
 
     /**

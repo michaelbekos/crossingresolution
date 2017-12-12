@@ -4,12 +4,12 @@ import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
 import util.DisplayMessagesGui;
-import util.Maybe;
 import util.Tuple3;
 import util.graph2d.Intersection;
 import util.graph2d.LineSegment;
 
 import javax.swing.*;
+import java.util.Optional;
 
 public class MinimumAngleMonitor {
   private IGraph graph;
@@ -30,10 +30,10 @@ public class MinimumAngleMonitor {
 
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel) {
     MinimumAngle.resetHighlighting(graph);
-    Maybe<Tuple3<LineSegment, LineSegment, Intersection>>
+    Optional<Tuple3<LineSegment, LineSegment, Intersection>>
         minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
-    Maybe<String> labText = minAngleCr.fmap(cr -> {
+    Optional<String> labText = minAngleCr.map(cr -> {
       String text = DisplayMessagesGui.createMinimumAngleMsg(cr);
 
       MinimumAngle.resetHighlighting(graph);
@@ -44,7 +44,7 @@ public class MinimumAngleMonitor {
       return text;
     });
 
-    infoLabel.setText(labText.getDefault("Graph has no crossings."));
+    infoLabel.setText(labText.orElse("Graph has no crossings."));
   }
 
   void registerGraphChangedListeners() {

@@ -28,15 +28,15 @@ public abstract class InitGeneticAlgorithm {
                       return faa;
                   }),
                   ((faa1, faa2) -> {
-                      Maybe<Double> ma1 = faa1.cMinimumAngle.getMinimumAngle(graph, faa1.nodePositions),
-                          ma2 = faa2.cMinimumAngle.getMinimumAngle(graph, faa2.nodePositions);
-                      if(ma1.hasValue() && !ma2.hasValue()){
+                      Optional<Double> ma1 = faa1.cMinimumAngle.getMinimumAngle(graph, faa1.nodePositions);
+                      Optional<Double> ma2 = faa2.cMinimumAngle.getMinimumAngle(graph, faa2.nodePositions);
+                      if(ma1.isPresent() && !ma2.isPresent()){
                           return -1;
                       }
-                      if(!ma1.hasValue() && ma2.hasValue()){
+                      if(!ma1.isPresent() && ma2.isPresent()){
                           return 1;
                       }
-                      if(!ma1.hasValue() && !ma2.hasValue()){
+                      if(!ma1.isPresent() && !ma2.isPresent()){
                           return 0;
                       }
                       Double a1 = ma1.get(),

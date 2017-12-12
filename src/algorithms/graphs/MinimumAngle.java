@@ -24,22 +24,21 @@ public class MinimumAngle {
     protected MinimumAngleHelper(){ }
     
     // return the worst angle
-    public Maybe<Double> getMinimumAngle(IGraph graph, @Nullable IMapper<INode, PointD> np){
-      // Maybe (LS, LS, I) --fmap--> Maybe Double
-      return this.getMinimumAngleCrossing(graph, np).fmap(i -> i.c.angle);
+    public Optional<Double> getMinimumAngle(IGraph graph, @Nullable IMapper<INode, PointD> np){
+      return this.getMinimumAngleCrossing(graph, np).map(i -> i.c.angle);
     }
 
-    Maybe<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
-      return this.getMinimumAngleCrossingForNode(graph, node, nodePositions).fmap(i -> i.c.angle);
+    Optional<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
+      return this.getMinimumAngleCrossingForNode(graph, node, nodePositions).map(i -> i.c.angle);
     }
 
-    private Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossingForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
+    private Optional<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossingForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
       if (nodePositions == null) {
         nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
       }
       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsForNode(graph, node, nodePositions);
 
-      return Maybe.fromOptional(crossings.stream().min(Comparator.comparingDouble(crossing -> crossing.c.angle)));
+      return crossings.stream().min(Comparator.comparingDouble(crossing -> crossing.c.angle));
     }
 
     /**
@@ -56,21 +55,21 @@ public class MinimumAngle {
           .map(e -> new LineSegment(e, nodePositions))
           .flatMap(s1 -> neighborEdges.stream()
               .map(s2 -> new Tuple3<>(s1, s2, s1.intersects(s2, true)))
-              .filter(intersection -> intersection.c.hasValue())
+              .filter(intersection -> intersection.c.isPresent())
               .map(intersection -> new Tuple3<>(intersection.a, intersection.b, intersection.c.get())))
           .collect(Collectors.toList());
     }
 
     // return the worst crossing, if any
-    public Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
+    public Optional<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
       List<Tuple3<LineSegment, LineSegment, Intersection>> crossings = getCrossingsSorted(graph, np);
       if(crossings.size() > 0){
         Tuple3<LineSegment, LineSegment, Intersection> crossing = crossings.get(0);
         //highlightCrossing(crossing);
-        return Maybe.just(crossing);
+        return Optional.of(crossing);
       }
       else{
-        return Maybe.nothing();
+        return Optional.empty();
       } 
     }
 
@@ -95,19 +94,19 @@ public class MinimumAngle {
    * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   // and now for some wrappers (or rappers?)
-  public static Maybe<Double> getMinimumAngle(IGraph graph, @Nullable IMapper<INode, PointD> np){
+  public static Optional<Double> getMinimumAngle(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getMinimumAngle(graph, np);
   }
 
-  public static Maybe<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
+  public static Optional<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
     return m.getMinimumAngleForNode(graph, node, nodePositions);
   }
 
-  public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph) {
+  public static Optional<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph) {
     return getMinimumAngleCrossing(graph, null);
   }
 
-  public static Maybe<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
+  public static Optional<Tuple3<LineSegment, LineSegment, Intersection>> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){
     return m.getMinimumAngleCrossing(graph, np);
   }
 
@@ -122,26 +121,31 @@ public class MinimumAngle {
 
   // variant: use parallel map with maybe return values.
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallel(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
-    return Util.distinctPairs(graph.getEdges()).parallel().map(e1e2 -> {
-        IEdge e1 = e1e2.a,
-              e2 = e1e2.b;
-        LineSegment l1 = new LineSegment(e1, nodePositions),
-                    l2 = new LineSegment(e2, nodePositions);
-        Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
-        return i.bind(i1 -> Maybe.just(new Tuple3<LineSegment, LineSegment, Intersection>(l1, l2, i1)));
-      }).filter(m -> m.hasValue())
-      .map(m -> m.get()).collect(Collectors.toList());
+    return Util.distinctPairs(graph.getEdges())
+        .parallel()
+        .map(e1e2 -> {
+          IEdge e1 = e1e2.a;
+          IEdge e2 = e1e2.b;
+          LineSegment l1 = new LineSegment(e1, nodePositions);
+          LineSegment l2 = new LineSegment(e2, nodePositions);
+          Optional<Intersection> i = l1.intersects(l2, edgesOnly);
+          return i.map(i1 -> new Tuple3<>(l1, l2, i1));
+        }).filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
   }
 
   // variant: use parallel flatmap, also maybes.
   public static List<Tuple3<LineSegment, LineSegment, Intersection>> getCrossingsParallelFlat(IGraph graph, boolean edgesOnly, IMapper<INode, PointD> nodePositions){
-    return Util.distinctPairs(graph.getEdges()).parallel().flatMap(e1e2 -> {
-        IEdge e1 = e1e2.a,
-              e2 = e1e2.b;
-        LineSegment l1 = new LineSegment(e1, nodePositions),
-                    l2 = new LineSegment(e2, nodePositions);
-        Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
-        return i.bind(i1 -> Maybe.just(new Tuple3<LineSegment, LineSegment, Intersection>(l1, l2, i1))).stream();
+    return Util.distinctPairs(graph.getEdges())
+        .parallel()
+        .flatMap(e1e2 -> {
+        IEdge e1 = e1e2.a;
+          IEdge e2 = e1e2.b;
+          LineSegment l1 = new LineSegment(e1, nodePositions);
+          LineSegment l2 = new LineSegment(e2, nodePositions);
+          Optional<Intersection> i = l1.intersects(l2, edgesOnly);
+          return i.map(intersection -> Stream.of(new Tuple3<>(l1, l2, intersection))).orElseGet(Stream::empty);
       }).collect(Collectors.toList());
   }
 
@@ -154,10 +158,10 @@ public class MinimumAngle {
               e2 = e1e2.b;
         LineSegment l1 = new LineSegment(e1, nodePositions),
                     l2 = new LineSegment(e2, nodePositions);
-        Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
-        i.andThen(i1 -> {
+        Optional<Intersection> i = l1.intersects(l2, edgesOnly);
+        i.ifPresent(i1 -> {
           synchronized(res){
-            res.add(new Tuple3<LineSegment, LineSegment, Intersection>(l1, l2, i1));
+            res.add(new Tuple3<>(l1, l2, i1));
           }
         });
       });
@@ -175,8 +179,8 @@ public class MinimumAngle {
         // same edge
         if(seenEdges.contains(e2)) continue;
         LineSegment l2 = new LineSegment(e2, nodePositions);
-        Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
-        if(i.hasValue()){
+        Optional<Intersection> i = l1.intersects(l2, edgesOnly);
+        if(i.isPresent()){
           Intersection i1 = i.get();
           res.add(new Tuple3<>(l1, l2, i1));
         }
@@ -249,8 +253,8 @@ public class MinimumAngle {
       // do not consider e1 twice
       if(seenEdges.contains(e2)) continue;
       LineSegment l2 = new LineSegment(e2, nodePositions);
-      Maybe<Intersection> i = l1.intersects(l2, edgesOnly);
-      if(i.hasValue()){
+      Optional<Intersection> i = l1.intersects(l2, edgesOnly);
+      if(i.isPresent()){
         Intersection i1 = i.get();
         res.add(new Tuple3<>(l1,l2,i1));
       }

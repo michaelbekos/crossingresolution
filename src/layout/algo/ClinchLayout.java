@@ -6,9 +6,11 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import util.Maybe;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 public class ClinchLayout implements ILayout {
   private static final double INITIAL_STEP_SIZE = 2.5;
@@ -163,7 +165,7 @@ public class ClinchLayout implements ILayout {
   }
 
   private double getMinimumAngleForNode(Mapper<INode, PointD> positions, INode node) {
-    return MinimumAngle.getMinimumAngleForNode(graph, node, positions).getDefault(Double.POSITIVE_INFINITY);
+    return MinimumAngle.getMinimumAngleForNode(graph, node, positions).orElse(Double.POSITIVE_INFINITY);
   }
 
   private PointD stepInDirection(PointD oldPosition, PointD direction, double stepSize) {

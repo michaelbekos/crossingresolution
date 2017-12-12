@@ -7,6 +7,8 @@ import com.yworks.yfiles.algorithms.YRectangle;
 import com.yworks.yfiles.graph.*;
 import util.*;
 
+import java.util.Optional;
+
 public class LineSegment implements IPlaneObject {
   YRectangle bb;
   public PointD p1, p2, ve;
@@ -76,28 +78,28 @@ public class LineSegment implements IPlaneObject {
    * @param skipEqualEndpoints - true if endpoints can be equal
    * @return Return Intersection of there is one
    */
-  public Maybe<Intersection> intersects(LineSegment o, boolean skipEqualEndpoints){
+  public Optional<Intersection> intersects(LineSegment o, boolean skipEqualEndpoints){
     PointD p3, p4;
     p3 = o.p1;
     p4 = o.p2;
     // skip equal endpoints
     if(skipEqualEndpoints &&  
       (p1.equals(p3) || p1.equals(p4) ||
-       p2.equals(p3) || p2.equals(p4))) return Maybe.nothing();
+       p2.equals(p3) || p2.equals(p4))) return Optional.empty();
     // http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
     PointD r = ve;
     PointD s = o.ve;
     double rTimesS = crossProduct(r, s);
     // lines parallel
-    if(rTimesS == 0) return Maybe.nothing();
+    if(rTimesS == 0) return Optional.empty();
     double t, u;
     t = crossProduct(PointD.subtract(p3, p1), s) / rTimesS;
     u = crossProduct(PointD.subtract(p3, p1), r) / rTimesS;
     // intersection not on line segments
-    if(t < 0 || u < 0 || t > 1 || u > 1) return Maybe.nothing();
+    if(t < 0 || u < 0 || t > 1 || u > 1) return Optional.empty();
     PointD crossingPoint = PointD.add(p1, PointD.times(t, r));
     Double crossingsAngle = Math.toDegrees(Math.acos(PointD.scalarProduct(r, s) / (r.getVectorLength() * s.getVectorLength())));
-    return Maybe.just(new Intersection(crossingPoint, crossingsAngle));
+    return Optional.of(new Intersection(crossingPoint, crossingsAngle));
   }
 
   // compute cross product of two points

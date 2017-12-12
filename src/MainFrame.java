@@ -11,7 +11,6 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithmApplier;
 import layout.algo.GeneticAlgorithm;
-import util.Maybe;
 import util.Tuple4;
 import util.interaction.ThresholdSliders;
 
@@ -23,6 +22,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Set;
 
 import static layout.algo.ForceAlgorithmApplier.bestSolution;
@@ -352,11 +352,11 @@ public class MainFrame extends JFrame {
             }
 
             Mapper<INode, PointD> nodePositions = bestSolution.a;
-            Maybe<Double> minCrossingAngle = bestSolution.b;
+            Optional<Double> minCrossingAngle = bestSolution.b;
             Double[] mods = bestSolution.c;
             Boolean[] switchs = bestSolution.d;
             ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-            String msg = minCrossingAngle.fmap(d -> "Minimum crossing angle: " + d.toString()).getDefault("No crossings!");
+            String msg = minCrossingAngle.map(d -> "Minimum crossing angle: " + d.toString()).orElse("No crossings!");
             msg += "\n";
             msg += "Modifiers:\n";
             for(int i = 0; i < mods.length; i++){

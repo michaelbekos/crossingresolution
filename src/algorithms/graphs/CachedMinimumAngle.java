@@ -21,10 +21,6 @@ public class CachedMinimumAngle extends MinimumAngle.MinimumAngleHelper {
     cache_getCrossings = null;
   }
   
-  /* Cache ≃ Maybe
-   * - Valid(v) ∼ Just(v)
-   * - Invalid  ∼ Nothing
-   */
   @Nullable
   List<Tuple3<LineSegment, LineSegment, Intersection>> cache_getCrossings;
 
