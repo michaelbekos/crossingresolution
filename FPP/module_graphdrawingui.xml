@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_graphdrawingui" default="compile.module.graphdrawingui">
+  <dirname property="module.graphdrawingui.basedir" file="${ant.file.module_graphdrawingui}"/>
+  
+  <property name="module.jdk.home.graphdrawingui" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.graphdrawingui" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.graphdrawingui" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.graphdrawingui" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  
+  <property name="graphdrawingui.output.dir" value="${module.graphdrawingui.basedir}/out/production/GraphDrawingUI"/>
+  <property name="graphdrawingui.testoutput.dir" value="${module.graphdrawingui.basedir}/out/test/GraphDrawingUI"/>
+  
+  <path id="graphdrawingui.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="graphdrawingui.module.production.classpath">
+    <path refid="${module.jdk.classpath.graphdrawingui}"/>
+    <path refid="library.y.classpath"/>
+    <path refid="library.graphml.classpath"/>
+    <path refid="library.absolutelayout.classpath"/>
+    <path refid="library.awtextra.classpath"/>
+  </path>
+  
+  <path id="graphdrawingui.runtime.production.module.classpath">
+    <pathelement location="${graphdrawingui.output.dir}"/>
+    <path refid="library.y.classpath"/>
+    <path refid="library.graphml.classpath"/>
+    <path refid="library.absolutelayout.classpath"/>
+    <path refid="library.awtextra.classpath"/>
+  </path>
+  
+  <path id="graphdrawingui.module.classpath">
+    <path refid="${module.jdk.classpath.graphdrawingui}"/>
+    <pathelement location="${graphdrawingui.output.dir}"/>
+    <path refid="library.y.classpath"/>
+    <path refid="library.graphml.classpath"/>
+    <path refid="library.absolutelayout.classpath"/>
+    <path refid="library.awtextra.classpath"/>
+  </path>
+  
+  <path id="graphdrawingui.runtime.module.classpath">
+    <pathelement location="${graphdrawingui.testoutput.dir}"/>
+    <pathelement location="${graphdrawingui.output.dir}"/>
+    <path refid="library.y.classpath"/>
+    <path refid="library.graphml.classpath"/>
+    <path refid="library.absolutelayout.classpath"/>
+    <path refid="library.awtextra.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.graphdrawingui">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.graphdrawingui">
+    <patternset refid="excluded.from.module.graphdrawingui"/>
+  </patternset>
+  
+  <path id="graphdrawingui.module.sourcepath">
+    <dirset dir="${module.graphdrawingui.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.graphdrawingui" depends="compile.module.graphdrawingui.production,compile.module.graphdrawingui.tests" description="Compile module GraphDrawingUI"/>
+  
+  <target name="compile.module.graphdrawingui.production" depends="register.custom.compilers" description="Compile module GraphDrawingUI; production classes">
+    <mkdir dir="${graphdrawingui.output.dir}"/>
+    <javac2 destdir="${graphdrawingui.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.graphdrawingui}/javac">
+      <compilerarg line="${compiler.args.graphdrawingui}"/>
+      <bootclasspath refid="graphdrawingui.module.bootclasspath"/>
+      <classpath refid="graphdrawingui.module.production.classpath"/>
+      <src refid="graphdrawingui.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.graphdrawingui"/>
+    </javac2>
+    
+    <copy todir="${graphdrawingui.output.dir}">
+      <fileset dir="${module.graphdrawingui.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.graphdrawingui.tests" depends="register.custom.compilers,compile.module.graphdrawingui.production" description="compile module GraphDrawingUI; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.graphdrawingui" description="cleanup module">
+    <delete dir="${graphdrawingui.output.dir}"/>
+    <delete dir="${graphdrawingui.testoutput.dir}"/>
+  </target>
+</project>
