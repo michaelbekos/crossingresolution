@@ -1,2 +1,2 @@
 #!/usr/bin/fish
-javac -cp "./yfiles-for-java.jar:." **.java
+javac -XDignore.symbol.file -cp "./yfiles-for-java.jar:." **.java
