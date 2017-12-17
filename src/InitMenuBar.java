@@ -1018,7 +1018,7 @@ public class InitMenuBar {
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        minimumAngleMonitor.showMinimumAngle(graph, view, infoLabel);
+        minimumAngleMonitor.showMinimumAngle(graph, view, infoLabel, true);
     }
 
     private void overlappingNodesMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
