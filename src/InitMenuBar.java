@@ -80,6 +80,7 @@ public class InitMenuBar {
         this.graphSnapContext = graphSnapContext;
         this.gridVisualCreator = gridVisualCreator;
         this.minimumAngleMonitor = minimumAngleMonitor;
+        this.fileNamePathFolder = "contest-2017";
     }
 
 
@@ -602,11 +603,8 @@ public class InitMenuBar {
                         numVertices = removedVertices.componentStack.size();
                     }
                 } catch (NumberFormatException exc) {
-                    if (useVertices.isSelected()) {
-                        numVertices = removedVertices.size();
-                    } else if (useComponents.isSelected()) {
-                        numVertices = removedVertices.componentStack.size();
-                    }
+                    JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                    numVertices = 0;
                 }
                 finally {
                     this.removedVertices = GraphOperations.reinsertVertices(this.graph, useVertices.isSelected(), numVertices, this.removedVertices);

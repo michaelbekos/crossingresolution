@@ -118,41 +118,28 @@ public class GraphOperations {
         INode[] reinsertedNodes = new INode[numVertices];
         for (int i = 0; i < numVertices; i++) {
             INode removedNode = removedVertices.pop().vertex;
-            reinsertedNodes[i] =  g.createNode(removedNode.getLayout().toRectD(), removedNode.getStyle(), removedNode.getTag());
+            reinsertedNodes[(numVertices - 1) - i] =  g.createNode(removedNode.getLayout().toPointD(), removedNode.getStyle(), removedNode.getTag());
         }
-        int uc = 0;
-        for (INode u : reinsertedNodes) { //todo: fix, create map for nodes so static lookup based on tag
+
+        Mapper<Integer, INode> tagMap = new Mapper<>(new WeakHashMap<>());
+        for (INode n : g.getNodes()) {
+            tagMap.setValue(Integer.parseInt(n.getTag().toString()), n);
+        }
+        for (INode u : reinsertedNodes) {
             int tag = Integer.parseInt(u.getTag().toString());
             for (int i = 0; i < removedVertices.edgeList.length; i++) {
                 if (tag == removedVertices.edgeList[i][0]) {    //u = source node
-                    for (INode n : g.getNodes()) {  //find node with tag
-                        breaklabel1:
-                        if (Integer.parseInt(n.getTag().toString()) == removedVertices.edgeList[i][1]) {
-                            for (int j = uc; j >= 0; --j) {  //already added edge (no duplicate edges)
-                                if (reinsertedNodes[j].equals(n)) {
-                                    break breaklabel1;
-                                }
-                            }
-                            g.createEdge(u, n);
-                            break;
-                        }
+                    INode target = tagMap.getValue(removedVertices.edgeList[i][1]);  //find target node with tag
+                    if (g.getEdge(u, target) == null){
+                        g.createEdge(u, target);
                     }
                 } else if (tag == removedVertices.edgeList[i][1]) { //u = target node
-                    for (INode n : g.getNodes()) {  //find node with tag
-                        breaklabel2:
-                        if (Integer.parseInt(n.getTag().toString()) == removedVertices.edgeList[i][0]) {
-                            for (int j = uc; j >= 0; --j) {  //already added edge (no duplicate edges)
-                                if (reinsertedNodes[j].equals(n)) {
-                                    break breaklabel2;
-                                }
-                            }
-                            g.createEdge(n, u);
-                            break;
-                        }
+                    INode source = tagMap.getValue(removedVertices.edgeList[i][0]);  //find source node with tag
+                    if (g.getEdge(source, u) == null ){
+                        g.createEdge(source, u);
                     }
                 }
             }
-            uc++;
         }
 
         return removedVertices;
