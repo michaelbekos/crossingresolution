@@ -28,6 +28,7 @@ public class ClinchLayout implements ILayout {
   private Mapper<INode, Collection<Sample>> sampleDirections;
   private Mapper<INode, Double> stepSizes;
   private RectD boundingBox;
+  private PointD lineDirection;
 
   public ClinchLayout(IGraph graph, PointD anchor1, PointD anchor2, Set<INode> fixNodes) {
     this.graph = graph;
@@ -78,7 +79,7 @@ public class ClinchLayout implements ILayout {
   private Mapper<INode, Collection<Sample>> preComputeSamples() {
     Mapper<INode, Collection<Sample>> projections = new Mapper<>(new WeakHashMap<>());
 
-    PointD lineDirection = PointD.subtract(anchor2, anchor1).getNormalized();
+    lineDirection = PointD.subtract(anchor2, anchor1).getNormalized();
 
     Collection<Sample> leftRotations = new ArrayList<>();
     Collection<Sample> rightRotations = new ArrayList<>();
@@ -127,6 +128,7 @@ public class ClinchLayout implements ILayout {
         continue;
       }
 
+      double leftOrRight = Math.signum(crossProduct(PointD.subtract(oldPosition, anchor1), lineDirection));
       double minAngle = getMinimumAngleForNode(positions, node);
       final Double stepSize = stepSizes.getValue(node);
       Collection<Sample> samples = sampleDirections.getValue(node);
@@ -139,6 +141,8 @@ public class ClinchLayout implements ILayout {
             sample.minimumAngle = getMinimumAngleForNode(positions, node);
           })
           .filter(sample -> boundingBox.contains(sample.position))
+          // check if sample is still on the same side of the line
+          .filter(sample -> Math.signum(crossProduct(PointD.subtract(sample.position, anchor1), lineDirection)) == leftOrRight)
           .max((s1, s2) -> {
             if (Math.abs(s1.minimumAngle - s2.minimumAngle) < COMPARISON_EPSILON) {
               return Double.compare(distanceTo90Degrees(s1.angle), distanceTo90Degrees(s2.angle));
