@@ -1,6 +1,7 @@
 package layout.algo;
 
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.graph.ICompoundEdit;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
@@ -25,6 +26,11 @@ public class IGraphLayoutExecutor {
 
   public void run() {
     new Thread(() -> {
+      ICompoundEdit compoundEdit;
+      synchronized (graph) {
+        compoundEdit = graph.beginEdit("Undo layout", "Redo layout");
+      }
+
       layout.init();
 
       for (int i = 0; i < maxIterations; i++) {
@@ -42,6 +48,10 @@ public class IGraphLayoutExecutor {
 
       updateProgressBar(0);
       updateView(layout.getNodePositions());
+
+      synchronized (graph) {
+        compoundEdit.commit();
+      }
     }).start();
   }
 
