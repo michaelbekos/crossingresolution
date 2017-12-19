@@ -131,7 +131,6 @@ public class ClinchLayout implements ILayout {
       final Double stepSize = stepSizes.getValue(node);
       Collection<Sample> samples = sampleDirections.getValue(node);
 
-      @SuppressWarnings("ConstantConditions")
       Optional<Sample> bestSample = samples.stream()
           .peek(sample -> {
             PointD newPosition = stepInDirection(oldPosition, sample.direction, stepSize);
@@ -177,8 +176,8 @@ public class ClinchLayout implements ILayout {
   }
 
   private static class Sample {
-    PointD direction;
-    double angle;
+    final PointD direction;
+    final double angle;
     double minimumAngle;
     PointD position;
 
