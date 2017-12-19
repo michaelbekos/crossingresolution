@@ -10,6 +10,7 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithmApplier;
 import layout.algo.GeneticAlgorithm;
+import util.GraphOperations;
 import util.Maybe;
 import util.Tuple4;
 import util.interaction.ThresholdSliders;
@@ -31,6 +32,9 @@ import java.util.function.Consumer;
  */
 public class MainFrame extends JFrame {
 
+	/* Box related issue*/
+	private static double boxsize= 10000;
+	
     /* Graph Drawing related objects */
     private GraphComponent view;
     private IGraph graph;
@@ -371,8 +375,13 @@ public class MainFrame extends JFrame {
         cSidePanel.gridx = 0;
         JButton showForceAlgoState = new JButton("Show state");
         showForceAlgoState.addActionListener(e -> faa.andThen(ForceAlgorithmApplier::showNodePositions));
-        sidePanel.add(showForceAlgoState, cSidePanel);
-
+        sidePanel.add(showForceAlgoState, cSidePanel);    
+        
+        JButton scaleToBox = new JButton("Scale me to the box");
+        cSidePanel.gridx = 1;
+        sidePanel.add(scaleToBox, cSidePanel);
+        scaleToBox.addActionListener(e -> scalingToBox());
+        scaleToBox.setSelected(false);
 
         cSidePanel.gridy = sidePanelNextY++;
 
@@ -540,6 +549,25 @@ public class MainFrame extends JFrame {
             minimumAngleMonitor.removeGraphChangedListeners();
         }
     }
+    
+    private void scalingToBox(){
+        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+        double maxX=0, maxY=0, minY=boxsize;
+        for(INode u : graph.getNodes()){
+        	if(u.getLayout().getCenter().getX()>maxX){
+        		maxX=u.getLayout().getCenter().getX();
+        	}
+        	if(u.getLayout().getCenter().getY()<minY){
+        		minY=u.getLayout().getCenter().getY();
+        	}
+        	if(u.getLayout().getCenter().getY()>maxY){
+        		maxY=u.getLayout().getCenter().getY();
+        	}
+        }
+        nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, Math.min((int)(boxsize/maxX), (int)(boxsize/maxY)));
+        this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.view.fitGraphBounds();
+        }    
 
     private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
         this.graphEditorInputMode.setCreateNodeAllowed((evt.getStateChange() == ItemEvent.DESELECTED));     //no new nodes
