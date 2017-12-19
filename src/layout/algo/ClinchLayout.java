@@ -9,10 +9,7 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import util.BoundingBox;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class ClinchLayout implements ILayout {
   private static final double INITIAL_STEP_SIZE = 2.5;
@@ -135,7 +132,7 @@ public class ClinchLayout implements ILayout {
       Collection<Sample> samples = sampleDirections.getValue(node);
 
       @SuppressWarnings("ConstantConditions")
-      Sample bestSample = samples.stream()
+      Optional<Sample> bestSample = samples.stream()
           .peek(sample -> {
             PointD newPosition = stepInDirection(oldPosition, sample.direction, stepSize);
             positions.setValue(node, newPosition);
@@ -149,11 +146,10 @@ public class ClinchLayout implements ILayout {
             } else {
               return Double.compare(s1.minimumAngle, s2.minimumAngle);
             }
-          })
-          .get();
+          });
 
-      if (bestSample.minimumAngle >= minAngle) {
-        positions.setValue(node, bestSample.position);
+      if (bestSample.isPresent() && bestSample.get().minimumAngle >= minAngle) {
+        positions.setValue(node, bestSample.get().position);
         stepSizes.setValue(node, Math.min(stepSize * STEP_SIZE_MULTIPLIER, distanceToLine - stepSize));
         changed = true;
       } else {
