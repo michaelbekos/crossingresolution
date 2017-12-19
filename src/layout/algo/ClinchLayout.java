@@ -3,9 +3,11 @@ package layout.algo;
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.Matrix2D;
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import util.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +30,7 @@ public class ClinchLayout implements ILayout {
   private Mapper<INode, PointD> positions;
   private Mapper<INode, Collection<Sample>> sampleDirections;
   private Mapper<INode, Double> stepSizes;
+  private RectD boundingBox;
 
   public ClinchLayout(IGraph graph, PointD anchor1, PointD anchor2, Set<INode> fixNodes) {
     this.graph = graph;
@@ -41,6 +44,7 @@ public class ClinchLayout implements ILayout {
     positions = initPositions();
     stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
+    boundingBox = BoundingBox.from(positions);
   }
 
 
@@ -138,6 +142,7 @@ public class ClinchLayout implements ILayout {
             sample.position = newPosition;
             sample.minimumAngle = getMinimumAngleForNode(positions, node);
           })
+          .filter(sample -> boundingBox.contains(sample.position))
           .max((s1, s2) -> {
             if (Math.abs(s1.minimumAngle - s2.minimumAngle) < COMPARISON_EPSILON) {
               return Double.compare(distanceTo90Degrees(s1.angle), distanceTo90Degrees(s2.angle));
