@@ -14,11 +14,11 @@ public class MinimumAngleMonitor {
   private JLabel infoLabel;
   private GraphComponent view;
 
-  private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel);
-  private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o, EdgeEventArgs) -> showMinimumAngle(graph, view, infoLabel);
-  private IEventListener<ItemEventArgs<INode>> minimumAngleNodeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel);
-  private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> showMinimumAngle(graph, view, infoLabel);
-  private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> showMinimumAngle(graph, view, infoLabel);
+  private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
+  private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o, EdgeEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
+  private IEventListener<ItemEventArgs<INode>> minimumAngleNodeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
+  private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
+  private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> showMinimumAngle(graph, view, infoLabel, false);
 
   MinimumAngleMonitor(GraphComponent view, IGraph graph, JLabel infoLabel) {
     this.graph = graph;
@@ -26,7 +26,7 @@ public class MinimumAngleMonitor {
     this.view = view;
   }
 
-  void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel) {
+  void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
     MinimumAngle.resetHighlighting(graph);
     Optional<Intersection>
         minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
@@ -34,6 +34,9 @@ public class MinimumAngleMonitor {
     Optional<String> labText = minAngleCr.map(cr -> {
       String text = DisplayMessagesGui.createMinimumAngleMsg(cr);
 
+      if (viewCenter) {
+        view.setCenter(cr.intersectionPoint);
+      }
       MinimumAngle.resetHighlighting(graph);
       MinimumAngle.highlightCrossing(cr);
 

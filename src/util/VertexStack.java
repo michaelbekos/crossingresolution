@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class VertexStack{
     public ArrayList<Vertex> stack;
-    public int[][] edgeList;
+    public final int[][] edgeList;
     public ArrayList<Integer> componentStack;
     private IGraph g;
 

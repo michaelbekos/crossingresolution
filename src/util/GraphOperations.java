@@ -12,12 +12,12 @@ public class GraphOperations {
 	private static Comparator<INode> byPortSize = Comparator.<INode>comparingInt(p -> p.getPorts().size());
 
     /**
-     * Removes numVertices number of  nodes with the highest degree from graph g
+     * Removes numVertices number of nodes with the highest or lowest degree from graph g
      * @param g
      * @param numVertices
      * @return
      */
-    public static VertexStack removeVertices(IGraph g, int numVertices, ISelectionModel<INode> selection, VertexStack removedVertices) {
+    public static VertexStack removeVertices(IGraph g, boolean removeHighestDegree, int numVertices, ISelectionModel<INode> selection, VertexStack removedVertices) {
 
         int tagNum = 0;
         for (INode u : g.getNodes()) {
@@ -26,8 +26,11 @@ public class GraphOperations {
             }
             tagNum++;
         }
-
+        if (numVertices == 0) {
+            return removedVertices;
+        }
         INode[] maxDegVertex = new INode[numVertices];
+
 
         if (selection != null) {
             int i = 0;
@@ -46,15 +49,26 @@ public class GraphOperations {
                     break;
                 }
             }
-
-            //fill array maxDegVertex with n largest degree vertices (largest->smallest)
-            Arrays.sort(maxDegVertex, byPortSize);
-            while(i<g.getNodes().size()){
-                if (g.getNodes().getItem(i).getPorts().size() > maxDegVertex[maxDegVertex.length-1].getPorts().size()) {
-                    maxDegVertex[maxDegVertex.length-1] =  g.getNodes().getItem(i);
-                    Arrays.sort(maxDegVertex, byPortSize);
+            if (removeHighestDegree) {
+                //fill array maxDegVertex with n largest degree vertices (largest->smallest)
+                Arrays.sort(maxDegVertex, byPortSize);
+                while (i < g.getNodes().size()) {
+                    if (g.getNodes().getItem(i).getPorts().size() > maxDegVertex[maxDegVertex.length - 1].getPorts().size()) {
+                        maxDegVertex[maxDegVertex.length - 1] = g.getNodes().getItem(i);
+                        Arrays.sort(maxDegVertex, byPortSize);
+                    }
+                    i++;
                 }
-                i++;
+            } else {
+                //fill array maxDegVertex with n smallest degree vertices (smallest->largest), defaults degree 0,1,2 vertices
+                Arrays.sort(maxDegVertex, byPortSize);
+                while (i < g.getNodes().size()) {
+                    if (g.getNodes().getItem(i).getPorts().size() < maxDegVertex[maxDegVertex.length - 1].getPorts().size()) {
+                        maxDegVertex[maxDegVertex.length - 1] = g.getNodes().getItem(i);
+                        Arrays.sort(maxDegVertex, byPortSize);
+                    }
+                    i++;
+                }
             }
         }
 
@@ -104,41 +118,28 @@ public class GraphOperations {
         INode[] reinsertedNodes = new INode[numVertices];
         for (int i = 0; i < numVertices; i++) {
             INode removedNode = removedVertices.pop().vertex;
-            reinsertedNodes[i] =  g.createNode(removedNode.getLayout().toRectD(), removedNode.getStyle(), removedNode.getTag());
+            reinsertedNodes[(numVertices - 1) - i] =  g.createNode(removedNode.getLayout().toPointD(), removedNode.getStyle(), removedNode.getTag());
         }
-        int uc = 0;
-        for (INode u : reinsertedNodes) { //todo: fix, create map for nodes so static lookup based on tag
+
+        Mapper<Integer, INode> tagMap = new Mapper<>(new WeakHashMap<>());
+        for (INode n : g.getNodes()) {
+            tagMap.setValue(Integer.parseInt(n.getTag().toString()), n);
+        }
+        for (INode u : reinsertedNodes) {
             int tag = Integer.parseInt(u.getTag().toString());
             for (int i = 0; i < removedVertices.edgeList.length; i++) {
                 if (tag == removedVertices.edgeList[i][0]) {    //u = source node
-                    for (INode n : g.getNodes()) {  //find node with tag
-                        breaklabel1:
-                        if (Integer.parseInt(n.getTag().toString()) == removedVertices.edgeList[i][1]) {
-                            for (int j = uc; j >= 0; --j) {  //already added edge (no duplicate edges)
-                                if (reinsertedNodes[j].equals(n)) {
-                                    break breaklabel1;
-                                }
-                            }
-                            g.createEdge(u, n);
-                            break;
-                        }
+                    INode target = tagMap.getValue(removedVertices.edgeList[i][1]);  //find target node with tag
+                    if (g.getEdge(u, target) == null){
+                        g.createEdge(u, target);
                     }
                 } else if (tag == removedVertices.edgeList[i][1]) { //u = target node
-                    for (INode n : g.getNodes()) {  //find node with tag
-                        breaklabel2:
-                        if (Integer.parseInt(n.getTag().toString()) == removedVertices.edgeList[i][0]) {
-                            for (int j = uc; j >= 0; --j) {  //already added edge (no duplicate edges)
-                                if (reinsertedNodes[j].equals(n)) {
-                                    break breaklabel2;
-                                }
-                            }
-                            g.createEdge(n, u);
-                            break;
-                        }
+                    INode source = tagMap.getValue(removedVertices.edgeList[i][0]);  //find source node with tag
+                    if (g.getEdge(source, u) == null ){
+                        g.createEdge(source, u);
                     }
                 }
             }
-            uc++;
         }
 
         return removedVertices;
@@ -161,7 +162,7 @@ public class GraphOperations {
         }    	
         for(INode u : g.getNodes()){
             nodePose.setValue(u, new PointD((u.getLayout().getCenter().getX()-minX) * scaleValue, (u.getLayout().getCenter().getY()-minY) * scaleValue));
-            g.setNodeLayout(u, new RectD(u.getLayout().getX()*scaleValue,u.getLayout().getY()*scaleValue,u.getLayout().getWidth()*scaleValue,u.getLayout().getHeight()*scaleValue));
+            g.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),u.getLayout().getWidth(),u.getLayout().getHeight()));
         }
         return nodePose;
     }

@@ -7,6 +7,7 @@ import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
+import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithmApplier;
@@ -199,6 +200,13 @@ public class MainFrame extends JFrame {
                 faa.resetNodePositions(movedNodesCP);
             }
         });
+        this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
+            double scaleValue = 1/this.view.getZoom();
+            for(INode u : this.graph.getNodes()){
+                this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
+            }
+        });
+
 
         /* Add two listeners two the graph */
         this.graphSnapContext = new GraphSnapContext();

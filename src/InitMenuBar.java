@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 /**
@@ -81,6 +80,7 @@ public class InitMenuBar {
         this.graphSnapContext = graphSnapContext;
         this.gridVisualCreator = gridVisualCreator;
         this.minimumAngleMonitor = minimumAngleMonitor;
+        this.fileNamePathFolder = "contest-2017";
     }
 
 
@@ -500,28 +500,62 @@ public class InitMenuBar {
     }
 
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        JTextField vertexCount = new JTextField("1");
 
         if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
-            this.removedVertices = GraphOperations.removeVertices(this.graph, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
-        } else  if (this.graph.getNodes().size() > 0){
-            int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Vertices to Remove: ", vertexCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-            int numVertices = 1;
+            this.removedVertices = GraphOperations.removeVertices(this.graph, true, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
+        } else if (this.graph.getNodes().size() > 0){
+            JTextField vertexCount = new JTextField();
+            vertexCount.setText(Integer.toString(1));
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            JRadioButton useHighest = new JRadioButton("Remove Highest Degree Vertices"),
+                    useLowest = new JRadioButton("Remove Lowest Degree (0, 1, 2) Vertices");
+            ButtonGroup bg = new ButtonGroup();
+            bg.add(useHighest);
+            bg.add(useLowest);
+            JLabel label = new JLabel();
+            String highDeg = "Number of highest degree vertices to remove: ";
+            String lowDeg = "Number of lowest degree vertices to remove: ";
+            label.setText(highDeg);
+            panel.add(label);
+            panel.add(vertexCount);
+            panel.add(useHighest);
+            panel.add(useLowest);
+            int numLowest = 0;
+            for (INode u : this.graph.getNodes()) {
+                if (u.getPorts().size() <= 2) {
+                    numLowest++;
+                }
+            }
+            int numLowestFinal = numLowest;
+            useHighest.addItemListener(itemEvent -> {
+                if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                    label.setText(highDeg);
+                    vertexCount.setText(Integer.toString(1));
+                } else if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
+                    label.setText(lowDeg);
+                    vertexCount.setText(Integer.toString(numLowestFinal));
+                }
+            });
+            useHighest.setSelected(true);
+            useLowest.setSelected(false);
+            int result = JOptionPane.showOptionDialog(null, panel, "Remove Highest or Lowest Degree Vertices", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            int numVertices = useHighest.isSelected() ? 1 : numLowest;
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     numVertices = Integer.parseInt(vertexCount.getText());
                     if(numVertices > graph.getNodes().size()){
                         numVertices = graph.getNodes().size();
-                       if( 0 != JOptionPane.showConfirmDialog(null, "Input is greater than the number of all nodes.\n Remove all nodes?")){
-                             numVertices = 0;
-                       }
+                        if( 0 != JOptionPane.showConfirmDialog(null, "Input is greater than the number of all nodes.\n Remove all nodes?")){
+                            numVertices = 0;
+                        }
                     }
                 } catch (NumberFormatException exc) {
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                     numVertices = 0;
                 }
-                    finally {
-                        this.removedVertices = GraphOperations.removeVertices(this.graph, numVertices, null, this.removedVertices);
+                finally {
+                    this.removedVertices = GraphOperations.removeVertices(this.graph, useHighest.isSelected(), numVertices, null, this.removedVertices);
                 }
             }
         }
@@ -569,11 +603,8 @@ public class InitMenuBar {
                         numVertices = removedVertices.componentStack.size();
                     }
                 } catch (NumberFormatException exc) {
-                    if (useVertices.isSelected()) {
-                        numVertices = removedVertices.size();
-                    } else if (useComponents.isSelected()) {
-                        numVertices = removedVertices.componentStack.size();
-                    }
+                    JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                    numVertices = 0;
                 }
                 finally {
                     this.removedVertices = GraphOperations.reinsertVertices(this.graph, useVertices.isSelected(), numVertices, this.removedVertices);
@@ -985,7 +1016,7 @@ public class InitMenuBar {
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        minimumAngleMonitor.showMinimumAngle(graph, view, infoLabel);
+        minimumAngleMonitor.showMinimumAngle(graph, view, infoLabel, true);
     }
 
     private void overlappingNodesMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

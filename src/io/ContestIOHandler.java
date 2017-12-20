@@ -91,6 +91,14 @@ public class ContestIOHandler extends GraphIOHandler {
         }
       }
     }
+    //allow saving of non-contest files in contest format
+    int tagNum = 0;
+    for (INode u : graph.getNodes()) {
+      if (u.getTag() == null) {
+        u.setTag(tagNum);
+      }
+      tagNum++;
+    }
     if(isFromContestFile){
       // phase 0 contains number of nodes
       BufferedWriter out = Files.newBufferedWriter(Paths.get(outputFileName));
