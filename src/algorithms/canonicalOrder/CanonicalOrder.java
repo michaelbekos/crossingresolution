@@ -1,43 +1,13 @@
 package algorithms.canonicalOrder;
 
-/**
- * Created by Ama on 06.01.2018.
- */
-
-        import com.yworks.yfiles.algorithms.*;
-
-        import java.util.ArrayList;
-        import java.util.Collections;
-        import java.util.HashSet;
-        import java.util.LinkedList;
-
-
 
 /**
- * Calculates the canonical order of a triconnected planar graph.
- *
- * @author Findan Eisenhut | Clean up, code reformatting and little bug fix: Philemon
- *         Schucker 21.04.2015
- *
- */
-/**
- * Calculates the canonical order of a triconnected planar graph.
- *
- * 02.08.15: Some Changes:
- *
- * - Bug fix: nodes were not added to the result list
- *
- * - Canonical Order algorithm is now deterministic => replaced random hashset iterator by a list which saves the order
- * of added elements in possibleNextFaces and possibleNextNodes
- *
- * - Code clean up and Code reformatting
- *
- * @author Findan Eisenhut | Changes by Philemon Schucker
- *
+ * Created by Ama on 16.12.2017.
  */
 public class CanonicalOrder {
 
-    public Graph graph;
+
+    public Graph2D graph;
     private PlanarInformation planarInformation;
     private Node v1;
     private Node v2;
@@ -54,14 +24,14 @@ public class CanonicalOrder {
     private LinkedList<Face> possibleNextFaces2;
 
     // maps
-    private INodeMap isInsertedNode;
+    private NodeMap isInsertedNode;
     private FaceMap isInsertedFace;
 
     private FaceMap outE; // number of Edges in the current outerFace
     private FaceMap outV; // number of Nodes in the current outerFace
     private FaceMap isSeparating;
-    private INodeMap separated;
-    private INodeMap visited;
+    private NodeMap separated;
+    private NodeMap visited;
 
     private boolean random = false;
 
@@ -74,7 +44,7 @@ public class CanonicalOrder {
      * @param p
      *            corresponding planar information
      */
-    public CanonicalOrder(Graph g, PlanarInformation p, boolean random) {
+    public CanonicalOrder(Graph2D g, PlanarInformation p, boolean random) {
         this.graph = g;
         this.random = random;
         planarInformation = p;
@@ -125,7 +95,7 @@ public class CanonicalOrder {
      * determine v1, v2, vn and the v1v2-face
      */
     private void preparations() {
-        IEdgeCursor ec = planarInformation.getOuterFace().edges();
+        EdgeCursor ec = planarInformation.getOuterFace().edges();
 
         v1 = ec.edge().source();
         ec.next();
@@ -156,7 +126,6 @@ public class CanonicalOrder {
         possibleNextNodes.add(vn);
         possibleNextNodes2.add(vn);
 
-
         Edge e = v1.getEdgeTo(v2);
         v1v2Face = planarInformation.faceOf(e);
     }
@@ -177,7 +146,7 @@ public class CanonicalOrder {
         possibleNextNodes2 = new LinkedList<>();
         possibleNextFaces2 = new LinkedList<>();
 
-        for (IEdgeCursor ec = planarInformation.getOuterFace().edges(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = planarInformation.getOuterFace().edges(); ec.ok(); ec.next()) {
             Edge edge = planarInformation.getReverse(ec.edge());
             Node node = edge.source();
             outerFace.add(node);
@@ -193,7 +162,7 @@ public class CanonicalOrder {
         isInsertedFace = planarInformation.createFaceMap();
         isSeparating = planarInformation.createFaceMap();
 
-        for (INodeCursor nc = graph.getNodeCursor(); nc.ok(); nc.next()) {
+        for (NodeCursor nc = graph.nodes(); nc.ok(); nc.next()) {
             separated.setInt(nc.node(), 0);
             visited.setInt(nc.node(), 0);
             isInsertedNode.setBool(nc.node(), false);
@@ -209,7 +178,7 @@ public class CanonicalOrder {
         isInsertedFace.setBool(planarInformation.getOuterFace(), true);
 
         // update face variables in dependency of the outerface
-        for (IEdgeCursor ec = planarInformation.getOuterFace().edges(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = planarInformation.getOuterFace().edges(); ec.ok(); ec.next()) {
             Edge innerEdge = planarInformation.getReverse(ec.edge());
             Node node = innerEdge.source();
             increaseOutE(innerEdge);
@@ -223,7 +192,7 @@ public class CanonicalOrder {
      * @param node
      */
     private void increaseOutV(Node node) {
-        for (IEdgeCursor ec = node.getOutEdgeCursor(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = node.outEdges(); ec.ok(); ec.next()) {
             Face face = planarInformation.faceOf(ec.edge());
             outV.setInt(face, outV.getInt(face) + 1);
         }
@@ -252,7 +221,7 @@ public class CanonicalOrder {
         outerFace.remove(deletedNode);
         possibleNextNodes.remove(deletedNode);
         isInsertedNode.setBool(deletedNode, true);
-        for (IEdgeCursor ec = deletedNode.getOutEdgeCursor(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = deletedNode.outEdges(); ec.ok(); ec.next()) {
             Face face = planarInformation.faceOf(ec.edge());
             isInsertedFace.setBool(face, true);
             possibleNextFaces.remove(face);
@@ -321,7 +290,7 @@ public class CanonicalOrder {
 
     private void updateVisited(Node node) {
         // visitet+=1 for all neighboues of node
-        for (IEdgeCursor ec = node.getOutEdgeCursor(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = node.outEdges(); ec.ok(); ec.next()) {
             Node n = ec.edge().target();
             visited.setInt(n, visited.getInt(n) + 1);
         }
@@ -359,7 +328,7 @@ public class CanonicalOrder {
 
         ArrayList<Node> nodes = new ArrayList<>();
 
-        for (IEdgeCursor ec = f.edges(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = f.edges(); ec.ok(); ec.next()) {
             Edge edge = ec.edge();
             Node node = edge.target();
             nodes.add(node);
@@ -369,7 +338,7 @@ public class CanonicalOrder {
 
     private int DegreeOf(Node node) {
         int counter = 0;
-        for (IEdgeCursor ec = node.getOutEdgeCursor(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = node.outEdges(); ec.ok(); ec.next()) {
             Node n = ec.edge().target();
             if (!isInsertedNode.getBool(n))
                 counter++;
@@ -457,7 +426,7 @@ public class CanonicalOrder {
     private ArrayList<Face> facesOfNode(Node node) {
         ArrayList<Face> faces = new ArrayList<>();
 
-        for (IEdgeCursor ec = node.getOutEdgeCursor(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = node.outEdges(); ec.ok(); ec.next()) {
             Face f = planarInformation.faceOf(ec.edge());
             if (!isInsertedFace.getBool(f))
                 faces.add(f);
@@ -500,7 +469,7 @@ public class CanonicalOrder {
         Boolean startAddingToList = false;
         ArrayList<Face> faces = new ArrayList<>();
 
-        for (IEdgeCursor ec = node.getOutEdgeCursor(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = node.outEdges(); ec.ok(); ec.next()) {
             Face f = planarInformation.faceOf(ec.edge());
 
             if (!isInsertedFace.getBool(f) && startAddingToList) {
@@ -511,7 +480,7 @@ public class CanonicalOrder {
                 startAddingToList = true;
         }
 
-        for (IEdgeCursor ec = node.getOutEdgeCursor(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = node.outEdges(); ec.ok(); ec.next()) {
             Face f = planarInformation.faceOf(ec.edge());
 
             if (!isInsertedFace.getBool(f)) {
@@ -535,7 +504,7 @@ public class CanonicalOrder {
 
         Node retNode = null;
         Node last = null;
-        IEdgeCursor ec = node.getEdgeCursor();
+        EdgeCursor ec = node.edges();
 
         while (ec.ok()) {// ignore inserted nodes
             retNode = ec.edge().target();
@@ -586,7 +555,7 @@ public class CanonicalOrder {
     private ArrayList<Node> sortedNodesFromFace(Face f, Node parentNode) {
         Boolean startAddingToList = false;
         ArrayList<Node> nodes = new ArrayList<>();
-        for (IEdgeCursor ec = f.edges(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = f.edges(); ec.ok(); ec.next()) {
 
             Edge edge = ec.edge();
             Node node = edge.target();
@@ -596,7 +565,7 @@ public class CanonicalOrder {
             if (startAddingToList)
                 nodes.add(node);
         }
-        for (IEdgeCursor ec = f.edges(); ec.ok(); ec.next()) {
+        for (EdgeCursor ec = f.edges(); ec.ok(); ec.next()) {
 
             Edge edge = ec.edge();
             Node node = edge.target();
@@ -644,3 +613,5 @@ public class CanonicalOrder {
     }
 
 }
+
+

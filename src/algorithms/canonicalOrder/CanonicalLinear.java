@@ -1,36 +1,30 @@
 package algorithms.canonicalOrder;
-ackage algorithms.canonicalOrder;
 
-        import algorithms.fpp.EdgeComparator;
-        import y.base.*;
-        import y.layout.planar.Face;
-        import y.layout.planar.FaceCursor;
-        import y.layout.planar.FaceMap;
-        import y.layout.planar.PlanarInformation;
-        import y.view.Graph2D;
+import algorithms.fpp.EdgeComparator;
+import com.yworks.yfiles.graph.IEdge;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.INode;
 
-        import java.util.ArrayList;
-        import java.util.Collections;
-        import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+
 
 /**
- * Calculates a canoncial order of a given graph.
- *
- * @author Original: Findan Eisenhut, Updated + Cleaned up: Philemon Schucker
- *
+ * Created by Ama on 16.12.2017.
  */
 public class CanonicalLinear {
 
-    public Graph2D graph;
+    public IGraph graph;
     private PlanarInformation planarInformation;
-    private Node v1;
-    private Node v2;
+    private INode v1;
+    private INode v2;
     private Face v1v2Face;
-    private ArrayList<ArrayList<Node>> canonicalOrder;
+    private ArrayList<ArrayList<INode>> canonicalOrder;
 
     // sets
-    private HashSet<Node> outerFace; // set of nodes in the current outerface
-    private HashSet<Node> possibleNextNodes;
+    private HashSet<INode> outerFace; // set of nodes in the current outerface
+    private HashSet<INode> possibleNextNodes;
     private HashSet<Face> possibleNextFaces;
 
     // maps
@@ -43,8 +37,8 @@ public class CanonicalLinear {
     private NodeMap separated;
     private NodeMap visited;
 
-    public CanonicalLinear(Graph2D g) {
-        this.graph = g;
+    public CanonicalLinear(IGraph graph) {
+        this.graph = graph;
         init();
         calcOrder();
 
@@ -60,8 +54,8 @@ public class CanonicalLinear {
         while (!possibleNextFaces.isEmpty() | !possibleNextNodes.isEmpty()) {
 
             if (!possibleNextNodes.isEmpty()) {
-                Node n = possibleNextNodes.iterator().next();
-                removeNode(n);
+                INode node = possibleNextNodes.iterator().next();
+                removeNode(node);
 
             }
             if (!possibleNextFaces.isEmpty()) {
@@ -200,9 +194,9 @@ public class CanonicalLinear {
      *
      * @param deletedNode
      */
-    private void removeNode(Node deletedNode) {
+    private void removeNode(INode deletedNode) {
         // chain from left to the right neighbour
-        ArrayList<Node> newOuterChain = calcNewOuterChain(deletedNode);
+        ArrayList<INode> newOuterChain = calcNewOuterChain(deletedNode);
 
         // remove node and faces
         outerFace.remove(deletedNode);
@@ -512,10 +506,10 @@ public class CanonicalLinear {
      * @param node
      * @return
      */
-    private Node leftOuterNode(Node node) {
-        Node retNode = null;
-        Node last = null;
-        EdgeCursor ec = node.edges();
+    private INode leftOuterNode(INode node) {
+        INode retNode = null;
+        INode last = null;
+        //EdgeCursor ec = node.edges();
 
         while (ec.ok()) {// ignore inserted nodes
             retNode = ec.edge().target();
@@ -566,13 +560,13 @@ public class CanonicalLinear {
      * @param parentNode
      * @return
      */
-    private ArrayList<Node> sortedNodesFromFace(Face f, Node parentNode) {
+    private ArrayList<INode> sortedNodesFromFace(Face f, INode parentNode) {
         Boolean startAddingToList = false;
-        ArrayList<Node> nodes = new ArrayList<>();
+        ArrayList<INode> nodes = new ArrayList<>();
         for (EdgeCursor ec = f.edges(); ec.ok(); ec.next()) {
 
-            Edge edge = ec.edge();
-            Node node = edge.target();
+            IEdge edge = ec.edge();
+            INode node = edge.target();
 
             if (node == parentNode)
                 startAddingToList = true;
@@ -596,31 +590,31 @@ public class CanonicalLinear {
      * add reversed edges, necessary to calculate faces in planarInformation
      */
     private void addReversedEdges() {
-        for (Edge ed : graph.getEdgeArray()) {
+        for (IEdge ed : graph.getEdges()) {
             this.planarInformation.createReverse(ed);
         }
     }
 
     private void removeReversedEdges() {
-        for (Edge ed : graph.getEdgeArray()) {
+        for (IEdge ed : graph.getEdges()) {
             if (planarInformation.isInsertedEdge(ed))
                 graph.removeEdge(ed);
         }
     }
 
-    private void addNodeToCanonicalOrder(Node n) {
-        ArrayList<Node> nodeAsList = new ArrayList<>();
+    private void addNodeToCanonicalOrder(INode n) {
+        ArrayList<INode> nodeAsList = new ArrayList<>();
         nodeAsList.add(n);
         canonicalOrder.add(0, nodeAsList);
     }
 
-    private void addChainToCanonicalOrder(ArrayList<Node> nodes) {
+    private void addChainToCanonicalOrder(ArrayList<INode> nodes) {
         canonicalOrder.add(0, nodes);
 
     }
 
     private void addv1v2FaceToCanonicalOrder() {
-        ArrayList<Node> lastFace = sortedNodesFromFace(v1v2Face, v2);
+        ArrayList<INode> lastFace = sortedNodesFromFace(v1v2Face, v2);
         Collections.reverse(lastFace);
         // now v1,.....,v2
         lastFace.remove(0);
@@ -631,10 +625,8 @@ public class CanonicalLinear {
         addNodeToCanonicalOrder(v1);
     }
 
-    public ArrayList<ArrayList<Node>> getCanonicalOrder() {
+    public ArrayList<ArrayList<INode>> getCanonicalOrder() {
         return canonicalOrder;
     }
 
 }
-
-

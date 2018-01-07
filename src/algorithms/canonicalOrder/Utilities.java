@@ -1,13 +1,12 @@
 package algorithms.canonicalOrder;
 
-/**
- * Created by Ama on 06.01.2018.
- */
 import com.yworks.yfiles.algorithms.YPoint;
 import com.yworks.yfiles.geometry.IPoint;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.*;
-
+import com.yworks.yfiles.graph.IBend;
+import com.yworks.yfiles.graph.IEdge;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.INode;
 /**
  * Created by Ama on 16.12.2017.
  */
@@ -19,6 +18,7 @@ public class Utilities {
         INode rightMost = null;
         INode topMost = null;
         INode bottomMost = null;
+        leftMost.
         double currentXMin = Double.MAX_VALUE;
         double currentXMax = -Double.MAX_VALUE;
         double currentYMin = Double.MAX_VALUE;
