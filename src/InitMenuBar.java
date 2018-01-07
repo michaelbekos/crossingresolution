@@ -730,7 +730,11 @@ public class InitMenuBar {
         if (this.fileNamePath != null) {
             try {
                 this.graph.clear();
-                this.view.importFromGraphML(this.fileNamePath);
+                if (this.fileNamePath.endsWith(".graphml")) {
+                    this.view.importFromGraphML(this.fileNamePath);
+                } else if (this.fileNamePath.endsWith(".txt")) {
+                    ContestIOHandler.read(this.graph, this.fileNamePath);
+                }
                 this.view.fitGraphBounds();
                 this.view.updateUI();
                 this.removedVertices = null;
