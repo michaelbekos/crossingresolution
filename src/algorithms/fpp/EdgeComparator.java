@@ -2,17 +2,16 @@ package algorithms.fpp;
 
 
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.algorithms.*;
 import com.yworks.yfiles.algorithms.YVector;
-import com.yworks.yfiles.geometry.PointD;
 
 import com.yworks.yfiles.utils.IListEnumerable;
-import util.Util;
+
+import java.util.Comparator;
 
 /**
  * Created by Ama on 14.12.2017.
  */
-public class EdgeComparator {
+public class EdgeComparator implements Comparator<IEdge> {
 
 
     private IEdge edge;
@@ -21,7 +20,7 @@ public class EdgeComparator {
 
     public EdgeComparator(IEdge edge, IGraph graph) {
         this.edge = edge;
-        this.graph = graph;
+        this.graph = graph; //TODO: Muss noch einkomment. werden
         // compare = new YVector((r.bendCount() > 0 ?
         // Utilities.getBendPoint(r.getBend(0)) : Utilities.getTargetPoint(e)),
         // Utilities.getSourcePoint(e));
@@ -30,7 +29,7 @@ public class EdgeComparator {
         // compare = new YVector(new YPoint(-1, -1), new YPoint(0, 0));
     }
 
-
+    @Override
     public int compare(IEdge o1, IEdge o2) {
         assert o1.getSourceNode() == o2.getSourceNode() && o1.getSourceNode() == edge.getSourceNode();
         IListEnumerable<IBend> bends1= edge.getBends();

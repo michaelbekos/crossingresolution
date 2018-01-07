@@ -4,12 +4,11 @@ package algorithms.fpp;
  * Created by Ama on 06.01.2018.
  */
 
-import com.yworks.yfiles.algorithms.Rectangle2D;
-import com.yworks.yfiles.algorithms.YPoint;
-import com.yworks.yfiles.algorithms.YVector;
+import com.yworks.yfiles.algorithms.*;
 import com.yworks.yfiles.geometry.IPoint;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.layout.YGraphAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -628,9 +627,12 @@ public class Utilities {
      *            the graph to sort edges for
      */
     static void sortEdges(IGraph graph) {
-        for (NodeCursor nc = graph.nodes(); nc.ok(); nc.next())
+        YGraphAdapter graphAdapter = new YGraphAdapter(graph);
+        for (Node node : graphAdapter.getYGraph().getNodes())
         {
-            nc.node().sortOutEdges(new EdgeComparator(nc.node().firstOutEdge(), graph));
+            IEdge edge = graphAdapter.getOriginalEdge(node.firstOutEdge());
+            node.sortOutEdges(new EdgeComparator(edge, graph));
+
         }
     }
 
