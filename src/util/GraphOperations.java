@@ -130,12 +130,12 @@ public class GraphOperations {
             for (int i = 0; i < removedVertices.edgeList.length; i++) {
                 if (tag == removedVertices.edgeList[i][0]) {    //u = source node
                     INode target = tagMap.getValue(removedVertices.edgeList[i][1]);  //find target node with tag
-                    if (g.getEdge(u, target) == null){
+                    if (target != null && g.getEdge(u, target) == null){
                         g.createEdge(u, target);
                     }
                 } else if (tag == removedVertices.edgeList[i][1]) { //u = target node
                     INode source = tagMap.getValue(removedVertices.edgeList[i][0]);  //find source node with tag
-                    if (g.getEdge(source, u) == null ){
+                    if (source != null && g.getEdge(source, u) == null ){
                         g.createEdge(source, u);
                     }
                 }

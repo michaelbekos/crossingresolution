@@ -1,8 +1,5 @@
 package io;
 
-import com.yworks.yfiles.utils.IListEnumerable;
-import util.GridPositioning;
-
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.geometry.PointD;
 

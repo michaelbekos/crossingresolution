@@ -1,4 +1,5 @@
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.INodeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
@@ -209,14 +210,14 @@ public class InitMenuBar {
         JMenuItem removeVerticesItem = new JMenuItem();
         removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
         removeVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/removeNode.png"))); // test Image
-        removeVerticesItem.setText("Remove High Degree Vertices");
+        removeVerticesItem.setText("Remove Vertices");
         removeVerticesItem.addActionListener(this::removeVerticesItemActionPerformed);
         graphOpsMenu.add(removeVerticesItem);
 
         JMenuItem reinsertVerticesItem = new JMenuItem();
         reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
         reinsertVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/reinsertNode.png"))); // test Image
-        reinsertVerticesItem.setText("Reinsert High Degree Vertices");
+        reinsertVerticesItem.setText("Reinsert Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
         graphOpsMenu.add(reinsertVerticesItem);
         return graphOpsMenu;
@@ -607,6 +608,10 @@ public class InitMenuBar {
                 }
                 finally {
                     this.removedVertices = GraphOperations.reinsertVertices(this.graph, useVertices.isSelected(), numVertices, this.removedVertices);
+                    double scaleValue = 1/this.view.getZoom();  //scale reinserted nodes
+                    for(INode u : this.graph.getNodes()){
+                        this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
+                    }
                 }
             }
         }
@@ -724,7 +729,11 @@ public class InitMenuBar {
         if (this.fileNamePath != null) {
             try {
                 this.graph.clear();
-                this.view.importFromGraphML(this.fileNamePath);
+                if (this.fileNamePath.endsWith(".graphml")) {
+                    this.view.importFromGraphML(this.fileNamePath);
+                } else if (this.fileNamePath.endsWith(".txt")) {
+                    ContestIOHandler.read(this.graph, this.fileNamePath);
+                }
                 this.view.fitGraphBounds();
                 this.view.updateUI();
                 this.removedVertices = null;
