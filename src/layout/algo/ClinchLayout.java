@@ -80,14 +80,14 @@ public class ClinchLayout implements ILayout {
       Matrix2D rotationMatrix = new Matrix2D();
       double angle = i * Math.PI / NUMBER_OF_SAMPLES;
       rotationMatrix.rotate(angle);
-      rightRotations.add(new Sample(rotationMatrix.transform(lineDirection), angle));
+      rightRotations.add(new Sample(rotationMatrix.transform(lineDirection)));
     }
 
     for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
       Matrix2D rotationMatrix = new Matrix2D();
       double angle = -i * Math.PI / NUMBER_OF_SAMPLES;
       rotationMatrix.rotate(angle);
-      leftRotations.add(new Sample(rotationMatrix.transform(lineDirection), angle));
+      leftRotations.add(new Sample(rotationMatrix.transform(lineDirection)));
     }
 
     for (INode node : graph.getNodes()) {
@@ -167,15 +167,4 @@ public class ClinchLayout implements ILayout {
     );
   }
 
-  private static class Sample {
-    final PointD direction;
-    final double angle;
-    double minimumAngle;
-    PointD position;
-
-    Sample(PointD direction, double angle) {
-      this.direction = direction;
-      this.angle = angle;
-    }
-  }
 }
