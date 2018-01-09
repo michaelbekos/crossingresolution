@@ -99,6 +99,10 @@ public class MinimumAngle {
     return m.getMinimumAngle(graph, np);
   }
 
+  public static double getMinimumAngleForNode(Mapper<INode, PointD> positions, INode node, IGraph graph) {
+    return getMinimumAngleForNode(graph, node, positions).orElse(Double.POSITIVE_INFINITY);
+  }
+
   public static Optional<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
     return m.getMinimumAngleForNode(graph, node, nodePositions);
   }
