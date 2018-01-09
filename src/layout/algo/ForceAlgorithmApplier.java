@@ -45,15 +45,7 @@ public class ForceAlgorithmApplier implements Runnable {
     });
     return res;
   }
-  // initPositionMap copies all node positions of a given graph to a positionMap.
-  public static Mapper<INode, PointD> initPositionMap(IGraph g){
-    Mapper<INode, PointD> nodePos = newNodePointMap();
-    g.getNodes().stream().forEach(n1 -> {
-      PointD p1 = n1.getLayout().getCenter();
-      nodePos.setValue(n1, n1.getLayout().getCenter());
-    });
-    return nodePos;
-  }  
+
   // initForceMap creates a forceMap with default force (0,0).
   public static Mapper<INode, PointD> initForceMap(IGraph g){
     Mapper<INode, PointD> map = newNodePointMap();
@@ -125,7 +117,7 @@ public class ForceAlgorithmApplier implements Runnable {
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, JProgressBar progressBar, JLabel infoLabel){
     this.view = view;
     this.graph = view.getGraph();
-    nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+    nodePositions = LayoutUtils.positionMapFromIGraph(graph);
     this.maxNoOfIterations = maxNoOfIterations;
     this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).map(x -> x.b).orElse(0.0);
     this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions).map(t -> t.angle).orElse(0.0);
@@ -156,7 +148,7 @@ public class ForceAlgorithmApplier implements Runnable {
         if(nodePositions.getValue(u) == null){
           // new node!
           System.out.println("! new node !");
-          nodePositions = initPositionMap(graph);
+          nodePositions = LayoutUtils.positionMapFromIGraph(graph);
           break;
         }
         nodePositions.setValue(u, p);

@@ -40,14 +40,13 @@ public class ClinchLayout implements ILayout {
 
   @Override
   public void init() {
-    positions = initPositions();
+    positions = LayoutUtils.positionMapFromIGraph(graph);
     stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
     boundingBox = BoundingBox.from(positions);
 
     random = new Random(System.currentTimeMillis());
   }
-
 
   @Override
   public boolean executeStep(int iteration) {
@@ -56,16 +55,6 @@ public class ClinchLayout implements ILayout {
 
   @Override
   public Mapper<INode, PointD> getNodePositions() {
-    return positions;
-  }
-
-  private Mapper<INode, PointD> initPositions() {
-    Mapper<INode, PointD> positions = new Mapper<>(new WeakHashMap<>());
-
-    for (INode node : graph.getNodes()) {
-      positions.setValue(node, node.getLayout().getCenter());
-    }
-
     return positions;
   }
 

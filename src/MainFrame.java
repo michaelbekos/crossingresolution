@@ -12,6 +12,7 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithmApplier;
 import layout.algo.GeneticAlgorithm;
+import layout.algo.LayoutUtils;
 import util.GraphOperations;
 import util.Tuple4;
 import util.interaction.ThresholdSliders;
@@ -570,7 +571,7 @@ public class MainFrame extends JFrame {
     }
     
     private void scalingToBox(){
-    Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+    Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
     double maxX=0, maxY=0, minY=boxsize;
     for(INode u : graph.getNodes()){
     	if(u.getLayout().getCenter().getX()>maxX){

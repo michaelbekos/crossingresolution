@@ -485,15 +485,14 @@ public class InitMenuBar {
 
     private void scaleUpGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
-        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 2.0);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
 
     private void scaleDownGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-
-        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.5);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.view.fitGraphBounds();

@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import layout.algo.ForceAlgorithmApplier;
+import layout.algo.LayoutUtils;
 import util.*;
 import util.graph2d.*;
 
@@ -34,7 +35,7 @@ public class MinimumAngle {
 
     private Optional<Intersection> getMinimumAngleCrossingForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
       if (nodePositions == null) {
-        nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+        nodePositions = LayoutUtils.positionMapFromIGraph(graph);
       }
       List<Intersection> crossings = getCrossingsForNode(graph, node, nodePositions);
 
@@ -84,7 +85,7 @@ public class MinimumAngle {
 
     public List<Intersection> getCrossings(IGraph graph, boolean edgesOnly, @Nullable IMapper<INode, PointD> np){
       if (np == null) {
-        np = ForceAlgorithmApplier.initPositionMap(graph);
+        np = LayoutUtils.positionMapFromIGraph(graph);
       }
       return yFilesSweepLine.getCrossings(graph, edgesOnly, np);
     }

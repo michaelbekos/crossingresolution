@@ -12,6 +12,7 @@ import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
 import layout.algo.ForceAlgorithmApplier;
 
 import algorithms.graphs.MinimumAngle;
+import layout.algo.LayoutUtils;
 import util.graph2d.Intersection;
 import util.graph2d.LineSegment;
 
@@ -33,7 +34,7 @@ public class GridPositioning {
      * @param g - Input Graph
      */
     public static void gridGraph(IGraph g){
-        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
+        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(g);
 
         while (GridPositioning.isGridGraph(g) == false) {
             ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.respectiveCrossingGrid(g, nodePositions)));
@@ -44,7 +45,7 @@ public class GridPositioning {
     }
 
     public static void gridQuickAndDirty(IGraph g){
-        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
+        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(g);
 
         while(GridPositioning.isGridGraph(g) == false){
             ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.quickAndDirtyGridding(g, nodePositions)));
@@ -57,7 +58,7 @@ public class GridPositioning {
      * @param g - Input Graph
      */
     public static void gridGraphFast(IGraph g){
-        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(g);
+        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(g);
 
        while (GridPositioning.isGridGraph(g) == false) {
             ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.respectiveNodeGrid(g, nodePositions)));
@@ -350,7 +351,7 @@ public class GridPositioning {
      */
     public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions, Set<INode> containedNodes) {
 
-        Mapper<INode, PointD> temp = ForceAlgorithmApplier.initPositionMap(graph);
+        Mapper<INode, PointD> temp = LayoutUtils.positionMapFromIGraph(graph);
         List<Tuple2<PointD, Double>> coord = new ArrayList<>();
         // if no node is already gridded compute the gridding for each node
         if(containedNodes.isEmpty()) {
