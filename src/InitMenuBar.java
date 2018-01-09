@@ -143,6 +143,12 @@ public class InitMenuBar {
         clinchLayout.addActionListener(this::clinchNodesActionPerformed);
         layoutMenu.add(clinchLayout);
 
+        JMenuItem randomMovement = new JMenuItem();
+        randomMovement.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        randomMovement.setText("Random Movement");
+        randomMovement.addActionListener(this::randomMovementActionPerformed);
+        layoutMenu.add(randomMovement);
+
         return layoutMenu;
     }
 
@@ -1012,6 +1018,12 @@ public class InitMenuBar {
     private void clinchNodesActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         IGraphSelection selection = graphEditorInputMode.getGraphSelection();
         InitClinchLayout.run(graph, selection, progressBar);
+    }
+
+    private void randomMovementActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        RandomMovementLayout layout = new RandomMovementLayout(graph);
+        IGraphLayoutExecutor layoutExecutor = new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
+        layoutExecutor.run();
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

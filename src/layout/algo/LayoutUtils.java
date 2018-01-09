@@ -17,4 +17,11 @@ public class LayoutUtils {
 
     return positions;
   }
+
+  public static PointD stepInDirection(PointD oldPosition, PointD direction, double stepSize) {
+    return new PointD(
+        oldPosition.getX() + stepSize * direction.getX(),
+        oldPosition.getY() + stepSize * direction.getY()
+    );
+  }
 }
