@@ -80,7 +80,7 @@ public class ClinchLayout implements ILayout {
   }
 
   private Mapper<INode, Collection<Sample>> preComputeSamples() {
-    Mapper<INode, Collection<Sample>> projections = new Mapper<>(new WeakHashMap<>());
+    Mapper<INode, Collection<Sample>> sampleDirections = new Mapper<>(new WeakHashMap<>());
 
     lineDirection = PointD.subtract(anchor2, anchor1).getNormalized();
 
@@ -104,13 +104,13 @@ public class ClinchLayout implements ILayout {
     for (INode node : graph.getNodes()) {
       PointD anchor1ToCenter = PointD.subtract(node.getLayout().getCenter(), anchor1);
       if (crossProduct(lineDirection, anchor1ToCenter) > 0) {
-        projections.setValue(node, leftRotations);
+        sampleDirections.setValue(node, leftRotations);
       } else {
-        projections.setValue(node, rightRotations);
+        sampleDirections.setValue(node, rightRotations);
       }
     }
 
-    return projections;
+    return sampleDirections;
   }
 
   private double crossProduct(PointD v1, PointD v2) {
