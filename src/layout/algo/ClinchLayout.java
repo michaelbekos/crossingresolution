@@ -29,6 +29,7 @@ public class ClinchLayout implements ILayout {
   private Mapper<INode, Double> stepSizes;
   private RectD boundingBox;
   private PointD lineDirection;
+  private Random random;
 
   public ClinchLayout(IGraph graph, PointD anchor1, PointD anchor2, Set<INode> fixNodes) {
     this.graph = graph;
@@ -43,6 +44,8 @@ public class ClinchLayout implements ILayout {
     stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
     boundingBox = BoundingBox.from(positions);
+
+    random = new Random(System.currentTimeMillis());
   }
 
 
@@ -145,7 +148,7 @@ public class ClinchLayout implements ILayout {
           .filter(sample -> Math.signum(crossProduct(PointD.subtract(sample.position, anchor1), lineDirection)) == leftOrRight)
           .max((s1, s2) -> {
             if (Math.abs(s1.minimumAngle - s2.minimumAngle) < COMPARISON_EPSILON) {
-              return Double.compare(distanceTo90Degrees(s1.angle), distanceTo90Degrees(s2.angle));
+              return Double.compare(random.nextDouble(), 0.5);
             } else {
               return Double.compare(s1.minimumAngle, s2.minimumAngle);
             }
