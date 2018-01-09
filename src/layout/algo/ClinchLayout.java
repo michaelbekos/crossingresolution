@@ -167,10 +167,6 @@ public class ClinchLayout implements ILayout {
     return changed;
   }
 
-  private double distanceTo90Degrees(double angle) {
-    return Math.abs(angle - Math.PI / 2);
-  }
-
   private double getMinimumAngleForNode(Mapper<INode, PointD> positions, INode node) {
     return MinimumAngle.getMinimumAngleForNode(graph, node, positions).orElse(Double.POSITIVE_INFINITY);
   }
