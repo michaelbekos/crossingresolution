@@ -14,6 +14,7 @@ import layout.algo.ForceAlgorithmApplier;
 import layout.algo.ForceDirectedAlgorithm;
 import layout.algo.ForceDirectedFactory;
 import layout.algo.GeneticAlgorithm;
+import layout.algo.LayoutUtils;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import util.GraphOperations;
@@ -46,7 +47,7 @@ public class MainFrame extends JFrame {
 	
 	/* Box related issue*/
 	private static double boxsize= 10000;
-	
+	// same as in InitMenuBar
 	
     /* Graph Drawing related objects */
     private GraphComponent view;
@@ -734,14 +735,11 @@ public class MainFrame extends JFrame {
     }
     
     private void scalingToBox(){
-    Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
-    double maxX=0, maxY=0, minY=boxsize;
+    Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+    double maxX=0, maxY=0;
     for(INode u : graph.getNodes()){
     	if(u.getLayout().getCenter().getX()>maxX){
     		maxX=u.getLayout().getCenter().getX();
-    	}
-    	if(u.getLayout().getCenter().getY()<minY){
-    		minY=u.getLayout().getCenter().getY();
     	}
     	if(u.getLayout().getCenter().getY()>maxY){
     		maxY=u.getLayout().getCenter().getY();

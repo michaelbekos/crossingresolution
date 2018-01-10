@@ -37,6 +37,11 @@ import java.util.Set;
  * Created by khokhi on 10.12.16.
  */
 public class InitMenuBar {
+	
+	/* Box related issue*/
+	private static double boxsize= 10000;
+	// same as in MainFrame
+	
     private MainFrame mainFrame;
 
     private JProgressBar progressBar;
@@ -226,6 +231,17 @@ public class InitMenuBar {
         reinsertVerticesItem.setText("Reinsert Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
         graphOpsMenu.add(reinsertVerticesItem);
+        
+        /*
+         * Check legality
+         */
+        JMenuItem enforcelegal = new JMenuItem();
+        enforcelegal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        enforcelegal.setIcon(new ImageIcon(getClass().getResource("/resources/exclamation.png"))); // test Image
+        enforcelegal.setText("Enforce legality");
+        enforcelegal.addActionListener(this::enforcelegal);
+        graphOpsMenu.add(enforcelegal);
+        
         return graphOpsMenu;
     }
 
@@ -492,15 +508,14 @@ public class InitMenuBar {
 
     private void scaleUpGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
-        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 2.0);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
 
     private void scaleDownGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-
-        Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.initPositionMap(graph);
+        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.5);
         this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
@@ -566,6 +581,22 @@ public class InitMenuBar {
                 }
             }
         }
+    }
+    
+    private void enforcelegal(@SuppressWarnings("unused") ActionEvent evt){
+    	Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+    	boolean change=true;
+    	while(change){
+    		change=false;
+	    	for(INode u : graph.getNodes()){
+	        	if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX()>boxsize || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY()>boxsize){
+	        		nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.9);
+	        	    this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+	        	    this.view.fitGraphBounds();
+	        	    change=true;
+				}
+	        }
+    	}
     }
 
     private void reinsertVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

@@ -3,14 +3,13 @@ package layout.algo;
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.Matrix2D;
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import util.BoundingBox;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class ClinchLayout implements ILayout {
   private static final double INITIAL_STEP_SIZE = 2.5;
@@ -28,6 +27,9 @@ public class ClinchLayout implements ILayout {
   private Mapper<INode, PointD> positions;
   private Mapper<INode, Collection<Sample>> sampleDirections;
   private Mapper<INode, Double> stepSizes;
+  private RectD boundingBox;
+  private PointD lineDirection;
+  private Random random;
 
   public ClinchLayout(IGraph graph, PointD anchor1, PointD anchor2, Set<INode> fixNodes) {
     this.graph = graph;
@@ -38,11 +40,13 @@ public class ClinchLayout implements ILayout {
 
   @Override
   public void init() {
-    positions = initPositions();
+    positions = LayoutUtils.positionMapFromIGraph(graph);
     stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
-  }
+    boundingBox = BoundingBox.from(positions);
 
+    random = new Random(System.currentTimeMillis());
+  }
 
   @Override
   public boolean executeStep(int iteration) {
@@ -51,16 +55,6 @@ public class ClinchLayout implements ILayout {
 
   @Override
   public Mapper<INode, PointD> getNodePositions() {
-    return positions;
-  }
-
-  private Mapper<INode, PointD> initPositions() {
-    Mapper<INode, PointD> positions = new Mapper<>(new WeakHashMap<>());
-
-    for (INode node : graph.getNodes()) {
-      positions.setValue(node, node.getLayout().getCenter());
-    }
-
     return positions;
   }
 
@@ -75,9 +69,9 @@ public class ClinchLayout implements ILayout {
   }
 
   private Mapper<INode, Collection<Sample>> preComputeSamples() {
-    Mapper<INode, Collection<Sample>> projections = new Mapper<>(new WeakHashMap<>());
+    Mapper<INode, Collection<Sample>> sampleDirections = new Mapper<>(new WeakHashMap<>());
 
-    PointD lineDirection = PointD.subtract(anchor2, anchor1).getNormalized();
+    lineDirection = PointD.subtract(anchor2, anchor1).getNormalized();
 
     Collection<Sample> leftRotations = new ArrayList<>();
     Collection<Sample> rightRotations = new ArrayList<>();
@@ -99,13 +93,13 @@ public class ClinchLayout implements ILayout {
     for (INode node : graph.getNodes()) {
       PointD anchor1ToCenter = PointD.subtract(node.getLayout().getCenter(), anchor1);
       if (crossProduct(lineDirection, anchor1ToCenter) > 0) {
-        projections.setValue(node, leftRotations);
+        sampleDirections.setValue(node, leftRotations);
       } else {
-        projections.setValue(node, rightRotations);
+        sampleDirections.setValue(node, rightRotations);
       }
     }
 
-    return projections;
+    return sampleDirections;
   }
 
   private double crossProduct(PointD v1, PointD v2) {
@@ -126,29 +120,31 @@ public class ClinchLayout implements ILayout {
         continue;
       }
 
+      double leftOrRight = Math.signum(crossProduct(PointD.subtract(oldPosition, anchor1), lineDirection));
       double minAngle = getMinimumAngleForNode(positions, node);
       final Double stepSize = stepSizes.getValue(node);
       Collection<Sample> samples = sampleDirections.getValue(node);
 
-      @SuppressWarnings("ConstantConditions")
-      Sample bestSample = samples.stream()
+      Optional<Sample> bestSample = samples.stream()
           .peek(sample -> {
             PointD newPosition = stepInDirection(oldPosition, sample.direction, stepSize);
             positions.setValue(node, newPosition);
             sample.position = newPosition;
             sample.minimumAngle = getMinimumAngleForNode(positions, node);
           })
+          .filter(sample -> boundingBox.contains(sample.position))
+          // check if sample is still on the same side of the line
+          .filter(sample -> Math.signum(crossProduct(PointD.subtract(sample.position, anchor1), lineDirection)) == leftOrRight)
           .max((s1, s2) -> {
             if (Math.abs(s1.minimumAngle - s2.minimumAngle) < COMPARISON_EPSILON) {
-              return Double.compare(distanceTo90Degrees(s1.angle), distanceTo90Degrees(s2.angle));
+              return Double.compare(random.nextDouble(), 0.5);
             } else {
               return Double.compare(s1.minimumAngle, s2.minimumAngle);
             }
-          })
-          .get();
+          });
 
-      if (bestSample.minimumAngle >= minAngle) {
-        positions.setValue(node, bestSample.position);
+      if (bestSample.isPresent() && bestSample.get().minimumAngle >= minAngle) {
+        positions.setValue(node, bestSample.get().position);
         stepSizes.setValue(node, Math.min(stepSize * STEP_SIZE_MULTIPLIER, distanceToLine - stepSize));
         changed = true;
       } else {
@@ -158,10 +154,6 @@ public class ClinchLayout implements ILayout {
     }
 
     return changed;
-  }
-
-  private double distanceTo90Degrees(double angle) {
-    return Math.abs(angle - Math.PI / 2);
   }
 
   private double getMinimumAngleForNode(Mapper<INode, PointD> positions, INode node) {
@@ -176,8 +168,8 @@ public class ClinchLayout implements ILayout {
   }
 
   private static class Sample {
-    PointD direction;
-    double angle;
+    final PointD direction;
+    final double angle;
     double minimumAngle;
     PointD position;
 

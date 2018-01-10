@@ -22,7 +22,7 @@ public class NodeSwapper {
      * @param crossing - true if crossing nodes should be swapped
      */
     public static void swapNodes(IGraph g, int amount, boolean crossing){
-        Mapper<INode, PointD> nodePos = ForceAlgorithmApplier.initPositionMap(g);
+        Mapper<INode, PointD> nodePos = LayoutUtils.positionMapFromIGraph(g);
         if(amount <= 4 && crossing){
             ForceAlgorithmApplier.applyNodePositionsToGraph(g, swapCrossingNodes(g, nodePos, amount));
         } else {

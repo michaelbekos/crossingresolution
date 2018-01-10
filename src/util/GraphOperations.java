@@ -151,18 +151,19 @@ public class GraphOperations {
      * @return scaled grid points with scaleValue factor
      */
     public static  Mapper<INode, PointD> scaleUpProcess(IGraph g, Mapper<INode,PointD> nodePose, double scaleValue){
-    	double minX=-1, minY=-1;
+    	double minX=Double.POSITIVE_INFINITY, minY=Double.POSITIVE_INFINITY;
     	for(INode u : g.getNodes()){
-    		if(u.getLayout().getCenter().getX()<minX || minX==-1){
+    		if(u.getLayout().getCenter().getX()<minX){
         		minX=u.getLayout().getCenter().getX();
         	}
-        	if(u.getLayout().getCenter().getY()<minY|| minY==-1){
+        	if(u.getLayout().getCenter().getY()<minY){
         		minY=u.getLayout().getCenter().getY();
         	}
-        }    	
+        }  
         for(INode u : g.getNodes()){
-            nodePose.setValue(u, new PointD((u.getLayout().getCenter().getX()-minX) * scaleValue, (u.getLayout().getCenter().getY()-minY) * scaleValue));
-            g.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),u.getLayout().getWidth(),u.getLayout().getHeight()));
+        	nodePose.setValue(u, new PointD((u.getLayout().getCenter().getX()-minX) * scaleValue, (u.getLayout().getCenter().getY()-minY) * scaleValue));
+            //g.setNodeLayout(u, new RectD(u.getLayout().getX()*scaleValue,u.getLayout().getY()*scaleValue,u.getLayout().getWidth()*scaleValue,u.getLayout().getHeight()*scaleValue));
+        	g.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),u.getLayout().getWidth(),u.getLayout().getHeight()));
         }
         return nodePose;
     }
