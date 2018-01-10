@@ -21,6 +21,7 @@ public class VectorVisual implements IVisual, IVisualCreator {
     private PointD vector;
     private INode node;
     private Color color;
+    private int thickness;
 
     /**
      * Creates a new instance of EnclosingRectangle by setting the given
@@ -33,6 +34,16 @@ public class VectorVisual implements IVisual, IVisualCreator {
         this.vector = PointD.times(100, vector);
         this.node = node;
         this.color = color;
+        this.thickness = 1;
+    }
+    public VectorVisual(GraphComponent view, PointD vector, INode node, Color color, int thickness)
+    {
+        this.view = view;
+        this.vector = new PointD(vector);
+        this.vector = PointD.times(100, vector);
+        this.node = node;
+        this.color = color;
+        this.thickness = thickness;
     }
 
     @Override
@@ -46,6 +57,7 @@ public class VectorVisual implements IVisual, IVisualCreator {
         int topRightX = (int) topRight.getX();
         int topRightY = (int) topRight.getY();
 
+        graphics2D.setStroke(new BasicStroke(thickness));
         graphics2D.setColor(this.color);
         graphics2D.drawLine(bottomLeftX, bottomLeftY, topRightX, topRightY);
 

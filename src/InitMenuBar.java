@@ -102,6 +102,12 @@ public class InitMenuBar {
         JMenu layoutMenu = new JMenu();
         layoutMenu.setText("Layout");
 
+        JMenuItem slopedSpringEmbedderItem = new JMenuItem();
+        slopedSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
+        slopedSpringEmbedderItem.setText("Sloped Spring Embedder");
+        slopedSpringEmbedderItem.addActionListener(mainFrame::slopedSpringEmbedderItemActionPerformed);
+        layoutMenu.add(slopedSpringEmbedderItem);
+
         JMenuItem springEmbedderItem = new JMenuItem();
         springEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         springEmbedderItem.setText("Spring Embedder");

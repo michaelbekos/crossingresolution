@@ -3,6 +3,7 @@ package layout.algo;
 import com.yworks.yfiles.algorithms.GraphConnectivity;
 import com.yworks.yfiles.algorithms.YPoint;
 import com.yworks.yfiles.algorithms.YVector;
+import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.IMapper;
 import com.yworks.yfiles.graph.INode;
@@ -100,4 +101,97 @@ public class ForceDirectedFactory {
             map.getValue(u).addAll(vectors);
         }
     }
+
+    private static double calculateSlopeAngle(IEdge e) {
+        INode u1 = e.getSourceNode();
+        double u1_x = u1.getLayout().getCenter().getX();
+        double u1_y = u1.getLayout().getCenter().getY();
+
+        INode u2 = e.getTargetNode();
+        double u2_x = u2.getLayout().getCenter().getX();
+        double u2_y = u2.getLayout().getCenter().getY();
+
+        double dx = u2_x - u1_x;
+        double dy = u2_y - u1_y;
+
+        return Math.atan2(dy,dx);
+    }
+
+    public static void calculateSlopedSpringForces(IGraph graph, int numberOfSlopes, double initialAngleDeg, IMapper<INode, List<YVector>> map) {
+        List<Double> slopeAngles = new ArrayList<>();
+        double stepSize = (2 * Math.PI)/numberOfSlopes;
+        double pos = 2 * Math.PI*(initialAngleDeg/360.0);
+        for (int i = 0; i < numberOfSlopes; i++) {
+            double x = 10 * Math.cos(pos);
+            double y = 10 * Math.sin(pos);
+
+            double slopeAngle = Math.atan2(y, x);
+            if (slopeAngle < 0) {
+                slopeAngle += Math.PI;
+            }
+            slopeAngles.add(slopeAngle);
+            pos += stepSize;
+            if (pos > 2 * Math.PI) {
+                pos -= 2 * Math.PI;
+            }
+        }
+
+
+        for (IEdge e : graph.getEdges()) {
+            double edgeSlopeAngle = calculateSlopeAngle(e);
+            double fittedSlopeAngle = slopeAngles.get(0);
+            if (edgeSlopeAngle < 0) {
+                edgeSlopeAngle += Math.PI;
+            }
+            if (fittedSlopeAngle < 0){
+                fittedSlopeAngle += Math.PI;
+            }
+            for (double s : slopeAngles) {
+                if (Math.abs(s - edgeSlopeAngle) < Math.abs(fittedSlopeAngle - edgeSlopeAngle)) {
+                    fittedSlopeAngle = s;
+                }
+            }
+
+
+            INode u1 = e.getSourceNode();
+            double u1_x = u1.getLayout().getCenter().x;
+            double u1_y = u1.getLayout().getCenter().y;
+
+            INode u2 = e.getTargetNode();
+            double u2_x = u2.getLayout().getCenter().x;
+            double u2_y = u2.getLayout().getCenter().y;
+
+            double dx = u2_x - u1_x;
+            double dy = u2_y - u1_y;
+
+
+            if (edgeSlopeAngle < 0) {
+                edgeSlopeAngle += Math.PI;
+            }
+            if (fittedSlopeAngle < 0){
+                fittedSlopeAngle += Math.PI;
+            }
+
+            int sign;
+            if ((edgeSlopeAngle - fittedSlopeAngle) < 0) {
+                sign = -1;
+            } else {
+                sign = 1;
+            }
+
+            YVector source_vec, target_vec;
+            source_vec = new YVector(new YPoint(u1_x, u1_y), new YPoint(sign*dy + u1_x, -sign*dx + u1_y));
+            target_vec = new YVector(new YPoint(u2_x, u2_y), new YPoint(-sign*dy + u2_x, sign*dx + u2_y));
+
+
+            source_vec.norm();
+            source_vec.scale(1 * Math.abs(fittedSlopeAngle - edgeSlopeAngle));
+            map.getValue(e.getSourceNode()).add(source_vec);
+
+            target_vec.norm();
+            target_vec.scale(1 * Math.abs(fittedSlopeAngle - edgeSlopeAngle));
+            map.getValue(e.getTargetNode()).add(target_vec);
+        }
+    }
+
 }

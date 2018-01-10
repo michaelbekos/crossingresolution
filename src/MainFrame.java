@@ -11,21 +11,30 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceDirectedAlgorithm;
+import layout.algo.ForceDirectedFactory;
 import layout.algo.GeneticAlgorithm;
+import layout.algo.event.AlgorithmEvent;
+import layout.algo.event.AlgorithmListener;
 import util.GraphOperations;
 import util.Tuple4;
 import util.interaction.ThresholdSliders;
+import view.visual.VectorVisual;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.ArrayList;
 
 import static layout.algo.ForceAlgorithmApplier.bestSolution;
 
@@ -401,16 +410,13 @@ public class MainFrame extends JFrame {
         scaleToBox.setSelected(false);
 
 
-        cSidePanel.gridy = sidePanelNextY++;
-
         JCheckBox enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
         cSidePanel.gridx = 0;
-        cSidePanel.gridy = sidePanelNextY;
+        cSidePanel.gridy = sidePanelNextY++;
         sidePanel.add(enableMinimumAngleDisplay, cSidePanel);
         enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
         enableMinimumAngleDisplay.setSelected(false);
 
-        
 
         JCheckBox allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
         cSidePanel.gridx = 1;
@@ -533,6 +539,164 @@ public class MainFrame extends JFrame {
             faa.running = false;
             this.graphEditorInputMode.setCreateNodeAllowed(true);
         }
+    }
+
+
+    //helper function
+    private List<ICanvasObject> canvasObjects = new ArrayList<>();
+    private void drawSlopes(double numSlopes, double initAngleDeg) {
+        numSlopes *=2;
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        double stepSize = (2* Math.PI)/numSlopes;
+        double pos = 2 * Math.PI*(initAngleDeg/360);
+        INode tmpNode = graph.createNode(this.view.getCenter());
+        for (int i = 0; i < numSlopes; i++) {
+            double x_val = 1/this.view.getZoom() * 3 * Math.cos(pos);
+            double y_val = 1/this.view.getZoom() * 3 * Math.sin(pos);
+            canvasObjects.add(this.view.getBackgroundGroup().addChild(new VectorVisual(this.view, new PointD(x_val,y_val), tmpNode, Color.GREEN,(int)(5/this.view.getZoom())), ICanvasObjectDescriptor.VISUAL));
+            pos += stepSize;
+            if (pos > 2 * Math.PI) {
+                pos -= 2 * Math.PI;
+            }
+        }
+        this.view.updateUI();
+        this.graph.remove(tmpNode);
+    }
+
+    private int iterations = 1000;
+    private int numSlopes = 1;
+    private int initAngle = 0;
+    void slopedSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        JTextField iterationsTextField = new JTextField(Integer.toString(iterations));
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel iterationLabel = new JLabel("Number of Iterations: ");
+        panel.add(iterationLabel);
+        panel.add(iterationsTextField);
+
+        JLabel numSlopesLabel = new JLabel("Number of Slopes: ");
+        JTextField numSlopesTextField = new JTextField(Integer.toString(numSlopes));
+
+        panel.add(numSlopesLabel);
+        panel.add(numSlopesTextField);
+
+        JLabel initAngleLabel = new JLabel("Angle (°) of First Slope: "); //other slopes are equidistant to first slope, default angle is 0 (right), clockwise is positive
+        panel.add(initAngleLabel);
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridLayout(1,2));
+//        panel2.setMaximumSize(new Dimension(100,50));
+        JTextField initAngleTextField = new JTextField(Integer.toString(initAngle));
+        drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+        JSlider initAngleSlider = new JSlider(JSlider.HORIZONTAL, 0, 360, initAngle);
+        initAngleSlider.addChangeListener(changeEvent -> {
+            initAngleTextField.setText(Integer.toString(initAngleSlider.getValue()));
+            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+        });
+
+
+        initAngleTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                try {
+                    if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) { //checks is int
+                        initAngleSlider.setValue(Integer.parseInt(initAngleTextField.getText()));
+                        if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) {
+                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+                        }
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Invalid Input");
+                }
+            }
+        });
+
+        numSlopesTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                try {
+                    if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) { //checks is int
+                        if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) {
+                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+                        }
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Invalid Input");
+                }
+            }
+        });
+
+        panel2.add(initAngleSlider);
+        panel2.add(initAngleTextField);
+        panel.add(panel2);
+
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                iterations = Integer.parseInt(iterationsTextField.getText());
+                numSlopes = Integer.parseInt(numSlopesTextField.getText());
+                initAngle = Integer.parseInt(initAngleTextField.getText());
+
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 1000, slopes to 1 and inital angle to 0.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                for (ICanvasObject o : canvasObjects) {
+                    o.remove();
+                }
+                canvasObjects.clear();
+                this.view.updateUI();
+                return;
+            }
+        }
+        else {
+            for (ICanvasObject o : canvasObjects) {
+                o.remove();
+            }
+            canvasObjects.clear();
+            this.view.updateUI();
+            return;
+        }
+
+        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
+            public void calculateVectors() {
+                ForceDirectedFactory.calculateSlopedSpringForces(graph, numSlopes*2, initAngle, map);
+            }
+        };
+        fd.addAlgorithmListener(new AlgorithmListener() {
+            public void algorithmStarted(AlgorithmEvent evt) {
+            }
+
+            public void algorithmFinished(AlgorithmEvent evt) {
+                progressBar.setValue(0);
+                view.fitContent();
+                view.updateUI();
+            }
+
+            public void algorithmStateChanged(AlgorithmEvent evt) {
+                progressBar.setValue(evt.currentStatus());
+            }
+        });
+
+        Thread thread = new Thread(fd);
+        thread.start();
+
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        this.view.updateUI();
     }
 
 
