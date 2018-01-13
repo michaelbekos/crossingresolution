@@ -501,8 +501,8 @@ public class InitMenuBar {
 
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
-        if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
-            this.removedVertices = GraphOperations.removeVertices(this.graph, true, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
+        if (this.view.getSelection().getSelectedNodes().size() > 0) {
+            this.removedVertices = GraphOperations.removeVertices(this.graph, true, this.view.getSelection().getSelectedNodes().size(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
         } else if (this.graph.getNodes().size() > 0){
             JTextField vertexCount = new JTextField();
             vertexCount.setText(Integer.toString(1));
@@ -870,8 +870,8 @@ public class InitMenuBar {
         IGraphSelection selection = graphEditorInputMode.getGraphSelection();
         ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
 
-        if (selectedNodes.getCount() == 0) {
-            LayoutUtilities.morphLayout(this.view, layout, Duration.ofSeconds(1), null);
+        if (selectedNodes.size() == 0) {
+            LayoutUtilities.morphLayout(this.view, layout, Duration.ofSeconds(1));
             return;
         }
 

@@ -381,7 +381,7 @@ public class Utilities {
      *            edge b
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
      */
-    static double calculateAngleLookingForBends(INode n, IEdge a, IEdge b, PlanarInformation p, IGraph g) {
+ /*   static double calculateAngleLookingForBends(INode n, IEdge a, IEdge b, PlanarInformation p, IGraph g) {
 
         // Edge a
         YPoint ap, bp;
@@ -429,7 +429,7 @@ public class Utilities {
         YVector v2 = new YVector(new YPoint(n.getLayout().getCenter().getX(), n.getLayout().getCenter().getY()), bp);
         return YVector.angle(v1, v2);
     }
-
+*/
     /**
      * Calculates a new coordinates for a node "a" if you rotate "a" around the node "center" counter-clockwise with
      * angle alpha. Does not rotate the node! Just calculating coordinates. Does also scale the distance if wanted.
@@ -520,7 +520,7 @@ public class Utilities {
      *            the graph the nodes belong to
      * @return the rotated coordinates as a YPoint
      */
-    static YPoint calcNextAnglePosLookingForBends(INode center, IEdge e, double alpha, double scale, PlanarInformation p,
+ /*   static YPoint calcNextAnglePosLookingForBends(INode center, IEdge e, double alpha, double scale, PlanarInformation p,
                                                   IGraph graph) {
         // if inserted edge, getReverse to work with
         if (p.isInsertedEdge(e)) {
@@ -546,6 +546,7 @@ public class Utilities {
             return calculateNextNodeAnglePosition(center, xa, ya, alpha, scale, graph);
         }
     }
+    */
 
     /**
      * Insert a bend in an edge e at position pp in a graph g with corresponding planar information p. The bend is
@@ -561,11 +562,11 @@ public class Utilities {
      * @param graph
      *            the graph the edge belong to
      */
-    static void insertBend(IEdge e, YPoint pp, INode n, PlanarInformation p, IGraph graph) {
+  /*  static void insertBend(IEdge e, YPoint pp, INode n, PlanarInformation p, IGraph graph) {
         double x = pp.getX();
         double y = pp.getY();
         insertBend(e, x, y, n, p, graph);
-    }
+    }*/
 
     /**
      * Insert a bend in an edge e at position pp in a graph g with corresponding planar information p. The bend is
@@ -583,7 +584,7 @@ public class Utilities {
      * @param graph
      *            the graph the edge belong to
      */
-    static void insertBend(IEdge edge, double x, double y, INode n, PlanarInformation p, IGraph graph) {
+   /* static void insertBend(IEdge edge, double x, double y, INode n, PlanarInformation p, IGraph graph) {
         // check if the current edge is inserted, take the reverse if
         // yes, because we want to add the bend to the original edge in
         // graph
@@ -604,6 +605,7 @@ public class Utilities {
             graph.addBend(edge,new PointD(x,y));
         }
     }
+    */
 
     /**
      * Adds for every edge in graph g a reversed edge. Function will add double directed edges if there already reversed
@@ -614,11 +616,11 @@ public class Utilities {
      * @param p
      *            corresponding planar information
      */
-    static void addReversedEdges(IGraph graph, PlanarInformation p) {
+   /* static void addReversedEdges(IGraph graph, PlanarInformation p) {
         for (IEdge ed : graph.getEdges()) {
             p.createReverse(ed);
         }
-    }
+    }*/
 
     /**
      * Sort edges, necessary to calculate faces in planarInformation.
@@ -626,7 +628,7 @@ public class Utilities {
      * @param graph
      *            the graph to sort edges for
      */
-    static void sortEdges(IGraph graph) {
+    /*static void sortEdges(IGraph graph) {
         YGraphAdapter graphAdapter = new YGraphAdapter(graph);
         for (Node node : graphAdapter.getYGraph().getNodes())
         {
@@ -634,7 +636,7 @@ public class Utilities {
             node.sortOutEdges(new EdgeComparator(edge, graph));
 
         }
-    }
+    }*/
 
     /**
      * Remove all edges, which are marked as inserted in planar information p, out of the graph g.
@@ -644,14 +646,14 @@ public class Utilities {
      * @param p
      *            Planar information in which edges are marked as inserted
      */
-    static void removeReversedEdges(IGraph graph, PlanarInformation p) {
+  /*  static void removeReversedEdges(IGraph graph, PlanarEmbedding p) {
         for (IEdge ed : graph.getEdges()) {
             if (p.isInsertedEdge(ed)){
                 graph.remove(ed);
             }
         }
     }
-
+*/
     /**
      * Creates a deep copy of Graph2D. Following attributes are copied: - nodes - edges - node positions and labels
      * Optional: You can set notAllEdges to true, if you're graph contains inserted edges, that should not be copied.
@@ -669,7 +671,7 @@ public class Utilities {
      *            true if not all edges should be copied otherwise false
      * @return a deep copy of g
      */
-    static IGraph deepCopy(IGraph graph, ArrayList<IEdge> insertedEdges, PlanarInformation p, boolean notAllEdges) {
+    /*static IGraph deepCopy(IGraph graph, ArrayList<IEdge> insertedEdges, PlanarInformation p, boolean notAllEdges) {
         HashMap<INode, INode> oldToNew = new HashMap<>();
         IGraph newG = graph.getC ; //TODO: wird die Methode überhaupt benutzt
         // deep copy nodes, labels and positions
@@ -685,7 +687,7 @@ public class Utilities {
                 newG.createEdge(oldToNew.get(ec.edge().source()), oldToNew.get(ec.edge().target()));
         }
         return newG;
-    }
+    }*/
 
     /**
      * Returns an angle in degree.
@@ -826,7 +828,7 @@ public class Utilities {
     public static double distanceToLine(YPoint p, YPoint o, YPoint e) {
         return java.awt.geom.Line2D.ptLineDist(o.getX(), o.getY(), e.getX(), e.getY(), p.getX(), p.getY());
     }
-
+/*
     /**
      * Checks if an infinite line represented by points liS and liE has an intersection with an line segment represented
      * by lsS and lsE. Special variant: Only intersections point in liS + (lisS->lieE) direction are found.
@@ -841,7 +843,7 @@ public class Utilities {
      *            line segments last node
      * @return the intersection point as YPoint or null if there was no intersection
      */
-    public static YPoint calcInfinitLineAndLineSegmentInterSect(YPoint liS, YPoint liE, YPoint lsS, YPoint lsE) {
+  /*  public static YPoint calcInfinitLineAndLineSegmentInterSect(YPoint liS, YPoint liE, YPoint lsS, YPoint lsE) {
         // calculate intersection point of the two infinite lines
         YPoint p = y.geom.Geom.calcIntersection(liS, liE, lsS, lsE);
         // System.out.println("P: " + p + " start: " + lsS + " end: " + lsE);
@@ -886,7 +888,7 @@ public class Utilities {
             return p;
         else
             return null;
-    }
+    }/*
 
     /**
      * Checks if an node n's new position newP bounding box intersects edge e in graph g. n's new bounding box is
@@ -929,7 +931,7 @@ public class Utilities {
         System.out.println(a-b);
         System.out.println( a + " " + b);
         System.out.println(test);
-        System.out.println(y.geom.Geom.calcIntersection(p1,p2,p3,p4));
+      //  System.out.println(y.geom.Geom.calcIntersection(p1,p2,p3,p4));
         System.out.println(calculateCrossing(p1, p2, p3, p4));
         System.out.println(calculateCrossing3(p1, p2, p3, p4));
     }

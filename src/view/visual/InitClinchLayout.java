@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 public class InitClinchLayout {
 
   public static void run(IGraph graph, IGraphSelection selection, JProgressBar progressBar) {
-    ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
+   /* ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
 
     Set<INode> fixNodes;
-    if (selectedNodes.getCount() > 0) {
+   if (selectedNodes.getCount() > 0) {
       fixNodes = graph.getNodes().stream()
           .filter(node -> !selectedNodes.isSelected(node))
           .collect(Collectors.toSet());
@@ -50,6 +50,6 @@ public class InitClinchLayout {
 
     new IGraphLayoutExecutor(clinchLayout, graph, progressBar, 1000, 20)
         .run();
-  }
+*/  }
 
 }

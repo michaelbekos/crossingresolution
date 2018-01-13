@@ -4,7 +4,8 @@ import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
-import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
+import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
+import com.yworks.yfiles.layout.YGraphAdapter;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.geometry.RectD;
@@ -26,6 +27,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Set;
+
+import algorithms.fpp.FraysseixPachPollack;
 
 import static layout.algo.ForceAlgorithmApplier.bestSolution;
 
@@ -50,7 +53,7 @@ public class MainFrame extends JFrame {
     /* Default Styles */
     private ShinyPlateNodeStyle defaultNodeStyle;
     private PolylineEdgeStyle defaultEdgeStyle;
-    private SimpleLabelStyle defaultLabelStyle;
+    private DefaultLabelStyle defaultLabelStyle;
 
     /* Central gui elements */
     private JLabel infoLabel;
@@ -233,7 +236,7 @@ public class MainFrame extends JFrame {
         this.graph.getEdgeDefaults().setStyle(this.defaultEdgeStyle);
 
         /* Default Label Styling */
-        this.defaultLabelStyle = new SimpleLabelStyle();
+        this.defaultLabelStyle = new DefaultLabelStyle();
         this.defaultLabelStyle.setFont(new Font("Dialog", Font.PLAIN, 0));
         this.defaultLabelStyle.setTextPaint(Colors.WHITE);
         this.graph.getNodeDefaults().getLabelDefaults().setStyle(this.defaultLabelStyle);
@@ -348,6 +351,19 @@ public class MainFrame extends JFrame {
 
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
+// FPP start
+        JButton startFPP = new JButton("Start De Fraysseix Pach Pollack"),
+                stopFPP  = new JButton("Stop De Fraysseix Pach Pollack");
+        startFPP.addActionListener(this::startFPPClicked);
+        stopFPP.addActionListener(this::stopFPPClicked);
+
+        sidePanel.add(startFPP, cSidePanel);
+        cSidePanel.gridx = 1;
+        sidePanel.add(stopFPP, cSidePanel);
+
+        cSidePanel.gridy = sidePanelNextY++;
+        cSidePanel.gridx = 0;
+// FPP ende
         JButton showForces = new JButton("Show forces");
         showForces.addActionListener(e -> {
             if (faa == null) {
@@ -529,6 +545,26 @@ public class MainFrame extends JFrame {
     }
 
     private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){
+        if (faa != null) {
+            faa.running = false;
+            this.graphEditorInputMode.setCreateNodeAllowed(true);
+        }
+    }
+    private void startFPPClicked(@SuppressWarnings("unused") ActionEvent evt){
+
+        YGraphAdapter graphAdapter = new YGraphAdapter(this.view.getGraph());
+        if (com.yworks.yfiles.algorithms.PlanarEmbedding.isPlanar(graphAdapter.getYGraph())) {
+            FraysseixPachPollack fpp = new FraysseixPachPollack(view.getGraph(), new FraysseixPachPollack.FPPSettings());
+            //fpp.run();
+            this.view.fitContent();
+            this.view.updateUI();
+        } else {
+            this.infoLabel.setText("The input graph is not planar");
+        }
+
+    }
+
+    private void stopFPPClicked(@SuppressWarnings("unused") ActionEvent evt){
         if (faa != null) {
             faa.running = false;
             this.graphEditorInputMode.setCreateNodeAllowed(true);

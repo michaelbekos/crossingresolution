@@ -1,5 +1,7 @@
 package algorithms.canonicalOrder;
 
+import com.yworks.yfiles.algorithms.Dart;
+import com.yworks.yfiles.algorithms.PlanarEmbedding;
 import com.yworks.yfiles.algorithms.YPoint;
 import com.yworks.yfiles.geometry.IPoint;
 import com.yworks.yfiles.geometry.PointD;
@@ -7,18 +9,22 @@ import com.yworks.yfiles.graph.IBend;
 import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.layout.YGraphAdapter;
+
+import java.util.List;
+
 /**
  * Created by Ama on 16.12.2017.
  */
 public class Utilities {
 
-    public static void setOuterFace(PlanarInformation plan, IGraph graph) {
+    public static void setOuterFace(PlanarEmbedding plan, IGraph graph) {
         // take leftMost node and check his faces
+        YGraphAdapter graphAdapter = new YGraphAdapter(graph);
         INode leftMost = null;
         INode rightMost = null;
         INode topMost = null;
         INode bottomMost = null;
-        leftMost.
         double currentXMin = Double.MAX_VALUE;
         double currentXMax = -Double.MAX_VALUE;
         double currentYMin = Double.MAX_VALUE;
@@ -87,12 +93,25 @@ public class Utilities {
         }
         // System.out.println("leftMost: " + leftMost + " rightMost: " +
         // rightMost + " bottomMost: " + bottomMost + " topMost: " + topMost);
-        for (FaceCursor fc = plan.faces(); fc.ok(); fc.next()) {
+        /*for (FaceCursor fc = plan.faces(); fc.ok(); fc.next()) {
             if (fc.face().contains(bottomMost) && fc.face().contains(topMost)
                     && fc.face().contains(leftMost)
                     && fc.face().contains(rightMost)) {
 
                 plan.setOuterFace(fc.face());
+            }
+        }
+        */
+        for(List<Dart> ld : plan.getFaces()){
+            if(ld.contains(graphAdapter.getCopiedNode(bottomMost)) &&
+                    ld.contains(graphAdapter.getCopiedNode(topMost)) &&
+                    ld.contains(graphAdapter.getCopiedNode(leftMost)) &&
+                    ld.contains(graphAdapter.getCopiedNode(rightMost))){
+                plan.getOuterFace().clear();
+                System.out.println("Ist es wirklich leer? : " + plan.getOuterFace().size());
+                for(int i = 0; i < ld.size(); i++ ){
+                    plan.getOuterFace().add(i, ld.get(i));
+                }
             }
         }
     }
@@ -113,3 +132,4 @@ public class Utilities {
     }
 
 }
+
