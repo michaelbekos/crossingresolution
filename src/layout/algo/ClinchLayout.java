@@ -80,14 +80,14 @@ public class ClinchLayout implements ILayout {
       Matrix2D rotationMatrix = new Matrix2D();
       double angle = i * Math.PI / NUMBER_OF_SAMPLES;
       rotationMatrix.rotate(angle);
-      rightRotations.add(new Sample(rotationMatrix.transform(lineDirection), angle));
+      rightRotations.add(new Sample(rotationMatrix.transform(lineDirection)));
     }
 
     for (int i = 0; i < NUMBER_OF_SAMPLES; i++) {
       Matrix2D rotationMatrix = new Matrix2D();
       double angle = -i * Math.PI / NUMBER_OF_SAMPLES;
       rotationMatrix.rotate(angle);
-      leftRotations.add(new Sample(rotationMatrix.transform(lineDirection), angle));
+      leftRotations.add(new Sample(rotationMatrix.transform(lineDirection)));
     }
 
     for (INode node : graph.getNodes()) {
@@ -121,16 +121,16 @@ public class ClinchLayout implements ILayout {
       }
 
       double leftOrRight = Math.signum(crossProduct(PointD.subtract(oldPosition, anchor1), lineDirection));
-      double minAngle = getMinimumAngleForNode(positions, node);
+      double minAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
       final Double stepSize = stepSizes.getValue(node);
       Collection<Sample> samples = sampleDirections.getValue(node);
 
       Optional<Sample> bestSample = samples.stream()
           .peek(sample -> {
-            PointD newPosition = stepInDirection(oldPosition, sample.direction, stepSize);
+            PointD newPosition = LayoutUtils.stepInDirection(oldPosition, sample.direction, stepSize);
             positions.setValue(node, newPosition);
             sample.position = newPosition;
-            sample.minimumAngle = getMinimumAngleForNode(positions, node);
+            sample.minimumAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
           })
           .filter(sample -> boundingBox.contains(sample.position))
           // check if sample is still on the same side of the line
@@ -156,26 +156,4 @@ public class ClinchLayout implements ILayout {
     return changed;
   }
 
-  private double getMinimumAngleForNode(Mapper<INode, PointD> positions, INode node) {
-    return MinimumAngle.getMinimumAngleForNode(graph, node, positions).orElse(Double.POSITIVE_INFINITY);
-  }
-
-  private PointD stepInDirection(PointD oldPosition, PointD direction, double stepSize) {
-    return new PointD(
-        oldPosition.getX() + stepSize * direction.getX(),
-        oldPosition.getY() + stepSize * direction.getY()
-    );
-  }
-
-  private static class Sample {
-    final PointD direction;
-    final double angle;
-    double minimumAngle;
-    PointD position;
-
-    Sample(PointD direction, double angle) {
-      this.direction = direction;
-      this.angle = angle;
-    }
-  }
 }
