@@ -84,11 +84,10 @@ public class RandomMovementLayout implements ILayout {
       positions.setValue(node, sample.position);
     } else {
       stepsSinceLastUpdate++;
+      positions.setValue(node, originalPosition);
 
-      if (stepsSinceLastUpdate >= 100) {
-        System.out.println("jumping...");
+      if (stepsSinceLastUpdate >= 50) {
         stepsSinceLastUpdate = 0;
-        positions.setValue(node, originalPosition);
         return resolveLocalMaximum();
       }
     }
