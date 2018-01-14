@@ -675,10 +675,18 @@ public class MainFrame extends JFrame {
             }
         };
         fd.addAlgorithmListener(new AlgorithmListener() {
+            ICompoundEdit compoundEdit;
             public void algorithmStarted(AlgorithmEvent evt) {
+                synchronized (graph) {
+                    compoundEdit = graph.beginEdit("Undo layout", "Redo layout");
+                }
+
             }
 
             public void algorithmFinished(AlgorithmEvent evt) {
+                synchronized (graph) {
+                    compoundEdit.commit();
+                }
                 progressBar.setValue(0);
                 view.fitContent();
                 view.updateUI();
