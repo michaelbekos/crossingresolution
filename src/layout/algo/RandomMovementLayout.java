@@ -7,9 +7,11 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import util.BoundingBox;
+import util.graph2d.Intersection;
 
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class RandomMovementLayout implements ILayout {
   private static final int NUM_SAMPLES = 50;
@@ -22,6 +24,7 @@ public class RandomMovementLayout implements ILayout {
   private ArrayList<Sample> sampleDirections;
   private Random random;
   private RectD boundingBox;
+  private int stepsSinceLastUpdate;
 
   public RandomMovementLayout(IGraph graph) {
     this.graph = graph;
@@ -50,7 +53,7 @@ public class RandomMovementLayout implements ILayout {
 
   @Override
   public boolean executeStep(int iteration) {
-    Optional<INode> randomNode = selectRandomNode();
+    Optional<INode> randomNode = selectRandomNode(graph.getNodes());
     if (!randomNode.isPresent()) {
       return true;
     }
@@ -63,29 +66,50 @@ public class RandomMovementLayout implements ILayout {
     PointD originalPosition = positions.getValue(node);
 
     Sample[] goodSamples = samples.stream()
-        .filter(sample -> {
+        .peek(sample -> {
           double stepSize = random.nextDouble() * (maxStepSize - minStepSize) + minStepSize;
-          PointD newPosition = LayoutUtils.stepInDirection(originalPosition, sample.direction, stepSize);
-          sample.position = newPosition;
-          return boundingBox.contains(newPosition);
+          sample.position = LayoutUtils.stepInDirection(originalPosition, sample.direction, stepSize);
         })
-        .filter(sample -> {
+        .filter(sample -> boundingBox.contains(sample.position))
+        .peek(sample -> {
           positions.setValue(node, sample.position);
-          double sampleMinAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
-          sample.minimumAngle = sampleMinAngle;
-
-          return sampleMinAngle > originalAngle;
+          sample.minimumAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
         })
+        .filter(sample -> sample.minimumAngle > originalAngle)
         .toArray(Sample[]::new);
 
     if (goodSamples.length > 0) {
+      stepsSinceLastUpdate = 0;
       Sample sample = goodSamples[random.nextInt(goodSamples.length)];
       positions.setValue(node, sample.position);
     } else {
-      jump(node, originalPosition);
+      stepsSinceLastUpdate++;
+
+      if (stepsSinceLastUpdate >= 100) {
+        System.out.println("jumping...");
+        stepsSinceLastUpdate = 0;
+        positions.setValue(node, originalPosition);
+        return resolveLocalMaximum();
+      }
     }
 
     // we're never finished...
+    return false;
+  }
+
+  private boolean resolveLocalMaximum() {
+    Optional<Intersection> crossing = MinimumAngle.getMinimumAngleCrossing(graph, positions);
+    if (!crossing.isPresent()) {
+      return true;
+    }
+
+    HashSet<INode> nodesOfCrossing = new HashSet<>(4);
+    nodesOfCrossing.add(crossing.get().segment1.n1);
+    nodesOfCrossing.add(crossing.get().segment1.n2);
+    nodesOfCrossing.add(crossing.get().segment2.n1);
+    nodesOfCrossing.add(crossing.get().segment2.n2);
+    selectRandomNode(nodesOfCrossing)
+        .ifPresent(n -> jump(n, positions.getValue(n)));
     return false;
   }
 
@@ -124,9 +148,9 @@ public class RandomMovementLayout implements ILayout {
     return randomSamples;
   }
 
-  private Optional<INode> selectRandomNode() {
+  private Optional<INode> selectRandomNode(Iterable<INode> nodes) {
     // select random node (we might think about shuffling instead?)
-    return graph.getNodes().stream()
+    return  StreamSupport.stream(nodes.spliterator(), false)
         .skip(random.nextInt(graph.getNodes().size()))
         .findFirst();
   }
