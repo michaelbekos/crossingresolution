@@ -9,6 +9,7 @@ import com.yworks.yfiles.graph.Mapper;
 import util.BoundingBox;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class RandomMovementLayout implements ILayout {
   private static final int NUM_SAMPLES = 50;
@@ -81,14 +82,36 @@ public class RandomMovementLayout implements ILayout {
       Sample sample = goodSamples[random.nextInt(goodSamples.length)];
       positions.setValue(node, sample.position);
     } else {
-      // select a completely random position (within the original bounds)
-      double x = random.nextDouble() * boundingBox.getWidth() + boundingBox.getX();
-      double y = random.nextDouble() * boundingBox.getHeight() + boundingBox.getY();
-      positions.setValue(node, new PointD(x, y));
+      jump(node, originalPosition);
     }
 
     // we're never finished...
     return false;
+  }
+
+  private void jump(INode node, PointD originalPosition) {
+    // select some bounds around the node and limit them by the global bounding box
+    double minX = Math.max(originalPosition.getX() - 50, boundingBox.getX());
+    double minY = Math.max(originalPosition.getY() - 50, boundingBox.getY());
+    RectD bounds = new RectD(
+        minX,
+        minY,
+        Math.min(minX + 100, boundingBox.getX() + boundingBox.getWidth()) - minX,
+        Math.min(minY + 100, boundingBox.getY() + boundingBox.getHeight()) - minY
+    );
+
+    Stream
+        .generate(() -> {
+          double x = random.nextDouble() * bounds.getWidth() + bounds.getX();
+          double y = random.nextDouble() * bounds.getHeight() + bounds.getY();
+          return new PointD(x, y);
+        })
+        .limit(NUM_SAMPLES_PER_TEST)
+        .max(Comparator.comparingDouble(position -> {
+          positions.setValue(node, position);
+          return MinimumAngle.getMinimumAngleForNode(positions, node, graph);
+        }))
+        .ifPresent(pointD -> positions.setValue(node, pointD));
   }
 
   private Collection<Sample> selectRandomSamples() {
