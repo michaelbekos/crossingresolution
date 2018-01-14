@@ -19,37 +19,42 @@ import java.util.*;
 /**
  * Created by Ama on 14.12.2017.
  */
+/**
+ * This class allows you to calculate a straight-line drawing for an arbitrary connected planar graph on an integer grid
+ * with size (2n-4) * (n-2) in linear time.
+ *
+ * @author Philemon Schucker, Mai 2015
+ *
+ */
 public class FraysseixPachPollack {
 
     protected ArrayList<Edge> insertedEdges;
     private HashMap<Node, TreeNode> nToTNMap = new HashMap<Node, TreeNode>();
     private HashSet<Node> neighbours = new HashSet<Node>();
-    private IGraph graph;
+    private Graph graph;
+    private IGraph iGraph;
+    private YGraphAdapter graphAdapter;
     private TreeNode tree;
     private int multiplierX = 70;
     private int multiplierY = -70; // for FPP
     private FPPSettings settings;
-    private YGraphAdapter graphAdapter;
-    private Graph yGraph;
 
-    //private  outerFace;
     private List<Dart> outerFace;
+
     /**
      * Creating an instance of this class directly applies FPP-Algorithm on given Graph g.
      *
-     * @param iGraph
+     * @param g
      *            the graph for which the embedding is calculated
      * @throws Exception
      */
-    public FraysseixPachPollack(IGraph iGraph, FPPSettings settings){
-        YGraphAdapter graphAdapter = new YGraphAdapter(iGraph);
-        Graph graph = graphAdapter.getYGraph();
-        if (GraphChecker.isConnected(graph) && GraphChecker.isMultipleEdgeFree(graph)
-                && GraphChecker.isSelfLoopFree(graph) && GraphChecker.isPlanar(graph)) {
-            this.graph = iGraph;
+    public FraysseixPachPollack(IGraph g, FPPSettings settings){
+        this.graphAdapter = new YGraphAdapter(g);
+        if (GraphChecker.isConnected(graphAdapter.getYGraph()) && GraphChecker.isMultipleEdgeFree(graphAdapter.getYGraph())
+                && GraphChecker.isSelfLoopFree(graphAdapter.getYGraph()) && GraphChecker.isPlanar(graphAdapter.getYGraph())) {
+            this.iGraph = g;
+            this.graph = graphAdapter.getYGraph();
             this.settings = settings;
-            this.graphAdapter = graphAdapter;
-            this.yGraph = graphAdapter.getYGraph();
             multiplierX = settings.scaleFactor;
             multiplierY = -settings.scaleFactor;
             start();
@@ -62,29 +67,30 @@ public class FraysseixPachPollack {
      * @throws Exception
      */
     public void start(){
-        int nodeNumber = graph.getNodes().size();
+
         // special cases
-        if (nodeNumber <= 0)
+        if (graph.getNodeArray().length <= 0)
             return;
-        if (nodeNumber == 1) {
-            graph.getNodes();
-            tree = new TreeNode(yGraph.firstNode(), 0);
+        if (graph.getNodeArray().length == 1) {
+            tree = new TreeNode(graph.getNodeArray()[0], 0);
             applyFPPresult();
             return;
         }
-        if (nodeNumber == 2) {
-            tree = new TreeNode(yGraph.firstNode(), 0);
-            tree.right = new TreeNode(yGraph.getNodeArray()[1], 1);
+        if (graph.getNodeArray().length == 2) {
+            Node[] nodeArr = graph.getNodeArray();
+            tree = new TreeNode(nodeArr[0], 0);
+            tree.right = new TreeNode(nodeArr[1], 1);
             tree.right.dx = 1;
             applyFPPresult();
             return;
         }
-        if (nodeNumber == 3) {
-            tree = new TreeNode(yGraph.getNodeArray()[0], 0);
-            tree.right = new TreeNode(yGraph.getNodeArray()[1], 1);
+        if (graph.getNodeArray().length == 3) {
+            Node[] nodeArr = graph.getNodeArray();
+            tree = new TreeNode(nodeArr[0], 0);
+            tree.right = new TreeNode(nodeArr[1], 1);
             tree.right.dx = 1;
             tree.right.y = 1;
-            tree.right.right = new TreeNode(yGraph.getNodeArray()[2], 2);
+            tree.right.right = new TreeNode(nodeArr[2], 2);
             tree.right.right.dx = 2;
             applyFPPresult();
             return;
@@ -93,18 +99,15 @@ public class FraysseixPachPollack {
         // preparations
 
         // triangulate the graph if necessary
-        insertedEdges = Connectivity.triangulatePlanarGraph(yGraph);
+        insertedEdges = Connectivity.triangulatePlanarGraph(graph);
 
         // calculate canonical order
-        PlanarEmbedding plan = new PlanarEmbedding(yGraph);
-
-/*        PlanarInformation plan = new PlanarInformation(g);
-        CombinatorialEmbedder emb = new CombinatorialEmbedder();
-        emb.setPlanarInformation(plan);
-        emb.embed();
-*/
-        CanonicalOrder corder = new CanonicalOrder(graph, plan, settings.random);
-        ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder(); //TODO: gogogo
+        PlanarEmbedding planarEmbedding = new PlanarEmbedding(graph);
+   //     CombinatorialEmbedder emb = new CombinatorialEmbedder();
+   //     emb.setPlanarInformation(plan);
+   //     emb.embed();
+        CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random);
+        ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
 
         // transform into one list
         ArrayList<Node> canonicalOrder = new ArrayList<Node>();
@@ -138,7 +141,6 @@ public class FraysseixPachPollack {
 
             // check for all neighbors if they are already placed and put these
             // in a hashset
-
             for (INodeCursor nc = vk.node.getNeighborCursor(); nc.ok(); nc.next()) {
                 Node n = nc.node();
                 // every placed vertex has already a treeNode
@@ -209,11 +211,12 @@ public class FraysseixPachPollack {
         // 2. Phase: calculate final x coordinates
         accumulateOffsets(v1, 0);
 
-        outerFace = plan.getOuterFace();
+        outerFace = planarEmbedding.getOuterFace();
         applyFPPresult();
-     //   algorithms.fpp.Utilities.removeReversedEdges(graph, plan);  //sollte nicht benötigt werden, da in dieser Api keine reverse Edges hinzugefügt werden
-        insertedEdges.forEach(e -> yGraph.removeEdge(e));
-        //insertedEdges.forEach(e -> graph.removeEdge(e));
+
+     //   Utilities.removeReversedEdges(g, plan);
+     //   insertedEdges.forEach(e -> g.removeEdge(e));
+
 
     }
 
@@ -224,17 +227,15 @@ public class FraysseixPachPollack {
      *            canonical order to check
      */
     private void checkForValidOrdering(ArrayList<Node> canonicalOrder) {
-        boolean[] b = new boolean[graph.getNodes().size()];
-        for(int i = 0; i < graph.getNodes().size(); i++){
-            b[i] = true;
-        }
+        boolean[] b = new boolean[graph.getNodeArray().length];
+        for (Node n : canonicalOrder)
+            b[n.index()] = true;
         boolean test = true;
         for (int i = 0; i < b.length; i++) {
             test = test && b[i];
         }
-        if (!test) {
+        if (!test)
             throw new IllegalArgumentException("Canonical Order is not valid");
-        }
     }
 
     /**
@@ -322,30 +323,49 @@ public class FraysseixPachPollack {
 
     private void applyFPPresult() {
         HashMap<Node, YPoint> res = getFFPResult();
-        IListEnumerable<INode> nl = graph.getNodes();
-        for (INode n : nl) {
+        Node[] nl = graph.getNodeArray();
+        for (Node n : nl) {
             YPoint p = res.get(n);
             if (p != null) {
-                graph.setNodeCenter(n,new PointD(p.getX() * multiplierX, p.getY() * multiplierY));
+                iGraph.setNodeCenter(graphAdapter.getOriginalNode(n), new PointD(p.getX() * multiplierX, p.getY() * multiplierY));
             }
         }
-        if (graph.getNodes().size() < 4)
+        if (nl.length < 4)
             return;
         // shift to positiv y values
-        Iterator<Dart> dartIte = outerFace.iterator();
-
         double minimum = 0;
-        double tmpMinimum = 0;
-       while(dartIte.hasNext()) {
-           Dart d = dartIte.next();
-            Edge e = d.getAssociatedEdge();
-            tmpMinimum = graphAdapter.getOriginalNode(e.source()).getLayout().getCenter().getY();
-            if (tmpMinimum  < minimum)
-                minimum = tmpMinimum;
+        for(Dart dart : outerFace){
+            INode sourceINode = graphAdapter.getOriginalNode(getSourceNode(dart));
+            if(sourceINode.getLayout().getCenter().getY() < minimum){
+                minimum = sourceINode.getLayout().getCenter().getY();
+            }
         }
         minimum *= -1;
-        for (INode n : graph.getNodes())
-            graph.setNodeCenter(n, new PointD(n.getLayout().getCenter().getX(), n.getLayout().getCenter().getY() + minimum));
+        for(INode iNode : iGraph.getNodes()){
+            PointD newCenter = new PointD(iNode.getLayout().getCenter().getX(),iNode.getLayout().getCenter().getY() + minimum);
+            iGraph.setNodeCenter(iNode, newCenter);
+        }
+
+    }
+
+    private Node getTargetNode(Dart dart){
+        Node targetNode;
+        if(dart.isReversed()){
+            targetNode = dart.getAssociatedEdge().target();
+        }else{
+            targetNode = dart.getAssociatedEdge().source();
+        }
+        return targetNode;
+    }
+
+    private Node getSourceNode(Dart dart){
+        Node targetNode;
+        if(dart.isReversed()){
+            targetNode = dart.getAssociatedEdge().source();
+        }else{
+            targetNode = dart.getAssociatedEdge().target();
+        }
+        return targetNode;
     }
 
     /**
@@ -394,4 +414,5 @@ public class FraysseixPachPollack {
         public int scaleFactor = 70;
         public double limitTopHeightFactor = 3.;
     }
+
 }

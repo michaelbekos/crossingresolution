@@ -6,12 +6,7 @@ import java.util.List;
 
 import com.yworks.yfiles.algorithms.*;
 
-/**
- * Static class containing some useful graph algorithms.
- *
- * @author Philemon Schucker 2015
- *
- */
+
 public class Connectivity {
 
     //no need for instantiation...
@@ -63,16 +58,15 @@ public class Connectivity {
         IEdgeMap emap = graph.createEdgeMap();
 
         // get biconnected components
+
         if (com.yworks.yfiles.algorithms.GraphConnectivity.biconnectedComponents(graph, emap, nmap) <= 1) {
             // clean up
             graph.disposeEdgeMap(emap);
             graph.disposeNodeMap(nmap);
-            if (removePlanInsertedEdges){
-
-            }
-                //      removeInsertedEdges(graph, plan);
-                // finish
-                return insertedEdges;
+            /*if (removePlanInsertedEdges)
+                removeInsertedEdges(graph, plan);
+            */ // finish
+            return insertedEdges;
         }
 
         // iterate over all nodes to find cutvertices in node map
@@ -83,24 +77,21 @@ public class Connectivity {
             if (nmap.getBool(curNode)) {
 
                 // get the first outgoing edge
-                //Edge preEdge = curNode.firstOutEdge();
                 Dart preDart = plan.getOutgoingDarts(curNode).get(0);
-                int preEdgeBCNumber = emap.getInt(preDart.getAssociatedEdge());
+                Edge preEdgeD = preDart.getAssociatedEdge();
 
-                //Edge edgeToStopAt = preEdge;
+                int preEdgeBCNumber = emap.getInt(preEdgeD);
+
                 Dart dartToStopAt = preDart;
 
                 // for each other outgoing edges
-                //    for (Edge curEdge =  plan.cyclicNextEdge(preEdge); curEdge != edgeToStopAt; curEdge = plan
-                //           .cyclicNextEdge(curEdge)) {
+
                 for (Dart curDart = plan.getCyclicNext(preDart); curDart != dartToStopAt; curDart = plan.getCyclicNext(curDart)) {
-                    //int curEdgeBCNumber = emap.getInt(curEdge);
-                    int curEdgeBCNumber = emap.getInt(curDart.getAssociatedEdge());
+                    int curEdgeBCNumber = emap.getInt(curDart);
 
                     // ignore selfloops and edge pairs that belong to the same
                     // biconnected component
-                    if (preEdgeBCNumber == -1
-                            || preEdgeBCNumber == curEdgeBCNumber) {
+                    if (preEdgeBCNumber == -1 || preEdgeBCNumber == curEdgeBCNumber) {
                         preEdgeBCNumber = curEdgeBCNumber;
                         preDart = curDart;
                         continue;
@@ -108,56 +99,45 @@ public class Connectivity {
 
                     // get the two next nodes of the two different biconnected
                     // components outer face
-                    //Node source = preDart.opposite(curNode);
-                    //Node target = curDart.opposite(curNode);
                     Node source = preDart.getAssociatedEdge().opposite(curNode);
                     Node target = curDart.getAssociatedEdge().opposite(curNode);
+
                     // in case of edge already exists go to next
-                    if (graph.containsEdge(source, target)
-                            || graph.containsEdge(target, source)) {
+                    if (graph.containsEdge(source, target) || graph.containsEdge(target, source)) {
                         preEdgeBCNumber = curEdgeBCNumber;
                         preDart = curDart;
                         continue;
                     }
                     // create a new edge and insert it at the correct place (and
                     // it's reverse)
-                   /* Edge newEdge = graph.createEdge(source,
-                            plan.getReverse(preDart), target, curDart,
+                    //TODO: Ist das richtig umgesetzt mit dem Reverse? MUss noch impl. werden
+                    /*
+                    Edge newEdge = graph.createEdge(source,
+                            plan.getReverse(preEdge), target, curEdge,
                             Graph.BEFORE, Graph.AFTER);
                     Edge newEdgeRev = graph.createEdge(target,
                             plan.getReverse(curEdge), source, preEdge,
                             Graph.AFTER, Graph.BEFORE);
                     */
-                    Edge newEdge = graph.createEdge(source,
-                            preDart.getOppositeDart().getAssociatedEdge(), target, curDart.getAssociatedEdge(),
-                            com.yworks.yfiles.algorithms.GraphElementInsertion.BEFORE, com.yworks.yfiles.algorithms.GraphElementInsertion.AFTER);
 
-                    Edge newEdgeRev = graph.createEdge(target,
-                            curDart.getAssociatedEdge(), source, preDart.getOppositeDart().getAssociatedEdge(),
-                            com.yworks.yfiles.algorithms.GraphElementInsertion.AFTER, com.yworks.yfiles.algorithms.GraphElementInsertion.BEFORE);
                     // update the planar information about the new reverse edges
-                    //  plan.setReverse(newEdge, newEdgeRev);
+                   // plan.setReverse(newEdge, newEdgeRev);
                     // mark one as inserted
-                    // plan.markAsInsertedEdge(newEdgeRev);
+                   // plan.markAsInsertedEdge(newEdgeRev);
 
                     // merge connecting edge and newEdge to the start
                     // biconnected component to avoid double edges
                     // so set component number in maps
-                 /*   emap.setInt(curEdge, preEdgeBCNumber);
-                    emap.setInt(plan.getReverse(curEdge), preEdgeBCNumber);
-                    emap.setInt(newEdge, preEdgeBCNumber);
-                    emap.setInt(plan.getReverse(newEdge), preEdgeBCNumber);
-                */
                     emap.setInt(curDart.getAssociatedEdge(), preEdgeBCNumber);
-                    emap.setInt(curDart.getOppositeDart().getAssociatedEdge(), preEdgeBCNumber);
-                    emap.setInt(newEdge, preEdgeBCNumber);
+                    //emap.setInt(plan.getReverse(curEdge), preEdgeBCNumber);
+                    //emap.setInt(newEdge, preEdgeBCNumber);
+                    //emap.setInt(plan.getReverse(newEdge), preEdgeBCNumber);
 
                     // remember new inserted edge
-                    insertedEdges.add(newEdge);
+                    // insertedEdges.add(newEdge);
 
                     // prepare for next for loop
                     preEdgeBCNumber = curEdgeBCNumber;
-                    //preEdge = curEdge;
                     preDart = curDart;
 
                 }
@@ -167,11 +147,9 @@ public class Connectivity {
         // free resources
         graph.disposeEdgeMap(emap);
         graph.disposeNodeMap(nmap);
-        if (removePlanInsertedEdges){
-
-        }
-              // removeInsertedEdges(graph, plan);
-            return insertedEdges;
+       /* if (removePlanInsertedEdges)
+            removeInsertedEdges(graph, plan);
+        */return insertedEdges;
     }
 
     /**
@@ -183,14 +161,14 @@ public class Connectivity {
      *            The graph's corresponding embedding
      */
    /* private static void removeInsertedEdges(Graph graph, PlanarEmbedding plan) {
-        for (Edge edge : graph.getEdges()) {
+        for (EdgeCursor cursor = graph.edges(); cursor.ok(); cursor.next()) {
+            Edge edge = cursor.edge();
             if (plan.isInsertedEdge(edge)) {
                 graph.removeEdge(edge);
             }
         }
     }
-    */
-
+*/
     /**
      * Triangulates a given planar graph keeping it's planarity.
      *
@@ -203,21 +181,23 @@ public class Connectivity {
         // get start embedding to work with
         int n = graph.getNodeArray().length;
         PlanarEmbedding plan = new PlanarEmbedding(graph);
-     //   CombinatorialEmbedder emb = new CombinatorialEmbedder();
-      //  emb.setPlanarInformation(plan);
-      //  emb.embed();
+        /*
+        CombinatorialEmbedder emb = new CombinatorialEmbedder();
+        emb.setPlanarInformation(plan);
+        emb.embed();
+        */
         if(n < graph.getNodeArray().length) {
-          // removeInsertedEdges(graph, plan);
+          //  removeInsertedEdges(graph, plan);
             throw new IllegalArgumentException("Input Graph is not planar!");
         }
         ArrayList<Edge> insertedEdges = makeGraphBiconnectedPlanar(graph, plan, true);
 
         // calculate new embedding
 
-      //  emb.dispose();
+        //emb.dispose();
         plan = new PlanarEmbedding(graph);
-      //  emb.setPlanarInformation(plan);
-      //  emb.embed();
+        //emb.setPlanarInformation(plan);
+        //emb.embed();
 
         // for every face check if it is triangulated, if not triangulate it
         for (List<Dart> face : plan.getFaces()) {
@@ -225,7 +205,7 @@ public class Connectivity {
         }
 
         // clean up
-      //  removeInsertedEdges(graph, plan);
+       // removeInsertedEdges(graph, plan);
         return insertedEdges;
     }
 
@@ -239,8 +219,8 @@ public class Connectivity {
                                         ArrayList<Edge> insertedEdges) {
 
         // get the face's nodes
-      //  EdgeCursor ec = curFace.edges();
-        Iterator<Dart> dartItera = curFace.iterator();
+      //  Iterator<Dart> dartIta = curFace.iterator();
+
         // faces with size <=3 are ok, nothing to do
         if (curFace.size() <= 3)
             return;
@@ -249,24 +229,39 @@ public class Connectivity {
         INodeMap nmap = graph.createNodeMap();
 
         // find the face's node with minimum degree
-        MyNode list = new MyNode(dartItera.next().getAssociatedEdge().source());
+        Dart curDart = curFace.get(0);
+        MyNode list;
+        if(curDart.isReversed()){
+            list = new MyNode(curDart.getAssociatedEdge().source());
+        } else {
+            list = new MyNode(curDart.getAssociatedEdge().target());
+        }
         MyNode ptr = list;
         MyNode v1Node = ptr;
 
-        // jump to second edge
-        //ec.next();
+        // jump to second edge , for loop starts with 1
         // for all edges get source, add to helper list, and find node with
         // minimum degree
-        while (dartItera.hasNext()) {
-            Edge curEdge = dartItera.next().getAssociatedEdge();
-
-            ptr.next = new MyNode(curEdge.source());
+        for (int i = 1; i < curFace.size(); i++) {
+            curDart = curFace.get(i);
+            if(curDart.isReversed()){
+                ptr.next = new MyNode(curDart.getAssociatedEdge().source());
+            } else {
+                ptr.next = new MyNode(curDart.getAssociatedEdge().target());
+            }
             MyNode tmp = ptr;
             ptr = ptr.next;
             ptr.prev = tmp;
-            if (v1Node.node.degree() > curEdge.source().degree()) {
-                v1Node = ptr;
+            if(curDart.isReversed()){
+                if (v1Node.node.degree() > curDart.getAssociatedEdge().source().degree()) {
+                    v1Node = ptr;
+                }
+            } else {
+                if (v1Node.node.degree() > curDart.getAssociatedEdge().target().degree()) {
+                    v1Node = ptr;
+                }
             }
+
         }
         // connect head and tail
         ptr.next = list;
@@ -274,10 +269,10 @@ public class Connectivity {
 
         // check v1 for more than 2 face neighbors
         // first mark v1's neighbors
+        for (INodeCursor nc = v1Node.node.getNeighborCursor(); nc.ok(); nc.next()) {
+            nmap.setBool(nc.node(), true);
+        }
 
-    for(Node node : v1Node.node.getNeighbors()){
-        nmap.setBool(node, true);
-    }
         // second, check face nodes
         boolean hasMoreThan2FaceNeighbors = false;
 

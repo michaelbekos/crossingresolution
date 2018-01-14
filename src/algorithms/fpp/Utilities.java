@@ -21,7 +21,6 @@ import java.util.HashMap;
  */
 public class Utilities {
 
-
     public final static double EPS = 0.0000001;
     /**
      * Calculates the crossing between the two lines n1 + r(pL-n1) and n2 + q(pR-n2). If lines are parallel or collinear
@@ -35,17 +34,18 @@ public class Utilities {
      *            position vector line 2
      * @param pR
      *            point pR such that n2-pR is direction vector of line 2
-     * @param graph
+     * @param g
      *            corresponding Graph g
      * @return crossing point
      */
-    static YPoint calculateCrossing(INode n1, YPoint pL, INode n2, YPoint pR, IGraph graph) {
-        double ax = n1.getLayout().getCenter().getX();
-        double ay = n1.getLayout().getCenter().getY();
+/*
+    static YPoint calculateCrossing(Node n1, YPoint pL, Node n2, YPoint pR, Graph2D g) {
+        double ax = g.getRealizer(n1).getCenterX();
+        double ay = g.getRealizer(n1).getCenterY();
         double px = pL.getX() - ax;
         double py = pL.getY() - ay;
-        double bx = n2.getLayout().getCenter().getX();
-        double by = n2.getLayout().getCenter().getY();
+        double bx = g.getRealizer(n2).getCenterX();
+        double by = g.getRealizer(n2).getCenterY();
         double qx = pR.getX() - bx;
         double qy = pR.getY() - by;
         // case dividing by zero
@@ -72,6 +72,7 @@ public class Utilities {
      *            point pR such that n2-pR is direction vector of line 2
      * @return crossing point
      */
+/*
     static YPoint calculateCrossing(YPoint p1, YPoint p2, YPoint p3, YPoint p4) {
         double ax =p1.getX();
         double ay = p1.getY();
@@ -121,30 +122,34 @@ public class Utilities {
     /**
      * Get the coordinates of a node as a YPoint
      *
-     * @param graph
+     * @param g
      *            the corresponding graph
-     * @param node
+     * @param n
      *            the node the get the coordinates from
      * @return ypoint with node coordinates
      */
-    static YPoint getCoords(IGraph graph, INode node) {
-        return new YPoint(node.getLayout().getCenter().getX(), node.getLayout().getCenter().getY());
+/*
+    static YPoint getCoords(Graph2D g, Node n) {
+        NodeRealizer r = g.getRealizer(n);
+        return new YPoint(r.getCenterX(), r.getCenterY());
     }
 
     /**
      * Calculates a distance with: max(node.height,node.width) * factor
      *
-     * @param node
+     * @param n
      *            node n to get width/height from
-     * @param graph
+     * @param g
      *            corresponding graph g
      * @param factor
      *            factor to multiply with
      * @return the calculated distance
      */
-    static double getMinDistance(IGraph graph, INode node, double factor) {
+/*
+    static double getMinDistance(Node n, Graph2D g, double factor) {
+        NodeRealizer r = g.getRealizer(n);
         // System.out.println("seize : " + r.getHeight() + " " + r.getWidth());
-        return Math.max(node.getLayout().getHeight(), node.getLayout().getWidth()) * factor;
+        return Math.max(r.getHeight(), r.getWidth()) * factor;
     }
 
     /**
@@ -154,9 +159,10 @@ public class Utilities {
      *            ArrayList to swap
      * @return swapped list
      */
-    static ArrayList<INode> swapArrayList(ArrayList<INode> al) {
-        ArrayList<INode> tmp = new ArrayList<>();
-        for (INode n : al) {
+/*
+    static ArrayList<Node> swapArrayList(ArrayList<Node> al) {
+        ArrayList<Node> tmp = new ArrayList<>();
+        for (Node n : al) {
             tmp.add(0, n);
         }
         return tmp;
@@ -175,6 +181,7 @@ public class Utilities {
      *            point's b y-coordinates
      * @return the distance
      */
+/*
     static double distance(double xa, double ya, double xb, double yb) {
         return Math.sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
     }
@@ -182,27 +189,32 @@ public class Utilities {
     /**
      * Calculates the distance between two nodes.
      *
-     * @param node1
+     * @param n1
      *            node n1
-     * @param node2
+     * @param n2
      *            node n2
      * @return the distance between n1 and n2
      */
-    static double calculateDistance(INode node1, INode node2, IGraph graph) {
-        return distance(node1.getLayout().getCenter().getX(), node1.getLayout().getCenter().getY(), node2.getLayout().getCenter().getX(), node2.getLayout().getCenter().getY());
+/*
+    static double calculateDistance(Node n1, Node n2, Graph2D g) {
+        NodeRealizer a = g.getRealizer(n1);
+        NodeRealizer b = g.getRealizer(n2);
+        return distance(a.getCenterX(), a.getCenterY(), b.getCenterX(), b.getCenterY());
     }
 
     /**
      * Calculates the distance between two nodes.
      *
-     * @param node1
-     *            node1
+     * @param n1
+     *            node n1
      * @param b
      *            poitn b
      * @return the distance between n1 and n2
      */
-    static double calculateDistance(INode node1, YPoint b, IGraph graph) {
-        return distance(node1.getLayout().getCenter().getX(), node1.getLayout().getCenter().getY(), b.getX(), b.getY());
+/*
+    static double calculateDistance(Node n1, YPoint b, Graph2D g) {
+        NodeRealizer a = g.getRealizer(n1);
+        return distance(a.getCenterX(), a.getCenterY(), b.getX(), b.getY());
     }
 
     /**
@@ -222,6 +234,7 @@ public class Utilities {
      *            second point y coord
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
      */
+/*
     static double calculateAngle(double xc, double yc, double xa, double ya, double xb, double yb) {
         // use YVector for easy calculation
         YVector v1 = new YVector(new YPoint(xc, yc), new YPoint(xa, ya));
@@ -235,20 +248,21 @@ public class Utilities {
      * @param center
      *            the center node
      * @param a
-     *            node a
+     *            node n1
      * @param b
-     *            node b
+     *            node n2
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
      */
-    static double calculateAngle(INode center, INode a, INode b, IGraph graph) {
+/*
+    static double calculateAngle(Node center, Node a, Node b, Graph2D g) {
 
         // get coordinates
-        double xa = a.getLayout().getCenter().getX();
-        double ya = a.getLayout().getCenter().getY();
-        double xb = b.getLayout().getCenter().getX();
-        double yb = b.getLayout().getCenter().getY();
-        double xc = center.getLayout().getCenter().getX();
-        double yc = center.getLayout().getCenter().getY();
+        double xa = g.getRealizer(a).getCenterX();
+        double ya = g.getRealizer(a).getCenterY();
+        double xb = g.getRealizer(b).getCenterX();
+        double yb = g.getRealizer(b).getCenterY();
+        double xc = g.getRealizer(center).getCenterX();
+        double yc = g.getRealizer(center).getCenterY();
 
         return calculateAngle(xc, yc, xa, ya, xb, yb);
     }
@@ -264,15 +278,16 @@ public class Utilities {
      *            node n2
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
      */
-    static double calculateAngle(INode center, YPoint a, INode b, IGraph g) {
+/*
+    static double calculateAngle(Node center, YPoint a, Node b, Graph2D g) {
 
         // get coordinates
         double xa = a.getX();
         double ya = a.getY();
-        double xb = b.getLayout().getCenter().getX();
-        double yb = b.getLayout().getCenter().getY();
-        double xc = center.getLayout().getCenter().getX();
-        double yc = center.getLayout().getCenter().getY();
+        double xb = g.getRealizer(b).getCenterX();
+        double yb = g.getRealizer(b).getCenterY();
+        double xc = g.getRealizer(center).getCenterX();
+        double yc = g.getRealizer(center).getCenterY();
 
         return calculateAngle(xc, yc, xa, ya, xb, yb);
     }
@@ -288,15 +303,17 @@ public class Utilities {
      *            node n2
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
      */
-    static double calculateAngle(INode center, YPoint a, YPoint b, IGraph graph) {
+/*
+    static double calculateAngle(Node center, YPoint a, YPoint b, Graph2D g) {
 
         // get coordinates
         double xa = a.getX();
         double ya = a.getY();
         double xb = b.getX();
         double yb = b.getY();
-        double xc = center.getLayout().getCenter().getX();
-        double yc = center.getLayout().getCenter().getY();
+        double xc = g.getRealizer(center).getCenterX();
+        double yc = g.getRealizer(center).getCenterY();
+
         return calculateAngle(xc, yc, xa, ya, xb, yb);
     }
 
@@ -311,6 +328,7 @@ public class Utilities {
      *            node n2
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
      */
+  /*
     public static double calculateAngle(YPoint center, YPoint a, YPoint b) {
         // get coordinates
         double xa = a.getX();
@@ -334,15 +352,16 @@ public class Utilities {
      *            node n2
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
      */
-    static double calculateAngle(INode center, INode a, YPoint b, IGraph graph) {
+  /*
+  static double calculateAngle(Node center, Node a, YPoint b, Graph2D g) {
 
         // get coordinates
-        double xa = a.getLayout().getCenter().getX();
-        double ya = a.getLayout().getCenter().getY();
+        double xa = g.getRealizer(a).getCenterX();
+        double ya = g.getRealizer(a).getCenterY();
         double xb = b.getX();
         double yb = b.getY();
-        double xc = center.getLayout().getCenter().getX();
-        double yc = center.getLayout().getCenter().getY();
+        double xc = g.getRealizer(center).getCenterX();
+        double yc = g.getRealizer(center).getCenterY();
 
         return calculateAngle(xc, yc, xa, ya, xb, yb);
     }
@@ -354,17 +373,18 @@ public class Utilities {
      *            the center node
      * @param a
      *            node n1
-     * @param graph
+     * @param g
      *            graph g
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
      */
-    static double calculateAngleToZero(INode center, INode a, IGraph graph) {
+  /*
+    static double calculateAngleToZero(Node center, Node a, Graph2D g) {
 
         // get coordinates
-        double xa = a.getLayout().getCenter().getX();
-        double ya = a.getLayout().getCenter().getY();
-        double xc = center.getLayout().getCenter().getX();
-        double yc = center.getLayout().getCenter().getY();
+        double xa = g.getRealizer(a).getCenterX();
+        double ya = g.getRealizer(a).getCenterY();
+        double xc = g.getRealizer(center).getCenterX();
+        double yc = g.getRealizer(center).getCenterY();
 
         return calculateAngle(xc, yc, xa, ya, xc + 1, yc);
     }
@@ -380,56 +400,56 @@ public class Utilities {
      * @param b
      *            edge b
      * @return angle in radians (clockwise angle in screen-coordinates (left->right, top->bottom), so angle in [0,2PI]
-     */
- /*   static double calculateAngleLookingForBends(INode n, IEdge a, IEdge b, PlanarInformation p, IGraph g) {
+     *//*
+    static double calculateAngleLookingForBends(Node n, Edge a, Edge b, PlanarInformation p, Graph2D g) {
 
         // Edge a
         YPoint ap, bp;
-        IEdge e1 = a;
+        Edge e1 = a;
         // get the non inserted edge to check for bends
-        if (p.isInsertedEdge(a)) {
+        if (p.isInsertedEdge(a))
             e1 = p.getReverse(a);
-        }
+        EdgeRealizer re1 = g.getRealizer(e1);
         // if no bends, use the target node of edge a
-        if (e1.getBends().size() == 0) {
-            ap = new YPoint(a.getTargetNode().getLayout().getCenter().getX(), a.getTargetNode().getLayout().getCenter().getY());
+        if (re1.bendCount() == 0)
+            ap = new YPoint(g.getRealizer(a.target()).getCenterX(), g.getRealizer(a.target()).getCenterY());
             // if just one bend or two bends with e1 has direction (center->a), then take first bend
-        }
-        else if (e1.getBends().size() == 1 || e1.equals(a)) {
-            ap = new YPoint(e1.getBends().first().getLocation().getX(), e1.getBends().first().getLocation().getY());
+        else if (re1.bendCount() == 1 || e1.equals(a))
+            ap = new YPoint(re1.bends().bend().getX(), re1.bends().bend().getY());
             // else take second bend
-        }
         else {
-            ap = new YPoint(e1.getBends().getItem(1).getLocation().getX(), e1.getBends().getItem(1).getLocation().getY());
+            BendCursor bc = re1.bends();
+            bc.next();
+            ap = new YPoint(bc.bend().getX(), bc.bend().getY());
         }
 
         // same for edge b
 
         // Edge a
-        IEdge e2 = b;
+        Edge e2 = b;
         // get the non inserted edge to check for bends
-        if (p.isInsertedEdge(b)) {
+        if (p.isInsertedEdge(b))
             e2 = p.getReverse(b);
-        }
+        EdgeRealizer re2 = g.getRealizer(e2);
         // if no bends, use the target node of edge b
-        if (e2.getBends().size() == 0) {
-            bp = new YPoint(b.getTargetNode().getLayout().getCenter().getX(), b.getTargetNode().getLayout().getY());
+        if (re2.bendCount() == 0)
+            bp = new YPoint(g.getRealizer(b.target()).getCenterX(), g.getRealizer(b.target()).getCenterY());
             // if just one bend or two bends with e1 has direction (center->b), then take first bend
-        }
-        else if (e2.getBends().size() == 1 || e2.equals(b)) {
-            bp = new YPoint(e2.getBends().first().getLocation().getX(), e2.getBends().first().getLocation().getY());
+        else if (re2.bendCount() == 1 || e2.equals(b))
+            bp = new YPoint(re2.bends().bend().getX(), re2.bends().bend().getY());
             // else take second bend
-        }
         else {
-            bp = new YPoint(e2.getBends().getItem(1).getLocation().getX(), e2.getBends().getItem(1).getLocation().getY();
+            BendCursor bc = re2.bends();
+            bc.next();
+            bp = new YPoint(bc.bend().getX(), bc.bend().getY());
         }
 
         // use YVector for easy calculation
-        YVector v1 = new YVector(new YPoint(n.getLayout().getCenter().getX(), n.getLayout().getCenter().getY()), ap);
-        YVector v2 = new YVector(new YPoint(n.getLayout().getCenter().getX(), n.getLayout().getCenter().getY()), bp);
+        YVector v1 = new YVector(new YPoint(g.getRealizer(n).getCenterX(), g.getRealizer(n).getCenterY()), ap);
+        YVector v2 = new YVector(new YPoint(g.getRealizer(n).getCenterX(), g.getRealizer(n).getCenterY()), bp);
         return YVector.angle(v1, v2);
     }
-*/
+
     /**
      * Calculates a new coordinates for a node "a" if you rotate "a" around the node "center" counter-clockwise with
      * angle alpha. Does not rotate the node! Just calculating coordinates. Does also scale the distance if wanted.
@@ -446,16 +466,17 @@ public class Utilities {
      *            the angle to rotate
      * @param scale
      *            scale factor for distance to center node, scale = final distance
-     * @param graph
+     * @param g
      *            the graph the nodes belong to
      * @return the rotated coordinates as a YPoint
      */
-    static YPoint calculateNextNodeAnglePosition(INode center, double xa, double ya, double alpha, double scale,
-                                                 IGraph graph) {
+    /*
+    static YPoint calculateNextNodeAnglePosition(Node center, double xa, double ya, double alpha, double scale,
+                                                 Graph2D g) {
         // How it works: calc vector (center->a), multiply with rotation matrix, calculate final point coordiantes
         // System.out.println("Node calc:");
-        double xc = center.getLayout().getCenter().getX();
-        double yc = center.getLayout().getCenter().getY();
+        double xc = g.getRealizer(center).getCenterX();
+        double yc = g.getRealizer(center).getCenterY();
         // System.out.println(xc + " " + yc + " " + xa + " " + ya + " " + alpha
         // + " " + scale);
         xa = xa - xc;
@@ -486,14 +507,15 @@ public class Utilities {
      *            the angle to rotate
      * @param scale
      *            scale factor for distance to center node, scale = final distance
-     * @param graph
+     * @param g
      *            the graph the nodes belong to
      * @return the rotated coordinates as a YPoint
      */
-    static YPoint calculateNextNodeAnglePosition(INode center, INode a, double alpha, double scale, IGraph graph) {
-        double xa = a.getLayout().getCenter().getX();
-        double ya = a.getLayout().getCenter().getY();
-        return calculateNextNodeAnglePosition(center, xa, ya, alpha, scale, graph);
+    /*
+    static YPoint calculateNextNodeAnglePosition(Node center, Node a, double alpha, double scale, Graph2D g) {
+        double xa = g.getRealizer(a).getCenterX();
+        double ya = g.getRealizer(a).getCenterY();
+        return calculateNextNodeAnglePosition(center, xa, ya, alpha, scale, g);
     }
 
     /**
@@ -516,37 +538,37 @@ public class Utilities {
      * @param p
      *            the graph's corresponding planar information
      *
-     * @param graph
+     * @param g
      *            the graph the nodes belong to
      * @return the rotated coordinates as a YPoint
      */
- /*   static YPoint calcNextAnglePosLookingForBends(INode center, IEdge e, double alpha, double scale, PlanarInformation p,
-                                                  IGraph graph) {
+    /*
+    static YPoint calcNextAnglePosLookingForBends(Node center, Edge e, double alpha, double scale, PlanarInformation p,
+                                                  Graph2D g) {
         // if inserted edge, getReverse to work with
-        if (p.isInsertedEdge(e)) {
+        if (p.isInsertedEdge(e))
             e = p.getReverse(e);
-        }
 
+        EdgeRealizer r = g.getRealizer(e);
         // bendCount = 0, than we can take the originally target node
-        if (e.getBends().size() == 0){
-            if (e.getSourceNode().equals(center)) {
-                return calculateNextNodeAnglePosition(center, e.getTargetNode(), alpha, scale, graph);
-            } else {
-                return calculateNextNodeAnglePosition(center, e.getSourceNode(), alpha, scale, graph);
-            }
-        }
+        if (r.bendCount() == 0)
+            if (e.source().equals(center))
+                return calculateNextNodeAnglePosition(center, e.target(), alpha, scale, g);
+            else
+                return calculateNextNodeAnglePosition(center, e.source(), alpha, scale, g);
         // else take the first bend
-        if (e.getBends().size() == 1 || e.getSourceNode().equals(center)) {
-            double xa = e.getBends().first().getLocation().getX();
-            double ya = e.getBends().first().getLocation().getY();
-            return calculateNextNodeAnglePosition(center, xa, ya, alpha, scale, graph);
+        if (r.bendCount() == 1 || e.source().equals(center)) {
+            double xa = r.bends().bend().getX();
+            double ya = r.bends().bend().getY();
+            return calculateNextNodeAnglePosition(center, xa, ya, alpha, scale, g);
         } else {
-            double xa = e.getBends().getItem(1).getLocation().getX();
-            double ya = e.getBends().getItem(1).getLocation().getY()
-            return calculateNextNodeAnglePosition(center, xa, ya, alpha, scale, graph);
+            BendCursor bc = r.bends();
+            bc.next();
+            double xa = bc.bend().getX();
+            double ya = bc.bend().getY();
+            return calculateNextNodeAnglePosition(center, xa, ya, alpha, scale, g);
         }
     }
-    */
 
     /**
      * Insert a bend in an edge e at position pp in a graph g with corresponding planar information p. The bend is
@@ -559,14 +581,15 @@ public class Utilities {
      *            point to place bend
      * @param p
      *            the graph g's corresponding planar information
-     * @param graph
+     * @param g
      *            the graph the edge belong to
      */
-  /*  static void insertBend(IEdge e, YPoint pp, INode n, PlanarInformation p, IGraph graph) {
+    /*
+    static void insertBend(Edge e, YPoint pp, Node n, PlanarInformation p, Graph2D g) {
         double x = pp.getX();
         double y = pp.getY();
-        insertBend(e, x, y, n, p, graph);
-    }*/
+        insertBend(e, x, y, n, p, g);
+    }
 
     /**
      * Insert a bend in an edge e at position pp in a graph g with corresponding planar information p. The bend is
@@ -581,46 +604,45 @@ public class Utilities {
      *            the bend's y-coordinate
      * @param p
      *            the graph g's corresponding planar information
-     * @param graph
+     * @param g
      *            the graph the edge belong to
      */
-   /* static void insertBend(IEdge edge, double x, double y, INode n, PlanarInformation p, IGraph graph) {
+    /*
+    static void insertBend(Edge edge, double x, double y, Node n, PlanarInformation p, Graph2D g) {
         // check if the current edge is inserted, take the reverse if
         // yes, because we want to add the bend to the original edge in
         // graph
-        if (p.isInsertedEdge(edge)) {
+        if (p.isInsertedEdge(edge))
             edge = p.getReverse(edge);
-        }
+        EdgeRealizer r = g.getRealizer(edge);
+        BendCursor bc = r.bends();
         // check if edge has already an bend and handle the bends
         // correctly (otherwise bend order will be wrong)
-        if (edge.getBends().size() != 0 && n.equals(edge.getSourceNode())) {
-            IBend b = edge.getBends().first();
-            for(IBend bend : edge.getBends()){
-                graph.remove(bend);
-            }
-            graph.addBend(edge,new PointD(x,y));
-            graph.addBend(edge,new PointD(b.getLocation().getX(), b.getLocation().getY()));
+        if (bc.size() != 0 && n.equals(edge.source())) {
+            Bend b = bc.bend();
+            r.clearBends();
+            r.appendBend(x, y);
+            r.appendBend(b.getX(), b.getY());
 
-        } else{
-            graph.addBend(edge,new PointD(x,y));
-        }
+        } else
+            r.appendBend(x, y);
     }
-    */
 
     /**
      * Adds for every edge in graph g a reversed edge. Function will add double directed edges if there already reversed
      * edges!
      *
-     * @param graph
-     *            graph graph
+     * @param g
+     *            graph g
      * @param p
      *            corresponding planar information
      */
-   /* static void addReversedEdges(IGraph graph, PlanarInformation p) {
-        for (IEdge ed : graph.getEdges()) {
+    /*
+    static void addReversedEdges(Graph2D g, PlanarInformation p) {
+        for (Edge ed : g.getEdgeArray()) {
             p.createReverse(ed);
         }
-    }*/
+    }
 
     /**
      * Sort edges, necessary to calculate faces in planarInformation.
@@ -628,39 +650,36 @@ public class Utilities {
      * @param graph
      *            the graph to sort edges for
      */
-    /*static void sortEdges(IGraph graph) {
-        YGraphAdapter graphAdapter = new YGraphAdapter(graph);
-        for (Node node : graphAdapter.getYGraph().getNodes())
-        {
-            IEdge edge = graphAdapter.getOriginalEdge(node.firstOutEdge());
-            node.sortOutEdges(new EdgeComparator(edge, graph));
-
+    /*
+    static void sortEdges(Graph2D graph) {
+        for (NodeCursor nc = graph.nodes(); nc.ok(); nc.next()) {
+            nc.node().sortOutEdges(new EdgeComparator(nc.node().firstOutEdge(), graph));
         }
-    }*/
+    }
 
     /**
      * Remove all edges, which are marked as inserted in planar information p, out of the graph g.
      *
-     * @param graph
+     * @param g
      *            The graph g to remove inserted edges
      * @param p
      *            Planar information in which edges are marked as inserted
      */
-  /*  static void removeReversedEdges(IGraph graph, PlanarEmbedding p) {
-        for (IEdge ed : graph.getEdges()) {
-            if (p.isInsertedEdge(ed)){
-                graph.remove(ed);
-            }
+    /*
+    static void removeReversedEdges(Graph2D g, PlanarInformation p) {
+        for (Edge ed : g.getEdgeArray()) {
+            if (p.isInsertedEdge(ed))
+                g.removeEdge(ed);
         }
     }
-*/
+
     /**
      * Creates a deep copy of Graph2D. Following attributes are copied: - nodes - edges - node positions and labels
      * Optional: You can set notAllEdges to true, if you're graph contains inserted edges, that should not be copied.
      * Then a list of inserted edges and a planar information is required. If you just want a copy, set the parameters
      * to null and notAllEdges to false.
      *
-     * @param graph
+     * @param g
      *            The Graph2D to deep copy
      * @param insertedEdges
      *            a list of inserted edges that should not be copied or null (if you have inserted your own edges that
@@ -671,23 +690,24 @@ public class Utilities {
      *            true if not all edges should be copied otherwise false
      * @return a deep copy of g
      */
-    /*static IGraph deepCopy(IGraph graph, ArrayList<IEdge> insertedEdges, PlanarInformation p, boolean notAllEdges) {
-        HashMap<INode, INode> oldToNew = new HashMap<>();
-        IGraph newG = graph.getC ; //TODO: wird die Methode überhaupt benutzt
+    /*
+    static Graph2D deepCopy(Graph2D g, ArrayList<Edge> insertedEdges, PlanarInformation p, boolean notAllEdges) {
+        HashMap<Node, Node> oldToNew = new HashMap<>();
+        Graph2D newG = new Graph2D();
         // deep copy nodes, labels and positions
-        for (INode node : graph.getNodes()) {
-            INode newNode = newG.createNode();
-            oldToNew.put(node, newNode);
+        for (NodeCursor nc = g.nodes(); nc.ok(); nc.next()) {
+            Node n = newG.createNode();
+            oldToNew.put(nc.node(), n);
             newG.getRealizer(n).setCenter(g.getRealizer(nc.node()).getCenterX(), g.getRealizer(nc.node()).getCenterY());
             newG.getRealizer(n).setLabelText(g.getRealizer(nc.node()).getLabelText());
         }
         // deep copy edges
-        for (IEdge edge : graph.getEdges()) {
+        for (EdgeCursor ec = g.edges(); ec.ok(); ec.next()) {
             if (!notAllEdges || (!insertedEdges.contains(ec.edge()) && !p.isInsertedEdge(ec.edge())))
                 newG.createEdge(oldToNew.get(ec.edge().source()), oldToNew.get(ec.edge().target()));
         }
         return newG;
-    }*/
+    }
 
     /**
      * Returns an angle in degree.
@@ -696,6 +716,7 @@ public class Utilities {
      *            the angle in radians
      * @return the angle in degree
      */
+    /*
     static double getDegree(double radian) {
         return radian / (2 * Math.PI) * 360;
     }
@@ -708,6 +729,7 @@ public class Utilities {
      * @param e2
      * @return
      */
+    /*
     public static boolean intersectsLine(YPoint s1, YPoint e1, YPoint s2, YPoint e2) {
         return linesIntersect(s1.getX(), s1.getY(), e1.getX(), e1.getY(), s2.getX(), s2.getY(), e2.getX(), e2.getY());
     }
@@ -748,6 +770,7 @@ public class Utilities {
      *         segment formed by the first two specified coordinates.
      * @since 1.2
      */
+    /*
     public static int relativeCCW(double x1, double y1, double x2, double y2, double px, double py) {
         x2 -= x1;
         y2 -= y1;
@@ -808,6 +831,7 @@ public class Utilities {
      *         each other; <code>false</code> otherwise.
      * @since 1.2
      */
+    /*
     public static boolean linesIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4,
                                          double y4) {
         return ((relativeCCW(x1, y1, x2, y2, x3, y3) * relativeCCW(x1, y1, x2, y2, x4, y4) < 0) && (relativeCCW(x3, y3,
@@ -825,10 +849,11 @@ public class Utilities {
      *            end point of line
      * @return the distance from p to line (o,e)
      */
+    /*
     public static double distanceToLine(YPoint p, YPoint o, YPoint e) {
         return java.awt.geom.Line2D.ptLineDist(o.getX(), o.getY(), e.getX(), e.getY(), p.getX(), p.getY());
     }
-/*
+
     /**
      * Checks if an infinite line represented by points liS and liE has an intersection with an line segment represented
      * by lsS and lsE. Special variant: Only intersections point in liS + (lisS->lieE) direction are found.
@@ -843,7 +868,8 @@ public class Utilities {
      *            line segments last node
      * @return the intersection point as YPoint or null if there was no intersection
      */
-  /*  public static YPoint calcInfinitLineAndLineSegmentInterSect(YPoint liS, YPoint liE, YPoint lsS, YPoint lsE) {
+    /*
+    public static YPoint calcInfinitLineAndLineSegmentInterSect(YPoint liS, YPoint liE, YPoint lsS, YPoint lsE) {
         // calculate intersection point of the two infinite lines
         YPoint p = y.geom.Geom.calcIntersection(liS, liE, lsS, lsE);
         // System.out.println("P: " + p + " start: " + lsS + " end: " + lsE);
@@ -888,7 +914,7 @@ public class Utilities {
             return p;
         else
             return null;
-    }/*
+    }
 
     /**
      * Checks if an node n's new position newP bounding box intersects edge e in graph g. n's new bounding box is
@@ -896,9 +922,9 @@ public class Utilities {
      *
      * @param rec
      *            Node n's current bounding box
-     * @param edge
+     * @param e
      *            the edge to check intersection for
-     * @param graph
+     * @param g
      *            the corresponding graph g
      * @param newP
      *            n's new postion to check
@@ -906,15 +932,16 @@ public class Utilities {
      *            n's current/old position
      * @return true if bounding box intersects, else false
      */
-    public static boolean checkBoxLineCrossing(Rectangle2D rec, IEdge edge, IGraph graph, YPoint newP, YPoint oldP) {
-        YPoint start = getCoords(graph, edge.getSourceNode());
-        YPoint end = getCoords(graph, edge.getTargetNode());
+    /*
+    public static boolean checkBoxLineCrossing(Rectangle2D rec, Edge e, Graph2D g, YPoint newP, YPoint oldP) {
+        YPoint start = getCoords(g, e.source());
+        YPoint end = getCoords(g, e.target());
         // calculate new bounding box
         double xdif = newP.getX() - oldP.getX();
         double ydif = newP.getY() - oldP.getY();
         double x = rec.getX() + xdif;
         double y = rec.getY() + ydif;
-        Rectangle2D rec2 = new Rectangle2D(x, y, rec.getHeight(), rec.getWidth());
+        Rectangle2D rec2 = new Rectangle2D.Double(x, y, rec.getHeight(), rec.getWidth());
         // check
         return rec2.intersectsLine(start.getX(), start.getY(), end.getX(), end.getY());
     }
@@ -931,24 +958,11 @@ public class Utilities {
         System.out.println(a-b);
         System.out.println( a + " " + b);
         System.out.println(test);
-      //  System.out.println(y.geom.Geom.calcIntersection(p1,p2,p3,p4));
+        System.out.println(y.geom.Geom.calcIntersection(p1,p2,p3,p4));
         System.out.println(calculateCrossing(p1, p2, p3, p4));
         System.out.println(calculateCrossing3(p1, p2, p3, p4));
     }
-    public static YPoint getPointForNode(INode node, IGraph graph) {
-        //  NodeRealizer realizer = graph.getRealizer(node);
-        return new YPoint(node.getLayout().getCenter().getX(), node.getLayout().getCenter().getY());
-    }
 
-    public static YPoint getBendPoint(IBend b) {
-        return new YPoint(b.getLocation().getX(), b.getLocation().getY());
-    }
-    public static YPoint toYPoint(IPoint point) {
-        return new YPoint(point.getX(), point.getY());
-    }
-    public static YPoint toYPoint(PointD point) {
-        return new YPoint(point.getX(), point.getY());
-    }
-
-
+*/
 }
+
