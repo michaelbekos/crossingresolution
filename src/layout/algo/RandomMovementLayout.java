@@ -13,7 +13,8 @@ import java.util.*;
 public class RandomMovementLayout implements ILayout {
   private static final int NUM_SAMPLES = 50;
   private static final int NUM_SAMPLES_PER_TEST = 10;
-  private static final double STEP_SIZE = 0.1;
+  private final double minStepSize = 0.1;
+  private final double maxStepSize = 10;
 
   private IGraph graph;
   private Mapper<INode, PointD> positions;
@@ -62,7 +63,8 @@ public class RandomMovementLayout implements ILayout {
 
     Sample[] goodSamples = samples.stream()
         .filter(sample -> {
-          PointD newPosition = LayoutUtils.stepInDirection(originalPosition, sample.direction, STEP_SIZE);
+          double stepSize = random.nextDouble() * (maxStepSize - minStepSize) + minStepSize;
+          PointD newPosition = LayoutUtils.stepInDirection(originalPosition, sample.direction, stepSize);
           sample.position = newPosition;
           return boundingBox.contains(newPosition);
         })
