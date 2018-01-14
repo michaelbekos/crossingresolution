@@ -64,8 +64,10 @@ public class RandomMovementLayout implements ILayout {
         .filter(sample -> {
           PointD newPosition = LayoutUtils.stepInDirection(originalPosition, sample.direction, STEP_SIZE);
           sample.position = newPosition;
-
-          positions.setValue(node, newPosition);
+          return boundingBox.contains(newPosition);
+        })
+        .filter(sample -> {
+          positions.setValue(node, sample.position);
           double sampleMinAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
           sample.minimumAngle = sampleMinAngle;
 
