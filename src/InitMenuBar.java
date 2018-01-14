@@ -21,6 +21,7 @@ import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import util.*;
 import view.visual.InitClinchLayout;
+import view.visual.InitClinchLayoutExecutor;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -1058,7 +1059,8 @@ public class InitMenuBar {
 
     private void clinchNodesActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         IGraphSelection selection = graphEditorInputMode.getGraphSelection();
-        InitClinchLayout.run(graph, selection, progressBar);
+//        InitClinchLayout.run(graph, selection, progressBar);
+        InitClinchLayoutExecutor.run(view, selection, progressBar);
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
