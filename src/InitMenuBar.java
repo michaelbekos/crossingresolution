@@ -22,6 +22,7 @@ import layout.algo.event.AlgorithmListener;
 import util.*;
 import view.visual.InitClinchLayout;
 import view.visual.InitClinchLayoutExecutor;
+import view.visual.VectorVisual;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -30,7 +31,9 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -111,13 +114,13 @@ public class InitMenuBar {
         JMenuItem slopedSpringEmbedderItem = new JMenuItem();
         slopedSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         slopedSpringEmbedderItem.setText("Sloped Spring Embedder");
-        slopedSpringEmbedderItem.addActionListener(mainFrame::slopedSpringEmbedderItemActionPerformed);
+        slopedSpringEmbedderItem.addActionListener(this::slopedSpringEmbedderItemActionPerformed);
         layoutMenu.add(slopedSpringEmbedderItem);
 
         JMenuItem springEmbedderItem = new JMenuItem();
         springEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         springEmbedderItem.setText("Spring Embedder");
-        springEmbedderItem.addActionListener(mainFrame::springEmbedderItemActionPerformed);
+        springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
         layoutMenu.add(springEmbedderItem);
 
         JMenuItem jitterItem = new JMenuItem();
@@ -892,6 +895,199 @@ public class InitMenuBar {
         Thread thread = new Thread(fd);
         thread.start();
         this.view.updateUI();
+    }
+
+    //helper function
+    private List<ICanvasObject> canvasObjects = new ArrayList<>();
+    private void drawSlopes(double numSlopes, double initAngleDeg) {
+        numSlopes *=2;
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        double stepSize = (2* Math.PI)/numSlopes;
+        double pos = 2 * Math.PI*(initAngleDeg/360);
+        INode tmpNode = mainFrame.graph.createNode(mainFrame.view.getCenter());
+        for (int i = 0; i < numSlopes; i++) {
+            double x_val = 1/mainFrame.view.getZoom() * 3 * Math.cos(pos);
+            double y_val = 1/mainFrame.view.getZoom() * 3 * Math.sin(pos);
+            canvasObjects.add(mainFrame.view.getBackgroundGroup().addChild(new VectorVisual(mainFrame.view, new PointD(x_val,y_val), tmpNode, Color.GREEN,(int)(5/mainFrame.view.getZoom())), ICanvasObjectDescriptor.VISUAL));
+            pos += stepSize;
+            if (pos > 2 * Math.PI) {
+                pos -= 2 * Math.PI;
+            }
+        }
+        mainFrame.view.updateUI();
+        mainFrame.graph.remove(tmpNode);
+    }
+
+    private int iterations = 1000;
+    private int numSlopes = 1;
+    private int initAngle = 0;
+    void slopedSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        JTextField iterationsTextField = new JTextField(Integer.toString(iterations));
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel iterationLabel = new JLabel("Number of Iterations: ");
+        panel.add(iterationLabel);
+        panel.add(iterationsTextField);
+
+        JLabel numSlopesLabel = new JLabel("Number of Slopes: ");
+        JTextField numSlopesTextField = new JTextField(Integer.toString(numSlopes));
+
+        panel.add(numSlopesLabel);
+        panel.add(numSlopesTextField);
+
+        JLabel initAngleLabel = new JLabel("Angle (°) of First Slope: "); //other slopes are equidistant to first slope, default angle is 0 (right), clockwise is positive
+        panel.add(initAngleLabel);
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridLayout(1,2));
+//        panel2.setMaximumSize(new Dimension(100,50));
+        JTextField initAngleTextField = new JTextField(Integer.toString(initAngle));
+        drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+        JSlider initAngleSlider = new JSlider(JSlider.HORIZONTAL, 0, 360, initAngle);
+        initAngleSlider.addChangeListener(changeEvent -> {
+            initAngleTextField.setText(Integer.toString(initAngleSlider.getValue()));
+            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+        });
+
+
+        initAngleTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                try {
+                    if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) { //checks is int
+                        initAngleSlider.setValue(Integer.parseInt(initAngleTextField.getText()));
+                        if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) {
+                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+                        }
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Invalid Input");
+                }
+            }
+        });
+
+        numSlopesTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                try {
+                    if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) { //checks is int
+                        if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) {
+                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+                        }
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Invalid Input");
+                }
+            }
+        });
+
+        panel2.add(initAngleSlider);
+        panel2.add(initAngleTextField);
+        panel.add(panel2);
+
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                iterations = Integer.parseInt(iterationsTextField.getText());
+                numSlopes = Integer.parseInt(numSlopesTextField.getText());
+                initAngle = Integer.parseInt(initAngleTextField.getText());
+
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 1000, slopes to 1 and inital angle to 0.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                for (ICanvasObject o : canvasObjects) {
+                    o.remove();
+                }
+                canvasObjects.clear();
+                mainFrame.view.updateUI();
+                return;
+            }
+        }
+        else {
+            for (ICanvasObject o : canvasObjects) {
+                o.remove();
+            }
+            canvasObjects.clear();
+            mainFrame.view.updateUI();
+            return;
+        }
+
+        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(mainFrame.view, iterations) {
+            public void calculateVectors() {
+                ForceDirectedFactory.calculateSlopedSpringForces(mainFrame.graph, numSlopes*2, initAngle, 0.7,  map);
+                ForceDirectedFactory.calculateElectricForcesEades(mainFrame.graph, 30000, 0.01, map);   //repulses nodes from another
+                ForceDirectedFactory.calculateSpringForcesEades(mainFrame.graph, 100, 100, 0.01, map);        //pulls nodes until edges same length
+            }
+        };
+        fd.addAlgorithmListener(new AlgorithmListener() {
+            ICompoundEdit compoundEdit;
+            public void algorithmStarted(AlgorithmEvent evt) {
+                synchronized (mainFrame.graph) {
+                    compoundEdit = mainFrame.graph.beginEdit("Undo layout", "Redo layout");
+                }
+
+            }
+
+            public void algorithmFinished(AlgorithmEvent evt) {
+                synchronized (mainFrame.graph) {
+                    compoundEdit.commit();
+                }
+                mainFrame.progressBar.setValue(0);
+                mainFrame.view.fitContent();
+                mainFrame.view.updateUI();
+            }
+
+            public void algorithmStateChanged(AlgorithmEvent evt) {
+                mainFrame.progressBar.setValue(evt.currentStatus());
+            }
+        });
+
+        Thread thread = new Thread(fd);
+        thread.start();
+
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        mainFrame.view.updateUI();
+    }
+
+
+    void springEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        JTextField iterationsTextField = new JTextField("1000");
+        int iterations = 1000;
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                iterations = Integer.parseInt(iterationsTextField.getText());
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else return;
+
+        ForceAlgorithmApplier fd = mainFrame.defaultForceAlgorithmApplier(iterations);
+        mainFrame.finalizeFAA(mainFrame.faa);
+        mainFrame.faa = fd;
+
+
+        Thread thread = new Thread(fd);
+        thread.start();
+        mainFrame.view.updateUI();
     }
 
     private void saveAsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

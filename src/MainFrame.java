@@ -1,43 +1,23 @@
 import com.sun.istack.internal.Nullable;
-import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithmApplier;
-import layout.algo.ForceDirectedAlgorithm;
-import layout.algo.ForceDirectedFactory;
-import layout.algo.GeneticAlgorithm;
-import layout.algo.LayoutUtils;
-import layout.algo.event.AlgorithmEvent;
-import layout.algo.event.AlgorithmListener;
-import util.GraphOperations;
-import util.Tuple4;
-import util.interaction.ThresholdSliders;
-import view.visual.VectorVisual;
+
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.ArrayList;
 
-import static layout.algo.ForceAlgorithmApplier.bestSolution;
 
 
 /**
@@ -46,14 +26,14 @@ import static layout.algo.ForceAlgorithmApplier.bestSolution;
 public class MainFrame extends JFrame {
 	
 	/* Box related issue*/
-	private static double boxsize= 10000;
+	public static double boxsize= 10000;
 	// same as in InitMenuBar
 	
     /* Graph Drawing related objects */
-    private GraphComponent view;
-    private IGraph graph;
+    public GraphComponent view;
+    public IGraph graph;
     private OrganicLayout defaultLayouter;
-    private GraphEditorInputMode graphEditorInputMode;
+    public GraphEditorInputMode graphEditorInputMode;
     private GridVisualCreator gridVisualCreator;
     private GraphSnapContext graphSnapContext;
 
@@ -64,20 +44,20 @@ public class MainFrame extends JFrame {
 
     /* Central gui elements */
     private JLabel infoLabel;
-    private JProgressBar progressBar;
+    public JProgressBar progressBar;
 
-    private MinimumAngleMonitor minimumAngleMonitor;
+    public MinimumAngleMonitor minimumAngleMonitor;
 
-    private JSlider[] sliders;
+    public JSlider[] sliders;
 
-    private final Double[] springThresholds = {0.01, 0.01, 0.01, 0.1};
-    private final Boolean[] algoModifiers = {false, false};
-    private int faaRunningTimeGenetic = 250;
+    public final Double[] springThresholds = {0.01, 0.01, 0.01, 0.1};
+    public final Boolean[] algoModifiers = {false, false};
+    public int faaRunningTimeGenetic = 250;
 
     @Nullable
-    private ForceAlgorithmApplier faa = null;
+    public ForceAlgorithmApplier faa = null;
 
-    private void finalizeFAA (@Nullable ForceAlgorithmApplier faa) {
+    public void finalizeFAA (@Nullable ForceAlgorithmApplier faa) {
         if (faa != null) {
             faa.running = false;
             faa.clearDrawables();
@@ -85,7 +65,7 @@ public class MainFrame extends JFrame {
     }
 
     // for this class, we can instantiate defaultForceAlgorithmApplier and do some post-initializing
-    private ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations) {
+    public ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations) {
         ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view, progressBar, infoLabel);
         springThresholds[1] = 50 * Math.log(graph.getNodes().size());
         fd.modifiers = springThresholds.clone();
@@ -264,167 +244,14 @@ public class MainFrame extends JFrame {
 
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel);
 
-        initSidePanel(mainPanel, c);
+        InitSidePanel newSidePanel = new InitSidePanel(this);
+        newSidePanel.initSidePanel(mainPanel,c);
+//        initSidePanel(mainPanel, c);
     }
 
     private final Set<INode> movedNodes = new HashSet<>();
 
-    private void initSidePanel(JPanel mainPanel, GridBagConstraints c) {
-        Tuple4<JPanel, JSlider[], JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(springThresholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
-        JPanel sidePanel = slidPanelSlidersCount.a;
-        this.sliders = slidPanelSlidersCount.b;
-        slidPanelSlidersCount.c[1].setVisible(false);
-        sliders[1].setVisible(false);
-        int sidePanelNextY = slidPanelSlidersCount.d;
-        c.gridy = 1;
-        c.gridx = 1;
-        c.weighty = 1;
-        c.weightx = 0.2;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.fill = GridBagConstraints.VERTICAL;
-        mainPanel.add(sidePanel, c);
-        //mainPanel.add(sliders, BorderLayout.LINE_END);
-        GridBagConstraints cSidePanel = new GridBagConstraints();
-        //WARNING: POST-INCREMENT!
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        sidePanel.add(new JLabel("Genetic FAA round time"), cSidePanel);
-        JSlider geneticSlider = new JSlider(0, 1000);
-        geneticSlider.setSize(0, 500);
-        geneticSlider.setValue(faaRunningTimeGenetic);
-        geneticSlider.addChangeListener(e-> {
-            JSlider source = (JSlider) e.getSource();
-            faaRunningTimeGenetic = source.getValue();
-            System.out.println("magic number:" + faaRunningTimeGenetic);
-        });
-        cSidePanel.gridx = 0;
-        cSidePanel.gridy = sidePanelNextY++;
-        sidePanel.add(geneticSlider, cSidePanel);
-        cSidePanel.gridy = sidePanelNextY++;
-        JButton startGenetic = new JButton("Start genetic algo"),
-                stopGenetic  = new JButton("Stop genetic algo");
-        startGenetic.addActionListener(this::startGeneticClicked);
-        stopGenetic.addActionListener(this::stopGeneticClicked);
-        sidePanel.add(startGenetic, cSidePanel);
-        cSidePanel.gridx = 1;
-        sidePanel.add(stopGenetic, cSidePanel);
-        cSidePanel.gridy = sidePanelNextY++;
 
-        cSidePanel.gridx = 0;
-        cSidePanel.gridy = sidePanelNextY++;
-
-        JRadioButton forceDirectionPerpendicular = new JRadioButton("Perpendicular"),
-                forceDirectionNonPerpendicular = new JRadioButton("Non Perpendicular");
-        cSidePanel.gridx = 0;
-        sidePanel.add(forceDirectionPerpendicular,cSidePanel);
-        forceDirectionPerpendicular.setSelected(true);
-        forceDirectionPerpendicular.addActionListener(this::forceDirectionPerpendicularActionPerformed);
-        cSidePanel.gridx = 1;
-        sidePanel.add(forceDirectionNonPerpendicular,cSidePanel);
-        forceDirectionNonPerpendicular.setSelected(false);
-        forceDirectionNonPerpendicular.addActionListener(this::forceDirectionNonPerpendicularActionPerformed);
-
-        ButtonGroup group = new ButtonGroup();
-        group.add(forceDirectionNonPerpendicular);
-        group.add(forceDirectionPerpendicular);
-
-        JRadioButton optimizingAngleNinty = new JRadioButton("Optimizing Angle Crossing: 90°"),
-                optimizingAngleSixty = new JRadioButton("Optimizing Angle Crossing: 60°");
-
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        sidePanel.add(optimizingAngleNinty,cSidePanel);
-        optimizingAngleNinty.setSelected(true);
-        optimizingAngleNinty.addActionListener(this::optimizingAngleNintyActionPerformed);
-        cSidePanel.gridx = 1;
-        sidePanel.add(optimizingAngleSixty,cSidePanel);
-        optimizingAngleSixty.setSelected(false);
-        optimizingAngleSixty.addActionListener(this::optimizingAngleSixtyActionPerformed);
-
-        ButtonGroup angleGroup = new ButtonGroup();
-        angleGroup.add(optimizingAngleNinty);
-        angleGroup.add(optimizingAngleSixty);
-
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        JButton startForce = new JButton("Start force algo"),
-                stopForce  = new JButton("Stop force algo");
-        startForce.addActionListener(this::startForceClicked);
-        stopForce.addActionListener(this::stopForceClicked);
-
-        sidePanel.add(startForce, cSidePanel);
-        cSidePanel.gridx = 1;
-        sidePanel.add(stopForce, cSidePanel);
-
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        JButton showForces = new JButton("Show forces");
-        showForces.addActionListener(e -> {
-            if (faa == null) {
-                faa = defaultForceAlgorithmApplier(0);
-            }
-            faa.showForces();
-        });
-        sidePanel.add(showForces, cSidePanel);
-
-        cSidePanel.gridx = 1;
-        JButton showBestSolution = new JButton("Show best");
-        showBestSolution.addActionListener(e -> {
-            if (bestSolution == null) {
-                return;
-            }
-
-            Mapper<INode, PointD> nodePositions = bestSolution.a;
-            Optional<Double> minCrossingAngle = bestSolution.b;
-            Double[] mods = bestSolution.c;
-            Boolean[] switchs = bestSolution.d;
-            ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-            String msg = minCrossingAngle.map(d -> "Minimum crossing angle: " + d.toString()).orElse("No crossings!");
-            msg += "\n";
-            msg += "Modifiers:\n";
-            for(int i = 0; i < mods.length; i++){
-                Double d = mods[i];
-                sliders[i].setValue((int) (1000 * d));
-                //noinspection StringConcatenationInLoop
-                msg += "\t" + d.toString() + "\n";
-            }
-            msg += "\n";
-            msg += "Switches:\n";
-            for(Boolean b: switchs){
-                //noinspection StringConcatenationInLoop
-                msg += "\n\t" + b.toString() + "\n";
-            }
-            JOptionPane.showMessageDialog(null, msg);
-        });
-        sidePanel.add(showBestSolution, cSidePanel);
-
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        JButton showForceAlgoState = new JButton("Show state");
-        showForceAlgoState.addActionListener(e -> faa.showNodePositions());
-        sidePanel.add(showForceAlgoState, cSidePanel);
-
-        JButton scaleToBox = new JButton("Scale me to the box");
-        cSidePanel.gridx = 1;
-        sidePanel.add(scaleToBox, cSidePanel);
-        scaleToBox.addActionListener(e -> scalingToBox());
-        scaleToBox.setSelected(false);
-
-
-        JCheckBox enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
-        cSidePanel.gridx = 0;
-        cSidePanel.gridy = sidePanelNextY++;
-        sidePanel.add(enableMinimumAngleDisplay, cSidePanel);
-        enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
-        enableMinimumAngleDisplay.setSelected(false);
-
-
-        JCheckBox allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
-        cSidePanel.gridx = 1;
-        sidePanel.add(allowClickCreateNodeEdge, cSidePanel);
-        allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
-        allowClickCreateNodeEdge.setSelected(true);
-    }
 
 
     private void initMenuBar() {
@@ -502,292 +329,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    /*********************************************************************
-     * Implementation of actions
-     ********************************************************************/
 
-    private void startGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(geneticAlgorithm == null || !geneticAlgorithm.running){
-            ForceAlgorithmApplier.init();
-            initializeGeneticAlgorithm();
-            this.graphEditorInputMode.setCreateNodeAllowed(false);
-            geneticAlgorithmThread.start();
-        }
-    }
-
-    private void stopGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
-        geneticAlgorithm.running = false;
-        this.graphEditorInputMode.setCreateNodeAllowed(true);
-    }
-
-    private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(faa == null || !faa.running){
-            ForceAlgorithmApplier.init();
-            ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(-1);
-            fd.modifiers = springThresholds;
-            fd.switches = algoModifiers;
-            finalizeFAA(faa);
-            faa = fd;
-            Thread thread = new Thread(fd);
-            this.graphEditorInputMode.setCreateNodeAllowed(false);
-            thread.start();
-            this.view.updateUI();
-        }
-    }
-
-    private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if (faa != null) {
-            faa.running = false;
-            this.graphEditorInputMode.setCreateNodeAllowed(true);
-        }
-    }
-
-
-    //helper function
-    private List<ICanvasObject> canvasObjects = new ArrayList<>();
-    private void drawSlopes(double numSlopes, double initAngleDeg) {
-        numSlopes *=2;
-        for (ICanvasObject o : canvasObjects) {
-            o.remove();
-        }
-        canvasObjects.clear();
-
-        double stepSize = (2* Math.PI)/numSlopes;
-        double pos = 2 * Math.PI*(initAngleDeg/360);
-        INode tmpNode = graph.createNode(this.view.getCenter());
-        for (int i = 0; i < numSlopes; i++) {
-            double x_val = 1/this.view.getZoom() * 3 * Math.cos(pos);
-            double y_val = 1/this.view.getZoom() * 3 * Math.sin(pos);
-            canvasObjects.add(this.view.getBackgroundGroup().addChild(new VectorVisual(this.view, new PointD(x_val,y_val), tmpNode, Color.GREEN,(int)(5/this.view.getZoom())), ICanvasObjectDescriptor.VISUAL));
-            pos += stepSize;
-            if (pos > 2 * Math.PI) {
-                pos -= 2 * Math.PI;
-            }
-        }
-        this.view.updateUI();
-        this.graph.remove(tmpNode);
-    }
-
-    private int iterations = 1000;
-    private int numSlopes = 1;
-    private int initAngle = 0;
-    void slopedSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        for (ICanvasObject o : canvasObjects) {
-            o.remove();
-        }
-        canvasObjects.clear();
-
-        JTextField iterationsTextField = new JTextField(Integer.toString(iterations));
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        JLabel iterationLabel = new JLabel("Number of Iterations: ");
-        panel.add(iterationLabel);
-        panel.add(iterationsTextField);
-
-        JLabel numSlopesLabel = new JLabel("Number of Slopes: ");
-        JTextField numSlopesTextField = new JTextField(Integer.toString(numSlopes));
-
-        panel.add(numSlopesLabel);
-        panel.add(numSlopesTextField);
-
-        JLabel initAngleLabel = new JLabel("Angle (°) of First Slope: "); //other slopes are equidistant to first slope, default angle is 0 (right), clockwise is positive
-        panel.add(initAngleLabel);
-        JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayout(1,2));
-//        panel2.setMaximumSize(new Dimension(100,50));
-        JTextField initAngleTextField = new JTextField(Integer.toString(initAngle));
-        drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
-        JSlider initAngleSlider = new JSlider(JSlider.HORIZONTAL, 0, 360, initAngle);
-        initAngleSlider.addChangeListener(changeEvent -> {
-            initAngleTextField.setText(Integer.toString(initAngleSlider.getValue()));
-            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
-        });
-
-
-        initAngleTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                try {
-                    if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) { //checks is int
-                        initAngleSlider.setValue(Integer.parseInt(initAngleTextField.getText()));
-                        if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) {
-                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
-                        }
-                    }
-                } catch (NumberFormatException nfe) {
-                    System.out.println("Invalid Input");
-                }
-            }
-        });
-
-        numSlopesTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                try {
-                    if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) { //checks is int
-                        if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) {
-                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
-                        }
-                    }
-                } catch (NumberFormatException nfe) {
-                    System.out.println("Invalid Input");
-                }
-            }
-        });
-
-        panel2.add(initAngleSlider);
-        panel2.add(initAngleTextField);
-        panel.add(panel2);
-
-
-        int result = JOptionPane.showOptionDialog(null, panel, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                iterations = Integer.parseInt(iterationsTextField.getText());
-                numSlopes = Integer.parseInt(numSlopesTextField.getText());
-                initAngle = Integer.parseInt(initAngleTextField.getText());
-
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 1000, slopes to 1 and inital angle to 0.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                for (ICanvasObject o : canvasObjects) {
-                    o.remove();
-                }
-                canvasObjects.clear();
-                this.view.updateUI();
-                return;
-            }
-        }
-        else {
-            for (ICanvasObject o : canvasObjects) {
-                o.remove();
-            }
-            canvasObjects.clear();
-            this.view.updateUI();
-            return;
-        }
-
-        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
-            public void calculateVectors() {
-                ForceDirectedFactory.calculateSlopedSpringForces(graph, numSlopes*2, initAngle, 0.7,  map);
-                ForceDirectedFactory.calculateElectricForcesEades(graph, 30000, 0.01, map);   //repulses nodes from another
-                ForceDirectedFactory.calculateSpringForcesEades(graph, 100, 100, 0.01, map);        //pulls nodes until edges same length
-            }
-        };
-        fd.addAlgorithmListener(new AlgorithmListener() {
-            ICompoundEdit compoundEdit;
-            public void algorithmStarted(AlgorithmEvent evt) {
-                synchronized (graph) {
-                    compoundEdit = graph.beginEdit("Undo layout", "Redo layout");
-                }
-
-            }
-
-            public void algorithmFinished(AlgorithmEvent evt) {
-                synchronized (graph) {
-                    compoundEdit.commit();
-                }
-                progressBar.setValue(0);
-                view.fitContent();
-                view.updateUI();
-            }
-
-            public void algorithmStateChanged(AlgorithmEvent evt) {
-                progressBar.setValue(evt.currentStatus());
-            }
-        });
-
-        Thread thread = new Thread(fd);
-        thread.start();
-
-        for (ICanvasObject o : canvasObjects) {
-            o.remove();
-        }
-        canvasObjects.clear();
-
-        this.view.updateUI();
-    }
-
-
-    void springEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        JTextField iterationsTextField = new JTextField("1000");
-        int iterations = 1000;
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                iterations = Integer.parseInt(iterationsTextField.getText());
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        else return;
-
-        ForceAlgorithmApplier fd = defaultForceAlgorithmApplier(iterations);
-        finalizeFAA(faa);
-        faa = fd;
-
-
-        Thread thread = new Thread(fd);
-        thread.start();
-        this.view.updateUI();
-    }
-
-    private void minimumAngleDisplayEnabled(ItemEvent evt) {
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            minimumAngleMonitor.registerGraphChangedListeners();
-        } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
-            minimumAngleMonitor.removeGraphChangedListeners();
-        }
-    }
-    
-    private void scalingToBox(){
-    Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
-    double maxX=0, maxY=0;
-    for(INode u : graph.getNodes()){
-    	if(u.getLayout().getCenter().getX()>maxX){
-    		maxX=u.getLayout().getCenter().getX();
-    	}
-    	if(u.getLayout().getCenter().getY()>maxY){
-    		maxY=u.getLayout().getCenter().getY();
-    	}
-    }
-    nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, Math.min((int)(boxsize/maxX), (int)(boxsize/maxY)));
-    this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
-    this.view.fitGraphBounds();
-    }    
-
-    private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
-        this.graphEditorInputMode.setCreateNodeAllowed((evt.getStateChange() == ItemEvent.DESELECTED));     //no new nodes
-        this.graphEditorInputMode.setCreateEdgeAllowed((evt.getStateChange() == ItemEvent.DESELECTED));     //no new edges
-        this.graphEditorInputMode.setEditLabelAllowed((evt.getStateChange() == ItemEvent.DESELECTED));      //no editing of labels
-        this.graphEditorInputMode.setShowHandleItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports
-        this.graphEditorInputMode.setDeletableItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
-        this.graphEditorInputMode.setSelectableItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
-    }
-
-    private void forceDirectionPerpendicularActionPerformed(@SuppressWarnings("unused") ActionEvent evt){    this.algoModifiers[0] = true; }
-    private void forceDirectionNonPerpendicularActionPerformed(@SuppressWarnings("unused") ActionEvent evt){ this.algoModifiers[0] = false; }
-
-    private void optimizingAngleNintyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { this.algoModifiers[1] = true; }
-    private void optimizingAngleSixtyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { this.algoModifiers[1] = false; }
-
-
-    private GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
-    private Thread geneticAlgorithmThread;
-    private void initializeGeneticAlgorithm(){
-        LinkedList<ForceAlgorithmApplier> firstFAAs = new LinkedList<>();
-        firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
-        LayoutUtilities.applyLayout(graph, new OrthogonalLayout());
-        firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
-        LayoutUtilities.applyLayout(graph, new OrganicLayout());
-        firstFAAs.add(defaultForceAlgorithmApplier(faaRunningTimeGenetic));
-        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, graph);
-        geneticAlgorithmThread = new Thread(geneticAlgorithm);
-    }
 
     /**
      * @param args the command line arguments
