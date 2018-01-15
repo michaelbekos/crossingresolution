@@ -19,8 +19,8 @@ import io.ContestIOHandler;
 import layout.algo.*;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
+import layout.algo.utils.PositionMap;
 import util.*;
-import view.visual.InitClinchLayout;
 import view.visual.InitClinchLayoutExecutor;
 import view.visual.VectorVisual;
 
@@ -518,16 +518,16 @@ public class InitMenuBar {
 
     private void scaleUpGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
-        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 2.0);
-        this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
 
     private void scaleDownGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.5);
-        this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
 
@@ -594,14 +594,14 @@ public class InitMenuBar {
     }
     
     private void enforcelegal(@SuppressWarnings("unused") ActionEvent evt){
-    	Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+    	Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
     	boolean change=true;
     	while(change){
     		change=false;
 	    	for(INode u : graph.getNodes()){
 	        	if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX()>boxsize || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY()>boxsize){
 	        		nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.9);
-	        	    this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+	        	    this.graph =  PositionMap.applyToGraph(graph, nodePositions);
 	        	    this.view.fitGraphBounds();
 	        	    change=true;
 				}

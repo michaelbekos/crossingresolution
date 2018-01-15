@@ -1,6 +1,7 @@
 
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import layout.algo.utils.PositionMap;
 import util.GridPositioning;
 import algorithms.graphs.MinimumAngle;
 import util.*;
@@ -168,7 +169,7 @@ public class BatchOptimizer {
     // afterwards: apply new positions to graph...
     if (ForceAlgorithmApplier.bestSolution != null) {
       Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.bestSolution.a;
-      ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+      PositionMap.applyToGraph(graph, nodePositions);
     }
     Optional<Intersection>
             minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph);

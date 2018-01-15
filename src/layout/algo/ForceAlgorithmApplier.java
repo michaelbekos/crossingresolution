@@ -14,6 +14,7 @@ import java.awt.Color;
 
 import javax.swing.*;
 
+import layout.algo.utils.PositionMap;
 import util.*;
 import util.graph2d.*;
 import algorithms.graphs.*;
@@ -28,45 +29,24 @@ public class ForceAlgorithmApplier implements Runnable {
     bestSolution = null;
   }
 
-  public static Mapper<INode, PointD> newNodePointMap(){
-    return new Mapper<>(new WeakHashMap<>());
-  }
-  // copy all entries of im to a new map
-  public static Mapper<INode, PointD> copyNodePositionsMap(Mapper<INode, PointD> im){
-    Mapper<INode, PointD> res = newNodePointMap();
-    im.getEntries().forEach(e -> {
-      INode n = e.getKey();
-      PointD p = e.getValue();
-      res.setValue(n, p);
-    });
-    return res;
-  }
-
   // initForceMap creates a forceMap with default force (0,0).
-  public static Mapper<INode, PointD> initForceMap(IGraph g){
-    Mapper<INode, PointD> map = newNodePointMap();
+  private static Mapper<INode, PointD> initForceMap(IGraph g){
+    Mapper<INode, PointD> map = PositionMap.newPositionMap();
     map.setDefaultValue(new PointD(0, 0));
     return map;
   }
-  // apply positions in a positionMap to a graph.
-  public static IGraph applyNodePositionsToGraph(IGraph g, Mapper<INode, PointD> nodePositions){
-    for(Map.Entry<INode, PointD> e: nodePositions.getEntries()){
-      INode n1 = e.getKey();
-      PointD p1 = e.getValue();
-      g.setNodeCenter(n1, p1);
-    }
-    return g;
-  }
+
   // add all forces to the corresponding nodes
-  public static Mapper<INode, PointD> applyForces(Mapper<INode, PointD> nodePositions, Mapper<INode, PointD> forces){
-    for(Map.Entry<INode, PointD> e: nodePositions.getEntries()){
-      INode n1 = e.getKey();
-      PointD f1 = forces.getValue(n1),
-             p1 = e.getValue(),
-             p2;
-      p2 = PointD.add(f1, p1);
-      nodePositions.setValue(n1, p2);
+  private static Mapper<INode, PointD> applyForces(Mapper<INode, PointD> nodePositions, Mapper<INode, PointD> forces) {
+    for (Map.Entry<INode, PointD> e : nodePositions.getEntries()) {
+      INode node = e.getKey();
+
+      PointD position = e.getValue();
+      PointD force = forces.getValue(node);
+
+      nodePositions.setValue(node, PointD.add(position, force));
     }
+
     return nodePositions;
   }
 
@@ -113,7 +93,7 @@ public class ForceAlgorithmApplier implements Runnable {
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, JProgressBar progressBar, JLabel infoLabel){
     this.view = view;
     this.graph = view.getGraph();
-    nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+    nodePositions = PositionMap.FromIGraph(graph);
     this.maxNoOfIterations = maxNoOfIterations;
     this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).map(x -> x.b).orElse(0.0);
     this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions).map(t -> t.angle).orElse(0.0);
@@ -127,7 +107,7 @@ public class ForceAlgorithmApplier implements Runnable {
   public ForceAlgorithmApplier clone(){
     ForceAlgorithmApplier ret = new ForceAlgorithmApplier(this.view, this.maxNoOfIterations, this.progressBar, this.infoLabel);
     ret.graph = this.graph;
-    ret.nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(this.nodePositions);
+    ret.nodePositions = PositionMap.copy(this.nodePositions);
     ret.modifiers = this.modifiers.clone();
     ret.switches = this.switches.clone();
     ret.algos = this.algos;
@@ -144,7 +124,7 @@ public class ForceAlgorithmApplier implements Runnable {
         if(nodePositions.getValue(u) == null){
           // new node!
           System.out.println("! new node !");
-          nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+          nodePositions = PositionMap.FromIGraph(graph);
           break;
         }
         nodePositions.setValue(u, p);
@@ -153,14 +133,7 @@ public class ForceAlgorithmApplier implements Runnable {
     cMinimumAngle.invalidate();
     improveSolution();
   }
-  // simpler setNodePositions
-  public void setNodePosition(INode u, PointD p){
-    setNodePositions(Arrays.asList(new Tuple2<>(u, p)));
-  }
-  // simpler setNodePositions
-  public void resetNodePosition(INode u){
-    setNodePosition(u, u.getLayout().getCenter());
-  }
+
   // simpler setNodePositions
   public void resetNodePositions(Collection<INode> us){
     List<Tuple2<INode, PointD>> ups = us.stream()
@@ -178,13 +151,13 @@ public class ForceAlgorithmApplier implements Runnable {
 
   // apply internal position map to graph
   public void showNodePositions(){
-    ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    PositionMap.applyToGraph(graph, nodePositions);
     this.view.updateUI();
   }
 
   // apply internal position map to graph
   public void showNodePositions(int j){
-    ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    PositionMap.applyToGraph(graph, nodePositions);
     // update only every 20 iterations
     if(j % 10 == 0) {
       this.view.updateUI();
@@ -239,7 +212,7 @@ public class ForceAlgorithmApplier implements Runnable {
       for (int i = 0; i < this.maxNoOfIterations; i++) {
         this.clearDrawables();
         nodePositions = applyAlgos();
-        ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        PositionMap.applyToGraph(graph, nodePositions);
         this.currNoOfIterations = i;
         // update only every 10 iterations
         if(nodes > 200){
@@ -288,7 +261,7 @@ public class ForceAlgorithmApplier implements Runnable {
      */
     // do it lazy, since we might not need to
     Supplier<Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]>> thisSol
-      = (() -> new Tuple4<>(copyNodePositionsMap(sol), solutionAngle, modifiers.clone(), switches.clone()));
+      = (() -> new Tuple4<>(PositionMap.copy(sol), solutionAngle, modifiers.clone(), switches.clone()));
     // if we hadn't had a previous best yet, update with our
     if (bestSolution == null) {
       bestSolution = thisSol.get();
@@ -320,7 +293,7 @@ public class ForceAlgorithmApplier implements Runnable {
   }
 
   public void draw(IGraph g){
-    ForceAlgorithmApplier.applyNodePositionsToGraph(g, nodePositions);
+    PositionMap.applyToGraph(g, nodePositions);
     displayMinimumAngle(g);
     this.view.updateUI();
     if (infoLabel != null) {

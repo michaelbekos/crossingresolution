@@ -1,8 +1,13 @@
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.graph.GraphItemTypes;
+import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.LayoutUtilities;
+import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import layout.algo.*;
+import layout.algo.ForceAlgorithmApplier;
+import layout.algo.GeneticAlgorithm;
+import layout.algo.utils.PositionMap;
 import util.GraphOperations;
 import util.Tuple4;
 import util.interaction.ThresholdSliders;
@@ -132,7 +137,7 @@ public class InitSidePanel {
             Optional<Double> minCrossingAngle = bestSolution.b;
             Double[] mods = bestSolution.c;
             Boolean[] switchs = bestSolution.d;
-            ForceAlgorithmApplier.applyNodePositionsToGraph(mainFrame.graph, nodePositions);
+            PositionMap.applyToGraph(mainFrame.graph, nodePositions);
             String msg = minCrossingAngle.map(d -> "Minimum crossing angle: " + d.toString()).orElse("No crossings!");
             msg += "\n";
             msg += "Modifiers:\n";
@@ -232,7 +237,7 @@ public class InitSidePanel {
     }
 
     private void scalingToBox(){
-        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(mainFrame.graph);
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(mainFrame.graph);
         double maxX=0, maxY=0;
         for(INode u : mainFrame.graph.getNodes()){
             if(u.getLayout().getCenter().getX()>maxX){
@@ -243,7 +248,7 @@ public class InitSidePanel {
             }
         }
         nodePositions = GraphOperations.scaleUpProcess(mainFrame.graph,nodePositions, Math.min((int)(mainFrame.boxsize/maxX), (int)(mainFrame.boxsize/maxY)));
-        mainFrame.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(mainFrame.graph, nodePositions);
+        mainFrame.graph =  PositionMap.applyToGraph(mainFrame.graph, nodePositions);
         mainFrame.view.fitGraphBounds();
     }
 

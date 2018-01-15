@@ -1,12 +1,12 @@
 import algorithms.graphs.MinimumAngle;
 import layout.algo.ForceAlgorithmApplier;
-import layout.algo.LayoutUtils;
 
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
+import layout.algo.utils.PositionMap;
 import util.DisplayMessagesGui;
 import util.Tuple4;
 import util.graph2d.Intersection;
@@ -35,7 +35,7 @@ public class MinimumAngleMonitor {
   }
 
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
-	  Mapper<INode, PointD> nodePositions= LayoutUtils.positionMapFromIGraph(graph);
+	  Mapper<INode, PointD> nodePositions= PositionMap.FromIGraph(graph);
     MinimumAngle.resetHighlighting(graph);
     Optional<Intersection>
         minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);

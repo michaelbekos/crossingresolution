@@ -7,6 +7,8 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import layout.algo.utils.LayoutUtils;
+import layout.algo.utils.PositionMap;
 import util.BoundingBox;
 
 import java.util.*;
@@ -40,7 +42,7 @@ public class ClinchLayout implements ILayout {
 
   @Override
   public void init() {
-    positions = LayoutUtils.positionMapFromIGraph(graph);
+    positions = PositionMap.FromIGraph(graph);
     stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
     boundingBox = BoundingBox.from(positions);

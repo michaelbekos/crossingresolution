@@ -4,6 +4,7 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.view.*;
 
+import layout.algo.utils.PositionMap;
 import util.*;
 import util.graph2d.*;
 import layout.algo.*;
@@ -45,7 +46,7 @@ public abstract class InitGeneticAlgorithm {
                   }),
                   5,
                   Either.left(fa -> {
-                      Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.copyNodePositionsMap(fa.nodePositions);
+                      Mapper<INode, PointD> nodePositions = PositionMap.copy(fa.nodePositions);
   
                       List<Intersection> crossings = MinimumAngle.getCrossingsSorted(graph, nodePositions);
                       ForceAlgorithmApplier fa2 = fa.clone();
