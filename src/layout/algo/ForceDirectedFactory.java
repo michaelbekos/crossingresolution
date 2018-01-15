@@ -117,7 +117,15 @@ public class ForceDirectedFactory {
         return Math.atan2(dy,dx);
     }
 
-    public static void calculateSlopedSpringForces(IGraph graph, int numberOfSlopes, double initialAngleDeg, IMapper<INode, List<YVector>> map) {
+    /**
+     * Calculate normal vectors to move each edge to the closest slope
+     * @param graph - the input graph.
+     * @param numberOfSlopes - number of slopes
+     * @param initialAngleDeg - angle in degrees of the first slope (right is zero, clockwise is positive), all other slopes are equidistant
+     * @param threshold - a threshold value.
+     * @param map - the NodeMap, where the calculated forces will be stored (might be non-empty).
+     */
+    public static void calculateSlopedSpringForces(IGraph graph, int numberOfSlopes, double initialAngleDeg, double threshold, IMapper<INode, List<YVector>> map) {
         List<Double> slopeAngles = new ArrayList<>();
         double stepSize = (2 * Math.PI)/numberOfSlopes;
         double pos = 2 * Math.PI*(initialAngleDeg/360.0);
@@ -185,11 +193,11 @@ public class ForceDirectedFactory {
 
 
             source_vec.norm();
-            source_vec.scale(1 * Math.abs(fittedSlopeAngle - edgeSlopeAngle));
+            source_vec.scale(threshold * Math.abs(fittedSlopeAngle - edgeSlopeAngle));
             map.getValue(e.getSourceNode()).add(source_vec);
 
             target_vec.norm();
-            target_vec.scale(1 * Math.abs(fittedSlopeAngle - edgeSlopeAngle));
+            target_vec.scale(threshold * Math.abs(fittedSlopeAngle - edgeSlopeAngle));
             map.getValue(e.getTargetNode()).add(target_vec);
         }
     }

@@ -1,7 +1,6 @@
 package layout.algo;
 
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.GraphComponent;
@@ -13,20 +12,18 @@ public class ClinchLayoutExecutor extends GenericAlgorithmExecutor{
 
     private final ILayout layout;
     private final int numberOfCyclesBetweenViewUpdates;
-    private final IGraph graph;
 
 
     public ClinchLayoutExecutor (GraphComponent view, JProgressBar progressBar, int maxIterations, ILayout layout, int numberOfCyclesBetweenViewUpdates) {
         super(view, progressBar, maxIterations);
-        this.graph = view.getGraph();
         this.layout = layout;
         this.numberOfCyclesBetweenViewUpdates = numberOfCyclesBetweenViewUpdates;
     }
 
     private void updateViewAlgo(Mapper<INode, PointD> nodePositions) {
-        synchronized (graph) {
+        synchronized (super.graph) {
             for (Map.Entry<INode, PointD> entry : nodePositions.getEntries()) {
-                graph.setNodeCenter(entry.getKey(), entry.getValue());
+                super.graph.setNodeCenter(entry.getKey(), entry.getValue());
             }
         }
     }

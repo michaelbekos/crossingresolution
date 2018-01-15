@@ -8,7 +8,7 @@ import javax.swing.*;
 
 public abstract class GenericAlgorithmExecutor{
     private final GraphComponent view;
-    private final IGraph graph;
+    public final IGraph graph;
     private final JProgressBar progressBar;
     private final int maxIterations;
     private boolean running;

@@ -671,7 +671,9 @@ public class MainFrame extends JFrame {
 
         ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
             public void calculateVectors() {
-                ForceDirectedFactory.calculateSlopedSpringForces(graph, numSlopes*2, initAngle, map);
+                ForceDirectedFactory.calculateSlopedSpringForces(graph, numSlopes*2, initAngle, 0.7,  map);
+                ForceDirectedFactory.calculateElectricForcesEades(graph, 30000, 0.01, map);   //repulses nodes from another
+                ForceDirectedFactory.calculateSpringForcesEades(graph, 100, 100, 0.01, map);        //pulls nodes until edges same length
             }
         };
         fd.addAlgorithmListener(new AlgorithmListener() {
