@@ -33,7 +33,7 @@ public class IGraphLayoutExecutor {
 
       layout.init();
 
-      for (int i = 0; i < maxIterations; i++) {
+      for (int i = 0; i < maxIterations || maxIterations == -1; i++) {
         boolean finished = layout.executeStep(i);
         if (finished) {
           break;

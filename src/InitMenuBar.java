@@ -416,7 +416,7 @@ public class InitMenuBar {
             int result = JOptionPane.showOptionDialog(null, new Object[]{"Dimensions: ", dim}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (result == JOptionPane.OK_OPTION) {
                 int dimensions = Integer.parseInt(dim.getText());
-                ForceAlgorithmApplier.init();
+                TrashCan.init();
                 HypercubeGenerator.generate(graph, dimensions);
                 view.updateUI();
             }
@@ -435,7 +435,7 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int rC = Integer.parseInt(rCount.getText());
-                ForceAlgorithmApplier.init();
+                TrashCan.init();
                 GridGenerator.generate(graph, xC, yC, rC);
                 view.updateUI();
             }
@@ -454,7 +454,7 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int lC = Integer.parseInt(layers.getText());
-                ForceAlgorithmApplier.init();
+                TrashCan.init();
                 LayeredGridGenerator.generate(graph, xC, yC, lC);
                 view.updateUI();
             }
@@ -705,7 +705,7 @@ public class InitMenuBar {
                 rgg.setNodeCount(10);
                 rgg.setEdgeCount(10);
             } finally {
-                ForceAlgorithmApplier.init();
+                TrashCan.init();
                 rgg.generate(this.graph);
                 LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
                 this.view.fitGraphBounds();
@@ -1085,8 +1085,8 @@ public class InitMenuBar {
         mainFrame.faa = fd;
 
 
-        Thread thread = new Thread(fd);
-        thread.start();
+        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(fd, graph, progressBar, -1, 20);
+        executor.run();
         mainFrame.view.updateUI();
     }
 

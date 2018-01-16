@@ -148,7 +148,7 @@ public class BatchOptimizer {
     // if there is a crossing, map to get the angle, then get it, otherwise "no crossings".
     String initialAngle = minAngleCr.map(intersection->intersection.angle.toString()).orElse("no crossings");
     
-    ForceAlgorithmApplier.init();
+    TrashCan.init();
     
     long startTime = System.nanoTime();
     if(forceAlgoOnly){
@@ -167,8 +167,8 @@ public class BatchOptimizer {
     }
 
     // afterwards: apply new positions to graph...
-    if (ForceAlgorithmApplier.bestSolution != null) {
-      Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.bestSolution.a;
+    if (TrashCan.bestSolution != null) {
+      Mapper<INode, PointD> nodePositions = TrashCan.bestSolution.a;
       PositionMap.applyToGraph(graph, nodePositions);
     }
     Optional<Intersection>

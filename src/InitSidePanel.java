@@ -7,6 +7,8 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import layout.algo.ForceAlgorithmApplier;
 import layout.algo.GeneticAlgorithm;
+import layout.algo.IGraphLayoutExecutor;
+import layout.algo.TrashCan;
 import layout.algo.utils.PositionMap;
 import util.GraphOperations;
 import util.Tuple4;
@@ -19,7 +21,7 @@ import java.awt.event.ItemEvent;
 import java.util.LinkedList;
 import java.util.Optional;
 
-import static layout.algo.ForceAlgorithmApplier.bestSolution;
+import static layout.algo.TrashCan.bestSolution;
 
 public class InitSidePanel {
     private MainFrame mainFrame;
@@ -191,7 +193,7 @@ public class InitSidePanel {
 
     private void startGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
         if(geneticAlgorithm == null || !geneticAlgorithm.running){
-            ForceAlgorithmApplier.init();
+            TrashCan.init();
             initializeGeneticAlgorithm();
             mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
             geneticAlgorithmThread.start();
@@ -205,15 +207,16 @@ public class InitSidePanel {
 
     private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
         if(mainFrame.faa == null || !mainFrame.faa.running){
-            ForceAlgorithmApplier.init();
+            TrashCan.init();
             ForceAlgorithmApplier fd = mainFrame.defaultForceAlgorithmApplier(-1);
             fd.modifiers = mainFrame.springThresholds;
             fd.switches = mainFrame.algoModifiers;
             mainFrame.finalizeFAA(mainFrame.faa);
             mainFrame.faa = fd;
-            Thread thread = new Thread(fd);
             mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
-            thread.start();
+            IGraphLayoutExecutor executor =
+                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
+            executor.run();
             mainFrame.view.updateUI();
         }
     }

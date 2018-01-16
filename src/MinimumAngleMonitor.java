@@ -1,11 +1,11 @@
 import algorithms.graphs.MinimumAngle;
-import layout.algo.ForceAlgorithmApplier;
 
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
+import layout.algo.TrashCan;
 import layout.algo.utils.PositionMap;
 import util.DisplayMessagesGui;
 import util.Tuple4;
@@ -47,7 +47,7 @@ public class MinimumAngleMonitor {
     		newAngle.of(minAngleCr.get().angle);
     		Supplier<Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]>> thisSol
 			= (() -> new Tuple4<>(nodePositions, newAngle , new Double[0], new Boolean[0]));
-			ForceAlgorithmApplier.bestSolution=thisSol.get();
+			TrashCan.bestSolution=thisSol.get();
     	}
     }
 

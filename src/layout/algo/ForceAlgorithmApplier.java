@@ -7,7 +7,6 @@ import com.yworks.yfiles.view.*;
 
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 import java.awt.Color;
 
@@ -21,63 +20,21 @@ import util.graph2d.*;
 import algorithms.graphs.*;
 import view.visual.*;
 
-public class ForceAlgorithmApplier implements Runnable {
-  // keep track of a bestSolution across all FAAs
-  public static Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]> bestSolution = null;
-  public static List<ICanvasObject> canvasObjects = new ArrayList<>();
-  // call this whenever the underlying graph changes structurally!
-  public static void init(){
-    bestSolution = null;
-  }
-
-  // initForceMap creates a forceMap with default force (0,0).
-  private static Mapper<INode, PointD> initForceMap(IGraph g){
-    Mapper<INode, PointD> map = PositionMap.newPositionMap();
-    map.setDefaultValue(new PointD(0, 0));
-    return map;
-  }
-
-  // add all forces to the corresponding nodes
-  private static Mapper<INode, PointD> applyForces(Mapper<INode, PointD> nodePositions, Mapper<INode, PointD> forces) {
-    for (Map.Entry<INode, PointD> e : nodePositions.getEntries()) {
-      INode node = e.getKey();
-
-      PointD position = e.getValue();
-      PointD force = forces.getValue(node);
-
-      nodePositions.setValue(node, PointD.add(position, force));
-    }
-
-    return nodePositions;
-  }
-
-  //everythings fine, this is checked, the compiler just doesn't get it
-  @SuppressWarnings("unchecked")
-  public static <T1, T extends T1> List<T> filterListSubclass(List<T1> l, Class<T> type){
-    return l.parallelStream()
-      .filter(a -> type.isInstance(a))
-      .map(a -> (T) a)
-      .collect(Collectors.toList());
-  }
-
-  /* * * * * * * * * * * * * *
-   * STATIC PART ENDS HERE  *
-   * * * * * * * * * * * * * */
+public class ForceAlgorithmApplier implements ILayout {
 
   // list of algos to apply to graph
   public List<IForce> algos = new LinkedList<>();
   // underlying graph info
   public GraphComponent view;
   public IGraph graph;
-  public int maxNoOfIterations;
-  public int currNoOfIterations;
-  public int maxMinAngleIterations;
+  private int maxNoOfIterations;
+  private int currNoOfIterations;
+  private int maxMinAngleIterations;
   @Nullable
   private JProgressBar progressBar;
   @Nullable
   private JLabel infoLabel;
-  public double maxMinAngle;
-  public double minEdgeLength;
+  private double maxMinAngle;
   // current nodePositions, so we can calculate in the background
   public Mapper<INode, PointD> nodePositions;
   public boolean running = false;
@@ -94,14 +51,10 @@ public class ForceAlgorithmApplier implements Runnable {
   public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations, JProgressBar progressBar, JLabel infoLabel){
     this.view = view;
     this.graph = view.getGraph();
-    nodePositions = PositionMap.FromIGraph(graph);
     this.maxNoOfIterations = maxNoOfIterations;
-    this.minEdgeLength = ShortestEdgeLength.getShortestEdge(graph).map(x -> x.b).orElse(0.0);
-    this.maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions).map(t -> t.angle).orElse(0.0);
     this.maxMinAngleIterations = 0;
     this.progressBar = progressBar;
     this.infoLabel = infoLabel;
-    improveSolution();
   }
 
   @Override
@@ -114,6 +67,24 @@ public class ForceAlgorithmApplier implements Runnable {
     ret.algos = this.algos;
 
     return ret;
+  }
+
+  @Override
+  public void init() {
+    nodePositions = PositionMap.FromIGraph(graph);
+    maxMinAngle = cMinimumAngle.getMinimumAngleCrossing(graph, nodePositions).map(t -> t.angle).orElse(0.0);
+    TrashCan.improveSolution(cMinimumAngle, graph, modifiers, nodePositions, switches);
+  }
+
+  @Override
+  public boolean executeStep(int iteration) {
+    nodePositions = applyAlgos();
+    return false;
+  }
+
+  @Override
+  public Mapper<INode, PointD> getNodePositions() {
+    return nodePositions;
   }
 
   // set a list of node positions. takes care of cache invalidation, tracking best solutions.
@@ -132,7 +103,7 @@ public class ForceAlgorithmApplier implements Runnable {
       }
     }
     cMinimumAngle.invalidate();
-    improveSolution();
+    TrashCan.improveSolution(cMinimumAngle, graph, modifiers, nodePositions, switches);
   }
 
   // simpler setNodePositions
@@ -156,139 +127,11 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
   }
 
-  // calculate internal position map to graph
-  public void showNodePositions(int j){
-    PositionMap.applyToGraph(graph, nodePositions);
-    // update only every 20 iterations
-    if(j % 10 == 0) {
-      this.view.updateUI();
-    }
-  }
-  /**
-   * run(maxNoOfIterations) has three modes:
-   * - run(0): showForces()
-   * - run(x < 0): run indefinitely
-   * - run(x): run x rounds
-   */ 
-  public void run() {
-    int nodes = this.graph.getNodes().size();
-    running = true;
-    if (this.maxNoOfIterations == 0) {
-      showForces();
-    }
-
-    if (this.maxNoOfIterations < 0) {
-      int j = 0;
-      while (running){
-        long startTime = System.nanoTime();
-        this.clearDrawables();
-        synchronized(nodePositions){
-          nodePositions = applyAlgos();
-        }
-        cMinimumAngle.invalidate();
-        improveSolution();
-        // update of ui not every time when more than 200 nodes
-        if(nodes > 200){
-         // if( j % 20 == 0){ showNodePositions(); }
-          showNodePositions(j);
-        } else {
-          showNodePositions();
-        }
-
-        this.currNoOfIterations = j;
-        long endTime = System.nanoTime();
-        System.out.println("Time taken: " + (endTime - startTime)/1000000 + " ms");
-        try {
-          Thread.sleep(1);
-        } catch (InterruptedException exc) {
-          System.out.println("Sleep interrupted!");
-          //Do nothing...
-        }
-        if (infoLabel != null) {
-          infoLabel.setText(displayMinimumAngle(graph));
-        }
-        j++;
-      }
-    } else {
-      for (int i = 0; i < this.maxNoOfIterations; i++) {
-        this.clearDrawables();
-        nodePositions = applyAlgos();
-        PositionMap.applyToGraph(graph, nodePositions);
-        this.currNoOfIterations = i;
-        // update only every 10 iterations
-        if(nodes > 200){
-          if(i % 10 == 0){ this.view.updateUI();}
-        } else {
-          this.view.updateUI();
-        }
-        try {
-          Thread.sleep(1);
-        } catch (InterruptedException exc) {
-          System.out.println("Sleep interrupted!");
-          //Do nothing...
-        }
-        int progress = Math.round(100 * i / this.maxNoOfIterations);
-        if (progressBar != null) {
-          progressBar.setValue(progress);
-        }
-        if (infoLabel != null) {
-          infoLabel.setText(displayMinimumAngle(graph));
-        }
-        running = false;
-      }
-    }
-
-    if (progressBar != null) {
-      progressBar.setValue(0);
-    }
-    JOptionPane.showMessageDialog(null, displayMaxMinAngle(), "Maximal Minimum Angle", JOptionPane.INFORMATION_MESSAGE);
-    
-    displayMinimumAngle(graph);
-    this.view.updateUI();
-    running = false;
-  }
-
-  /**
-   * improveSolution: check current node positions and last best positions (metric: minimum crossing angle). If better, update.
-   */
-  public void improveSolution(){
-    Mapper<INode, PointD> sol = nodePositions;
-    Optional<Double> solutionAngle = cMinimumAngle.getMinimumAngle(graph, sol);
-    /* best solution is a tuple of:
-     * - nodePositions :: Mapper (INode, PointD)
-     * - crossingAngle (if any) :: Optional Double
-     * - force parameters :: [Double]
-     * - force switches :: [Bool]
-     */
-    // do it lazy, since we might not need to
-    Supplier<Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]>> thisSol
-      = (() -> new Tuple4<>(PositionMap.copy(sol), solutionAngle, modifiers.clone(), switches.clone()));
-    // if we hadn't had a previous best yet, update with our
-    if (bestSolution == null) {
-      bestSolution = thisSol.get();
-      return;
-    }
-    // otherwise: previous best exists. get it...
-    Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]> prevBest = bestSolution;
-    // ... if previous one had no crossings, we can't be better, so we stop.
-    if(!prevBest.b.isPresent()) return;
-    // ... otherwise, if this one has no crossings, it must be better, so we update.
-    if(!solutionAngle.isPresent()){
-      bestSolution = thisSol.get();
-      return;
-    }
-    // ... if the previous angle was better, we return.
-    if(prevBest.b.get() >= solutionAngle.get()) return;
-    // ... otherwise, ours is better, so we update.
-    bestSolution = thisSol.get();
-    
-  }
-
   public void runNoDraw() {
     running = true;
     for (int i = 0; i < this.maxNoOfIterations && running; i++) {
       nodePositions = applyAlgos();
-      improveSolution();
+      TrashCan.improveSolution(cMinimumAngle, graph, modifiers, nodePositions, switches);
     }
     running = false;
   }
@@ -309,7 +152,7 @@ public class ForceAlgorithmApplier implements Runnable {
     for(INode u: graph.getNodes()){
       PointD vector = map.getValue(u);
       System.out.println(vector);
-      this.canvasObjects.add(this.view.getBackgroundGroup().addChild(
+      TrashCan.canvasObjects.add(this.view.getBackgroundGroup().addChild(
         new VectorVisual(this.view, vector, u, Color.GREEN),
         ICanvasObjectDescriptor.VISUAL));
     }
@@ -317,10 +160,10 @@ public class ForceAlgorithmApplier implements Runnable {
   }
 
   public void clearDrawables() {
-    for (ICanvasObject o: canvasObjects) {
+    for (ICanvasObject o: TrashCan.canvasObjects) {
       o.remove();
     }
-    canvasObjects.clear();
+    TrashCan.canvasObjects.clear();
     this.view.updateUI();
   }
 
@@ -377,6 +220,25 @@ public class ForceAlgorithmApplier implements Runnable {
     return DisplayMessagesGui.createMaxMinAngleMsg(this.maxMinAngle, this.maxMinAngleIterations);
   }
 
+  // initForceMap creates a forceMap with default force (0,0).
+  private static Mapper<INode, PointD> initForceMap(IGraph g){
+    Mapper<INode, PointD> map = PositionMap.newPositionMap();
+    map.setDefaultValue(new PointD(0, 0));
+    return map;
+  }
 
+  // add all forces to the corresponding nodes
+  private static Mapper<INode, PointD> applyForces(Mapper<INode, PointD> nodePositions, Mapper<INode, PointD> forces) {
+    for (Map.Entry<INode, PointD> e : nodePositions.getEntries()) {
+      INode node = e.getKey();
+
+      PointD position = e.getValue();
+      PointD force = forces.getValue(node);
+
+      nodePositions.setValue(node, PointD.add(position, force));
+    }
+
+    return nodePositions;
+  }
 }
 
