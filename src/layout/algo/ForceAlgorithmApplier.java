@@ -65,7 +65,7 @@ public class ForceAlgorithmApplier implements Runnable {
    * * * * * * * * * * * * * */
 
   // list of algos to apply to graph
-  public List<ForceAlgorithm> algos = new LinkedList<>();
+  public List<IForce> algos = new LinkedList<>();
   // underlying graph info
   public GraphComponent view;
   public IGraph graph;
@@ -156,7 +156,7 @@ public class ForceAlgorithmApplier implements Runnable {
     this.view.updateUI();
   }
 
-  // apply internal position map to graph
+  // calculate internal position map to graph
   public void showNodePositions(int j){
     PositionMap.applyToGraph(graph, nodePositions);
     // update only every 20 iterations
@@ -330,22 +330,11 @@ public class ForceAlgorithmApplier implements Runnable {
 
 
   public Mapper<INode, PointD> calculateAllForces(){
-    List<NodePairForce> nodePairA =
-      ForceAlgorithmApplier.filterListSubclass(algos, NodePairForce.class);
-    List<NodeNeighbourForce> nodeNeighbourA =
-      ForceAlgorithmApplier.filterListSubclass(algos, NodeNeighbourForce.class);
-    List<IncidentEdgesForce> incidentEdgesA =
-      ForceAlgorithmApplier.filterListSubclass(algos, IncidentEdgesForce.class);
-    List<CrossingForce> edgeCrossingsA =
-      ForceAlgorithmApplier.filterListSubclass(algos, CrossingForce.class);
-
     Mapper<INode, PointD> map = ForceAlgorithmApplier.initForceMap(graph);
 
-    ForceAlgorithmApplierForces forces = new ForceAlgorithmApplierForces(graph, nodePositions, cMinimumAngle);
-    map = forces.calculatePairwiseForces(nodePairA, map);
-    map = forces.calculateNeighbourForces(nodeNeighbourA, map);
-    map = forces.calculateIncidentForces(incidentEdgesA, map);
-    map = forces.calculateCrossingForces(edgeCrossingsA, map);
+    for (IForce force : algos) {
+      map = force.calculate(map, nodePositions);
+    }
 
     return map;
   }
