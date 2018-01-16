@@ -162,7 +162,7 @@ public class InitSidePanel {
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
         JButton showForceAlgoState = new JButton("Show state");
-        showForceAlgoState.addActionListener(e -> mainFrame.faa.showNodePositions());
+        showForceAlgoState.addActionListener(e -> PositionMap.applyToGraph(mainFrame.graph, mainFrame.faa.getNodePositions()));
         sidePanel.add(showForceAlgoState, cSidePanel);
 
         JButton scaleToBox = new JButton("Scale me to the box");

@@ -154,7 +154,9 @@ public class BatchOptimizer {
     if(forceAlgoOnly){
       System.out.println("running FAA only");
       ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
-      firstFAA.runNoDraw();
+
+      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstFAA, graph, initTime, initTime);
+      executor.run();
     }
     else {
       System.out.println("running genetic");

@@ -1085,7 +1085,7 @@ public class InitMenuBar {
         mainFrame.faa = fd;
 
 
-        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(fd, graph, progressBar, -1, 20);
+        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(fd, graph, progressBar, iterations, 20);
         executor.run();
         mainFrame.view.updateUI();
     }

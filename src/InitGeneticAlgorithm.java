@@ -25,7 +25,8 @@ public abstract class InitGeneticAlgorithm {
     public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(List<ForceAlgorithmApplier> firstFAAs, IGraph graph){
           GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm = new GeneticAlgorithm<>(
                   (faa -> {
-                      faa.runNoDraw();
+                      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(faa, graph, 100, 100);
+                      executor.run();
                       return faa;
                   }),
                   ((faa1, faa2) -> {
@@ -126,7 +127,8 @@ public abstract class InitGeneticAlgorithm {
                       }
                       return fa2;
                   }));
-          geneticAlgorithm.bestChanged = faa -> faa.draw(graph);
+          // TODO: update min angle display, etc.
+          geneticAlgorithm.bestChanged = faa -> PositionMap.applyToGraph(graph, faa.getNodePositions());
           
           geneticAlgorithm.instances.addAll(firstFAAs);
           return geneticAlgorithm;

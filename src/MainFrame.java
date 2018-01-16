@@ -66,7 +66,7 @@ public class MainFrame extends JFrame {
 
     // for this class, we can instantiate defaultForceAlgorithmApplier and do some post-initializing
     public ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations) {
-        ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view, progressBar, infoLabel);
+        ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view);
         springThresholds[1] = 50 * Math.log(graph.getNodes().size());
         fd.modifiers = springThresholds.clone();
         fd.switches = algoModifiers.clone();
@@ -186,9 +186,10 @@ public class MainFrame extends JFrame {
                 movedNodesCP = new HashSet<>(movedNodes);
                 movedNodes.clear();
             }
-            if (faa != null) {
+            // TODO: do we really need this?
+            /*if (faa != null) {
                 faa.resetNodePositions(movedNodesCP);
-            }
+            }*/
         });
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
             double scaleValue = 1/this.view.getZoom();
