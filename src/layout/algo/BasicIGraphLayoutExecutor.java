@@ -13,6 +13,11 @@ public class BasicIGraphLayoutExecutor {
   private final ILayout layout;
   final int maxIterations;
   private final int numberOfCyclesBetweenViewUpdates;
+  private boolean running;
+  private boolean finished;
+  private int currentIteration;
+  private ICompoundEdit compoundEdit;
+  public Mapper<INode, PointD> bestSolution; //TODO
 
   public BasicIGraphLayoutExecutor(ILayout layout,
                                    IGraph graph,
@@ -22,35 +27,72 @@ public class BasicIGraphLayoutExecutor {
     this.graph = graph;
     this.maxIterations = maxIterations;
     this.numberOfCyclesBetweenViewUpdates = numberOfCyclesBetweenGraphUpdates;
+    this.currentIteration = 0;
+    this.running = false;
+    this.finished = false;
   }
 
-  public void run() {
-    new Thread(() -> {
-      ICompoundEdit compoundEdit;
-      synchronized (graph) {
+  public void start() {
+    if (!running) {
+      running = true;
+      synchronized (this.graph) {
         compoundEdit = graph.beginEdit("Undo layout", "Redo layout");
       }
+    }
+  }
 
-      layout.init();
-
-      for (int i = 0; i < maxIterations || maxIterations == -1; i++) {
-        boolean finished = layout.executeStep(i);
-        if (finished) {
-          break;
-        }
-
-        if (i % numberOfCyclesBetweenViewUpdates == 0) {
-          updateGraph(layout.getNodePositions());
-        }
-
-        updateProgress(i);
+  public void stop() {
+    if (running) {
+      synchronized (graph) {
+        compoundEdit.commit();
       }
 
       updateProgress(0);
       updateGraph(layout.getNodePositions());
+      running = false;
+      finished = true;
+    }
+  }
 
-      synchronized (graph) {
-        compoundEdit.commit();
+  public void pause()
+  {
+    running = false;
+  }
+
+  public void unpause() {
+    running = true;
+    notify();
+  }
+
+  public void run() {
+    //iterations < 0 infinite loop
+    //iterations > 0 runs for # of iterations
+    new Thread(() -> {
+      start();     //remove when start/stop button exists
+      layout.init();
+      while (!finished) {
+        while (running) {
+          finished = layout.executeStep(currentIteration++);
+
+          if (finished || maxIterations > 0 && currentIteration == maxIterations) {
+            stop();
+            return;
+          }
+
+          if (currentIteration % numberOfCyclesBetweenViewUpdates == 0) {
+            updateGraph(layout.getNodePositions());
+          }
+
+          updateProgress(currentIteration);
+        }
+
+        synchronized (BasicIGraphLayoutExecutor.this) {
+          try {
+            BasicIGraphLayoutExecutor.this.wait();
+          } catch (InterruptedException e) {
+            stop();
+          }
+        }
       }
     }).start();
   }

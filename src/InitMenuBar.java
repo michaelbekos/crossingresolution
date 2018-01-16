@@ -21,7 +21,7 @@ import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
 import layout.algo.utils.PositionMap;
 import util.*;
-import view.visual.InitClinchLayoutExecutor;
+import view.visual.InitClinchLayout;
 import view.visual.VectorVisual;
 
 import javax.swing.*;
@@ -1261,8 +1261,7 @@ public class InitMenuBar {
 
     private void clinchNodesActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         IGraphSelection selection = graphEditorInputMode.getGraphSelection();
-//        InitClinchLayout.run(graph, selection, progressBar);
-        InitClinchLayoutExecutor.run(view, selection, progressBar);
+        InitClinchLayout.run(graph, selection, progressBar);
     }
 
     private void randomMovementActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
