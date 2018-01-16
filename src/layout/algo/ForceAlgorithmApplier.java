@@ -10,6 +10,7 @@ import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.ICanvasObject;
 import com.yworks.yfiles.view.ICanvasObjectDescriptor;
 import layout.algo.forces.IForce;
+import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import layout.algo.utils.PositionMap;
 import view.visual.VectorVisual;
 
@@ -55,7 +56,7 @@ public class ForceAlgorithmApplier implements ILayout {
   }
 
   @Override
-  public void init() {
+  public void init(ILayoutInterfaceItemFactory interfaceItemFactory) {
     nodePositions = PositionMap.FromIGraph(graph);
   }
 

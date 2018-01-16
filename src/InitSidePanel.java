@@ -30,7 +30,7 @@ public class InitSidePanel {
         this.mainFrame = mainFrame;
     }
 
-    public void initSidePanel(JPanel mainPanel, GridBagConstraints c) {
+    public JPanel initSidePanel(JPanel mainPanel, GridBagConstraints c) {
         Tuple4<JPanel, JSlider[], JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(mainFrame.springThresholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
         JPanel sidePanel = slidPanelSlidersCount.a;
         mainFrame.sliders = slidPanelSlidersCount.b;
@@ -185,6 +185,8 @@ public class InitSidePanel {
         sidePanel.add(allowClickCreateNodeEdge, cSidePanel);
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
         allowClickCreateNodeEdge.setSelected(true);
+
+        return sidePanel;
     }
 
     /*********************************************************************
@@ -215,7 +217,7 @@ public class InitSidePanel {
             mainFrame.faa = fd;
             mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
             IGraphLayoutExecutor executor =
-                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
+                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, mainFrame.sidePanel, -1, 20);
             executor.run();
             mainFrame.view.updateUI();
         }

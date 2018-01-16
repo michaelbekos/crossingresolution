@@ -6,6 +6,8 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
+import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import util.BoundingBox;
@@ -18,8 +20,8 @@ import java.util.stream.StreamSupport;
 public class RandomMovementLayout implements ILayout {
   private static final int NUM_SAMPLES = 50;
   private static final int NUM_SAMPLES_PER_TEST = 10;
-  private final double minStepSize = 0.1;
-  private final double maxStepSize = 10;
+  private AbstractLayoutInterfaceItem<Double> minStepSize;
+  private AbstractLayoutInterfaceItem<Double> maxStepSize;
 
   private IGraph graph;
   private Mapper<INode, PointD> positions;
@@ -33,11 +35,16 @@ public class RandomMovementLayout implements ILayout {
   }
 
   @Override
-  public void init() {
+  public void init(ILayoutInterfaceItemFactory interfaceItemFactory) {
     positions = PositionMap.FromIGraph(graph);
     sampleDirections = initSampleDirections();
     random = new Random(System.currentTimeMillis());
     boundingBox = BoundingBox.from(positions);
+
+    minStepSize = interfaceItemFactory.doubleParameter("Minimum step size", 0.1, 50);
+    maxStepSize = interfaceItemFactory.doubleParameter("Maximum step size", 0.1, 50);
+    minStepSize.setValue(0.1);
+    maxStepSize.setValue(10.);
   }
 
   private ArrayList<Sample> initSampleDirections() {
@@ -69,7 +76,7 @@ public class RandomMovementLayout implements ILayout {
 
     Sample[] goodSamples = samples.stream()
         .peek(sample -> {
-          double stepSize = random.nextDouble() * (maxStepSize - minStepSize) + minStepSize;
+          double stepSize = random.nextDouble() * (maxStepSize.getValue() - minStepSize.getValue()) + minStepSize.getValue();
           sample.position = LayoutUtils.stepInDirection(originalPosition, sample.direction, stepSize);
         })
         .filter(sample -> boundingBox.contains(sample.position))

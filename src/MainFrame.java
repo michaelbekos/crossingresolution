@@ -56,6 +56,7 @@ public class MainFrame extends JFrame {
 
     @Nullable
     public ForceAlgorithmApplier faa = null;
+    public JPanel sidePanel;
 
     public void finalizeFAA (@Nullable ForceAlgorithmApplier faa) {
         if (faa != null) {
@@ -246,7 +247,7 @@ public class MainFrame extends JFrame {
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel);
 
         InitSidePanel newSidePanel = new InitSidePanel(this);
-        newSidePanel.initSidePanel(mainPanel,c);
+        sidePanel = newSidePanel.initSidePanel(mainPanel,c);
 //        initSidePanel(mainPanel, c);
     }
 

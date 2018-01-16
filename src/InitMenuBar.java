@@ -1084,8 +1084,8 @@ public class InitMenuBar {
         mainFrame.finalizeFAA(mainFrame.faa);
         mainFrame.faa = fd;
 
-
-        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(fd, graph, progressBar, iterations, 20);
+        IGraphLayoutExecutor executor =
+            new IGraphLayoutExecutor(fd, graph, progressBar, mainFrame.sidePanel, iterations, 20);
         executor.run();
         mainFrame.view.updateUI();
     }
@@ -1261,12 +1261,13 @@ public class InitMenuBar {
 
     private void clinchNodesActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         IGraphSelection selection = graphEditorInputMode.getGraphSelection();
-        InitClinchLayout.run(graph, selection, progressBar);
+        InitClinchLayout.run(graph, selection, progressBar, mainFrame.sidePanel);
     }
 
     private void randomMovementActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         RandomMovementLayout layout = new RandomMovementLayout(graph);
-        IGraphLayoutExecutor layoutExecutor = new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
+        IGraphLayoutExecutor layoutExecutor =
+            new IGraphLayoutExecutor(layout, graph, progressBar, mainFrame.sidePanel, 1000000, 20);
         layoutExecutor.run();
     }
 
