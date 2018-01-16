@@ -1,5 +1,6 @@
-package layout.algo;
+package layout.algo.forces;
 
+import layout.algo.forces.ForceAlgorithm;
 import util.*;
 import java.util.function.Function;
 import com.yworks.yfiles.geometry.*;

@@ -14,6 +14,7 @@ import java.awt.Color;
 
 import javax.swing.*;
 
+import layout.algo.forces.*;
 import layout.algo.utils.PositionMap;
 import util.*;
 import util.graph2d.*;
@@ -329,13 +330,13 @@ public class ForceAlgorithmApplier implements Runnable {
 
 
   public Mapper<INode, PointD> calculateAllForces(){
-    List<NodePairForce> nodePairA = 
+    List<NodePairForce> nodePairA =
       ForceAlgorithmApplier.filterListSubclass(algos, NodePairForce.class);
-    List<NodeNeighbourForce> nodeNeighbourA = 
+    List<NodeNeighbourForce> nodeNeighbourA =
       ForceAlgorithmApplier.filterListSubclass(algos, NodeNeighbourForce.class);
-    List<IncidentEdgesForce> incidentEdgesA = 
+    List<IncidentEdgesForce> incidentEdgesA =
       ForceAlgorithmApplier.filterListSubclass(algos, IncidentEdgesForce.class);
-    List<CrossingForce> edgeCrossingsA = 
+    List<CrossingForce> edgeCrossingsA =
       ForceAlgorithmApplier.filterListSubclass(algos, CrossingForce.class);
 
     Mapper<INode, PointD> map = ForceAlgorithmApplier.initForceMap(graph);

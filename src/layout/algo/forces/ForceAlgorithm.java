@@ -1,3 +1,3 @@
-package layout.algo;
+package layout.algo.forces;
 
 public abstract class ForceAlgorithm {}

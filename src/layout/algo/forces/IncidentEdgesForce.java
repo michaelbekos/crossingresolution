@@ -1,4 +1,4 @@
-package layout.algo;
+package layout.algo.forces;
 
 import util.*;
 import java.util.function.Function;

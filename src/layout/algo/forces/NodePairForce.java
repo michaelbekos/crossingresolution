@@ -1,12 +1,11 @@
-package layout.algo;
+package layout.algo.forces;
 
-import util.*;
 import java.util.function.Function;
 import com.yworks.yfiles.geometry.*;
 
-public class NodeNeighbourForce extends ForceAlgorithm {
+public class NodePairForce extends ForceAlgorithm {
   Function<PointD, Function<PointD, PointD>> f;
-  public NodeNeighbourForce(Function<PointD, Function<PointD, PointD>> f1){
+  public NodePairForce(Function<PointD, Function<PointD, PointD>> f1){
     f = f1;
   }
   public Function<PointD, PointD> apply(PointD t){
