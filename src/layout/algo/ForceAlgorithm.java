@@ -1,7 +1,6 @@
 package layout.algo;
 
 import algorithms.graphs.CachedMinimumAngle;
-import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
@@ -19,37 +18,27 @@ import java.util.List;
 import java.util.Map;
 
 public class ForceAlgorithm implements ILayout {
-  // list of algos to apply to graph
-  public List<IForce> algos = new LinkedList<>();
-  // underlying graph info
-  public GraphComponent view;
-  public IGraph graph;
-  private int maxNoOfIterations;
-  @Nullable
-  // current nodePositions, so we can calculate in the background
-  public Mapper<INode, PointD> nodePositions;
-  public boolean running = false;
-  // modifiers for algos
-  // TODO: replace by AbstractParameter mechanism
-  public Double[] modifiers = new Double[0];
-  public Boolean[] switches = new Boolean[0];
+  public ForceAlgorithmConfigurator configurator;
+  public List<IForce> forces = new LinkedList<>();
+  private GraphComponent view;
+  private IGraph graph;
+  private Mapper<INode, PointD> nodePositions;
+  private CachedMinimumAngle cMinimumAngle;
 
-  public CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
-
-  public ForceAlgorithm(GraphComponent view, int maxNoOfIterations){
+  public ForceAlgorithm(ForceAlgorithmConfigurator configurator, GraphComponent view, CachedMinimumAngle cMinimumAngle){
+    this.configurator = configurator;
     this.view = view;
     this.graph = view.getGraph();
-    this.maxNoOfIterations = maxNoOfIterations;
+    this.cMinimumAngle = cMinimumAngle;
   }
 
   @Override
   public ForceAlgorithm clone(){
-    ForceAlgorithm ret = new ForceAlgorithm(this.view, this.maxNoOfIterations);
+    // TODO: clone configurator
+    ForceAlgorithm ret = new ForceAlgorithm(configurator, this.view, cMinimumAngle);
     ret.graph = this.graph;
     ret.nodePositions = PositionMap.copy(this.nodePositions);
-    ret.modifiers = this.modifiers.clone();
-    ret.switches = this.switches.clone();
-    ret.algos = this.algos;
+    ret.forces = this.forces;
 
     return ret;
   }
@@ -102,7 +91,7 @@ public class ForceAlgorithm implements ILayout {
   private Mapper<INode, PointD> calculateAllForces(){
     Mapper<INode, PointD> map = ForceAlgorithm.initForceMap();
 
-    for (IForce force : algos) {
+    for (IForce force : forces) {
       map = force.calculate(map, nodePositions);
     }
 

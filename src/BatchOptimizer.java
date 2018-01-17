@@ -1,6 +1,7 @@
 
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import layout.algo.layoutinterface.VoidItemFactory;
 import layout.algo.utils.PositionMap;
 import util.GridPositioning;
 import algorithms.graphs.MinimumAngle;
@@ -85,11 +86,9 @@ public class BatchOptimizer {
     System.out.println(msg);
   }
   // easier instantiation of ForceAlgorithm
-  public static ForceAlgorithm defaultForceAlgorithm(int iterations){
-    ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(iterations, view);
+  public static ForceAlgorithm defaultForceAlgorithm(){
+    ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(view, new VoidItemFactory());
     springThreshholds[1] = 50 * Math.log(graph.getNodes().size());
-    fd.modifiers = springThreshholds.clone();
-    fd.switches = algoModifiers.clone();
     return fd;
   }
   public static void main(String[] args) throws IOException {
@@ -153,7 +152,7 @@ public class BatchOptimizer {
     long startTime = System.nanoTime();
     if(forceAlgoOnly){
       System.out.println("running ForceAlgorithm only");
-      ForceAlgorithm firstForceAlgorithm = defaultForceAlgorithm(initTime);
+      ForceAlgorithm firstForceAlgorithm = defaultForceAlgorithm();
 
       BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstForceAlgorithm, graph, initTime, initTime);
       executor.run();
@@ -161,9 +160,9 @@ public class BatchOptimizer {
     else {
       System.out.println("running genetic");
       List<ForceAlgorithm> initials = new LinkedList<>();
-      initials.add(defaultForceAlgorithm(initTime));
+      initials.add(defaultForceAlgorithm());
       LayoutUtilities.applyLayout(graph, new OrganicLayout());
-      initials.add(defaultForceAlgorithm(initTime));
+      initials.add(defaultForceAlgorithm());
       GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view);
       ga.runRounds(rounds);
     }

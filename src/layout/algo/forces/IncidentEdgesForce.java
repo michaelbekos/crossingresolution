@@ -3,7 +3,7 @@ package layout.algo.forces;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithm;
+import layout.algo.ForceAlgorithmConfigurator;
 import util.*;
 
 import java.util.*;
@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 import com.yworks.yfiles.geometry.*;
 
 public class IncidentEdgesForce implements IForce {
-  private ForceAlgorithm fd;
+  private ForceAlgorithmConfigurator configurator;
   private IGraph graph;
 
-  public IncidentEdgesForce(ForceAlgorithm fd, IGraph graph) {
-    this.fd = fd;
+  public IncidentEdgesForce(ForceAlgorithmConfigurator configurator, IGraph graph) {
+    this.configurator = configurator;
     this.graph = graph;
   }
 
@@ -93,7 +93,7 @@ public class IncidentEdgesForce implements IForce {
 
   private Tuple2<PointD, PointD> doSomething(PointD e1, PointD e2, double angle, int deg) {
     if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
-    double threshold = fd.modifiers[3],
+    double threshold = configurator.getIncidentEdgesForce().getValue(),
         optAngle = (360 / deg);
     if(e1.getVectorLength() <= G.Epsilon ||
         e2.getVectorLength() <= G.Epsilon){

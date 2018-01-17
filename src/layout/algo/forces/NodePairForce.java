@@ -4,16 +4,16 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithm;
+import layout.algo.ForceAlgorithmConfigurator;
 import util.G;
 
 public class NodePairForce implements IForce {
   private IGraph graph;
-  private ForceAlgorithm fd;
+  private ForceAlgorithmConfigurator configurator;
 
-  public NodePairForce(IGraph graph, ForceAlgorithm fd) {
+  public NodePairForce(ForceAlgorithmConfigurator configurator, IGraph graph) {
     this.graph = graph;
-    this.fd = fd;
+    this.configurator = configurator;
   }
 
   @Override
@@ -37,8 +37,8 @@ public class NodePairForce implements IForce {
   }
 
   private PointD doSomething(PointD p1, PointD p2) {
-    double electricalRepulsion = 50000,
-        threshold = fd.modifiers[0];
+    double electricalRepulsion = 50000;
+    double threshold = configurator.getNodePairWeight().getValue();
     PointD t = PointD.subtract(p1, p2);
     double dist = t.getVectorLength();
     if(dist <= G.Epsilon){

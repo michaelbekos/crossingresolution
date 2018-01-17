@@ -30,8 +30,8 @@ public abstract class InitGeneticAlgorithm {
                       return forceAlgorithm;
                   }),
                   ((fa1, fa2) -> {
-                      Optional<Double> ma1 = fa1.cMinimumAngle.getMinimumAngle(graph, fa1.nodePositions);
-                      Optional<Double> ma2 = fa2.cMinimumAngle.getMinimumAngle(graph, fa2.nodePositions);
+                      /*TODO: Optional<Double> ma1 = fa1.cMinimumAngle.getMinimumAngle(graph, fa1.getNodePositions());
+                      Optional<Double> ma2 = fa2.cMinimumAngle.getMinimumAngle(graph, fa2.getNodePositions());
                       if(ma1.isPresent() && !ma2.isPresent()){
                           return -1;
                       }
@@ -42,12 +42,12 @@ public abstract class InitGeneticAlgorithm {
                           return 0;
                       }
                       Double a1 = ma1.get(),
-                              a2 = ma2.get();
-                      return a1.compareTo(a2);
+                              a2 = ma2.get();*/
+                      return 0;//a1.compareTo(a2);
                   }),
                   5,
                   Either.left(fa -> {
-                      Mapper<INode, PointD> nodePositions = PositionMap.copy(fa.nodePositions);
+                      Mapper<INode, PointD> nodePositions = PositionMap.copy(fa.getNodePositions());
   
                       List<Intersection> crossings = MinimumAngle.getCrossingsSorted(graph, nodePositions);
                       ForceAlgorithm fa2 = fa.clone();
@@ -101,30 +101,32 @@ public abstract class InitGeneticAlgorithm {
                       }
                       direction = direction.getNormalized();
                       PointD posOld = pos;
-                      pos = PointD.add(pos, PointD.times(fa.modifiers[2], direction));
+                      pos = PointD.add(pos, PointD.times(fa.configurator.getIncidentEdgesForce().getValue(), direction));
                       nodePositions.setValue(node, pos);
-                      fa2.nodePositions = nodePositions;
-                      fa2.cMinimumAngle.invalidate();
+                      // TODO:
+//                      fa2.nodePositions = nodePositions;
+//                      fa2.cMinimumAngle.invalidate();
   
+                        // TODO: genetic algo
                       // russian roulette to change a modifier
-                      if(fa2.modifiers.length > 0 && rand.nextDouble() > 0.5){
+//                      if(fa2.modifiers.length > 0 && rand.nextDouble() > 0.5){
                           // randomly modify one spring threshhold
-                          int modIndex = rand.nextInt(fa.modifiers.length);
+//                          int modIndex = rand.nextInt(fa.modifiers.length);
                           // smallest double > 0
-                          double minVal = Math.nextAfter(0, Double.POSITIVE_INFINITY);
+//                          double minVal = Math.nextAfter(0, Double.POSITIVE_INFINITY);
                           // value should remain 0 < val <= 1
-                          fa2.modifiers[modIndex] = Math.min(1, Math.max(minVal, fa.modifiers[modIndex] * rand.nextDouble() * 2));
-                      }
+//                          fa2.modifiers[modIndex] = Math.min(1, Math.max(minVal, fa.modifiers[modIndex] * rand.nextDouble() * 2));
+//                      }
   
                       // russian roulette to change a switch
-                      if(fa2.switches.length > 0 && rand.nextDouble() > 0.5){
+//                      if(fa2.switches.length > 0 && rand.nextDouble() > 0.5){
                           // randomly modify one spring threshhold
-                          int switchIndex = rand.nextInt(fa.switches.length);
+//                          int switchIndex = rand.nextInt(fa.switches.length);
                           // smallest double > 0
-                          double minVal = Math.nextAfter(0, Double.POSITIVE_INFINITY);
+//                          double minVal = Math.nextAfter(0, Double.POSITIVE_INFINITY);
                           // value should remain 0 < val <= 1
-                          fa2.switches[switchIndex] = (fa.switches[switchIndex] == false);
-                      }
+//                          fa2.switches[switchIndex] = (fa.switches[switchIndex] == false);
+//                      }
                       return fa2;
                   }));
           // TODO: update min angle display, etc.

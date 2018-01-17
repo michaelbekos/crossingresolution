@@ -1081,7 +1081,7 @@ public class InitMenuBar {
         }
         else return;
 
-        ForceAlgorithm fd = mainFrame.defaultForceAlgorithm(iterations);
+        ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
         mainFrame.finalizeForceAlgorithm(mainFrame.forceAlgorithm);
         mainFrame.forceAlgorithm = fd;
 

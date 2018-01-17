@@ -9,6 +9,7 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithm;
+import layout.algo.layoutinterface.SidePanelItemFactory;
 
 
 import javax.swing.*;
@@ -50,28 +51,22 @@ public class MainFrame extends JFrame {
 
     public JSlider[] sliders;
 
-    public final Double[] springThresholds = {0.01, 0.01, 0.01, 0.1};
-    public final Boolean[] algoModifiers = {false, false};
     public int faRunningTimeGenetic = 250;
 
     @Nullable
     public ForceAlgorithm forceAlgorithm = null;
     public JPanel sidePanel;
+    public SidePanelItemFactory sidePanelItemFactory;
 
     public void finalizeForceAlgorithm(@Nullable ForceAlgorithm fa) {
         if (fa != null) {
-            fa.running = false;
             fa.clearDrawables();
         }
     }
 
     // for this class, we can instantiate defaultForceAlgorithm and do some post-initializing
-    public ForceAlgorithm defaultForceAlgorithm(int iterations) {
-        ForceAlgorithm forceAlgorithm = InitForceAlgorithm.defaultForceAlgorithm(iterations, view);
-        springThresholds[1] = 50 * Math.log(graph.getNodes().size());
-        forceAlgorithm.modifiers = springThresholds.clone();
-        forceAlgorithm.switches = algoModifiers.clone();
-        return forceAlgorithm;
+    public ForceAlgorithm defaultForceAlgorithm() {
+        return InitForceAlgorithm.defaultForceAlgorithm(view, sidePanelItemFactory);
     }
 
     /**
@@ -248,6 +243,7 @@ public class MainFrame extends JFrame {
 
         InitSidePanel newSidePanel = new InitSidePanel(this);
         sidePanel = newSidePanel.initSidePanel(mainPanel,c);
+        sidePanelItemFactory = new SidePanelItemFactory(sidePanel);
 //        initSidePanel(mainPanel, c);
     }
 
