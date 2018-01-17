@@ -19,6 +19,7 @@ import io.ContestIOHandler;
 import layout.algo.*;
 import layout.algo.event.AlgorithmEvent;
 import layout.algo.event.AlgorithmListener;
+import layout.algo.layoutinterface.SidePanelItemFactory;
 import layout.algo.utils.PositionMap;
 import util.*;
 import view.visual.InitClinchLayout;
@@ -1085,7 +1086,7 @@ public class InitMenuBar {
         mainFrame.faa = fd;
 
         IGraphLayoutExecutor executor =
-            new IGraphLayoutExecutor(fd, graph, progressBar, mainFrame.sidePanel, iterations, 20);
+            new IGraphLayoutExecutor(fd, graph, progressBar, iterations, 20);
         executor.run();
         mainFrame.view.updateUI();
     }
@@ -1261,13 +1262,16 @@ public class InitMenuBar {
 
     private void clinchNodesActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         IGraphSelection selection = graphEditorInputMode.getGraphSelection();
-        InitClinchLayout.run(graph, selection, progressBar, mainFrame.sidePanel);
+        InitClinchLayout.run(graph, selection, progressBar);
     }
 
     private void randomMovementActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        RandomMovementLayout layout = new RandomMovementLayout(graph);
+        RandomMovementConfigurator configurator = new RandomMovementConfigurator();
+        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel));
+
+        RandomMovementLayout layout = new RandomMovementLayout(graph, configurator);
         IGraphLayoutExecutor layoutExecutor =
-            new IGraphLayoutExecutor(layout, graph, progressBar, mainFrame.sidePanel, 1000000, 20);
+            new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
         layoutExecutor.run();
     }
 

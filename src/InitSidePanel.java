@@ -217,7 +217,7 @@ public class InitSidePanel {
             mainFrame.faa = fd;
             mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
             IGraphLayoutExecutor executor =
-                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, mainFrame.sidePanel, -1, 20);
+                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
             executor.run();
             mainFrame.view.updateUI();
         }
