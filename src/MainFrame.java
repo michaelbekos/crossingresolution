@@ -8,7 +8,7 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
-import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceAlgorithm;
 
 
 import javax.swing.*;
@@ -52,26 +52,26 @@ public class MainFrame extends JFrame {
 
     public final Double[] springThresholds = {0.01, 0.01, 0.01, 0.1};
     public final Boolean[] algoModifiers = {false, false};
-    public int faaRunningTimeGenetic = 250;
+    public int faRunningTimeGenetic = 250;
 
     @Nullable
-    public ForceAlgorithmApplier faa = null;
+    public ForceAlgorithm forceAlgorithm = null;
     public JPanel sidePanel;
 
-    public void finalizeFAA (@Nullable ForceAlgorithmApplier faa) {
-        if (faa != null) {
-            faa.running = false;
-            faa.clearDrawables();
+    public void finalizeForceAlgorithm(@Nullable ForceAlgorithm fa) {
+        if (fa != null) {
+            fa.running = false;
+            fa.clearDrawables();
         }
     }
 
-    // for this class, we can instantiate defaultForceAlgorithmApplier and do some post-initializing
-    public ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations) {
-        ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view);
+    // for this class, we can instantiate defaultForceAlgorithm and do some post-initializing
+    public ForceAlgorithm defaultForceAlgorithm(int iterations) {
+        ForceAlgorithm forceAlgorithm = InitForceAlgorithm.defaultForceAlgorithm(iterations, view);
         springThresholds[1] = 50 * Math.log(graph.getNodes().size());
-        fd.modifiers = springThresholds.clone();
-        fd.switches = algoModifiers.clone();
-        return fd;
+        forceAlgorithm.modifiers = springThresholds.clone();
+        forceAlgorithm.switches = algoModifiers.clone();
+        return forceAlgorithm;
     }
 
     /**
@@ -188,8 +188,8 @@ public class MainFrame extends JFrame {
                 movedNodes.clear();
             }
             // TODO: do we really need this?
-            /*if (faa != null) {
-                faa.resetNodePositions(movedNodesCP);
+            /*if (forceAlgorithm != null) {
+                forceAlgorithm.resetNodePositions(movedNodesCP);
             }*/
         });
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {

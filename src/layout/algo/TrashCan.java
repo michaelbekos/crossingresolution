@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  */
 public class TrashCan {
 
-  // keep track of a bestSolution across all FAAs
+  // keep track of a bestSolution across all ForceAlgorithms
   public static Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]> bestSolution = null;
   public static List<ICanvasObject> canvasObjects = new ArrayList<>();
 

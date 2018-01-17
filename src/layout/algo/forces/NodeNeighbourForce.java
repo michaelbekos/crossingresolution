@@ -4,14 +4,14 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceAlgorithm;
 import util.G;
 
 public class NodeNeighbourForce implements IForce {
   private IGraph graph;
-  private ForceAlgorithmApplier fd;
+  private ForceAlgorithm fd;
 
-  public NodeNeighbourForce(IGraph graph, ForceAlgorithmApplier fd) {
+  public NodeNeighbourForce(IGraph graph, ForceAlgorithm fd) {
     this.graph = graph;
     this.fd = fd;
   }

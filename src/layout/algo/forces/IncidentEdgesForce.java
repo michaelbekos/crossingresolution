@@ -3,7 +3,7 @@ package layout.algo.forces;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceAlgorithm;
 import util.*;
 
 import java.util.*;
@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 import com.yworks.yfiles.geometry.*;
 
 public class IncidentEdgesForce implements IForce {
-  private ForceAlgorithmApplier fd;
+  private ForceAlgorithm fd;
   private IGraph graph;
 
-  public IncidentEdgesForce(ForceAlgorithmApplier fd, IGraph graph) {
+  public IncidentEdgesForce(ForceAlgorithm fd, IGraph graph) {
     this.fd = fd;
     this.graph = graph;
   }

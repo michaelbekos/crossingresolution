@@ -1081,9 +1081,9 @@ public class InitMenuBar {
         }
         else return;
 
-        ForceAlgorithmApplier fd = mainFrame.defaultForceAlgorithmApplier(iterations);
-        mainFrame.finalizeFAA(mainFrame.faa);
-        mainFrame.faa = fd;
+        ForceAlgorithm fd = mainFrame.defaultForceAlgorithm(iterations);
+        mainFrame.finalizeForceAlgorithm(mainFrame.forceAlgorithm);
+        mainFrame.forceAlgorithm = fd;
 
         IGraphLayoutExecutor executor =
             new IGraphLayoutExecutor(fd, graph, progressBar, iterations, 20);

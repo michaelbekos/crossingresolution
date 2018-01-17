@@ -5,7 +5,7 @@ import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceAlgorithm;
 import layout.algo.GeneticAlgorithm;
 import layout.algo.IGraphLayoutExecutor;
 import layout.algo.TrashCan;
@@ -49,14 +49,14 @@ public class InitSidePanel {
         //WARNING: POST-INCREMENT!
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
-        sidePanel.add(new JLabel("Genetic FAA round time"), cSidePanel);
+        sidePanel.add(new JLabel("Genetic ForceAlgorithm round time"), cSidePanel);
         JSlider geneticSlider = new JSlider(0, 1000);
         geneticSlider.setSize(0, 500);
-        geneticSlider.setValue(mainFrame.faaRunningTimeGenetic);
+        geneticSlider.setValue(mainFrame.faRunningTimeGenetic);
         geneticSlider.addChangeListener(e-> {
             JSlider source = (JSlider) e.getSource();
-            mainFrame.faaRunningTimeGenetic = source.getValue();
-            System.out.println("magic number:" + mainFrame.faaRunningTimeGenetic);
+            mainFrame.faRunningTimeGenetic = source.getValue();
+            System.out.println("magic number:" + mainFrame.faRunningTimeGenetic);
         });
         cSidePanel.gridx = 0;
         cSidePanel.gridy = sidePanelNextY++;
@@ -121,10 +121,10 @@ public class InitSidePanel {
         cSidePanel.gridx = 0;
         JButton showForces = new JButton("Show forces");
         showForces.addActionListener(e -> {
-            if (mainFrame.faa == null) {
-                mainFrame.faa = mainFrame.defaultForceAlgorithmApplier(0);
+            if (mainFrame.forceAlgorithm == null) {
+                mainFrame.forceAlgorithm = mainFrame.defaultForceAlgorithm(0);
             }
-            mainFrame.faa.showForces();
+            mainFrame.forceAlgorithm.showForces();
         });
         sidePanel.add(showForces, cSidePanel);
 
@@ -162,7 +162,7 @@ public class InitSidePanel {
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
         JButton showForceAlgoState = new JButton("Show state");
-        showForceAlgoState.addActionListener(e -> PositionMap.applyToGraph(mainFrame.graph, mainFrame.faa.getNodePositions()));
+        showForceAlgoState.addActionListener(e -> PositionMap.applyToGraph(mainFrame.graph, mainFrame.forceAlgorithm.getNodePositions()));
         sidePanel.add(showForceAlgoState, cSidePanel);
 
         JButton scaleToBox = new JButton("Scale me to the box");
@@ -208,13 +208,13 @@ public class InitSidePanel {
     }
 
     private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(mainFrame.faa == null || !mainFrame.faa.running){
+        if(mainFrame.forceAlgorithm == null || !mainFrame.forceAlgorithm.running){
             TrashCan.init();
-            ForceAlgorithmApplier fd = mainFrame.defaultForceAlgorithmApplier(-1);
+            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm(-1);
             fd.modifiers = mainFrame.springThresholds;
             fd.switches = mainFrame.algoModifiers;
-            mainFrame.finalizeFAA(mainFrame.faa);
-            mainFrame.faa = fd;
+            mainFrame.finalizeForceAlgorithm(mainFrame.forceAlgorithm);
+            mainFrame.forceAlgorithm = fd;
             mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
             IGraphLayoutExecutor executor =
                 new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
@@ -224,8 +224,8 @@ public class InitSidePanel {
     }
 
     private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if (mainFrame.faa != null) {
-            mainFrame.faa.running = false;
+        if (mainFrame.forceAlgorithm != null) {
+            mainFrame.forceAlgorithm.running = false;
             mainFrame.graphEditorInputMode.setCreateNodeAllowed(true);
         }
     }
@@ -273,16 +273,16 @@ public class InitSidePanel {
     private void optimizingAngleSixtyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { mainFrame.algoModifiers[1] = false; }
 
 
-    private GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
+    private GeneticAlgorithm<ForceAlgorithm> geneticAlgorithm;
     private Thread geneticAlgorithmThread;
     private void initializeGeneticAlgorithm(){
-        LinkedList<ForceAlgorithmApplier> firstFAAs = new LinkedList<>();
-        firstFAAs.add(mainFrame.defaultForceAlgorithmApplier(mainFrame.faaRunningTimeGenetic));
+        LinkedList<ForceAlgorithm> firstFAs = new LinkedList<>();
+        firstFAs.add(mainFrame.defaultForceAlgorithm(mainFrame.faRunningTimeGenetic));
         LayoutUtilities.applyLayout(mainFrame.graph, new OrthogonalLayout());
-        firstFAAs.add(mainFrame.defaultForceAlgorithmApplier(mainFrame.faaRunningTimeGenetic));
+        firstFAs.add(mainFrame.defaultForceAlgorithm(mainFrame.faRunningTimeGenetic));
         LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
-        firstFAAs.add(mainFrame.defaultForceAlgorithmApplier(mainFrame.faaRunningTimeGenetic));
-        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, mainFrame.graph);
+        firstFAs.add(mainFrame.defaultForceAlgorithm(mainFrame.faRunningTimeGenetic));
+        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAs, mainFrame.graph);
         geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
 }

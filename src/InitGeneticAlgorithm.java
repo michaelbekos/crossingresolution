@@ -13,25 +13,25 @@ import algorithms.graphs.*;
 public abstract class InitGeneticAlgorithm {
     public static Random rand = new Random();
 
-    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(List<ForceAlgorithmApplier> firstFAA, IGraph graph, GraphComponent view) {
-        return defaultGeneticAlgorithm(firstFAA, graph);
+    public static GeneticAlgorithm<ForceAlgorithm> defaultGeneticAlgorithm(List<ForceAlgorithm> firstForceAlgorithm, IGraph graph, GraphComponent view) {
+        return defaultGeneticAlgorithm(firstForceAlgorithm, graph);
     }
 
-    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(ForceAlgorithmApplier firstFAA, IGraph graph){
-      List<ForceAlgorithmApplier> firstFAAs = new LinkedList<ForceAlgorithmApplier>();
-      firstFAAs.add(firstFAA);
-      return defaultGeneticAlgorithm(firstFAAs, graph);
+    public static GeneticAlgorithm<ForceAlgorithm> defaultGeneticAlgorithm(ForceAlgorithm firstForceAlgorithm, IGraph graph){
+      List<ForceAlgorithm> firstFAs = new LinkedList<ForceAlgorithm>();
+      firstFAs.add(firstForceAlgorithm);
+      return defaultGeneticAlgorithm(firstFAs, graph);
     }
-    public static GeneticAlgorithm<ForceAlgorithmApplier> defaultGeneticAlgorithm(List<ForceAlgorithmApplier> firstFAAs, IGraph graph){
-          GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm = new GeneticAlgorithm<>(
-                  (faa -> {
-                      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(faa, graph, 100, 100);
+    public static GeneticAlgorithm<ForceAlgorithm> defaultGeneticAlgorithm(List<ForceAlgorithm> firstFAs, IGraph graph){
+          GeneticAlgorithm<ForceAlgorithm> geneticAlgorithm = new GeneticAlgorithm<>(
+                  (forceAlgorithm -> {
+                      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, 100, 100);
                       executor.run();
-                      return faa;
+                      return forceAlgorithm;
                   }),
-                  ((faa1, faa2) -> {
-                      Optional<Double> ma1 = faa1.cMinimumAngle.getMinimumAngle(graph, faa1.nodePositions);
-                      Optional<Double> ma2 = faa2.cMinimumAngle.getMinimumAngle(graph, faa2.nodePositions);
+                  ((fa1, fa2) -> {
+                      Optional<Double> ma1 = fa1.cMinimumAngle.getMinimumAngle(graph, fa1.nodePositions);
+                      Optional<Double> ma2 = fa2.cMinimumAngle.getMinimumAngle(graph, fa2.nodePositions);
                       if(ma1.isPresent() && !ma2.isPresent()){
                           return -1;
                       }
@@ -50,7 +50,7 @@ public abstract class InitGeneticAlgorithm {
                       Mapper<INode, PointD> nodePositions = PositionMap.copy(fa.nodePositions);
   
                       List<Intersection> crossings = MinimumAngle.getCrossingsSorted(graph, nodePositions);
-                      ForceAlgorithmApplier fa2 = fa.clone();
+                      ForceAlgorithm fa2 = fa.clone();
                       if(crossings.size() == 0) {
                           return fa2;
                       }
@@ -128,9 +128,9 @@ public abstract class InitGeneticAlgorithm {
                       return fa2;
                   }));
           // TODO: update min angle display, etc.
-          geneticAlgorithm.bestChanged = faa -> PositionMap.applyToGraph(graph, faa.getNodePositions());
+          geneticAlgorithm.bestChanged = fa -> PositionMap.applyToGraph(graph, fa.getNodePositions());
           
-          geneticAlgorithm.instances.addAll(firstFAAs);
+          geneticAlgorithm.instances.addAll(firstFAs);
           return geneticAlgorithm;
       }
 }

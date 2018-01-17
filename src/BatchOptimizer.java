@@ -79,14 +79,14 @@ public class BatchOptimizer {
   public static void printUsage(){
     String msg = "Usage:\n"
     + "\tjava BatchOptimizer [-i init-time] [-r rounds] [-f] path-to-rome-graphs\n"
-    + "\t\t-i init-time: how long one round of ForceAlgorithmApplier should run\n"
+    + "\t\t-i init-time: how long one round of ForceAlgorithm should run\n"
     + "\t\t-r rounds:    how many rounds of genetic generations should be run\n"
-    + "\t\t-f:           only apply ForceAlgorithmApplier, don't do genetic part\n";
+    + "\t\t-f:           only apply ForceAlgorithm, don't do genetic part\n";
     System.out.println(msg);
   }
-  // easier instantiation of FAA
-  public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
-    ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view);
+  // easier instantiation of ForceAlgorithm
+  public static ForceAlgorithm defaultForceAlgorithm(int iterations){
+    ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(iterations, view);
     springThreshholds[1] = 50 * Math.log(graph.getNodes().size());
     fd.modifiers = springThreshholds.clone();
     fd.switches = algoModifiers.clone();
@@ -152,18 +152,18 @@ public class BatchOptimizer {
     
     long startTime = System.nanoTime();
     if(forceAlgoOnly){
-      System.out.println("running FAA only");
-      ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
+      System.out.println("running ForceAlgorithm only");
+      ForceAlgorithm firstForceAlgorithm = defaultForceAlgorithm(initTime);
 
-      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstFAA, graph, initTime, initTime);
+      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstForceAlgorithm, graph, initTime, initTime);
       executor.run();
     }
     else {
       System.out.println("running genetic");
-      List<ForceAlgorithmApplier> initials = new LinkedList<>();
-      initials.add(defaultForceAlgorithmApplier(initTime));
+      List<ForceAlgorithm> initials = new LinkedList<>();
+      initials.add(defaultForceAlgorithm(initTime));
       LayoutUtilities.applyLayout(graph, new OrganicLayout());
-      initials.add(defaultForceAlgorithmApplier(initTime));
+      initials.add(defaultForceAlgorithm(initTime));
       GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view);
       ga.runRounds(rounds);
     }

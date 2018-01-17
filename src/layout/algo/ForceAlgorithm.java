@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class ForceAlgorithmApplier implements ILayout {
+public class ForceAlgorithm implements ILayout {
   // list of algos to apply to graph
   public List<IForce> algos = new LinkedList<>();
   // underlying graph info
@@ -36,15 +36,15 @@ public class ForceAlgorithmApplier implements ILayout {
 
   public CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
 
-  public ForceAlgorithmApplier(GraphComponent view, int maxNoOfIterations){
+  public ForceAlgorithm(GraphComponent view, int maxNoOfIterations){
     this.view = view;
     this.graph = view.getGraph();
     this.maxNoOfIterations = maxNoOfIterations;
   }
 
   @Override
-  public ForceAlgorithmApplier clone(){
-    ForceAlgorithmApplier ret = new ForceAlgorithmApplier(this.view, this.maxNoOfIterations);
+  public ForceAlgorithm clone(){
+    ForceAlgorithm ret = new ForceAlgorithm(this.view, this.maxNoOfIterations);
     ret.graph = this.graph;
     ret.nodePositions = PositionMap.copy(this.nodePositions);
     ret.modifiers = this.modifiers.clone();
@@ -100,7 +100,7 @@ public class ForceAlgorithmApplier implements ILayout {
   }
 
   private Mapper<INode, PointD> calculateAllForces(){
-    Mapper<INode, PointD> map = ForceAlgorithmApplier.initForceMap();
+    Mapper<INode, PointD> map = ForceAlgorithm.initForceMap();
 
     for (IForce force : algos) {
       map = force.calculate(map, nodePositions);
