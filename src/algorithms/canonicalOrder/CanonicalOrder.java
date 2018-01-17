@@ -116,16 +116,35 @@ public class CanonicalOrder {
         addv1v2FaceToCanonicalOrder();
 
         // removeReversedEdges();
-        // System.out.println(canonicalOrder.toString());
+         System.out.println("119Canorder: "+ canonicalOrder.toString());
     }
 
-    /**
+    /**&
      * determine v1, v2, vn and the v1v2-face
      */
     private void preparations() {
         List<Dart> outerFace = planarEmbedding.getOuterFace();
         Dart curDart = outerFace.get(0);
-        if(curDart.isReversed()){
+        Node[] nodes = graph.getNodeArray();
+        System.out.println("NodeNum: " +nodes.length + " Nodes: "+ nodes[0].toString() + "---"+ nodes[1].index() + "---"+ nodes[2].index() + "---"+ nodes[3].index()+ "---" );
+        System.out.println("Dart: Source: " + curDart.getAssociatedEdge().source() + "  Target:  " + curDart.getAssociatedEdge().target() + "  Reversed?" + curDart.isReversed());
+        System.out.println("DartNextOP: Source: " + outerFace.get(1).getAssociatedEdge().source() + "  Target:  " + outerFace.get(1).getAssociatedEdge().target() + "Reversed?" + outerFace.get(1).isReversed());
+        System.out.println("DartNextOP: Source: " + outerFace.get(outerFace.size()-1).getAssociatedEdge().source() + "  Target:  " + outerFace.get(outerFace.size()-1).getAssociatedEdge().target() + "Reversed?" + outerFace.get(outerFace.size()-1).isReversed());
+        for(Dart dart : outerFace){
+            System.out.println("---Dart: Source: " + dart.getAssociatedEdge().source() + "  Target:  " + dart.getAssociatedEdge().target() + "  Reversed?" + dart.isReversed());
+
+        }
+        int facNum = 0;
+        for(List<Dart> face : planarEmbedding.getFaces()){
+            for (Dart dart : face) {
+                System.out.println("+"+facNum+"+Dart: Source: " + dart.getAssociatedEdge().source() + "  Target:  " + dart.getAssociatedEdge().target() + "  Reversed?" + dart.isReversed());
+            }
+            facNum++;
+        }
+
+
+
+            if(curDart.isReversed()){
             v1 = curDart.getAssociatedEdge().source();
         }else{
             v1 = curDart.getAssociatedEdge().target();
@@ -171,8 +190,26 @@ public class CanonicalOrder {
         possibleNextNodes2.add(vn);
 
         List<Dart> outgoingDarts = planarEmbedding.getOutgoingDarts(v1);
-
+/*
         for(Dart dart : outgoingDarts){
+            Node targetNode1, targetNode2;
+            targetNode1 = dart.getAssociatedEdge().target();
+            targetNode2 = dart.getAssociatedEdge().source();
+
+
+            if(v2.equals(targetNode1)){
+                v1v2Face = dart.getFace();
+                System.out.print("gefunden");
+                break;
+            }
+            if(v2.equals(targetNode2)){
+                v1v2Face = dart.getOppositeDart().getFace();
+                System.out.print("gefunden");
+                break;
+            }
+        }
+*/
+for(Dart dart : outgoingDarts){
             Node targetNode;
             if(dart.isReversed()){
                 targetNode = dart.getAssociatedEdge().target();
@@ -316,6 +353,8 @@ public class CanonicalOrder {
         updateSets(newOuterChain);
 
         addNodeToCanonicalOrder(deletedNode);
+     //   System.out.println("337 Canorder: "+ canonicalOrder.toString());
+
     }
 
     /**
@@ -360,6 +399,8 @@ public class CanonicalOrder {
         updateSets(newOuterChain);
 
         addChainToCanonicalOrder(deleteChain);
+       // System.out.println("383Canorder: "+ canonicalOrder.toString());
+
     }
 
     private void updateVisited(Node node) {
@@ -439,7 +480,23 @@ public class CanonicalOrder {
             if (!isInsertedNode.getBool(n))
                 counter++;
         }
-        return counter;
+
+        int counter2 = 0;
+        for (Dart outDart : planarEmbedding.getOutgoingDarts(node)) {
+            Node n1,n2;
+
+                n1 = outDart.getAssociatedEdge().target();
+
+                n2 = outDart.getAssociatedEdge().source();
+
+            if (!isInsertedNode.getBool(n1) && !node.equals(n1))
+                counter2++;
+            if (!isInsertedNode.getBool(n2) && !node.equals(n2))
+                counter2++;
+
+        }
+       // System.out.println("Counter1: " + counter +"     Counter2: " + counter2);
+        return counter2;
     }
 
     private void updateSets(ArrayList<Node> newOuterChain) {
@@ -549,7 +606,7 @@ public class CanonicalOrder {
                 outerChain.add(nodes.get(i));
             }
         }
-        // System.out.println(outerChain.toString());
+        // System.out.println("Outerchain: " + outerChain.toString());
         return outerChain;
     }
 
@@ -668,6 +725,7 @@ public class CanonicalOrder {
     private ArrayList<Node> sortedNodesFromFace(List<Dart> f, Node parentNode) {
         Boolean startAddingToList = false;
         ArrayList<Node> nodes = new ArrayList<>();
+      //  System.out.println("709 FACE: " + f.size());
         for (Dart dart : f ){
             Node node;
             if(dart.isReversed()){
@@ -705,12 +763,15 @@ public class CanonicalOrder {
     }
 */
     private void addNodeToCanonicalOrder(Node n) {
+        //   System.out.println("CanorderNode:" + n.toString() );
+
         ArrayList<Node> nodeAsList = new ArrayList<>();
         nodeAsList.add(n);
         canonicalOrder.add(0, nodeAsList);
     }
 
     private void addChainToCanonicalOrder(ArrayList<Node> nodes) {
+      //  System.out.println("CanorderNodeCHain:" + nodes.toString() );
         canonicalOrder.add(0, nodes);
 
     }
@@ -731,7 +792,7 @@ public class CanonicalOrder {
         return canonicalOrder;
     }
 
-    /*private  Dart getDart(Node source, Node target){
+   /* private  Dart getDart(Node source, Node target){
         System.out.println("Num of Darts: " + planarEmbedding.getOutgoingDarts(source).size());
 
         for(Dart dart : planarEmbedding.getOutgoingDarts(source)){
@@ -749,11 +810,11 @@ public class CanonicalOrder {
                 return dart;
             }
         }
-        System.out.println("There not existes a dart for this two nodes.");
+        System.out.println("There not existes a dart for this pair.");
         return null;
     }*/
     private  Dart getDart(Node source, Node target){
-        System.out.println("Num of Darts: " + planarEmbedding.getOutgoingDarts(source).size());
+
 
         for(Dart dart : planarEmbedding.getOutgoingDarts(source)){
             Node n1,n2;
@@ -761,19 +822,20 @@ public class CanonicalOrder {
                 n1 = dart.getAssociatedEdge().target();
 
                 n2 = dart.getAssociatedEdge().source();
+           // System.out.println("GESUCHT: " + source.index() + ",  "  + target.index() + "  GEFUNDEN: " + n2.index() + ",   " + n1.index());
 
             if(target.equals(n1)){
-                System.out.println("Return the dart");
+             //   System.out.println("Return the dart");
                 return dart;
             }
             if(target.equals(n2)){
-                System.out.println("Return the dart Reverse");
+              //  System.out.println("Return the dart Reverse");
                 return dart.getOppositeDart();
             }
-            System.out.println("falxcher dart");
+          //  System.out.println("falxcher dart");
 
         }
-        System.out.println("There not existes a dart for this two nodes.");
+       // System.out.println("There not existes a dart for this pair");
         return null;
     }
 }

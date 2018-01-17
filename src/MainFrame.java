@@ -352,14 +352,14 @@ public class MainFrame extends JFrame {
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
 // FPP start
-        JButton startFPP = new JButton("Start De Fraysseix Pach Pollack"),
-                stopFPP  = new JButton("Stop De Fraysseix Pach Pollack");
+        JButton startFPP = new JButton("Start De Fraysseix Pach Pollack");
+               // stopFPP  = new JButton("Stop De Fraysseix Pach Pollack");
         startFPP.addActionListener(this::startFPPClicked);
-        stopFPP.addActionListener(this::stopFPPClicked);
+      //  stopFPP.addActionListener(this::stopFPPClicked);
 
         sidePanel.add(startFPP, cSidePanel);
         cSidePanel.gridx = 1;
-        sidePanel.add(stopFPP, cSidePanel);
+       // sidePanel.add(stopFPP, cSidePanel);
 
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
@@ -550,6 +550,7 @@ public class MainFrame extends JFrame {
             this.graphEditorInputMode.setCreateNodeAllowed(true);
         }
     }
+
     private void startFPPClicked(@SuppressWarnings("unused") ActionEvent evt){
 
         YGraphAdapter graphAdapter = new YGraphAdapter(this.view.getGraph());
@@ -564,13 +565,13 @@ public class MainFrame extends JFrame {
 
     }
 
-    private void stopFPPClicked(@SuppressWarnings("unused") ActionEvent evt){
+  /*  private void stopFPPClicked(@SuppressWarnings("unused") ActionEvent evt){
         if (faa != null) {
             faa.running = false;
             this.graphEditorInputMode.setCreateNodeAllowed(true);
         }
     }
-
+*/
 
     void springEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");

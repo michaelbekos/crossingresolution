@@ -106,12 +106,27 @@ public class FraysseixPachPollack {
    //     CombinatorialEmbedder emb = new CombinatorialEmbedder();
    //     emb.setPlanarInformation(plan);
    //     emb.embed();
-        CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random);
-        ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
 
-        // transform into one list
+        /*   CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
+        //ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
+         transform into one list
         ArrayList<Node> canonicalOrder = new ArrayList<Node>();
         orderdpl.forEach(l -> canonicalOrder.add(l.get(0)));
+*/
+
+
+
+       int[] order = {0,1,2,3,4,5,6,7};
+        ArrayList<Node> canonicalOrder = new ArrayList<Node>();
+       for(int i : order){
+           for(Node n : graph.getNodes()){
+               if(n.index() == i){
+                   canonicalOrder.add(n);
+               }
+           }
+       }
+
+
 
         checkForValidOrdering(canonicalOrder);
 
@@ -228,9 +243,13 @@ public class FraysseixPachPollack {
      */
     private void checkForValidOrdering(ArrayList<Node> canonicalOrder) {
         boolean[] b = new boolean[graph.getNodeArray().length];
-        for (Node n : canonicalOrder)
+        for (Node n : canonicalOrder){
             b[n.index()] = true;
+          //  System.out.println("INDEEX:" + n.index());
+        }
+
         boolean test = true;
+        System.out.println("numONode:" + graph.getNodeArray().length + "   Num of b: " + b.length);
         for (int i = 0; i < b.length; i++) {
             test = test && b[i];
         }
