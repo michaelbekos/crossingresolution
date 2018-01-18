@@ -58,11 +58,6 @@ public class MainFrame extends JFrame {
     public JPanel sidePanel;
     public SidePanelItemFactory sidePanelItemFactory;
 
-    public void finalizeForceAlgorithm(@Nullable ForceAlgorithm fa) {
-        if (fa != null) {
-            fa.clearDrawables();
-        }
-    }
 
     // for this class, we can instantiate defaultForceAlgorithm and do some post-initializing
     public ForceAlgorithm defaultForceAlgorithm() {
@@ -243,7 +238,7 @@ public class MainFrame extends JFrame {
 
         InitSidePanel newSidePanel = new InitSidePanel(this);
         sidePanel = newSidePanel.initSidePanel(mainPanel,c);
-        sidePanelItemFactory = new SidePanelItemFactory(sidePanel);
+        sidePanelItemFactory = new SidePanelItemFactory(sidePanel, view);
 //        initSidePanel(mainPanel, c);
     }
 

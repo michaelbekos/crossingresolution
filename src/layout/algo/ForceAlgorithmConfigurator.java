@@ -1,5 +1,8 @@
 package layout.algo;
 
+import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.Mapper;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
@@ -16,6 +19,8 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
 
   // this is mainly required for the genetic algorithm - you should usually access the fields directly
   private List<AbstractLayoutInterfaceItem> weights;
+
+  private AbstractLayoutInterfaceItem<Mapper<INode, PointD>> debugVectors;
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
@@ -38,6 +43,8 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
     weights.add(incidentEdgesForce);
     weights.add(crossingForce);
     weights.add(perpendicular);
+
+    debugVectors = itemFactory.debugVectors("Forces");
   }
 
   public ForceAlgorithmConfigurator copy(ILayoutInterfaceItemFactory itemFactory) {
@@ -75,5 +82,9 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
 
   public List<AbstractLayoutInterfaceItem> getWeights() {
     return weights;
+  }
+
+  public AbstractLayoutInterfaceItem<Mapper<INode, PointD>> getDebugVectors() {
+    return debugVectors;
   }
 }

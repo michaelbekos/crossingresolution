@@ -1082,7 +1082,6 @@ public class InitMenuBar {
         else return;
 
         ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
-        mainFrame.finalizeForceAlgorithm(mainFrame.forceAlgorithm);
         mainFrame.forceAlgorithm = fd;
 
         IGraphLayoutExecutor executor =
@@ -1267,7 +1266,7 @@ public class InitMenuBar {
 
     private void randomMovementActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         RandomMovementConfigurator configurator = new RandomMovementConfigurator();
-        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel));
+        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, view));
 
         RandomMovementLayout layout = new RandomMovementLayout(graph, configurator);
         IGraphLayoutExecutor layoutExecutor =

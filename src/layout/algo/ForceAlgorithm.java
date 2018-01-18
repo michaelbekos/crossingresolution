@@ -6,13 +6,9 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.GraphComponent;
-import com.yworks.yfiles.view.ICanvasObject;
-import com.yworks.yfiles.view.ICanvasObjectDescriptor;
 import layout.algo.forces.IForce;
 import layout.algo.utils.PositionMap;
-import view.visual.VectorVisual;
 
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -64,33 +60,15 @@ public class ForceAlgorithm implements ILayout {
     cMinimumAngle.invalidate();
   }
 
-  // show all forces that would be applied to nodes currently
-  public void showForces(){
-    this.clearDrawables();
-    Mapper<INode, PointD> map = calculateAllForces();
-    this.displayVectors(map);
+  @Override
+  public void showDebug() {
+    Mapper<INode, PointD> forces = calculateAllForces();
+    configurator.getDebugVectors().setValue(forces);
   }
 
-  /**
-   * Displays vectors for debugging purposes
-   */
-  private void displayVectors(Mapper<INode, PointD> map) {
-    for(INode u: graph.getNodes()){
-      PointD vector = map.getValue(u);
-      System.out.println(vector);
-      TrashCan.canvasObjects.add(this.view.getBackgroundGroup().addChild(
-        new VectorVisual(this.view, vector, u, Color.GREEN),
-        ICanvasObjectDescriptor.VISUAL));
-    }
-    this.view.updateUI();
-  }
-
-  public void clearDrawables() {
-    for (ICanvasObject o: TrashCan.canvasObjects) {
-      o.remove();
-    }
-    TrashCan.canvasObjects.clear();
-    this.view.updateUI();
+  @Override
+  public void clearDebug() {
+    configurator.getDebugVectors().setValue(null);
   }
 
   private Mapper<INode, PointD> calculateAllForces(){

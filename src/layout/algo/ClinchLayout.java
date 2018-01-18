@@ -60,6 +60,12 @@ public class ClinchLayout implements ILayout {
     return positions;
   }
 
+  @Override
+  public void showDebug() {}
+
+  @Override
+  public void clearDebug() {}
+
   private Mapper<INode, Double> initStepSizes() {
     final Mapper<INode, Double> stepSizes = new Mapper<>(new WeakHashMap<>());
 

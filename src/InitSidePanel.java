@@ -209,7 +209,6 @@ public class InitSidePanel {
 //        if(mainFrame.forceAlgorithm == null){
 //            TrashCan.init();
 //            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
-//            mainFrame.finalizeForceAlgorithm(mainFrame.forceAlgorithm);
 //            mainFrame.forceAlgorithm = fd;
 //            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
 //            IGraphLayoutExecutor executor =

@@ -8,4 +8,6 @@ public interface ILayout {
   void init();
   boolean executeStep(int iteration);
   Mapper<INode, PointD> getNodePositions();
+  void showDebug();
+  void clearDebug();
 }
