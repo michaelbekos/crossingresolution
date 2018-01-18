@@ -1,6 +1,8 @@
 
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import layout.algo.genetic.GeneticAlgorithm;
+import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.VoidItemFactory;
 import layout.algo.utils.PositionMap;
 import util.GridPositioning;
@@ -153,8 +155,8 @@ public class BatchOptimizer {
     if(forceAlgoOnly){
       System.out.println("running ForceAlgorithm only");
       ForceAlgorithm firstForceAlgorithm = defaultForceAlgorithm();
-
       BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstForceAlgorithm, graph, initTime, initTime);
+
       executor.run();
     }
     else {
@@ -163,8 +165,11 @@ public class BatchOptimizer {
       initials.add(defaultForceAlgorithm());
       LayoutUtilities.applyLayout(graph, new OrganicLayout());
       initials.add(defaultForceAlgorithm());
-      GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view);
-      ga.runRounds(rounds);
+
+      GeneticForceAlgorithmLayout layout = new GeneticForceAlgorithmLayout(graph, initials);
+      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(layout, graph, rounds, rounds);
+
+      executor.run();
     }
 
     // afterwards: apply new positions to graph...

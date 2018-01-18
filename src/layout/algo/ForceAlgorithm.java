@@ -16,6 +16,7 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ForceAlgorithm implements ILayout {
   public ForceAlgorithmConfigurator configurator;
@@ -34,7 +35,6 @@ public class ForceAlgorithm implements ILayout {
 
   @Override
   public ForceAlgorithm clone(){
-    // TODO: clone configurator
     ForceAlgorithm ret = new ForceAlgorithm(configurator, this.view, cMinimumAngle);
     ret.graph = this.graph;
     ret.nodePositions = PositionMap.copy(this.nodePositions);
@@ -57,6 +57,11 @@ public class ForceAlgorithm implements ILayout {
   @Override
   public Mapper<INode, PointD> getNodePositions() {
     return nodePositions;
+  }
+
+  public void setNodePositions(Mapper<INode, PointD> nodePositions) {
+    this.nodePositions = nodePositions;
+    cMinimumAngle.invalidate();
   }
 
   // show all forces that would be applied to nodes currently
@@ -124,6 +129,10 @@ public class ForceAlgorithm implements ILayout {
     }
 
     return nodePositions;
+  }
+
+  public Optional<Double> getMinimumAngle() {
+    return cMinimumAngle.getMinimumAngle(graph, nodePositions);
   }
 }
 

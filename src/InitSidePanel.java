@@ -6,7 +6,7 @@ import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import layout.algo.ForceAlgorithm;
-import layout.algo.GeneticAlgorithm;
+import layout.algo.genetic.GeneticAlgorithm;
 import layout.algo.IGraphLayoutExecutor;
 import layout.algo.TrashCan;
 import layout.algo.utils.PositionMap;
@@ -192,31 +192,31 @@ public class InitSidePanel {
      ********************************************************************/
 
     private void startGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(geneticAlgorithm == null || !geneticAlgorithm.running){
-            TrashCan.init();
-            initializeGeneticAlgorithm();
-            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
-            geneticAlgorithmThread.start();
-        }
+//        if(geneticAlgorithm == null || !geneticAlgorithm.running){
+//            TrashCan.init();
+//            initializeGeneticAlgorithm();
+//            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
+//            geneticAlgorithmThread.start();
+//        }
     }
 
     private void stopGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
-        geneticAlgorithm.running = false;
-        mainFrame.graphEditorInputMode.setCreateNodeAllowed(true);
+//        geneticAlgorithm.running = false;
+//        mainFrame.graphEditorInputMode.setCreateNodeAllowed(true);
     }
 
     private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(mainFrame.forceAlgorithm == null){
-            TrashCan.init();
-            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
-            mainFrame.finalizeForceAlgorithm(mainFrame.forceAlgorithm);
-            mainFrame.forceAlgorithm = fd;
-            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
-            IGraphLayoutExecutor executor =
-                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
-            executor.run();
-            mainFrame.view.updateUI();
-        }
+//        if(mainFrame.forceAlgorithm == null){
+//            TrashCan.init();
+//            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
+//            mainFrame.finalizeForceAlgorithm(mainFrame.forceAlgorithm);
+//            mainFrame.forceAlgorithm = fd;
+//            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
+//            IGraphLayoutExecutor executor =
+//                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
+//            executor.run();
+//            mainFrame.view.updateUI();
+//        }
     }
 
     private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){
@@ -277,7 +277,7 @@ public class InitSidePanel {
         firstFAs.add(mainFrame.defaultForceAlgorithm());
         LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
         firstFAs.add(mainFrame.defaultForceAlgorithm());
-        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAs, mainFrame.graph);
-        geneticAlgorithmThread = new Thread(geneticAlgorithm);
+//        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAs, mainFrame.graph);
+//        geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
 }
