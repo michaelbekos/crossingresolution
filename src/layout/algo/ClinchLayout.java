@@ -7,7 +7,6 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import util.BoundingBox;
@@ -42,7 +41,7 @@ public class ClinchLayout implements ILayout {
   }
 
   @Override
-  public void init(ILayoutInterfaceItemFactory interfaceItemFactory) {
+  public void init() {
     positions = PositionMap.FromIGraph(graph);
     stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
@@ -60,6 +59,12 @@ public class ClinchLayout implements ILayout {
   public Mapper<INode, PointD> getNodePositions() {
     return positions;
   }
+
+  @Override
+  public void showDebug() {}
+
+  @Override
+  public void clearDebug() {}
 
   private Mapper<INode, Double> initStepSizes() {
     final Mapper<INode, Double> stepSizes = new Mapper<>(new WeakHashMap<>());

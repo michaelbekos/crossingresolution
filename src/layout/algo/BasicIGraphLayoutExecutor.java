@@ -5,9 +5,6 @@ import com.yworks.yfiles.graph.ICompoundEdit;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
-import layout.algo.layoutinterface.SidePanelItemFactory;
-import layout.algo.layoutinterface.VoidItemFactory;
 
 import java.util.Map;
 
@@ -21,7 +18,6 @@ public class BasicIGraphLayoutExecutor {
   private int currentIteration;
   private ICompoundEdit compoundEdit;
   public Mapper<INode, PointD> bestSolution; //TODO
-  ILayoutInterfaceItemFactory interfaceItemFactory;
 
   public BasicIGraphLayoutExecutor(ILayout layout,
                                    IGraph graph,
@@ -34,7 +30,6 @@ public class BasicIGraphLayoutExecutor {
     this.currentIteration = 0;
     this.running = false;
     this.finished = false;
-    this.interfaceItemFactory = new VoidItemFactory();
   }
 
   public void start() {
@@ -74,7 +69,7 @@ public class BasicIGraphLayoutExecutor {
     //iterations > 0 runs for # of iterations
     new Thread(() -> {
       start();     //remove when start/stop button exists
-      layout.init(interfaceItemFactory);
+      layout.init();
       while (!finished) {
         while (running) {
           finished = layout.executeStep(currentIteration++);

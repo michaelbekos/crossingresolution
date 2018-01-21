@@ -2,7 +2,7 @@ package layout.algo.layoutinterface;
 
 public abstract class AbstractLayoutInterfaceItem<T> {
   private T value;
-  private String name;
+  private final String name;
 
   AbstractLayoutInterfaceItem(String name) {
     this.name = name;
@@ -13,5 +13,9 @@ public abstract class AbstractLayoutInterfaceItem<T> {
   }
   public void setValue(T value) {
     this.value = value;
+  }
+
+  public String getName() {
+    return name;
   }
 }

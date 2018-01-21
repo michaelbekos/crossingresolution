@@ -1,5 +1,9 @@
 package layout.algo.layoutinterface;
 
+import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.Mapper;
+
 public class VoidItemFactory implements ILayoutInterfaceItemFactory{
 
   @Override
@@ -9,6 +13,11 @@ public class VoidItemFactory implements ILayoutInterfaceItemFactory{
 
   @Override
   public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
+    return new VoidItem<>(name);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Mapper<INode, PointD>> debugVectors(String name) {
     return new VoidItem<>(name);
   }
 }

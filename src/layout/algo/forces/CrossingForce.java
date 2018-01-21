@@ -5,19 +5,19 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceAlgorithmConfigurator;
 import util.G;
 import util.Tuple2;
 import util.Util;
 import util.graph2d.LineSegment;
 
 public class CrossingForce implements IForce {
-  private ForceAlgorithmApplier fd;
+  private ForceAlgorithmConfigurator configurator;
   private CachedMinimumAngle cMinimumAngle;
   private IGraph graph;
 
-  public CrossingForce(ForceAlgorithmApplier fd, CachedMinimumAngle cMinimumAngle, IGraph graph) {
-    this.fd = fd;
+  public CrossingForce(ForceAlgorithmConfigurator configurator, IGraph graph, CachedMinimumAngle cMinimumAngle) {
+    this.configurator = configurator;
     this.cMinimumAngle = cMinimumAngle;
     this.graph = graph;
   }
@@ -63,7 +63,7 @@ public class CrossingForce implements IForce {
   }
 
   private Tuple2<PointD, PointD> calculateSomethingWithCosinuses(PointD e1, PointD e2, double angle) {
-    double threshold = fd.modifiers[2];
+    double threshold = configurator.getCrossingForce().getValue();
     if(e1.getVectorLength() <= G.Epsilon ||
         e2.getVectorLength() <= G.Epsilon){
       return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
@@ -82,8 +82,7 @@ public class CrossingForce implements IForce {
 
     t1 = Util.rotate90DegreesClockwise(PointD.negate(t1));
     t2 = Util.rotate90DegreesClockwise(t2);
-    // if(perpendicular?)
-    if(fd.switches[0]) {
+    if(configurator.getPerpendicular().getValue()) {
       return new Tuple2<>(t1, t2);
     }
     // else direction of other edge

@@ -8,7 +8,8 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
-import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceAlgorithm;
+import layout.algo.layoutinterface.SidePanelItemFactory;
 
 
 import javax.swing.*;
@@ -49,28 +50,17 @@ public class MainFrame extends JFrame {
 
     public JSlider[] sliders;
 
-    public final Double[] springThresholds = {0.01, 0.01, 0.01, 0.1};
-    public final Boolean[] algoModifiers = {false, false};
-    public int faaRunningTimeGenetic = 250;
+    public int faRunningTimeGenetic = 250;
 
     @Nullable
-    public ForceAlgorithmApplier faa = null;
+    public ForceAlgorithm forceAlgorithm = null;
     public JPanel sidePanel;
+    public SidePanelItemFactory sidePanelItemFactory;
 
-    public void finalizeFAA (@Nullable ForceAlgorithmApplier faa) {
-        if (faa != null) {
-            faa.running = false;
-            faa.clearDrawables();
-        }
-    }
 
-    // for this class, we can instantiate defaultForceAlgorithmApplier and do some post-initializing
-    public ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations) {
-        ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view);
-        springThresholds[1] = 50 * Math.log(graph.getNodes().size());
-        fd.modifiers = springThresholds.clone();
-        fd.switches = algoModifiers.clone();
-        return fd;
+    // for this class, we can instantiate defaultForceAlgorithm and do some post-initializing
+    public ForceAlgorithm defaultForceAlgorithm() {
+        return InitForceAlgorithm.defaultForceAlgorithm(view, sidePanelItemFactory);
     }
 
     /**
@@ -187,8 +177,8 @@ public class MainFrame extends JFrame {
                 movedNodes.clear();
             }
             // TODO: do we really need this?
-            /*if (faa != null) {
-                faa.resetNodePositions(movedNodesCP);
+            /*if (forceAlgorithm != null) {
+                forceAlgorithm.resetNodePositions(movedNodesCP);
             }*/
         });
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
@@ -247,6 +237,7 @@ public class MainFrame extends JFrame {
 
         InitSidePanel newSidePanel = new InitSidePanel(this);
         sidePanel = newSidePanel.initSidePanel(mainPanel,c);
+        sidePanelItemFactory = new SidePanelItemFactory(sidePanel, view);
 //        initSidePanel(mainPanel, c);
     }
 

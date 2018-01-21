@@ -5,8 +5,8 @@ import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import layout.algo.ForceAlgorithmApplier;
-import layout.algo.GeneticAlgorithm;
+import layout.algo.ForceAlgorithm;
+import layout.algo.genetic.GeneticAlgorithm;
 import layout.algo.IGraphLayoutExecutor;
 import layout.algo.TrashCan;
 import layout.algo.utils.PositionMap;
@@ -19,9 +19,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.util.LinkedList;
-import java.util.Optional;
-
-import static layout.algo.TrashCan.bestSolution;
 
 public class InitSidePanel {
     private MainFrame mainFrame;
@@ -31,12 +28,13 @@ public class InitSidePanel {
     }
 
     public JPanel initSidePanel(JPanel mainPanel, GridBagConstraints c) {
-        Tuple4<JPanel, JSlider[], JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(mainFrame.springThresholds, new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
+        // TODO:
+        Tuple4<JPanel, JSlider[], JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(new Double[0], new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
         JPanel sidePanel = slidPanelSlidersCount.a;
-        mainFrame.sliders = slidPanelSlidersCount.b;
+/*        mainFrame.sliders = slidPanelSlidersCount.b;
         slidPanelSlidersCount.c[1].setVisible(false);
         mainFrame.sliders[1].setVisible(false);
-        int sidePanelNextY = slidPanelSlidersCount.d;
+        int sidePanelNextY = slidPanelSlidersCount.d;*/
         c.gridy = 1;
         c.gridx = 1;
         c.weighty = 1;
@@ -44,19 +42,19 @@ public class InitSidePanel {
         c.insets = new Insets(0, 0, 0, 0);
         c.fill = GridBagConstraints.VERTICAL;
         mainPanel.add(sidePanel, c);
-        //mainPanel.add(sliders, BorderLayout.LINE_END);
+/*        //mainPanel.add(sliders, BorderLayout.LINE_END);
         GridBagConstraints cSidePanel = new GridBagConstraints();
         //WARNING: POST-INCREMENT!
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
-        sidePanel.add(new JLabel("Genetic FAA round time"), cSidePanel);
+        sidePanel.add(new JLabel("Genetic ForceAlgorithm round time"), cSidePanel);
         JSlider geneticSlider = new JSlider(0, 1000);
         geneticSlider.setSize(0, 500);
-        geneticSlider.setValue(mainFrame.faaRunningTimeGenetic);
+        geneticSlider.setValue(mainFrame.faRunningTimeGenetic);
         geneticSlider.addChangeListener(e-> {
             JSlider source = (JSlider) e.getSource();
-            mainFrame.faaRunningTimeGenetic = source.getValue();
-            System.out.println("magic number:" + mainFrame.faaRunningTimeGenetic);
+            mainFrame.faRunningTimeGenetic = source.getValue();
+            System.out.println("magic number:" + mainFrame.faRunningTimeGenetic);
         });
         cSidePanel.gridx = 0;
         cSidePanel.gridy = sidePanelNextY++;
@@ -121,10 +119,10 @@ public class InitSidePanel {
         cSidePanel.gridx = 0;
         JButton showForces = new JButton("Show forces");
         showForces.addActionListener(e -> {
-            if (mainFrame.faa == null) {
-                mainFrame.faa = mainFrame.defaultForceAlgorithmApplier(0);
+            if (mainFrame.forceAlgorithm == null) {
+                mainFrame.forceAlgorithm = mainFrame.defaultForceAlgorithm(0);
             }
-            mainFrame.faa.showForces();
+            mainFrame.forceAlgorithm.showForces();
         });
         sidePanel.add(showForces, cSidePanel);
 
@@ -162,7 +160,7 @@ public class InitSidePanel {
         cSidePanel.gridy = sidePanelNextY++;
         cSidePanel.gridx = 0;
         JButton showForceAlgoState = new JButton("Show state");
-        showForceAlgoState.addActionListener(e -> PositionMap.applyToGraph(mainFrame.graph, mainFrame.faa.getNodePositions()));
+        showForceAlgoState.addActionListener(e -> PositionMap.applyToGraph(mainFrame.graph, mainFrame.forceAlgorithm.getNodePositions()));
         sidePanel.add(showForceAlgoState, cSidePanel);
 
         JButton scaleToBox = new JButton("Scale me to the box");
@@ -185,7 +183,7 @@ public class InitSidePanel {
         sidePanel.add(allowClickCreateNodeEdge, cSidePanel);
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
         allowClickCreateNodeEdge.setSelected(true);
-
+*/
         return sidePanel;
     }
 
@@ -194,38 +192,34 @@ public class InitSidePanel {
      ********************************************************************/
 
     private void startGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(geneticAlgorithm == null || !geneticAlgorithm.running){
-            TrashCan.init();
-            initializeGeneticAlgorithm();
-            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
-            geneticAlgorithmThread.start();
-        }
+//        if(geneticAlgorithm == null || !geneticAlgorithm.running){
+//            TrashCan.init();
+//            initializeGeneticAlgorithm();
+//            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
+//            geneticAlgorithmThread.start();
+//        }
     }
 
     private void stopGeneticClicked(@SuppressWarnings("unused") ActionEvent evt){
-        geneticAlgorithm.running = false;
-        mainFrame.graphEditorInputMode.setCreateNodeAllowed(true);
+//        geneticAlgorithm.running = false;
+//        mainFrame.graphEditorInputMode.setCreateNodeAllowed(true);
     }
 
     private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(mainFrame.faa == null || !mainFrame.faa.running){
-            TrashCan.init();
-            ForceAlgorithmApplier fd = mainFrame.defaultForceAlgorithmApplier(-1);
-            fd.modifiers = mainFrame.springThresholds;
-            fd.switches = mainFrame.algoModifiers;
-            mainFrame.finalizeFAA(mainFrame.faa);
-            mainFrame.faa = fd;
-            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
-            IGraphLayoutExecutor executor =
-                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, mainFrame.sidePanel, -1, 20);
-            executor.run();
-            mainFrame.view.updateUI();
-        }
+//        if(mainFrame.forceAlgorithm == null){
+//            TrashCan.init();
+//            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
+//            mainFrame.forceAlgorithm = fd;
+//            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
+//            IGraphLayoutExecutor executor =
+//                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
+//            executor.run();
+//            mainFrame.view.updateUI();
+//        }
     }
 
     private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if (mainFrame.faa != null) {
-            mainFrame.faa.running = false;
+        if (mainFrame.forceAlgorithm != null) {
             mainFrame.graphEditorInputMode.setCreateNodeAllowed(true);
         }
     }
@@ -266,23 +260,23 @@ public class InitSidePanel {
         mainFrame.graphEditorInputMode.setSelectableItems((evt.getStateChange() == ItemEvent.DESELECTED) ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
     }
 
-    private void forceDirectionPerpendicularActionPerformed(@SuppressWarnings("unused") ActionEvent evt){    mainFrame.algoModifiers[0] = true; }
-    private void forceDirectionNonPerpendicularActionPerformed(@SuppressWarnings("unused") ActionEvent evt){ mainFrame.algoModifiers[0] = false; }
+    private void forceDirectionPerpendicularActionPerformed(@SuppressWarnings("unused") ActionEvent evt){    /*mainFrame.algoModifiers[0] = true;*/ }
+    private void forceDirectionNonPerpendicularActionPerformed(@SuppressWarnings("unused") ActionEvent evt){ /*mainFrame.algoModifiers[0] = false;*/ }
 
-    private void optimizingAngleNintyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { mainFrame.algoModifiers[1] = true; }
-    private void optimizingAngleSixtyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { mainFrame.algoModifiers[1] = false; }
+    private void optimizingAngleNintyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { /*mainFrame.algoModifiers[1] = true;*/ }
+    private void optimizingAngleSixtyActionPerformed(@SuppressWarnings("unused") ActionEvent evt) { /*mainFrame.algoModifiers[1] = false;*/ }
 
 
-    private GeneticAlgorithm<ForceAlgorithmApplier> geneticAlgorithm;
+    private GeneticAlgorithm<ForceAlgorithm> geneticAlgorithm;
     private Thread geneticAlgorithmThread;
     private void initializeGeneticAlgorithm(){
-        LinkedList<ForceAlgorithmApplier> firstFAAs = new LinkedList<>();
-        firstFAAs.add(mainFrame.defaultForceAlgorithmApplier(mainFrame.faaRunningTimeGenetic));
+        LinkedList<ForceAlgorithm> firstFAs = new LinkedList<>();
+        firstFAs.add(mainFrame.defaultForceAlgorithm());
         LayoutUtilities.applyLayout(mainFrame.graph, new OrthogonalLayout());
-        firstFAAs.add(mainFrame.defaultForceAlgorithmApplier(mainFrame.faaRunningTimeGenetic));
+        firstFAs.add(mainFrame.defaultForceAlgorithm());
         LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
-        firstFAAs.add(mainFrame.defaultForceAlgorithmApplier(mainFrame.faaRunningTimeGenetic));
-        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAAs, mainFrame.graph);
-        geneticAlgorithmThread = new Thread(geneticAlgorithm);
+        firstFAs.add(mainFrame.defaultForceAlgorithm());
+//        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAs, mainFrame.graph);
+//        geneticAlgorithmThread = new Thread(geneticAlgorithm);
     }
 }

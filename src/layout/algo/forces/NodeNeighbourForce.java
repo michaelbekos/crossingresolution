@@ -4,16 +4,16 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithmApplier;
+import layout.algo.ForceAlgorithmConfigurator;
 import util.G;
 
 public class NodeNeighbourForce implements IForce {
   private IGraph graph;
-  private ForceAlgorithmApplier fd;
+  private ForceAlgorithmConfigurator configurator;
 
-  public NodeNeighbourForce(IGraph graph, ForceAlgorithmApplier fd) {
+  public NodeNeighbourForce(ForceAlgorithmConfigurator configurator, IGraph graph) {
     this.graph = graph;
-    this.fd = fd;
+    this.configurator = configurator;
   }
 
 
@@ -38,7 +38,7 @@ public class NodeNeighbourForce implements IForce {
   }
 
   private PointD doSomething(PointD p1, PointD p2) {
-    double springNaturalLength = fd.modifiers[1];
+    double springNaturalLength = configurator.getNodeNeighborWeight().getValue();
     PointD t = PointD.subtract(p2, p1);
     double dist = t.getVectorLength();
     if(dist <= G.Epsilon){
@@ -53,7 +53,7 @@ public class NodeNeighbourForce implements IForce {
       System.out.println(dist);
       return new PointD(0, 0);
     }
-    //System.out.println(forceStrength * fd.modifiers[1]);
+    //System.out.println(forceStrength * configurator.modifiers[1]);
     t = PointD.times(t, forceStrength);
     //return new PointD(0, 0);
     return t;

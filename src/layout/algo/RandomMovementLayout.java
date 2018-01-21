@@ -6,8 +6,6 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
-import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import util.BoundingBox;
@@ -20,31 +18,26 @@ import java.util.stream.StreamSupport;
 public class RandomMovementLayout implements ILayout {
   private static final int NUM_SAMPLES = 50;
   private static final int NUM_SAMPLES_PER_TEST = 10;
-  private AbstractLayoutInterfaceItem<Double> minStepSize;
-  private AbstractLayoutInterfaceItem<Double> maxStepSize;
 
   private IGraph graph;
+  private RandomMovementConfigurator configurator;
   private Mapper<INode, PointD> positions;
   private ArrayList<Sample> sampleDirections;
   private Random random;
   private RectD boundingBox;
   private int stepsSinceLastUpdate;
 
-  public RandomMovementLayout(IGraph graph) {
+  public RandomMovementLayout(IGraph graph, RandomMovementConfigurator configurator) {
     this.graph = graph;
+    this.configurator = configurator;
   }
 
   @Override
-  public void init(ILayoutInterfaceItemFactory interfaceItemFactory) {
+  public void init() {
     positions = PositionMap.FromIGraph(graph);
     sampleDirections = initSampleDirections();
     random = new Random(System.currentTimeMillis());
     boundingBox = BoundingBox.from(positions);
-
-    minStepSize = interfaceItemFactory.doubleParameter("Minimum step size", 0.1, 50);
-    maxStepSize = interfaceItemFactory.doubleParameter("Maximum step size", 0.1, 50);
-    minStepSize.setValue(0.1);
-    maxStepSize.setValue(10.);
   }
 
   private ArrayList<Sample> initSampleDirections() {
@@ -76,7 +69,9 @@ public class RandomMovementLayout implements ILayout {
 
     Sample[] goodSamples = samples.stream()
         .peek(sample -> {
-          double stepSize = random.nextDouble() * (maxStepSize.getValue() - minStepSize.getValue()) + minStepSize.getValue();
+          double maxStepSize = configurator.maxStepSize.getValue();
+          double minStepSize = configurator.minStepSize.getValue();
+          double stepSize = random.nextDouble() * (maxStepSize - minStepSize) + minStepSize;
           sample.position = LayoutUtils.stepInDirection(originalPosition, sample.direction, stepSize);
         })
         .filter(sample -> boundingBox.contains(sample.position))
@@ -167,4 +162,10 @@ public class RandomMovementLayout implements ILayout {
   public Mapper<INode, PointD> getNodePositions() {
     return positions;
   }
+
+  @Override
+  public void showDebug() {}
+
+  @Override
+  public void clearDebug() {}
 }

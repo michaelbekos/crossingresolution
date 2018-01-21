@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class InitClinchLayout {
 
-  public static void run(IGraph graph, IGraphSelection selection, JProgressBar progressBar, JPanel sidePanel) {
+  public static void run(IGraph graph, IGraphSelection selection, JProgressBar progressBar) {
     ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
 
     Set<INode> fixNodes;
@@ -48,7 +48,7 @@ public class InitClinchLayout {
 
     ClinchLayout clinchLayout = new ClinchLayout(graph, anchor1.getLayout().getCenter(), anchor2.getLayout().getCenter(), fixNodes);
 
-    new IGraphLayoutExecutor(clinchLayout, graph, progressBar, sidePanel, 1000, 20)
+    new IGraphLayoutExecutor(clinchLayout, graph, progressBar, 1000, 20)
         .run();
   }
 
