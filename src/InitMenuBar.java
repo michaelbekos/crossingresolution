@@ -42,10 +42,6 @@ import java.util.Set;
  */
 public class InitMenuBar {
 	
-	/* Box related issue*/
-	private static double boxsize= 10000;
-	// same as in MainFrame
-	
     private MainFrame mainFrame;
 
     private JProgressBar progressBar;
@@ -599,7 +595,7 @@ public class InitMenuBar {
     	while(change){
     		change=false;
 	    	for(INode u : graph.getNodes()){
-	        	if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX()>boxsize || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY()>boxsize){
+	        	if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE){
 	        		nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.9);
 	        	    this.graph =  PositionMap.applyToGraph(graph, nodePositions);
 	        	    this.view.fitGraphBounds();
