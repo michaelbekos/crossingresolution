@@ -8,7 +8,9 @@ import layout.algo.forces.CrossingForce;
 import layout.algo.forces.IncidentEdgesForce;
 import layout.algo.forces.NodeNeighbourForce;
 import layout.algo.forces.NodePairForce;
+import layout.algo.genetic.GeneForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticAlgorithm;
+import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.*;
 import layout.algo.utils.PositionMap;
 import util.GraphOperations;
@@ -24,7 +26,7 @@ import java.util.Optional;
 
 public class InitSidePanel {
     private MainFrame mainFrame;
-    private JTabbedPane tabbedSidePane;
+    public JTabbedPane tabbedSidePane;
 
     public InitSidePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -60,7 +62,7 @@ public class InitSidePanel {
         configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
 
         CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
-        ForceAlgorithm fd = new ForceAlgorithm(configurator, mainFrame.view, cMinimumAngle);
+        ForceAlgorithm fd = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
 
         IGraph graph = mainFrame.view.getGraph();
 
@@ -74,8 +76,18 @@ public class InitSidePanel {
 
         addAlgorithm("Force Algorithm", configurator, forceExecutor);
 //----------------------------------------
-        //Config, layout, layoutexecutor for all other algos too
-        addAlgorithm("Genetic Algorithm", null, null);
+
+      //Config, layout, layoutexecutor for all other algos too
+
+      GeneForceAlgorithmConfigurator geneticConfigurator = new GeneForceAlgorithmConfigurator();
+      geneticConfigurator.init(mainFrame.sidePanelItemFactory);
+      GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
+      IGraphLayoutExecutor geneticExecutor = new IGraphLayoutExecutor(geneticAlgo, graph, mainFrame.progressBar, 1000, 20);
+      addAlgorithm("Genetic Algorithm", geneticConfigurator, geneticExecutor);
+
+
+
+
         addAlgorithm("Clinch Nodes", null, null);
         addAlgorithm("Sloped Spring Embedder", null, null);
 
@@ -736,14 +748,4 @@ public class InitSidePanel {
 
     private GeneticAlgorithm<ForceAlgorithm> geneticAlgorithm;
     private Thread geneticAlgorithmThread;
-    private void initializeGeneticAlgorithm(){
-        LinkedList<ForceAlgorithm> firstFAs = new LinkedList<>();
-        firstFAs.add(mainFrame.defaultForceAlgorithm());
-        LayoutUtilities.applyLayout(mainFrame.graph, new OrthogonalLayout());
-        firstFAs.add(mainFrame.defaultForceAlgorithm());
-        LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
-        firstFAs.add(mainFrame.defaultForceAlgorithm());
-//        geneticAlgorithm = InitGeneticAlgorithm.defaultGeneticAlgorithm(firstFAs, mainFrame.graph);
-//        geneticAlgorithmThread = new Thread(geneticAlgorithm);
-    }
 }

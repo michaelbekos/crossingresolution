@@ -70,13 +70,15 @@ public class BasicIGraphLayoutExecutor {
     //iterations > 0 runs for # of iterations
     new Thread(() -> {
       layout.init();
+
+      mainLoop:
       while (!finished) {
         while (running) {
           finished = layout.executeStep(currentIteration++);
 
           if (finished || maxIterations > 0 && currentIteration == maxIterations) {
             stop();
-            return;
+            continue mainLoop;
           }
 
           if (currentIteration % numberOfCyclesBetweenViewUpdates == 0) {
@@ -93,6 +95,10 @@ public class BasicIGraphLayoutExecutor {
             stop();
           }
         }
+      }
+
+      synchronized (BasicIGraphLayoutExecutor.this) {
+        BasicIGraphLayoutExecutor.this.notifyAll();
       }
     }).start();
   }

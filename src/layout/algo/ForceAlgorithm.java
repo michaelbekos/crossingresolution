@@ -5,7 +5,6 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import com.yworks.yfiles.view.GraphComponent;
 import layout.algo.forces.IForce;
 import layout.algo.utils.PositionMap;
 
@@ -17,22 +16,19 @@ import java.util.Optional;
 public class ForceAlgorithm implements ILayout {
   public ForceAlgorithmConfigurator configurator;
   public List<IForce> forces = new LinkedList<>();
-  private GraphComponent view;
   private IGraph graph;
   private Mapper<INode, PointD> nodePositions;
   private CachedMinimumAngle cMinimumAngle;
 
-  public ForceAlgorithm(ForceAlgorithmConfigurator configurator, GraphComponent view, CachedMinimumAngle cMinimumAngle){
+  public ForceAlgorithm(ForceAlgorithmConfigurator configurator, IGraph graph, CachedMinimumAngle cMinimumAngle){
     this.configurator = configurator;
-    this.view = view;
-    this.graph = view.getGraph();
+    this.graph = graph;
     this.cMinimumAngle = cMinimumAngle;
   }
 
   @Override
   public ForceAlgorithm clone(){
-    ForceAlgorithm ret = new ForceAlgorithm(configurator, this.view, cMinimumAngle);
-    ret.graph = this.graph;
+    ForceAlgorithm ret = new ForceAlgorithm(configurator, graph, cMinimumAngle);
     ret.nodePositions = PositionMap.copy(this.nodePositions);
     ret.forces = this.forces;
 

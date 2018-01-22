@@ -16,20 +16,30 @@ import util.graph2d.Intersection;
 import java.util.*;
 
 class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
+  private GeneForceAlgorithmConfigurator configurator;
   private IGraph graph;
   private Random rand;
   private ILayoutInterfaceItemFactory itemFactory = new VoidItemFactory();
 
-  ForceAlgorithmObjective(IGraph graph, Random rand) {
+  ForceAlgorithmObjective(GeneForceAlgorithmConfigurator configurator, IGraph graph, Random rand) {
+    this.configurator = configurator;
     this.graph = graph;
     this.rand = rand;
   }
 
   @Override
   public ForceAlgorithm advance(ForceAlgorithm forceAlgorithm) {
-    BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, 100, 100);
-    // TODO: we need to wait for the other thread here...
+    int iterations = configurator.iterationsPerGeneration.getValue();
+    final BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, iterations, iterations);
     executor.start();
+    synchronized (executor) {
+      try {
+        executor.wait();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        return forceAlgorithm;
+      }
+    }
     return forceAlgorithm;
   }
 

@@ -1,7 +1,7 @@
 
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import layout.algo.genetic.GeneticAlgorithm;
+import layout.algo.genetic.GeneForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.VoidItemFactory;
 import layout.algo.utils.PositionMap;
@@ -89,7 +89,7 @@ public class BatchOptimizer {
   }
   // easier instantiation of ForceAlgorithm
   public static ForceAlgorithm defaultForceAlgorithm(){
-    ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(view, new VoidItemFactory());
+    ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(graph, new VoidItemFactory());
     springThreshholds[1] = 50 * Math.log(graph.getNodes().size());
     return fd;
   }
@@ -166,7 +166,9 @@ public class BatchOptimizer {
       LayoutUtilities.applyLayout(graph, new OrganicLayout());
       initials.add(defaultForceAlgorithm());
 
-      GeneticForceAlgorithmLayout layout = new GeneticForceAlgorithmLayout(graph, initials);
+      GeneForceAlgorithmConfigurator configurator = new GeneForceAlgorithmConfigurator();
+      configurator.init(new VoidItemFactory());
+      GeneticForceAlgorithmLayout layout = new GeneticForceAlgorithmLayout(configurator, graph);
       BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(layout, graph, rounds, rounds);
 
       executor.start();
