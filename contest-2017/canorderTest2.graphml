@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--Created by yFiles for Java 3.1--><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yfj="http://www.yworks.com/xml/yfiles-for-java/3.1" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.java/3.1/ygraphml.xsd ">
+  <key attr.name="NodeLabels" for="node" id="d0" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+  <key attr.name="NodeGeometry" for="node" id="d1" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+  <key attr.name="UserTags" for="all" id="d2" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+  <key attr.name="NodeStyle" for="node" id="d3" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+  <key attr.name="EdgeLabels" for="edge" id="d4" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+  <key attr.name="EdgeGeometry" for="edge" id="d5" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+  <key attr.name="EdgeStyle" for="edge" id="d6" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+  <key attr.name="PortLocationParameter" for="port" id="d7" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+    <default>
+      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
+    </default>
+  </key>
+  <key attr.name="PortStyle" for="port" id="d8" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+    <default>
+      <x:Static Member="y:VoidPortStyle.Instance"/>
+    </default>
+  </key>
+  <key attr.name="SharedData" id="d9" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+  <data key="d9">
+    <y:SharedData>
+      <java:Font xmlns:java="http://www.yworks.com/xml/yfiles-common/1.0/java" Family="Dialog" Size="0" x:Key="1"/>
+      <yfj:Pen Paint="Gray" x:Key="2"/>
+    </y:SharedData>
+  </data>
+  <graph id="G">
+    <node id="n0">
+      <data key="d0">
+        <x:List>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" PreferredSize="4,4">
+            <y:Label.Style>
+              <yfj:DefaultLabelStyle Font="{y:GraphMLReference 1}" TextPaint="White"/>
+            </y:Label.Style>
+            <y:Label.Text>0</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <data key="d1">
+        <y:RectD Height="15.0" Width="15.0" X="272.5" Y="132.5"/>
+      </data>
+      <data key="d3">
+        <yfj:ShinyPlateNodeStyle Paint="Gray" Pen="{y:GraphMLReference 2}" ShadowDrawingEnabled="False"/>
+      </data>
+      <port name="p0"/>
+      <port name="p1"/>
+      <port name="p2"/>
+      <port name="p3"/>
+    </node>
+    <node id="n1">
+      <data key="d0">
+        <x:List>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" PreferredSize="4,4">
+            <y:Label.Style>
+              <yfj:DefaultLabelStyle Font="{y:GraphMLReference 1}" TextPaint="White"/>
+            </y:Label.Style>
+            <y:Label.Text>1</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <data key="d1">
+        <y:RectD Height="15.0" Width="15.0" X="-7.5" Y="132.5"/>
+      </data>
+      <data key="d3">
+        <yfj:ShinyPlateNodeStyle Paint="Gray" Pen="{y:GraphMLReference 2}" ShadowDrawingEnabled="False"/>
+      </data>
+      <port name="p0"/>
+      <port name="p1"/>
+      <port name="p2"/>
+    </node>
+    <node id="n2">
+      <data key="d0">
+        <x:List>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" PreferredSize="4,4">
+            <y:Label.Style>
+              <yfj:DefaultLabelStyle Font="{y:GraphMLReference 1}" TextPaint="White"/>
+            </y:Label.Style>
+            <y:Label.Text>2</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <data key="d1">
+        <y:RectD Height="15.0" Width="15.0" X="132.5" Y="-7.5"/>
+      </data>
+      <data key="d3">
+        <yfj:ShinyPlateNodeStyle Paint="Gray" Pen="{y:GraphMLReference 2}" ShadowDrawingEnabled="False"/>
+      </data>
+      <port name="p0"/>
+      <port name="p1"/>
+      <port name="p2"/>
+      <port name="p3"/>
+    </node>
+    <node id="n3">
+      <data key="d0">
+        <x:List>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" PreferredSize="4,4">
+            <y:Label.Style>
+              <yfj:DefaultLabelStyle Font="{y:GraphMLReference 1}" TextPaint="White"/>
+            </y:Label.Style>
+            <y:Label.Text>3</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <data key="d1">
+        <y:RectD Height="15.0" Width="15.0" X="132.5" Y="62.5"/>
+      </data>
+      <data key="d3">
+        <yfj:ShinyPlateNodeStyle Paint="Gray" Pen="{y:GraphMLReference 2}" ShadowDrawingEnabled="False"/>
+      </data>
+      <port name="p0"/>
+      <port name="p1"/>
+      <port name="p2"/>
+      <port name="p3"/>
+    </node>
+    <node id="n4">
+      <data key="d0">
+        <x:List>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" PreferredSize="4,4">
+            <y:Label.Style>
+              <yfj:DefaultLabelStyle Font="{y:GraphMLReference 1}" TextPaint="White"/>
+            </y:Label.Style>
+            <y:Label.Text>4</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <data key="d1">
+        <y:RectD Height="15.0" Width="15.0" X="166.75" Y="54.0"/>
+      </data>
+      <data key="d3">
+        <yfj:ShinyPlateNodeStyle Paint="Gray" Pen="{y:GraphMLReference 2}" ShadowDrawingEnabled="False"/>
+      </data>
+      <port name="p0"/>
+      <port name="p1"/>
+      <port name="p2"/>
+    </node>
+    <edge id="e0" source="n0" sourceport="p0" target="n1" targetport="p0">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+    <edge id="e1" source="n1" sourceport="p1" target="n2" targetport="p0">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+    <edge id="e2" source="n2" sourceport="p1" target="n3" targetport="p0">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+    <edge id="e3" source="n3" sourceport="p1" target="n0" targetport="p1">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+    <edge id="e4" source="n2" sourceport="p2" target="n0" targetport="p2">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+    <edge id="e5" source="n3" sourceport="p2" target="n1" targetport="p2">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+    <edge id="e6" source="n4" sourceport="p0" target="n0" targetport="p3">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+    <edge id="e7" source="n4" sourceport="p1" target="n3" targetport="p3">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+    <edge id="e8" source="n4" sourceport="p2" target="n2" targetport="p3">
+      <data key="d6">
+        <yfj:PolylineEdgeStyle/>
+      </data>
+    </edge>
+  </graph>
+</graphml>

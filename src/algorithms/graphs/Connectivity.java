@@ -111,14 +111,17 @@ public class Connectivity {
                     // create a new edge and insert it at the correct place (and
                     // it's reverse)
                     //TODO: Ist das richtig umgesetzt mit dem Reverse? MUss noch impl. werden
-                    /*
+
                     Edge newEdge = graph.createEdge(source,
+                            preDart.getOppositeDart().getAssociatedEdge(), target, curDart.getAssociatedEdge(),
+                            com.yworks.yfiles.algorithms.GraphElementInsertion.BEFORE, com.yworks.yfiles.algorithms.GraphElementInsertion.AFTER);
+              /*      Edge newEdge = graph.createEdge(source,
                             plan.getReverse(preEdge), target, curEdge,
                             Graph.BEFORE, Graph.AFTER);
                     Edge newEdgeRev = graph.createEdge(target,
                             plan.getReverse(curEdge), source, preEdge,
                             Graph.AFTER, Graph.BEFORE);
-                    */
+*/
 
                     // update the planar information about the new reverse edges
                    // plan.setReverse(newEdge, newEdgeRev);
@@ -134,7 +137,7 @@ public class Connectivity {
                     //emap.setInt(plan.getReverse(newEdge), preEdgeBCNumber);
 
                     // remember new inserted edge
-                    // insertedEdges.add(newEdge);
+                     insertedEdges.add(newEdge);
 
                     // prepare for next for loop
                     preEdgeBCNumber = curEdgeBCNumber;
@@ -180,7 +183,7 @@ public class Connectivity {
 
         // get start embedding to work with
         int n = graph.getNodeArray().length;
-        PlanarEmbedding plan = new PlanarEmbedding(graph);
+        PlanarEmbedding planarEmbedding = new PlanarEmbedding(graph);
         /*
         CombinatorialEmbedder emb = new CombinatorialEmbedder();
         emb.setPlanarInformation(plan);
@@ -190,17 +193,17 @@ public class Connectivity {
           //  removeInsertedEdges(graph, plan);
             throw new IllegalArgumentException("Input Graph is not planar!");
         }
-        ArrayList<Edge> insertedEdges = makeGraphBiconnectedPlanar(graph, plan, true);
+        ArrayList<Edge> insertedEdges = makeGraphBiconnectedPlanar(graph, planarEmbedding, true);
 
         // calculate new embedding
 
         //emb.dispose();
-        plan = new PlanarEmbedding(graph);
+        planarEmbedding = new PlanarEmbedding(graph);
         //emb.setPlanarInformation(plan);
         //emb.embed();
 
         // for every face check if it is triangulated, if not triangulate it
-        for (List<Dart> face : plan.getFaces()) {
+        for (List<Dart> face : planarEmbedding.getFaces()) {
             triangulateFace(face, graph, insertedEdges);
         }
 

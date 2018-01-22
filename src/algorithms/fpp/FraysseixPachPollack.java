@@ -57,6 +57,7 @@ public class FraysseixPachPollack {
             this.settings = settings;
             multiplierX = settings.scaleFactor;
             multiplierY = -settings.scaleFactor;
+            PlanarEmbedding planarEmbedding = new PlanarEmbedding(graph);
             start();
         }
     }
@@ -100,32 +101,24 @@ public class FraysseixPachPollack {
 
         // triangulate the graph if necessary
         insertedEdges = Connectivity.triangulatePlanarGraph(graph);
-
+        for(Edge edge : insertedEdges){
+            System.out.println("InsertedEdge:   SourceNode: " + edge.source().index() + " TargetNode: " + edge.target());
+        }
         // calculate canonical order
         PlanarEmbedding planarEmbedding = new PlanarEmbedding(graph);
+
    //     CombinatorialEmbedder emb = new CombinatorialEmbedder();
    //     emb.setPlanarInformation(plan);
    //     emb.embed();
 
-        /*   CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
-        //ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
-         transform into one list
+
+
+          // CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
+           CanonicalOrderMy corder = new CanonicalOrderMy(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
+        ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
+        // transform into one list
         ArrayList<Node> canonicalOrder = new ArrayList<Node>();
         orderdpl.forEach(l -> canonicalOrder.add(l.get(0)));
-*/
-
-
-
-       int[] order = {0,1,2,3,4,5,6,7};
-        ArrayList<Node> canonicalOrder = new ArrayList<Node>();
-       for(int i : order){
-           for(Node n : graph.getNodes()){
-               if(n.index() == i){
-                   canonicalOrder.add(n);
-               }
-           }
-       }
-
 
 
         checkForValidOrdering(canonicalOrder);
@@ -229,8 +222,8 @@ public class FraysseixPachPollack {
         outerFace = planarEmbedding.getOuterFace();
         applyFPPresult();
 
-     //   Utilities.removeReversedEdges(g, plan);
-     //   insertedEdges.forEach(e -> g.removeEdge(e));
+       // Utilities.removeReversedEdges(g, plan);
+      //  insertedEdges.forEach(e -> g.removeEdge(e));
 
 
     }
@@ -245,7 +238,7 @@ public class FraysseixPachPollack {
         boolean[] b = new boolean[graph.getNodeArray().length];
         for (Node n : canonicalOrder){
             b[n.index()] = true;
-          //  System.out.println("INDEEX:" + n.index());
+            System.out.println("CanonicalOrder: " + n.index());
         }
 
         boolean test = true;
