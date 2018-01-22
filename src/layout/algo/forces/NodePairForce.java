@@ -25,7 +25,7 @@ public class NodePairForce implements IForce {
         if(n1.equals(n2)) continue;
         PointD p2 = nodePositions.getValue(n2);
         // applying spring force
-        PointD f = doSomething(p1, p2);
+        PointD f = applyElectricForce(p1, p2);
         f1 = PointD.add(f1, f);
       }
       synchronized(forces){
@@ -36,7 +36,7 @@ public class NodePairForce implements IForce {
     return forces;
   }
 
-  private PointD doSomething(PointD p1, PointD p2) {
+  private PointD applyElectricForce(PointD p1, PointD p2) {
     double electricalRepulsion = 50000;
     double threshold = configurator.getNodePairWeight().getValue();
     PointD t = PointD.subtract(p1, p2);

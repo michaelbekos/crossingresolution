@@ -5,12 +5,9 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import com.yworks.yfiles.view.ICanvasObject;
 import layout.algo.utils.PositionMap;
 import util.Tuple4;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 

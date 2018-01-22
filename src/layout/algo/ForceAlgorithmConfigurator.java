@@ -25,10 +25,10 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
     // TODO: reasonable bounds
-    nodePairWeight = itemFactory.doubleParameter("Node Pair Force", 0.01, 2);
-    nodeNeighborWeight = itemFactory.doubleParameter("Node Neighbor Force", 0.01, 2);
-    incidentEdgesForce = itemFactory.doubleParameter("Incident Edges Force", 0.01, 2);
-    crossingForce = itemFactory.doubleParameter("Crossings Force", 0.01, 2);
+    nodePairWeight = itemFactory.doubleParameter("Node Pair Force", 0.01, 2, 0.01);
+    nodeNeighborWeight = itemFactory.doubleParameter("Node Neighbor Force", 0.01, 2, 0.01);
+    incidentEdgesForce = itemFactory.doubleParameter("Incident Edges Force", 0.01, 2,0.01);
+    crossingForce = itemFactory.doubleParameter("Crossings Force", 0.01, 2,0.01);
     perpendicular = itemFactory.booleanParameter("Perpendicular");
 
     nodePairWeight.setValue(0.01);
@@ -45,6 +45,17 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
     weights.add(perpendicular);
 
     debugVectors = itemFactory.debugVectors("Forces");
+  }
+
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems(){
+    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
+    parameterList.add(nodePairWeight);
+    parameterList.add(nodeNeighborWeight);
+    parameterList.add(crossingForce);
+    parameterList.add(incidentEdgesForce);
+    parameterList.add(perpendicular);
+    return parameterList;
   }
 
   public ForceAlgorithmConfigurator copy(ILayoutInterfaceItemFactory itemFactory) {

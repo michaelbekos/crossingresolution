@@ -69,7 +69,7 @@ public class IncidentEdgesForce implements IForce {
         PointD v1 = PointD.subtract(p2, p1);
         PointD v2 = PointD.subtract(p3, p1);
         Double angle = n2n3.c;
-        Tuple2<PointD, PointD> f = doSomething(v1, v2, angle, n1degree);
+        Tuple2<PointD, PointD> f = applyIncidentEdgeForce(v1, v2, angle, n1degree);
         f2 = PointD.add(f2, f.a);
         f3 = PointD.add(f3, f.b);
         synchronized(forces){
@@ -91,7 +91,7 @@ public class IncidentEdgesForce implements IForce {
     return forces;
   }
 
-  private Tuple2<PointD, PointD> doSomething(PointD e1, PointD e2, double angle, int deg) {
+  private Tuple2<PointD, PointD> applyIncidentEdgeForce(PointD e1, PointD e2, double angle, int deg) {
     if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
     double threshold = configurator.getIncidentEdgesForce().getValue(),
         optAngle = (360 / deg);

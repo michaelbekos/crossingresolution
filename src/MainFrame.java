@@ -1,16 +1,18 @@
 import com.sun.istack.internal.Nullable;
+import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
-import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.graph.IEdge;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.IModelItem;
+import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithm;
 import layout.algo.layoutinterface.SidePanelItemFactory;
-
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,8 +56,10 @@ public class MainFrame extends JFrame {
 
     @Nullable
     public ForceAlgorithm forceAlgorithm = null;
-    public JPanel sidePanel;
+    public JTabbedPane sidePanel;
     public SidePanelItemFactory sidePanelItemFactory;
+
+    InitMenuBar menuBar;
 
 
     // for this class, we can instantiate defaultForceAlgorithm and do some post-initializing
@@ -247,7 +251,7 @@ public class MainFrame extends JFrame {
 
 
     private void initMenuBar() {
-        InitMenuBar menuBar = new InitMenuBar(
+        this.menuBar = new InitMenuBar(
             this,
             graph,
             infoLabel,

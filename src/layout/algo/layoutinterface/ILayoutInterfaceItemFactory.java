@@ -5,7 +5,8 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 
 public interface ILayoutInterfaceItemFactory {
-  AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue);
+  AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold);
+  AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, int threshold);
   AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name);
 
   AbstractLayoutInterfaceItem<Mapper<INode, PointD>> debugVectors(String name);

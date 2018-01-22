@@ -3,9 +3,9 @@ package layout.algo.layoutinterface;
 import javax.swing.*;
 
 public class SidePanelItem<T> extends AbstractLayoutInterfaceItem<T> {
-  final JPanel sidePanel;
+  final JTabbedPane sidePanel;
 
-  SidePanelItem(String name, JPanel sidePanel) {
+  SidePanelItem(String name, JTabbedPane sidePanel) {
     super(name);
     this.sidePanel = sidePanel;
   }

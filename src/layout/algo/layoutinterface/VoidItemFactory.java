@@ -7,7 +7,12 @@ import com.yworks.yfiles.graph.Mapper;
 public class VoidItemFactory implements ILayoutInterfaceItemFactory{
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue) {
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold) {
+    return new VoidItem<>(name);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, int threshold) {
     return new VoidItem<>(name);
   }
 

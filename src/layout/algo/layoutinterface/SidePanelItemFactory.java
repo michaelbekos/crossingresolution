@@ -8,17 +8,22 @@ import com.yworks.yfiles.view.GraphComponent;
 import javax.swing.*;
 
 public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
-  private JPanel sidePanel;
+  private JTabbedPane sidePanel;
   private GraphComponent view;
 
-  public SidePanelItemFactory(JPanel sidePanel, GraphComponent view) {
+  public SidePanelItemFactory(JTabbedPane sidePanel, GraphComponent view) {
     this.sidePanel = sidePanel;
     this.view = view;
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue) {
-    return new DoubleSidePanelItem(name, sidePanel, minValue, maxValue);
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold) {
+    return new DoubleSidePanelItem(name, sidePanel, minValue, maxValue, threshold);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, int threshold) {
+    return new IntegerSidePanelItem(name, sidePanel, minValue, maxValue, threshold);
   }
 
   @Override

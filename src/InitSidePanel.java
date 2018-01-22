@@ -1,142 +1,461 @@
+import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.GraphItemTypes;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.graph.LayoutUtilities;
-import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import layout.algo.ForceAlgorithm;
+import layout.algo.*;
+import layout.algo.forces.CrossingForce;
+import layout.algo.forces.IncidentEdgesForce;
+import layout.algo.forces.NodeNeighbourForce;
+import layout.algo.forces.NodePairForce;
 import layout.algo.genetic.GeneticAlgorithm;
-import layout.algo.IGraphLayoutExecutor;
-import layout.algo.TrashCan;
+import layout.algo.layoutinterface.*;
 import layout.algo.utils.PositionMap;
 import util.GraphOperations;
-import util.Tuple4;
-import util.interaction.ThresholdSliders;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Optional;
 
 public class InitSidePanel {
     private MainFrame mainFrame;
+    private JTabbedPane tabbedSidePane;
 
     public InitSidePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+        this.tabbedSidePane = new JTabbedPane();
     }
 
-    public JPanel initSidePanel(JPanel mainPanel, GridBagConstraints c) {
-        // TODO:
-        Tuple4<JPanel, JSlider[], JSpinner[], Integer> slidPanelSlidersCount = ThresholdSliders.create(new Double[0], new String[]{"Electric force", " ", "Crossing force", "Incident edges force"});
-        JPanel sidePanel = slidPanelSlidersCount.a;
-/*        mainFrame.sliders = slidPanelSlidersCount.b;
-        slidPanelSlidersCount.c[1].setVisible(false);
-        mainFrame.sliders[1].setVisible(false);
-        int sidePanelNextY = slidPanelSlidersCount.d;*/
-        c.gridy = 1;
-        c.gridx = 1;
-        c.weighty = 1;
-        c.weightx = 0.2;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.fill = GridBagConstraints.VERTICAL;
-        mainPanel.add(sidePanel, c);
-/*        //mainPanel.add(sliders, BorderLayout.LINE_END);
+    public JTabbedPane initSidePanel(JPanel mainPanel, GridBagConstraints c) {
+
+        GridBagConstraints cc = new GridBagConstraints();
+        cc.gridx = 1;
+        cc.gridy = 1;
+        cc.weighty = 1;
+        cc.weightx = 0.2;
+        cc.insets = new Insets(0, 0, 0, 0);
+        cc.fill = GridBagConstraints.BOTH;
+
+        TrashCan.init();
+
+//----------------------------------------
+
+        RandomMovementConfigurator config = new RandomMovementConfigurator();
+        config.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
+
+        RandomMovementLayout layout = new RandomMovementLayout(mainFrame.graph, config);
+        IGraphLayoutExecutor layoutExecutor = new IGraphLayoutExecutor(layout, mainFrame.graph, mainFrame.progressBar, -1, 20);
+
+        addAlgorithm("Random Movement", config, layoutExecutor);
+//----------------------------------------
+
+//        ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
+
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator();
+        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
+
+        CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
+        ForceAlgorithm fd = new ForceAlgorithm(configurator, mainFrame.view, cMinimumAngle);
+
+        IGraph graph = mainFrame.view.getGraph();
+
+        fd.forces.add(new NodeNeighbourForce(configurator, graph));
+        fd.forces.add(new NodePairForce(configurator, graph));
+        fd.forces.add(new CrossingForce(configurator, graph, cMinimumAngle));
+        fd.forces.add(new IncidentEdgesForce(configurator, graph));
+
+        IGraphLayoutExecutor forceExecutor = new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
+        mainFrame.view.updateUI();
+
+        addAlgorithm("Force Algorithm", configurator, forceExecutor);
+//----------------------------------------
+        //Config, layout, layoutexecutor for all other algos too
+        addAlgorithm("Genetic Algorithm", null, null);
+        addAlgorithm("Clinch Nodes", null, null);
+        addAlgorithm("Sloped Spring Embedder", null, null);
+
+
+//----------------------------------------
+
+////        ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
+////        mainFrame.forceAlgorithm = fd;
+//
+//        ForceAlgorithmConfigurator springConfigurator = new ForceAlgorithmConfigurator();
+//        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
+//
+////        CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
+//        ForceAlgorithm springfd = new ForceAlgorithm(configurator, mainFrame.view, cMinimumAngle);
+//
+////        IGraph graph = mainFrame.view.getGraph();
+//
+//        springfd.forces.add(new NodeNeighbourForce(configurator, graph));
+//        springfd.forces.add(new NodePairForce(configurator, graph));
+//        springfd.forces.add(new CrossingForce(configurator, graph, cMinimumAngle));
+//        springfd.forces.add(new IncidentEdgesForce(configurator, graph));
+//
+//        IGraphLayoutExecutor springEmbedderExecutor = new IGraphLayoutExecutor(fd, mainFrame.graph, mainFrame.progressBar, iterations, 20);
+//        mainFrame.view.updateUI();
+//
+//        addAlgorithm("Spring Embedder", springConfigurator, springEmbedderExecutor);
+//----------------------------------------
+
+        addMiscAlgorithms();
+
+        mainPanel.add(tabbedSidePane, cc);
+
+        return tabbedSidePane;
+    }
+
+    /**
+     * Adds an algorithm in a new tab, top panel is defined by the configurator, bottom is the default panel
+     * @param algorithmName - name of tab
+     * @param configurator - which and what parameters
+     * @param executor - interface to algorithm for start/pause/stop buttons and controls for above parameters
+     */
+    private void addAlgorithm(String algorithmName, ILayoutConfigurator configurator, IGraphLayoutExecutor executor) {
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new GridBagLayout());
         GridBagConstraints cSidePanel = new GridBagConstraints();
-        //WARNING: POST-INCREMENT!
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        sidePanel.add(new JLabel("Genetic ForceAlgorithm round time"), cSidePanel);
-        JSlider geneticSlider = new JSlider(0, 1000);
-        geneticSlider.setSize(0, 500);
-        geneticSlider.setValue(mainFrame.faRunningTimeGenetic);
-        geneticSlider.addChangeListener(e-> {
-            JSlider source = (JSlider) e.getSource();
-            mainFrame.faRunningTimeGenetic = source.getValue();
-            System.out.println("magic number:" + mainFrame.faRunningTimeGenetic);
-        });
-        cSidePanel.gridx = 0;
-        cSidePanel.gridy = sidePanelNextY++;
-        sidePanel.add(geneticSlider, cSidePanel);
-        cSidePanel.gridy = sidePanelNextY++;
-        JButton startGenetic = new JButton("Start genetic algo"),
-                stopGenetic  = new JButton("Stop genetic algo");
-        startGenetic.addActionListener(this::startGeneticClicked);
-        stopGenetic.addActionListener(this::stopGeneticClicked);
-        sidePanel.add(startGenetic, cSidePanel);
-        cSidePanel.gridx = 1;
-        sidePanel.add(stopGenetic, cSidePanel);
-        cSidePanel.gridy = sidePanelNextY++;
 
-        cSidePanel.gridx = 0;
-        cSidePanel.gridy = sidePanelNextY++;
+        //algorithm configurator specific controls
+        JPanel custom = new JPanel();
+        custom.setLayout(new GridBagLayout());
+        GridBagConstraints cCustomPanel = new GridBagConstraints();
+        cCustomPanel.gridx = 0;
+        cCustomPanel.gridy = 1;
+//        cCustomPanel.anchor = GridBagConstraints.PAGE_START;
 
-        JRadioButton forceDirectionPerpendicular = new JRadioButton("Perpendicular"),
-                forceDirectionNonPerpendicular = new JRadioButton("Non Perpendicular");
-        cSidePanel.gridx = 0;
-        sidePanel.add(forceDirectionPerpendicular,cSidePanel);
-        forceDirectionPerpendicular.setSelected(true);
-        forceDirectionPerpendicular.addActionListener(this::forceDirectionPerpendicularActionPerformed);
-        cSidePanel.gridx = 1;
-        sidePanel.add(forceDirectionNonPerpendicular,cSidePanel);
-        forceDirectionNonPerpendicular.setSelected(false);
-        forceDirectionNonPerpendicular.addActionListener(this::forceDirectionNonPerpendicularActionPerformed);
+        int cCustomPanelY = 1;
+        if (configurator != null && configurator.getAbstractLayoutInterfaceItems() != null) {
+            ArrayList<AbstractLayoutInterfaceItem> parameters = configurator.getAbstractLayoutInterfaceItems();
+            for (int i = 0; i < parameters.size(); i++) {
+                cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+                cCustomPanel.gridx = 0;
+                cCustomPanel.gridy = cCustomPanelY;
+                if (parameters.get(i).getValue().getClass().equals(Double.class)) {
+                    //add slider
+                    GridBagConstraints cLabel = new GridBagConstraints();
+                    GridBagConstraints cSlider = new GridBagConstraints();
+                    GridBagConstraints cSliderMax = new GridBagConstraints();
+                    cSlider.fill = GridBagConstraints.HORIZONTAL;
 
-        ButtonGroup group = new ButtonGroup();
-        group.add(forceDirectionNonPerpendicular);
-        group.add(forceDirectionPerpendicular);
+                    DoubleSidePanelItem item = (DoubleSidePanelItem) parameters.get(i);
+                    double[] threshold = {item.getThreshold()};
+                    JTextField out = new JTextField(Double.toString(item.getValue()));
+                    out.setColumns(5);
+                    GridBagConstraints cout = new GridBagConstraints();
 
-        JRadioButton optimizingAngleNinty = new JRadioButton("Optimizing Angle Crossing: 90°"),
-                optimizingAngleSixty = new JRadioButton("Optimizing Angle Crossing: 60°");
+                    double max = item.getMaxValue();
+                    JSlider slider = new JSlider(0, (int) (max * 1000 * threshold[0]));
+//                    slider.setValue((int) (1000 * threshold[0]));
+                    slider.setValue((int) (1000 * item.getValue()));
+                    slider.addChangeListener(new ChangeListener() {
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                            JSlider source = (JSlider) e.getSource();
+                            int val = source.getValue();
+                            threshold[0] = val / 1000.0;    //TODO less messy
+                            item.setValue(threshold[0]);
+                            out.setText(Double.toString(threshold[0]));
+//                            System.out.println(threshold[0]);
+                        }
+                    });
 
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        sidePanel.add(optimizingAngleNinty,cSidePanel);
-        optimizingAngleNinty.setSelected(true);
-        optimizingAngleNinty.addActionListener(this::optimizingAngleNintyActionPerformed);
-        cSidePanel.gridx = 1;
-        sidePanel.add(optimizingAngleSixty,cSidePanel);
-        optimizingAngleSixty.setSelected(false);
-        optimizingAngleSixty.addActionListener(this::optimizingAngleSixtyActionPerformed);
+                    SpinnerModel model = new SpinnerNumberModel(max * threshold[0], threshold[0] / 10.0, 1000 * max * threshold[0], threshold[0] / 10.0);
+                    JSpinner spinner = new JSpinner(model);
+                    JComponent editor = new JSpinner.NumberEditor(spinner, "#,##0.###");
+                    spinner.setEditor(editor);
+                    ((JSpinner.DefaultEditor) (spinner.getEditor())).getTextField().setColumns(5);
+                    spinner.addChangeListener(new ChangeListener() {
+                        final JSlider s = slider;
 
-        ButtonGroup angleGroup = new ButtonGroup();
-        angleGroup.add(optimizingAngleNinty);
-        angleGroup.add(optimizingAngleSixty);
+                        public void stateChanged(ChangeEvent e) {
+                            JSpinner source = (JSpinner) e.getSource();
+                            Double val = (Double) source.getValue();
+                            int maxValSlider = (int) (val * 1000);
+                            s.setMaximum(maxValSlider);
+                        }
+                    });
 
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        JButton startForce = new JButton("Start force algo"),
-                stopForce  = new JButton("Stop force algo");
-        startForce.addActionListener(this::startForceClicked);
-        stopForce.addActionListener(this::stopForceClicked);
 
-        sidePanel.add(startForce, cSidePanel);
-        cSidePanel.gridx = 1;
-        sidePanel.add(stopForce, cSidePanel);
+                    slider.setSize(400, 30);
+                    cLabel.gridx = 1;
+                    cLabel.gridy = ++cCustomPanelY;
 
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        JButton showForces = new JButton("Show forces");
-        showForces.addActionListener(e -> {
-            if (mainFrame.forceAlgorithm == null) {
-                mainFrame.forceAlgorithm = mainFrame.defaultForceAlgorithm(0);
+                    cout.gridx = 0;
+                    cout.gridy = ++cCustomPanelY;
+                    cout.fill = GridBagConstraints.HORIZONTAL;
+                    cSlider.gridx = 1;
+                    cSlider.gridy = cCustomPanelY;
+                    cSlider.fill = GridBagConstraints.HORIZONTAL;
+                    cSliderMax.gridy = cCustomPanelY;
+                    cSliderMax.gridx = 2;
+                    cSliderMax.fill = GridBagConstraints.HORIZONTAL;
+                    custom.add(new JLabel(parameters.get(i).getName()), cLabel);
+                    custom.add(out, cout);
+                    custom.add(slider, cSlider);
+                    custom.add(spinner, cSliderMax);
+
+                } else if (parameters.get(i).getValue().getClass().equals(Boolean.class)) {
+                    //add checkbox
+                    cCustomPanel.gridy = ++cCustomPanelY;
+                    cCustomPanel.gridx = 0;
+                    JCheckBox checkBox = new JCheckBox(parameters.get(i).getName());
+                    custom.add(checkBox, cCustomPanel);
+                    BoolSidePanelItem item = (BoolSidePanelItem) parameters.get(i);
+                    checkBox.addItemListener(new ItemListener() {
+                        @Override
+                        public void itemStateChanged(ItemEvent itemEvent) {
+                            item.setValue((itemEvent.getStateChange() == ItemEvent.SELECTED));
+                        }
+                    });
+//                    checkBox.addItemListener(this::minimumAngleDisplayEnabled);
+                    checkBox.setSelected((boolean) parameters.get(i).getValue());
+
+                } else if (parameters.get(i).getValue().getClass().equals(Integer.class)) {
+                    //maybe textfield vs slider for ints?
+                    //add slider
+                    GridBagConstraints cLabel = new GridBagConstraints();
+                    GridBagConstraints cSlider = new GridBagConstraints();
+                    GridBagConstraints cSliderMax = new GridBagConstraints();
+                    cSlider.fill = GridBagConstraints.HORIZONTAL;
+
+                    IntegerSidePanelItem item = (IntegerSidePanelItem) parameters.get(i);
+                    double[] threshold = {item.getThreshold()};
+                    JTextField out = new JTextField(Double.toString(item.getValue()));
+                    out.setColumns(5);
+                    GridBagConstraints cout = new GridBagConstraints();
+
+                    double max = item.getMaxValue();
+                    JSlider slider = new JSlider(item.getMinValue(), item.getMaxValue());
+                    slider.setValue(item.getValue());
+                    slider.addChangeListener(new ChangeListener() {
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                            JSlider source = (JSlider) e.getSource();
+                            int val = source.getValue();
+                            item.setValue(val);
+                            executor.setMaxIterations(val);
+                            out.setText(Integer.toString(val));
+                        }
+                    });
+
+                    SpinnerModel model = new SpinnerNumberModel(max * threshold[0], threshold[0] / 10.0, 1000 * max * threshold[0], threshold[0] / 10.0);
+                    JSpinner spinner = new JSpinner(model);
+                    JComponent editor = new JSpinner.NumberEditor(spinner, "#,##0.###");
+                    spinner.setEditor(editor);
+                    ((JSpinner.DefaultEditor) (spinner.getEditor())).getTextField().setColumns(5);
+                    spinner.addChangeListener(new ChangeListener() {
+                        final JSlider s = slider;
+
+                        public void stateChanged(ChangeEvent e) {
+                            JSpinner source = (JSpinner) e.getSource();
+                            s.setMaximum((int) source.getValue());
+                        }
+                    });
+
+                    slider.setSize(400, 30);
+                    cLabel.gridx = 1;
+                    cLabel.gridy = ++cCustomPanelY;
+
+                    cout.gridx = 0;
+                    cout.gridy = ++cCustomPanelY;
+                    cout.fill = GridBagConstraints.HORIZONTAL;
+                    cSlider.gridx = 1;
+                    cSlider.gridy = cCustomPanelY;
+//                    cSlider.gridwidth = 7;
+                    cSlider.fill = GridBagConstraints.HORIZONTAL;
+                    cSliderMax.gridy = cCustomPanelY;
+                    cSliderMax.gridx = 2;
+//                    cSlider.gridwidth =  1;
+//                    cSliderMax.weightx = 0.2;
+                    cSliderMax.fill = GridBagConstraints.HORIZONTAL;
+                    custom.add(new JLabel(parameters.get(i).getName()), cLabel);
+                    custom.add(out, cout);
+                    custom.add(slider, cSlider);
+                    custom.add(spinner, cSliderMax);
+
+                }
             }
-            mainFrame.forceAlgorithm.showForces();
-        });
-        sidePanel.add(showForces, cSidePanel);
 
-        cSidePanel.gridx = 1;
-        JButton showBestSolution = new JButton("Show best");
+
+            cSidePanel.fill = GridBagConstraints.BOTH;
+            cSidePanel.gridx = 0;
+            cSidePanel.gridy = 0;
+//        cSidePanel.weightx = 1;
+            cSidePanel.weighty = 1;
+            cSidePanel.anchor = GridBagConstraints.FIRST_LINE_START;
+            sidePanel.add(custom, cSidePanel);
+
+
+            //default controls (start, pause, manual mode, min angle, output, etc)
+            cSidePanel.fill = GridBagConstraints.HORIZONTAL;
+            cSidePanel.gridx = 0;
+            cSidePanel.gridy = 1;
+            cSidePanel.weightx = 0;
+            cSidePanel.weighty = 0;
+            sidePanel.add(getDefaultPanel(executor), cSidePanel);
+
+            tabbedSidePane.addTab(algorithmName, sidePanel);
+        } else {
+            //empty custom with only lean default controls
+            cSidePanel.fill = GridBagConstraints.BOTH;
+            cSidePanel.gridx = 0;
+            cSidePanel.gridy = 0;
+//        cSidePanel.weightx = 1;
+            cSidePanel.weighty = 1;
+            cSidePanel.anchor = GridBagConstraints.FIRST_LINE_START;
+            sidePanel.add(custom, cSidePanel);
+
+            //default controls (manual mode, min angle, output, etc)
+            cSidePanel.fill = GridBagConstraints.HORIZONTAL;
+            cSidePanel.gridx = 0;
+            cSidePanel.gridy = 1;
+            cSidePanel.weightx = 0;
+            cSidePanel.weighty = 0;
+            sidePanel.add(getLeanDefaultPanel(), cSidePanel);
+            tabbedSidePane.addTab(algorithmName, sidePanel);
+        }
+    }
+
+    /**
+     * Adds all algorithms that do not need a separate tab
+     */
+    private void addMiscAlgorithms() {
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new GridBagLayout());
+        GridBagConstraints cSidePanel = new GridBagConstraints();
+
+        //misc algorithms
+        JPanel custom = new JPanel();
+        custom.setLayout(new GridBagLayout());
+        GridBagConstraints cCustomPanel = new GridBagConstraints();
+        cCustomPanel.gridx = 0;
+//        cCustomPanel.gridy = 1;
+//        cCustomPanel.anchor = GridBagConstraints.PAGE_START;
+//        cCustomPanel.insets= new Insets(5,5,5,5);
+
+        int cCustomPanelY = 1;
+
+
+        JButton orthogonalItem = new JButton("Orthogonal Layout");
+//        JButton orthogonalItem = new JButton("<html>Orthogonal <br />Layout</html>");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 0;
+        cCustomPanel.gridy = cCustomPanelY;
+        orthogonalItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainFrame.menuBar.orthogonalItemActionPerformed(actionEvent);
+            }
+        });
+        custom.add(orthogonalItem, cCustomPanel);
+
+        JButton circularItem = new JButton("Circular Layout");
+//        JButton circularItem = new JButton("<html>Circular <br />Layout</html>");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 1;
+        cCustomPanel.gridy = cCustomPanelY;
+        circularItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainFrame.menuBar.circularItemActionPerformed(actionEvent);
+            }
+        });
+        custom.add(circularItem, cCustomPanel);
+
+        JButton treeItem = new JButton("Tree Layout");
+//        JButton treeItem = new JButton("<html>Tree <br />Layout</html>");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 0;
+        cCustomPanel.gridy = ++cCustomPanelY;
+        treeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainFrame.menuBar.treeItemActionPerformed(actionEvent);
+            }
+        });
+        custom.add(treeItem, cCustomPanel);
+
+        JButton organicItem = new JButton("Organic Layout");
+//        JButton organicItem = new JButton("<html>Organic <br />Layout</html>");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 1;
+        cCustomPanel.gridy = cCustomPanelY;
+        organicItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainFrame.menuBar.organicItemActionPerformed(actionEvent);
+            }
+        });
+        custom.add(organicItem, cCustomPanel);
+
+
+        JButton yFilesSpringEmbedderItem = new JButton("yFiles Spring Embedder");
+//        JButton yFilesSpringEmbedderItem = new JButton("<html>yFiles Spring <br />Embedder</html>");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 0;
+        cCustomPanel.gridy = ++cCustomPanelY;
+        yFilesSpringEmbedderItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainFrame.menuBar.yFilesSpringEmbedderItemActionPerformed(actionEvent);
+            }
+        });
+        custom.add(yFilesSpringEmbedderItem, cCustomPanel);
+
+
+
+        cSidePanel.fill = GridBagConstraints.HORIZONTAL;
+        cSidePanel.gridx = 0;
+        cSidePanel.gridy = 0;
+//        cSidePanel.weightx = 1;
+        cSidePanel.weighty = 1;
+//        cSidePanel.anchor = GridBagConstraints.FIRST_LINE_START;
+        sidePanel.add(custom, cSidePanel);
+
+        //default controls (manual mode, min angle, output, etc)
+        cSidePanel.fill = GridBagConstraints.HORIZONTAL;
+        cSidePanel.gridx = 0;
+        cSidePanel.gridy = 1;
+        cSidePanel.weightx = 0;
+        cSidePanel.weighty = 0;
+        sidePanel.add(getLeanDefaultPanel(), cSidePanel);
+
+        tabbedSidePane.addTab("Misc.", sidePanel);
+    }
+
+    /**
+     * returns default panel without start/stop controls
+     * @return - lean default panel
+     */
+    private JPanel getLeanDefaultPanel() {
+        //lean default panel
+        JPanel defaultPanel = new JPanel();
+        defaultPanel.setLayout(new GridBagLayout());
+        GridBagConstraints cDefaultPanel = new GridBagConstraints();
+        int cDefaultPanelY = 0; //current y pos, preincrement: myPanel.gridy = ++cDefaultPanelY;
+//        defaultPanel.add(new JLabel("my second pane "));
+
+
+        JButton showBestSolution = new JButton("Show best");    //TODO: fix best solution
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
         showBestSolution.addActionListener(e -> {
-            if (bestSolution == null) {
+            if (TrashCan.bestSolution == null) {
                 return;
             }
 
-            Mapper<INode, PointD> nodePositions = bestSolution.a;
-            Optional<Double> minCrossingAngle = bestSolution.b;
-            Double[] mods = bestSolution.c;
-            Boolean[] switchs = bestSolution.d;
+            Mapper<INode, PointD> nodePositions = TrashCan.bestSolution.a;
+            Optional<Double> minCrossingAngle = TrashCan.bestSolution.b;
+            Double[] mods = TrashCan.bestSolution.c;
+            Boolean[] switchs = TrashCan.bestSolution.d;
             PositionMap.applyToGraph(mainFrame.graph, nodePositions);
             String msg = minCrossingAngle.map(d -> "Minimum crossing angle: " + d.toString()).orElse("No crossings!");
             msg += "\n";
@@ -155,36 +474,184 @@ public class InitSidePanel {
             }
             JOptionPane.showMessageDialog(null, msg);
         });
-        sidePanel.add(showBestSolution, cSidePanel);
-
-        cSidePanel.gridy = sidePanelNextY++;
-        cSidePanel.gridx = 0;
-        JButton showForceAlgoState = new JButton("Show state");
-        showForceAlgoState.addActionListener(e -> PositionMap.applyToGraph(mainFrame.graph, mainFrame.forceAlgorithm.getNodePositions()));
-        sidePanel.add(showForceAlgoState, cSidePanel);
+        defaultPanel.add(showBestSolution, cDefaultPanel);
 
         JButton scaleToBox = new JButton("Scale me to the box");
-        cSidePanel.gridx = 1;
-        sidePanel.add(scaleToBox, cSidePanel);
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        defaultPanel.add(scaleToBox, cDefaultPanel);
         scaleToBox.addActionListener(e -> scalingToBox());
         scaleToBox.setSelected(false);
 
-
         JCheckBox enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
-        cSidePanel.gridx = 0;
-        cSidePanel.gridy = sidePanelNextY++;
-        sidePanel.add(enableMinimumAngleDisplay, cSidePanel);
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);
         enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
-        enableMinimumAngleDisplay.setSelected(false);
-
+        enableMinimumAngleDisplay.setSelected(true);
 
         JCheckBox allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
-        cSidePanel.gridx = 1;
-        sidePanel.add(allowClickCreateNodeEdge, cSidePanel);
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
         allowClickCreateNodeEdge.setSelected(true);
-*/
-        return sidePanel;
+
+        JTextArea output = new JTextArea("Output");
+        output.setLineWrap(true);
+        output.setRows(5);
+        JScrollPane test = new JScrollPane(output);
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 1;
+        cDefaultPanel.weighty = 0;
+        cDefaultPanel.insets = new Insets(10,10,10,10);
+        cDefaultPanel.gridwidth = 3;
+        defaultPanel.add(test, cDefaultPanel);
+        return defaultPanel;
+    }
+
+    /**
+     * returns the default panel for all algorithms (start/pause, stop, manual mode, min angle, output)
+     * @param executor - interface start/stop etc to algorithm
+     * @return default panel
+     */
+    private JPanel getDefaultPanel(IGraphLayoutExecutor executor) {
+        JPanel defaultPanel = new JPanel();
+        defaultPanel.setLayout(new GridBagLayout());
+        GridBagConstraints cDefaultPanel = new GridBagConstraints();
+        int cDefaultPanelY = 0; //current y pos, preincrement: myPanel.gridy = ++cDefaultPanelY;
+//        defaultPanel.add(new JLabel("my second pane "));
+
+        JButton button1 = new JButton("Start");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = cDefaultPanelY;
+//        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+//        cDefaultPanel.insets = new Insets(0,10,0,0);
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (button1.getText().equals("Start") || button1.getText().equals("Continue")) {
+                    if (executor.isRunning()) {
+                        button1.setText("Pause");
+                        executor.unpause();
+                    } else {
+                        if (executor.isFinished()) {
+                            button1.setText("Start");
+                        } else {
+                            button1.setText("Pause");
+//                        button1.setBackground(Color.green);
+                            executor.start();
+                        }
+                    }
+                } else if (button1.getText().equals("Pause")) {
+                    button1.setText("Continue");
+                    executor.pause();
+                }
+            }
+        });
+        defaultPanel.add(button1, cDefaultPanel);
+
+        JButton button2 = new JButton("Stop");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+//        cDefaultPanel.weightx = 0.;
+        cDefaultPanel.weighty = 0;
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                button1.setText("Start");
+                executor.stop();
+            }
+        });
+        defaultPanel.add(button2, cDefaultPanel);
+
+
+
+        JButton showBestSolution = new JButton("Show best");    //TODO: fix best solution
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        showBestSolution.addActionListener(e -> {
+            if (TrashCan.bestSolution == null) {
+                return;
+            }
+
+            Mapper<INode, PointD> nodePositions = TrashCan.bestSolution.a;
+            Optional<Double> minCrossingAngle = TrashCan.bestSolution.b;
+            Double[] mods = TrashCan.bestSolution.c;
+            Boolean[] switchs = TrashCan.bestSolution.d;
+            PositionMap.applyToGraph(mainFrame.graph, nodePositions);
+            String msg = minCrossingAngle.map(d -> "Minimum crossing angle: " + d.toString()).orElse("No crossings!");
+            msg += "\n";
+            msg += "Modifiers:\n";
+            for(int i = 0; i < mods.length; i++){
+                Double d = mods[i];
+                mainFrame.sliders[i].setValue((int) (1000 * d));
+                //noinspection StringConcatenationInLoop
+                msg += "\t" + d.toString() + "\n";
+            }
+            msg += "\n";
+            msg += "Switches:\n";
+            for(Boolean b: switchs){
+                //noinspection StringConcatenationInLoop
+                msg += "\n\t" + b.toString() + "\n";
+            }
+            JOptionPane.showMessageDialog(null, msg);
+        });
+        defaultPanel.add(showBestSolution, cDefaultPanel);
+
+        JButton scaleToBox = new JButton("Scale me to the box");
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        defaultPanel.add(scaleToBox, cDefaultPanel);
+        scaleToBox.addActionListener(e -> scalingToBox());
+        scaleToBox.setSelected(false);
+
+        JCheckBox enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);
+        enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
+        enableMinimumAngleDisplay.setSelected(true);
+
+        JCheckBox allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
+        allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
+        allowClickCreateNodeEdge.setSelected(true);
+
+        JTextArea output = new JTextArea("Output");
+        output.setLineWrap(true);
+        output.setRows(5);
+        JScrollPane test = new JScrollPane(output);
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 1;
+        cDefaultPanel.weighty = 0;
+        cDefaultPanel.insets = new Insets(10,10,10,10);
+        cDefaultPanel.gridwidth = 3;
+        defaultPanel.add(test, cDefaultPanel);
+
+        return defaultPanel;
     }
 
     /*********************************************************************
@@ -206,16 +673,16 @@ public class InitSidePanel {
     }
 
     private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-//        if(mainFrame.forceAlgorithm == null){
-//            TrashCan.init();
-//            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
-//            mainFrame.forceAlgorithm = fd;
-//            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
-//            IGraphLayoutExecutor executor =
-//                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
-//            executor.run();
-//            mainFrame.view.updateUI();
-//        }
+        if(mainFrame.forceAlgorithm == null){
+            TrashCan.init();
+            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
+            mainFrame.forceAlgorithm = fd;
+            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
+            IGraphLayoutExecutor executor =
+                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
+            executor.run();
+            mainFrame.view.updateUI();
+        }
     }
 
     private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){

@@ -26,7 +26,7 @@ public class NodeNeighbourForce implements IForce {
       for(INode n2: graph.neighbors(INode.class, n1)){
 
         PointD p2 = nodePositions.getValue(n2);
-        PointD f = doSomething(p1, p2);
+        PointD f = applySpringForce(p1, p2);
         f1 = PointD.add(f1, f);
       }
       synchronized(forces){
@@ -37,7 +37,7 @@ public class NodeNeighbourForce implements IForce {
     return forces;
   }
 
-  private PointD doSomething(PointD p1, PointD p2) {
+  private PointD applySpringForce(PointD p1, PointD p2) {
     double springNaturalLength = configurator.getNodeNeighborWeight().getValue();
     PointD t = PointD.subtract(p2, p1);
     double dist = t.getVectorLength();

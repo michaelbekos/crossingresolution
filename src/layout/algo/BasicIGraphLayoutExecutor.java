@@ -11,7 +11,7 @@ import java.util.Map;
 public class BasicIGraphLayoutExecutor {
   private final IGraph graph;
   private final ILayout layout;
-  final int maxIterations;
+  int maxIterations;
   private final int numberOfCyclesBetweenViewUpdates;
   private boolean running;
   private boolean finished;
@@ -38,6 +38,7 @@ public class BasicIGraphLayoutExecutor {
       synchronized (this.graph) {
         compoundEdit = graph.beginEdit("Undo layout", "Redo layout");
       }
+      run();
     }
   }
 
@@ -68,7 +69,7 @@ public class BasicIGraphLayoutExecutor {
     //iterations < 0 infinite loop
     //iterations > 0 runs for # of iterations
     new Thread(() -> {
-      start();     //remove when start/stop button exists
+//      start();     //remove when start/stop button exists
       layout.init();
       while (!finished) {
         while (running) {
@@ -107,5 +108,21 @@ public class BasicIGraphLayoutExecutor {
 
   protected void updateProgress(int iteration) {
     System.out.println(iteration + "/" + maxIterations);
+  }
+
+  public boolean isRunning() {
+    return running;
+  }
+
+  public boolean isFinished() {
+    return finished;
+  }
+
+  public void setMaxIterations(int maxIterations) {
+    this.maxIterations = maxIterations;
+    if (this.currentIteration >= maxIterations) {
+      this.currentIteration = maxIterations;
+      stop();
+    }
   }
 }

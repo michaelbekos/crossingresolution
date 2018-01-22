@@ -855,7 +855,7 @@ public class InitMenuBar {
         }
     }
 
-    private void yFilesSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt){
+    public void yFilesSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt){
         JTextField iterationsTextField = new JTextField("1000");
         int iterations = 1000;
 
@@ -1090,20 +1090,20 @@ public class InitMenuBar {
         showFileChooser(new JFileChooser(this.fileNamePathFolder));
     }
 
-    private void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+    public void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         applyLayoutToSelection(new OrganicLayout());
     }
 
-    private void circularItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+    public void circularItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         applyLayoutToSelection(new CircularLayout());
     }
 
-    private void orthogonalItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+    public void orthogonalItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         applyLayoutToSelection(new OrthogonalLayout());
 
     }
 
-    private void treeItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+    public void treeItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         try {
             applyLayoutToSelection(new TreeLayout());
         } catch (Exception exc) {
