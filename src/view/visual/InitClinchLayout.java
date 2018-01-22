@@ -49,7 +49,7 @@ public class InitClinchLayout {
     ClinchLayout clinchLayout = new ClinchLayout(graph, anchor1.getLayout().getCenter(), anchor2.getLayout().getCenter(), fixNodes);
 
     new IGraphLayoutExecutor(clinchLayout, graph, progressBar, 1000, 20)
-        .run();
+        .start();
   }
 
 }

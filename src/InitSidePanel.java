@@ -680,7 +680,7 @@ public class InitSidePanel {
             mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
             IGraphLayoutExecutor executor =
                 new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
-            executor.run();
+            executor.start();
             mainFrame.view.updateUI();
         }
     }

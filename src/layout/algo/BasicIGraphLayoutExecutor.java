@@ -65,11 +65,10 @@ public class BasicIGraphLayoutExecutor {
     notify();
   }
 
-  public void run() {
+  private void run() {
     //iterations < 0 infinite loop
     //iterations > 0 runs for # of iterations
     new Thread(() -> {
-//      start();     //remove when start/stop button exists
       layout.init();
       while (!finished) {
         while (running) {

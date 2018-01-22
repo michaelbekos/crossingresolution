@@ -28,7 +28,8 @@ class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
   @Override
   public ForceAlgorithm advance(ForceAlgorithm forceAlgorithm) {
     BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, 100, 100);
-    executor.run();
+    // TODO: we need to wait for the other thread here...
+    executor.start();
     return forceAlgorithm;
   }
 

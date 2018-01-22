@@ -157,7 +157,7 @@ public class BatchOptimizer {
       ForceAlgorithm firstForceAlgorithm = defaultForceAlgorithm();
       BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstForceAlgorithm, graph, initTime, initTime);
 
-      executor.run();
+      executor.start();
     }
     else {
       System.out.println("running genetic");
@@ -169,7 +169,7 @@ public class BatchOptimizer {
       GeneticForceAlgorithmLayout layout = new GeneticForceAlgorithmLayout(graph, initials);
       BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(layout, graph, rounds, rounds);
 
-      executor.run();
+      executor.start();
     }
 
     // afterwards: apply new positions to graph...

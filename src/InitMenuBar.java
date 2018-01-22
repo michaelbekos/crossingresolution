@@ -1082,7 +1082,7 @@ public class InitMenuBar {
 
         IGraphLayoutExecutor executor =
             new IGraphLayoutExecutor(fd, graph, progressBar, iterations, 20);
-        executor.run();
+        executor.start();
         mainFrame.view.updateUI();
     }
 
@@ -1267,7 +1267,7 @@ public class InitMenuBar {
         RandomMovementLayout layout = new RandomMovementLayout(graph, configurator);
         IGraphLayoutExecutor layoutExecutor =
             new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
-        layoutExecutor.run();
+        layoutExecutor.start();
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
