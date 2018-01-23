@@ -24,17 +24,16 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    // TODO: reasonable bounds
-    nodePairWeight = itemFactory.doubleParameter("Node Pair Force", 0.01, 2, 0.01);
-    nodeNeighborWeight = itemFactory.doubleParameter("Node Neighbor Force", 0.01, 2, 0.01);
-    incidentEdgesForce = itemFactory.doubleParameter("Incident Edges Force", 0.01, 2,0.01);
-    crossingForce = itemFactory.doubleParameter("Crossings Force", 0.01, 2,0.01);
+    nodePairWeight = itemFactory.doubleParameter("Node Pair Force", 0.01, 1, 0.1);
+    nodeNeighborWeight = itemFactory.doubleParameter("Node Neighbor Force", 1, 300, 200);
+    incidentEdgesForce = itemFactory.doubleParameter("Incident Edges Force", 0.1, 1,1);
+    crossingForce = itemFactory.doubleParameter("Crossings Force", 0.01, 1,0.1);
     perpendicular = itemFactory.booleanParameter("Perpendicular");
 
     nodePairWeight.setValue(0.01);
-    nodeNeighborWeight.setValue(0.01);
-    incidentEdgesForce.setValue(0.01);
-    crossingForce.setValue(0.1);
+    nodeNeighborWeight.setValue(170.0);
+    incidentEdgesForce.setValue(0.1);
+    crossingForce.setValue(0.01);
     perpendicular.setValue(false);
 
     weights = new ArrayList<>(5);
