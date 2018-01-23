@@ -78,7 +78,7 @@ public class BasicIGraphLayoutExecutor {
 
           if (finished || maxIterations > 0 && currentIteration == maxIterations) {
             stop();
-            continue mainLoop;
+            break mainLoop;
           }
 
           if (currentIteration % numberOfCyclesBetweenViewUpdates == 0) {
