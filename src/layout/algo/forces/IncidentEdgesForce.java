@@ -1,23 +1,31 @@
 package layout.algo.forces;
 
+import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithmConfigurator;
-import util.*;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
+import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
+import util.G;
+import util.Tuple2;
+import util.Tuple3;
+import util.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.yworks.yfiles.geometry.*;
-
 public class IncidentEdgesForce implements IForce {
-  private ForceAlgorithmConfigurator configurator;
   private IGraph graph;
+  public AbstractLayoutInterfaceItem<Double> weight;
 
-  public IncidentEdgesForce(ForceAlgorithmConfigurator configurator, IGraph graph) {
-    this.configurator = configurator;
+  public IncidentEdgesForce(IGraph graph) {
     this.graph = graph;
+  }
+
+  @Override
+  public void init(ILayoutInterfaceItemFactory itemFactory) {
+    weight = itemFactory.doubleParameter("Incident Edges Force", 0.1, 1, 1);
+    weight.setValue(0.1);
   }
 
   @Override
@@ -93,7 +101,7 @@ public class IncidentEdgesForce implements IForce {
 
   private Tuple2<PointD, PointD> applyIncidentEdgeForce(PointD e1, PointD e2, double angle, int deg) {
     if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
-    double threshold = configurator.getIncidentEdgesForce().getValue(),
+    double threshold = weight.getValue(),
         optAngle = (360 / deg);
     if(e1.getVectorLength() <= G.Epsilon ||
         e2.getVectorLength() <= G.Epsilon){

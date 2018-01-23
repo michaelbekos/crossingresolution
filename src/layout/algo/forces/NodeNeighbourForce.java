@@ -5,17 +5,24 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import layout.algo.ForceAlgorithmConfigurator;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
+import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import util.G;
 
 public class NodeNeighbourForce implements IForce {
   private IGraph graph;
-  private ForceAlgorithmConfigurator configurator;
+  private AbstractLayoutInterfaceItem<Double> weight;
 
-  public NodeNeighbourForce(ForceAlgorithmConfigurator configurator, IGraph graph) {
+  public NodeNeighbourForce(IGraph graph) {
     this.graph = graph;
-    this.configurator = configurator;
   }
 
+
+  @Override
+  public void init(ILayoutInterfaceItemFactory itemFactory) {
+    weight = itemFactory.doubleParameter("Node Neighbor Force", 1, 300, 200);
+    weight.setValue(170.0);
+  }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
@@ -38,7 +45,7 @@ public class NodeNeighbourForce implements IForce {
   }
 
   private PointD applySpringForce(PointD p1, PointD p2) {
-    double springNaturalLength = configurator.getNodeNeighborWeight().getValue();
+    double springNaturalLength = weight.getValue();
     PointD t = PointD.subtract(p2, p1);
     double dist = t.getVectorLength();
     if(dist <= G.Epsilon){

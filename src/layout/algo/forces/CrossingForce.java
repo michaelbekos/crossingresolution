@@ -5,21 +5,30 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithmConfigurator;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
+import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import util.G;
 import util.Tuple2;
 import util.Util;
 import util.graph2d.LineSegment;
 
 public class CrossingForce implements IForce {
-  private ForceAlgorithmConfigurator configurator;
   private CachedMinimumAngle cMinimumAngle;
   private IGraph graph;
+  private AbstractLayoutInterfaceItem<Double> weight;
+  private AbstractLayoutInterfaceItem<Boolean> isPerpendicular;
 
-  public CrossingForce(ForceAlgorithmConfigurator configurator, IGraph graph, CachedMinimumAngle cMinimumAngle) {
-    this.configurator = configurator;
+  public CrossingForce(IGraph graph, CachedMinimumAngle cMinimumAngle) {
     this.cMinimumAngle = cMinimumAngle;
     this.graph = graph;
+  }
+
+  @Override
+  public void init(ILayoutInterfaceItemFactory itemFactory) {
+    weight = itemFactory.doubleParameter("Crossings Force", 0.01, 1, 0.1);
+    weight.setValue(0.01);
+    isPerpendicular = itemFactory.booleanParameter("Perpendicular");
+    isPerpendicular.setValue(false);
   }
 
   @Override
@@ -63,7 +72,7 @@ public class CrossingForce implements IForce {
   }
 
   private Tuple2<PointD, PointD> calculateSomethingWithCosinuses(PointD e1, PointD e2, double angle) {
-    double threshold = configurator.getCrossingForce().getValue();
+    double threshold = weight.getValue();
     if(e1.getVectorLength() <= G.Epsilon ||
         e2.getVectorLength() <= G.Epsilon){
       return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
@@ -82,7 +91,7 @@ public class CrossingForce implements IForce {
 
     t1 = Util.rotate90DegreesClockwise(PointD.negate(t1));
     t2 = Util.rotate90DegreesClockwise(t2);
-    if(configurator.getPerpendicular().getValue()) {
+    if(isPerpendicular.getValue()) {
       return new Tuple2<>(t1, t2);
     }
     // else direction of other edge

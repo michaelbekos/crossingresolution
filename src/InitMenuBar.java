@@ -1,3 +1,4 @@
+import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
@@ -17,8 +18,9 @@ import com.yworks.yfiles.view.input.GraphSnapContext;
 import com.yworks.yfiles.view.input.GridSnapTypes;
 import io.ContestIOHandler;
 import layout.algo.*;
-import layout.algo.event.AlgorithmEvent;
-import layout.algo.event.AlgorithmListener;
+import layout.algo.forces.ElectricForce;
+import layout.algo.forces.SlopedForce;
+import layout.algo.forces.SpringForce;
 import layout.algo.layoutinterface.SidePanelItemFactory;
 import layout.algo.utils.PositionMap;
 import util.*;
@@ -869,28 +871,14 @@ public class InitMenuBar {
             }
         }
 
-        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
-            public void calculateVectors() {
-                ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
-                ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
-            }
-        };
-        fd.addAlgorithmListener(new AlgorithmListener() {
-            public void algorithmStarted(AlgorithmEvent evt) {
-            }
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
+            .addForce(new SpringForce(graph, 100, 0.01, 150))
+            .addForce(new ElectricForce(graph, 0.01, 50000));
+        configurator.init(mainFrame.sidePanelItemFactory);
 
-            public void algorithmFinished(AlgorithmEvent evt) {
-                progressBar.setValue(0);
-                view.fitContent();
-                view.updateUI();
-            }
-
-            public void algorithmStateChanged(AlgorithmEvent evt) {
-                progressBar.setValue(evt.currentStatus());
-            }
-        });
-        Thread thread = new Thread(fd);
-        thread.start();
+        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, graph, new CachedMinimumAngle());
+        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(forceAlgorithm, graph, progressBar, iterations, 20);
+        executor.start();
         this.view.updateUI();
     }
 
@@ -1020,38 +1008,17 @@ public class InitMenuBar {
             return;
         }
 
-        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(mainFrame.view, iterations) {
-            public void calculateVectors() {
-                ForceDirectedFactory.calculateSlopedSpringForces(mainFrame.graph, numSlopes*2, initAngle, 0.7,  map);
-                ForceDirectedFactory.calculateElectricForcesEades(mainFrame.graph, 30000, 0.01, map);   //repulses nodes from another
-                ForceDirectedFactory.calculateSpringForcesEades(mainFrame.graph, 100, 100, 0.01, map);        //pulls nodes until edges same length
-            }
-        };
-        fd.addAlgorithmListener(new AlgorithmListener() {
-            ICompoundEdit compoundEdit;
-            public void algorithmStarted(AlgorithmEvent evt) {
-                synchronized (mainFrame.graph) {
-                    compoundEdit = mainFrame.graph.beginEdit("Undo layout", "Redo layout");
-                }
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
+            .addForce(new SlopedForce(mainFrame.graph, numSlopes * 2, initAngle, 0.7))
+            .addForce(new ElectricForce(mainFrame.graph, 0.01, 30000))
+            .addForce(new SpringForce(mainFrame.graph, 100, 0.01, 100));
+        configurator.init(mainFrame.sidePanelItemFactory);
 
-            }
+        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, new CachedMinimumAngle());
 
-            public void algorithmFinished(AlgorithmEvent evt) {
-                synchronized (mainFrame.graph) {
-                    compoundEdit.commit();
-                }
-                mainFrame.progressBar.setValue(0);
-                mainFrame.view.fitContent();
-                mainFrame.view.updateUI();
-            }
-
-            public void algorithmStateChanged(AlgorithmEvent evt) {
-                mainFrame.progressBar.setValue(evt.currentStatus());
-            }
-        });
-
-        Thread thread = new Thread(fd);
-        thread.start();
+        IGraphLayoutExecutor executor =
+            new IGraphLayoutExecutor(forceAlgorithm, mainFrame.graph, progressBar, iterations, 20);
+        executor.start();
 
         for (ICanvasObject o : canvasObjects) {
             o.remove();

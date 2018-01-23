@@ -4,16 +4,22 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ForceAlgorithmConfigurator;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
+import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import util.G;
 
 public class NodePairForce implements IForce {
   private IGraph graph;
-  private ForceAlgorithmConfigurator configurator;
+  private AbstractLayoutInterfaceItem<Double> weight;
 
-  public NodePairForce(ForceAlgorithmConfigurator configurator, IGraph graph) {
+  public NodePairForce(IGraph graph) {
     this.graph = graph;
-    this.configurator = configurator;
+  }
+
+  @Override
+  public void init(ILayoutInterfaceItemFactory itemFactory) {
+    weight = itemFactory.doubleParameter("Node Pair Force", 0.01, 1, 0.1);
+    weight.setValue(0.01);
   }
 
   @Override
@@ -38,7 +44,7 @@ public class NodePairForce implements IForce {
 
   private PointD applyElectricForce(PointD p1, PointD p2) {
     double electricalRepulsion = 50000;
-    double threshold = configurator.getNodePairWeight().getValue();
+    double threshold = weight.getValue();
     PointD t = PointD.subtract(p1, p2);
     double dist = t.getVectorLength();
     if(dist <= G.Epsilon){

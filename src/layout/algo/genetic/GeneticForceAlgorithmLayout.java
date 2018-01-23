@@ -10,18 +10,17 @@ import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import layout.algo.ForceAlgorithm;
 import layout.algo.ILayout;
 import layout.algo.InitForceAlgorithm;
-import layout.algo.layoutinterface.VoidItemFactory;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.utils.PositionMap;
 
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 
 public class GeneticForceAlgorithmLayout implements ILayout {
-  private GeneForceAlgorithmConfigurator configurator;
+  private GeneticForceAlgorithmConfigurator configurator;
   private IGraph graph;
   private GeneticAlgorithm<ForceAlgorithm> geneticAlgorithm;
 
-  public GeneticForceAlgorithmLayout(GeneForceAlgorithmConfigurator configurator, IGraph graph) {
+  public GeneticForceAlgorithmLayout(GeneticForceAlgorithmConfigurator configurator, IGraph graph) {
     this.configurator = configurator;
     this.graph = graph;
   }
@@ -29,18 +28,27 @@ public class GeneticForceAlgorithmLayout implements ILayout {
   @Override
   public void init() {
     LinkedList<ForceAlgorithm> firstIndividuals = new LinkedList<>();
-    VoidItemFactory itemFactory = new VoidItemFactory();
-    firstIndividuals.add(InitForceAlgorithm.defaultForceAlgorithm(graph, itemFactory));
+    Map<ForceAlgorithm, List<AbstractLayoutInterfaceItem>> weightsMap = new WeakHashMap<>();
+
+    spawnIndividual(firstIndividuals, weightsMap);
     LayoutUtilities.applyLayout(graph, new OrthogonalLayout());
-    firstIndividuals.add(InitForceAlgorithm.defaultForceAlgorithm(graph, itemFactory));
+    spawnIndividual(firstIndividuals, weightsMap);
     LayoutUtilities.applyLayout(graph, new OrganicLayout());
-    firstIndividuals.add(InitForceAlgorithm.defaultForceAlgorithm(graph, itemFactory));
+    spawnIndividual(firstIndividuals, weightsMap);
+
 
     firstIndividuals.forEach(ForceAlgorithm::init);
 
     Random rand = new Random();
-    ForceAlgorithmObjective objective = new ForceAlgorithmObjective(configurator, graph, rand);
+    ForceAlgorithmObjective objective = new ForceAlgorithmObjective(configurator, graph, rand, weightsMap);
     geneticAlgorithm = new GeneticAlgorithm<>(objective, firstIndividuals, 5, rand);
+  }
+
+  private void spawnIndividual(LinkedList<ForceAlgorithm> firstIndividuals, Map<ForceAlgorithm, List<AbstractLayoutInterfaceItem>> weightsMap) {
+    MutationItemFactory itemFactory = new MutationItemFactory();
+    ForceAlgorithm forceAlgorithm = InitForceAlgorithm.defaultForceAlgorithm(graph, itemFactory);
+    firstIndividuals.add(forceAlgorithm);
+    weightsMap.put(forceAlgorithm, itemFactory.weights);
   }
 
   @Override

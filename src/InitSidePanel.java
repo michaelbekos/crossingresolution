@@ -1,14 +1,12 @@
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import layout.algo.*;
 import layout.algo.forces.CrossingForce;
 import layout.algo.forces.IncidentEdgesForce;
 import layout.algo.forces.NodeNeighbourForce;
 import layout.algo.forces.NodePairForce;
-import layout.algo.genetic.GeneForceAlgorithmConfigurator;
+import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticAlgorithm;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.*;
@@ -21,7 +19,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Optional;
 
 public class InitSidePanel {
@@ -58,18 +55,18 @@ public class InitSidePanel {
 
 //        ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
 
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator();
-        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
-
         CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
-        ForceAlgorithm fd = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
-
         IGraph graph = mainFrame.view.getGraph();
 
-        fd.forces.add(new NodeNeighbourForce(configurator, graph));
-        fd.forces.add(new NodePairForce(configurator, graph));
-        fd.forces.add(new CrossingForce(configurator, graph, cMinimumAngle));
-        fd.forces.add(new IncidentEdgesForce(configurator, graph));
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator();
+        configurator.addForce(new NodeNeighbourForce(graph))
+            .addForce(new NodePairForce(graph))
+            .addForce(new CrossingForce(graph, cMinimumAngle))
+            .addForce(new IncidentEdgesForce(graph));
+
+        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
+
+        ForceAlgorithm fd = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
 
         IGraphLayoutExecutor forceExecutor = new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
         mainFrame.view.updateUI();
@@ -79,7 +76,7 @@ public class InitSidePanel {
 
       //Config, layout, layoutexecutor for all other algos too
 
-      GeneForceAlgorithmConfigurator geneticConfigurator = new GeneForceAlgorithmConfigurator();
+      GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
       geneticConfigurator.init(mainFrame.sidePanelItemFactory);
       GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
       IGraphLayoutExecutor geneticExecutor = new IGraphLayoutExecutor(geneticAlgo, graph, mainFrame.progressBar, 1000, 20);

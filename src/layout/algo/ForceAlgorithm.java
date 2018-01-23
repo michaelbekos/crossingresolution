@@ -8,14 +8,11 @@ import com.yworks.yfiles.graph.Mapper;
 import layout.algo.forces.IForce;
 import layout.algo.utils.PositionMap;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class ForceAlgorithm implements ILayout {
   public ForceAlgorithmConfigurator configurator;
-  public List<IForce> forces = new LinkedList<>();
   private IGraph graph;
   private Mapper<INode, PointD> nodePositions;
   private CachedMinimumAngle cMinimumAngle;
@@ -30,7 +27,6 @@ public class ForceAlgorithm implements ILayout {
   public ForceAlgorithm clone(){
     ForceAlgorithm ret = new ForceAlgorithm(configurator, graph, cMinimumAngle);
     ret.nodePositions = PositionMap.copy(this.nodePositions);
-    ret.forces = this.forces;
 
     return ret;
   }
@@ -70,7 +66,7 @@ public class ForceAlgorithm implements ILayout {
   private Mapper<INode, PointD> calculateAllForces(){
     Mapper<INode, PointD> map = ForceAlgorithm.initForceMap();
 
-    for (IForce force : forces) {
+    for (IForce force : configurator.forces) {
       map = force.calculate(map, nodePositions);
     }
 

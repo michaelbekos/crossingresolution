@@ -8,23 +8,23 @@ import com.yworks.yfiles.graph.Mapper;
 import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.ForceAlgorithm;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
-import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
-import layout.algo.layoutinterface.VoidItemFactory;
+import layout.algo.layoutinterface.VoidItem;
 import util.G;
 import util.graph2d.Intersection;
 
 import java.util.*;
 
 class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
-  private GeneForceAlgorithmConfigurator configurator;
+  private GeneticForceAlgorithmConfigurator configurator;
   private IGraph graph;
   private Random rand;
-  private ILayoutInterfaceItemFactory itemFactory = new VoidItemFactory();
+  private Map<ForceAlgorithm, List<AbstractLayoutInterfaceItem>> weights;
 
-  ForceAlgorithmObjective(GeneForceAlgorithmConfigurator configurator, IGraph graph, Random rand) {
+  ForceAlgorithmObjective(GeneticForceAlgorithmConfigurator configurator, IGraph graph, Random rand, Map<ForceAlgorithm, List<AbstractLayoutInterfaceItem>> weights) {
     this.configurator = configurator;
     this.graph = graph;
     this.rand = rand;
+    this.weights = weights;
   }
 
   @Override
@@ -46,7 +46,17 @@ class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
   @Override
   public ForceAlgorithm mutate(ForceAlgorithm forceAlgorithm) {
     ForceAlgorithm mutationFA = forceAlgorithm.clone();
-    mutationFA.configurator = forceAlgorithm.configurator.copy(itemFactory);
+
+    List<AbstractLayoutInterfaceItem> weights = this.weights.get(forceAlgorithm);
+    LinkedList<AbstractLayoutInterfaceItem> mutationWeights = new LinkedList<>();
+    for (AbstractLayoutInterfaceItem weight : weights) {
+      if (weight instanceof VoidItem) { // as it always is...
+        mutationWeights.add(((VoidItem) weight).clone());
+      }
+    }
+
+    this.weights.put(mutationFA, mutationWeights);
+
 
     Mapper<INode, PointD> nodePositions = mutationFA.getNodePositions();
     List<Intersection> crossings = MinimumAngle.getCrossingsSorted(graph, nodePositions);
@@ -93,14 +103,15 @@ class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
       return mutationFA;
     }
     direction = direction.getNormalized();
-    pos = PointD.add(pos, PointD.times(forceAlgorithm.configurator.getIncidentEdgesForce().getValue(), direction));
+    pos = PointD.add(pos, PointD.times(configurator.stepSize.getValue(), direction));
+
     nodePositions.setValue(node, pos);
     mutationFA.setNodePositions(nodePositions);
 
     // russian roulette to change a modifier
     if (rand.nextDouble() > 0.75) {
       // randomly modify one spring threshold
-      List<AbstractLayoutInterfaceItem> weights = forceAlgorithm.configurator.getWeights();
+      weights = this.weights.get(mutationFA);
       int indexToModify = rand.nextInt(weights.size());
       AbstractLayoutInterfaceItem weightToModify = weights.get(indexToModify);
       // smallest double > 0

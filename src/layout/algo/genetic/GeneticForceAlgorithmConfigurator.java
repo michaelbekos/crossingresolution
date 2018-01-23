@@ -6,8 +6,10 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import java.util.ArrayList;
 
-public class GeneForceAlgorithmConfigurator implements ILayoutConfigurator {
+public class GeneticForceAlgorithmConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Integer> iterationsPerGeneration;
+  AbstractLayoutInterfaceItem<Double> stepSize;
+
   private ArrayList<AbstractLayoutInterfaceItem> abstractLayoutInterfaceItems = new ArrayList<>();
 
   @Override
@@ -15,7 +17,11 @@ public class GeneForceAlgorithmConfigurator implements ILayoutConfigurator {
     iterationsPerGeneration = itemFactory.intParameter("Iterations per generation", 1, 500, 5);
     abstractLayoutInterfaceItems.add(iterationsPerGeneration);
 
+    stepSize = itemFactory.doubleParameter("Mutation step size", 0.1, 1, 1);
+    abstractLayoutInterfaceItems.add(stepSize);
+
     iterationsPerGeneration.setValue(100);
+    stepSize.setValue(0.1);
   }
 
   @Override

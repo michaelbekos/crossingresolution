@@ -1,7 +1,7 @@
 
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import layout.algo.genetic.GeneForceAlgorithmConfigurator;
+import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.VoidItemFactory;
 import layout.algo.utils.PositionMap;
@@ -166,7 +166,7 @@ public class BatchOptimizer {
       LayoutUtilities.applyLayout(graph, new OrganicLayout());
       initials.add(defaultForceAlgorithm());
 
-      GeneForceAlgorithmConfigurator configurator = new GeneForceAlgorithmConfigurator();
+      GeneticForceAlgorithmConfigurator configurator = new GeneticForceAlgorithmConfigurator();
       configurator.init(new VoidItemFactory());
       GeneticForceAlgorithmLayout layout = new GeneticForceAlgorithmLayout(configurator, graph);
       BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(layout, graph, rounds, rounds);
