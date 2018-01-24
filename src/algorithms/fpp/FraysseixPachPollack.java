@@ -107,20 +107,20 @@ public class FraysseixPachPollack {
         // calculate canonical order
         PlanarEmbedding planarEmbedding = new PlanarEmbedding(graph);
 
-   //     CombinatorialEmbedder emb = new CombinatorialEmbedder();
-   //     emb.setPlanarInformation(plan);
-   //     emb.embed();
+        //     CombinatorialEmbedder emb = new CombinatorialEmbedder();
+        //     emb.setPlanarInformation(plan);
+        //     emb.embed();
 
 
 
-           CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
-            ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
+        CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random);
+        ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
         ArrayList<Node> canonicalOrder = new ArrayList<Node>();
         orderdpl.forEach(l -> canonicalOrder.add(l.get(0)));
 
-      //  CanonicalOrderMy corder = new CanonicalOrderMy(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
-      //  ArrayList<Node> canonicalOrder  = corder.getCanonicalOrder();
-
+    /*    CanonicalOrderMy corder = new CanonicalOrderMy(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
+        ArrayList<Node> canonicalOrder  = corder.getCanonicalOrder();
+*/
         // transform into one list
 
 
@@ -225,8 +225,8 @@ public class FraysseixPachPollack {
         outerFace = planarEmbedding.getOuterFace();
         applyFPPresult();
 
-       // Utilities.removeReversedEdges(g, plan);
-      //  insertedEdges.forEach(e -> g.removeEdge(e));
+        // Utilities.removeReversedEdges(g, plan);
+        //  insertedEdges.forEach(e -> g.removeEdge(e));
 
 
     }
@@ -366,9 +366,9 @@ public class FraysseixPachPollack {
     private Node getTargetNode(Dart dart){
         Node targetNode;
         if(dart.isReversed()){
-            targetNode = dart.getAssociatedEdge().target();
-        }else{
             targetNode = dart.getAssociatedEdge().source();
+        }else{
+            targetNode = dart.getAssociatedEdge().target();
         }
         return targetNode;
     }
@@ -376,9 +376,9 @@ public class FraysseixPachPollack {
     private Node getSourceNode(Dart dart){
         Node targetNode;
         if(dart.isReversed()){
-            targetNode = dart.getAssociatedEdge().source();
-        }else{
             targetNode = dart.getAssociatedEdge().target();
+        }else{
+            targetNode = dart.getAssociatedEdge().source();
         }
         return targetNode;
     }

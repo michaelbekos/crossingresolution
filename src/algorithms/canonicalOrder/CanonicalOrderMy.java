@@ -23,7 +23,7 @@ public class CanonicalOrderMy {
     private INodeMap isInsertedNode;
     private Map<List<Dart>,Boolean> isInsertedFace;
     private ArrayList<Node>  outerChain;
-  //  private List<Dart> outerChainDart;
+    //  private List<Dart> outerChainDart;
 
     private INodeMap chords; //INT
     private INodeMap out;   //bool
@@ -61,7 +61,7 @@ public class CanonicalOrderMy {
         }
         //merken welche Faces schon verwendet wurden
         for(List<Dart> face : planarEmbedding.getFaces()){
-             isInsertedFace.put(face, false);
+            isInsertedFace.put(face, false);
         }
         isInsertedFace.put(planarEmbedding.getOuterFace(), true);
     }
@@ -70,8 +70,8 @@ public class CanonicalOrderMy {
     }
 
     private ArrayList<Node> calcNewOuterChain(Node parentNode) {
-       // Node firstNode = leftOuterNode(parentNode);
-    return null;
+        // Node firstNode = leftOuterNode(parentNode);
+        return null;
     }
 
 
@@ -79,42 +79,32 @@ public class CanonicalOrderMy {
 
     private void calcOrder(){
 
-       Iterator<Node> nodeIta =  outerFace.iterator();
-       v1 = nodeIta.next();
-       v2 = nodeIta.next();
-       Node vn = nodeIta.next();
-       out.setBool(v1, true);
-       out.setBool(v2, true);
-       out.setBool(vn, true);
+        Iterator<Node> nodeIta =  outerFace.iterator();
+        v1 = nodeIta.next();
+        v2 = nodeIta.next();
+        Node vn = nodeIta.next();
+        out.setBool(v1, true);
+        out.setBool(v2, true);
+        out.setBool(vn, true);
 
 
         nextNodes = new ArrayList<>();
         outerChain = new ArrayList<>();
-//        outerChainDart = new ArrayList<>();
 
 
         nextNodes.add(vn);
 
 
-       outerChain.add(v1);
-       outerChain.add(vn);
-       outerChain.add(v2);
-       //find dart from  v1 to v2
-        for(Dart dart : planarEmbedding.getOutgoingDarts(v1)){
-            if(getTargetNode(dart).equals(v2)){
-              //  outerChainDart = getCycleDartsfromStartDart(dart);
-                break;
-            }
-        }
-
-
+        outerChain.add(v1);
+        outerChain.add(vn);
+        outerChain.add(v2);
 
 
         for(int k = graph.getNodeArray().length - 1; k >= 2; k-- ){
 
             Node vk = getNextNode();
             canonicalOrder.add(vk);
-            System.out.println("Iteration: " + k + "    With node Index: " + vk.index());
+            System.out.println("Iteration: " + k + "     node Index: " + vk.index());
 
 
             //find Index for node vk
@@ -158,7 +148,6 @@ public class CanonicalOrderMy {
 
 
             boolean reachedInsertedNode = false; //reached node1
-         //   ArrayList<Dart> outerChainDartTmp = new ArrayList<>(); //the new sub Chain which will inserted in the old outerChain
             ArrayList<Node> outerChainTmp = new ArrayList<>();
             // add new nodes to the chain in the right order
             while(true){
@@ -167,11 +156,9 @@ public class CanonicalOrderMy {
                 //found the last Dart
                 if(getTargetNode(cycledDarts.get(1)).equals(node1)){
                     System.out.println("Found last dart");
-               //     outerChainDartTmp.add(cycledDarts.get(1));
                     break;
                 }
                 outerChainTmp.add(getTargetNode(cycledDarts.get(1)));
-              //  outerChainDartTmp.add(cycledDarts.get(1));
                 curDart = cycledDarts.get(2).getOppositeDart();
             }
             //merge  the outerChains
@@ -180,32 +167,24 @@ public class CanonicalOrderMy {
             ArrayList<Node> outerChainNew = new ArrayList<>();
             for(int i = 0; i < indexVk; i++){
                 outerChainNew.add(outerChain.get(i));
-                System.out.println("preChain: " +i);
-                if(i > 0){
-                       //     outerChainDartNew.add(outerChainDart.get(i-1));
-                }
+                System.out.println("preChain: " +i + "Nodeindex: " + outerChain.get(i));
             }
             Collections.reverse(outerChainTmp);
             for(Node node : outerChainTmp){
-                System.out.println("midChain: ");
+                System.out.println("midChain: " + node);
                 outerChainNew.add(node);
             }
-        //    for(Dart dart : outerChainDartTmp){
-        //        outerChainDartNew.add(dart);
-        //    }
+
             for(int i = indexVk+1; i < outerChain.size(); i++){
                 outerChainNew.add(outerChain.get(i));
-                System.out.println("sufChain: " +i);
-              //  outerChainDartNew.add(outerChainDart.get(i));
+                System.out.println("sufChain: " +i+ "Nodeindex: " + outerChain.get(i));
+                //  outerChainDartNew.add(outerChainDart.get(i));
             }
             outerChain = outerChainNew;
-            //outerChainDart = outerChainDartNew;
-            // Reverse it for the right order
-            Collections.reverse(outerChain);
-          //  Collections.reverse(outerChainDart);
 
-            int p = (outerChain.size() -1) - (indexVk - 1); //Index for the first neighbor of vk
-            int q = (outerChain.size() -1) - (indexVk  + outerChainTmp.size()); // Index for the last neighbor of vk
+            int p =  indexVk - 1; //Index for the first neighbor of vk
+            int q =  (indexVk  + outerChainTmp.size() - 1); // Index for the last neighbor of vk
+            System.out.println("p : " + p + "  q: " + q);
             //update chords from wi and his neighbors
             for(int i = p + 1; i < q; i++){
                 out.setBool(outerChain.get(i), true);
@@ -240,7 +219,7 @@ public class CanonicalOrderMy {
                 }
             }
         }
-       //outerChain = toCounterclockwiseAndShift(outerChain);
+        //outerChain = toCounterclockwiseAndShift(outerChain);
 
     }
     public ArrayList<Node> getCanonicalOrder(){
