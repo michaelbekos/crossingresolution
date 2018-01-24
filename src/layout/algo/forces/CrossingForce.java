@@ -12,6 +12,8 @@ import util.Tuple2;
 import util.Util;
 import util.graph2d.LineSegment;
 
+import java.util.ArrayList;
+
 public class CrossingForce implements IForce {
   private CachedMinimumAngle cMinimumAngle;
   private IGraph graph;
@@ -105,4 +107,13 @@ public class CrossingForce implements IForce {
             t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
         */
   }
+
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
+    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
+    parameterList.add(weight);
+    parameterList.add(isPerpendicular);
+    return parameterList;
+  }
+
 }

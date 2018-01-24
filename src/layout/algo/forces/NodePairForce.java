@@ -8,6 +8,8 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import util.G;
 
+import java.util.ArrayList;
+
 public class NodePairForce implements IForce {
   private IGraph graph;
   private AbstractLayoutInterfaceItem<Double> weight;
@@ -40,6 +42,13 @@ public class NodePairForce implements IForce {
       }
     });
     return forces;
+  }
+
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
+    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
+    parameterList.add(weight);
+    return parameterList;
   }
 
   private PointD applyElectricForce(PointD p1, PointD p2) {

@@ -4,7 +4,10 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
+
+import java.util.ArrayList;
 
 public class SpringForce implements IForce {
   private IGraph graph;
@@ -43,5 +46,11 @@ public class SpringForce implements IForce {
     }
 
     return forces;
+  }
+
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
+    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
+    return parameterList;
   }
 }

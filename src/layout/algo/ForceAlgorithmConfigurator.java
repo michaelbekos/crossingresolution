@@ -35,11 +35,9 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
   public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems(){
     // TODO:
     ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
-    /*parameterList.add(nodePairWeight);
-    parameterList.add(nodeNeighborWeight);
-    parameterList.add(crossingForce);
-    parameterList.add(incidentEdgesForce);
-    parameterList.add(perpendicular);*/
+    for (IForce f : forces) {
+      parameterList.addAll(f.getAbstractLayoutInterfaceItems());
+    }
     return parameterList;
   }
 
