@@ -185,11 +185,12 @@ public class CanonicalOrder {
 
         Node targetNode, sourceNode;
         if(dart1.isReversed()){
-            sourceNode = getSourceNode(dart1);
-            targetNode = getTargetNode(dart1);
-        }else{
             sourceNode = getTargetNode(dart1);
             targetNode = getSourceNode(dart1);
+        }else{
+
+            sourceNode = getSourceNode(dart1);
+            targetNode = getTargetNode(dart1);
         }
         if(v1.equals(sourceNode) && v2.equals(targetNode)){
             v1v2Face = dart1.getFace();
@@ -766,17 +767,17 @@ for(Dart dart : planarEmbedding.getDarts(edge)){
         return null;
     }
 
-    private Node getTargetNode(Dart dart){
-        Node targetNode;
+    private Node getSourceNode(Dart dart){
+        Node sourceNode;
         if(dart.isReversed()){
-            targetNode = dart.getAssociatedEdge().target();
+            sourceNode = dart.getAssociatedEdge().target();
         }else{
-            targetNode = dart.getAssociatedEdge().source();
+            sourceNode = dart.getAssociatedEdge().source();
         }
-        return targetNode;
+        return sourceNode;
     }
 
-    private Node getSourceNode(Dart dart){
+    private Node getTargetNode(Dart dart){
         Node targetNode;
         if(dart.isReversed()){
             targetNode = dart.getAssociatedEdge().source();

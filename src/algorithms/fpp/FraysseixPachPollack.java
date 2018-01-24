@@ -113,12 +113,15 @@ public class FraysseixPachPollack {
 
 
 
-          // CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
-           CanonicalOrderMy corder = new CanonicalOrderMy(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
-        ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
-        // transform into one list
+           CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
+            ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
         ArrayList<Node> canonicalOrder = new ArrayList<Node>();
         orderdpl.forEach(l -> canonicalOrder.add(l.get(0)));
+
+      //  CanonicalOrderMy corder = new CanonicalOrderMy(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
+      //  ArrayList<Node> canonicalOrder  = corder.getCanonicalOrder();
+
+        // transform into one list
 
 
         checkForValidOrdering(canonicalOrder);
