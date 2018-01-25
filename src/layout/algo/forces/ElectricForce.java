@@ -6,10 +6,7 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.YGraphAdapter;
-import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
-
-import java.util.ArrayList;
 
 public class ElectricForce implements IForce {
   private final YGraphAdapter adapter;
@@ -51,11 +48,5 @@ public class ElectricForce implements IForce {
     }
 
     return forces;
-  }
-
-  @Override
-  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
-    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
-    return parameterList;
   }
 }

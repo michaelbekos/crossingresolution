@@ -9,8 +9,6 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import util.G;
 
-import java.util.ArrayList;
-
 public class NodeNeighbourForce implements IForce {
   private IGraph graph;
   private AbstractLayoutInterfaceItem<Double> weight;
@@ -66,12 +64,5 @@ public class NodeNeighbourForce implements IForce {
     t = PointD.times(t, forceStrength);
     //return new PointD(0, 0);
     return t;
-  }
-
-  @Override
-  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
-    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
-    parameterList.add(weight);
-    return parameterList;
   }
 }

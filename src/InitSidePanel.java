@@ -60,9 +60,9 @@ public class InitSidePanel {
 
         ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator();
         configurator.addForce(new NodeNeighbourForce(graph))
-                .addForce(new NodePairForce(graph))
-                .addForce(new IncidentEdgesForce(graph))
-                .addForce(new CrossingForce(graph, cMinimumAngle));
+            .addForce(new NodePairForce(graph))
+            .addForce(new CrossingForce(graph, cMinimumAngle))
+            .addForce(new IncidentEdgesForce(graph));
 
         configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
 
@@ -76,11 +76,11 @@ public class InitSidePanel {
 
       //Config, layout, layoutexecutor for all other algos too
 
-        GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
-        geneticConfigurator.init(mainFrame.sidePanelItemFactory);
-        GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
-        IGraphLayoutExecutor geneticExecutor = new IGraphLayoutExecutor(geneticAlgo, graph, mainFrame.progressBar, 1000, 20);
-        addAlgorithm("Genetic Algorithm", geneticConfigurator, geneticExecutor);
+      GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
+      geneticConfigurator.init(mainFrame.sidePanelItemFactory);
+      GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
+      IGraphLayoutExecutor geneticExecutor = new IGraphLayoutExecutor(geneticAlgo, graph, mainFrame.progressBar, 1000, 20);
+      addAlgorithm("Genetic Algorithm", geneticConfigurator, geneticExecutor);
 
 
 

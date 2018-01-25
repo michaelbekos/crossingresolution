@@ -5,7 +5,6 @@ import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import java.util.ArrayList;
@@ -129,11 +128,5 @@ public class SlopedForce implements IForce {
     double dy = u2_y - u1_y;
 
     return Math.atan2(dy,dx);
-  }
-
-  @Override
-  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
-    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
-    return parameterList;
   }
 }

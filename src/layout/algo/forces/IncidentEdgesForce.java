@@ -118,11 +118,4 @@ public class IncidentEdgesForce implements IForce {
     t2 = Util.rotate90DegreesClockwise(t2);
     return new Tuple2<>(t1, t2);
   }
-
-  @Override
-  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
-    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
-    parameterList.add(weight);
-    return parameterList;
-  }
 }
