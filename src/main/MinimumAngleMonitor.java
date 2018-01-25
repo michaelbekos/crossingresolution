@@ -1,3 +1,5 @@
+package main;
+
 import algorithms.graphs.MinimumAngle;
 
 import com.yworks.yfiles.geometry.PointD;
@@ -68,7 +70,7 @@ public class MinimumAngleMonitor {
     infoLabel.setText(labText.orElse("Graph has no crossings."));
   }
 
-  void registerGraphChangedListeners() {
+  public void registerGraphChangedListeners() {
     graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
     graph.addEdgeCreatedListener(minimumAngleEdgeCreatedListener);
     graph.addEdgeRemovedListener(minimumAngleEdgeRemovedListener);
@@ -76,7 +78,7 @@ public class MinimumAngleMonitor {
     graph.addNodeRemovedListener(minimumAngleNodeRemovedListener);
   }
 
-  void removeGraphChangedListeners() {
+  public void removeGraphChangedListeners() {
     graph.removeNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
     graph.removeEdgeCreatedListener(minimumAngleEdgeCreatedListener);
     graph.removeEdgeRemovedListener(minimumAngleEdgeRemovedListener);

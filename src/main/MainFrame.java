@@ -1,3 +1,5 @@
+package main;
+
 import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
@@ -13,7 +15,8 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithm;
 import layout.algo.InitForceAlgorithm;
-import layout.algo.layoutinterface.SidePanelItemFactory;
+import sidepanel.InitSidePanel;
+import sidepanel.SidePanelItemFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,7 +63,7 @@ public class MainFrame extends JFrame {
     public JTabbedPane sidePanel;
     public SidePanelItemFactory sidePanelItemFactory;
 
-    InitMenuBar menuBar;
+    public InitMenuBar menuBar;
 
 
     // for this class, we can instantiate defaultForceAlgorithm and do some post-initializing

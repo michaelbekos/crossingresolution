@@ -4,7 +4,7 @@ public abstract class AbstractLayoutInterfaceItem<T> {
   private T value;
   private final String name;
 
-  AbstractLayoutInterfaceItem(String name) {
+  protected AbstractLayoutInterfaceItem(String name) {
     this.name = name;
   }
 

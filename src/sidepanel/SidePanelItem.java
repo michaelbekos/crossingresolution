@@ -1,4 +1,6 @@
-package layout.algo.layoutinterface;
+package sidepanel;
+
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 
 import javax.swing.*;
 

@@ -1,3 +1,5 @@
+package main;
+
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
@@ -21,7 +23,7 @@ import layout.algo.*;
 import layout.algo.forces.ElectricForce;
 import layout.algo.forces.SlopedForce;
 import layout.algo.forces.SpringForce;
-import layout.algo.layoutinterface.SidePanelItemFactory;
+import sidepanel.SidePanelItemFactory;
 import layout.algo.utils.PositionMap;
 import util.*;
 import view.visual.InitClinchLayout;

@@ -1,3 +1,5 @@
+package sidepanel;
+
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
@@ -11,6 +13,11 @@ import layout.algo.genetic.GeneticAlgorithm;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.*;
 import layout.algo.utils.PositionMap;
+import main.MainFrame;
+import sidepanel.BoolSidePanelItem;
+import sidepanel.DoubleSidePanelItem;
+import sidepanel.IntegerSidePanelItem;
+import sidepanel.SidePanelItemFactory;
 import util.GraphOperations;
 
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package layout.algo.layoutinterface;
+package sidepanel;
 
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.INode;
@@ -6,6 +6,7 @@ import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.ICanvasObject;
 import com.yworks.yfiles.view.ICanvasObjectDescriptor;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import view.visual.VectorVisual;
 
 import java.awt.*;
