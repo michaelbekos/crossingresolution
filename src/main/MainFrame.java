@@ -14,9 +14,7 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithm;
-import layout.algo.InitForceAlgorithm;
 import sidepanel.InitSidePanel;
-import sidepanel.SidePanelItemFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,15 +59,8 @@ public class MainFrame extends JFrame {
     @Nullable
     public ForceAlgorithm forceAlgorithm = null;
     public JTabbedPane sidePanel;
-    public SidePanelItemFactory sidePanelItemFactory;
 
     public InitMenuBar menuBar;
-
-
-    // for this class, we can instantiate defaultForceAlgorithm and do some post-initializing
-    public ForceAlgorithm defaultForceAlgorithm() {
-        return InitForceAlgorithm.defaultForceAlgorithm(graph, sidePanelItemFactory);
-    }
 
     /**
      * Creates new form MainFrame
@@ -244,8 +235,6 @@ public class MainFrame extends JFrame {
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel);
 
         InitSidePanel newSidePanel = new InitSidePanel(this);
-        sidePanelItemFactory = new SidePanelItemFactory(newSidePanel.tabbedSidePane, view);
-
         sidePanel = newSidePanel.initSidePanel(mainPanel,c);
 //        initSidePanel(mainPanel, c);
     }

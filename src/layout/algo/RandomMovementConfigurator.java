@@ -4,8 +4,6 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
-import java.util.ArrayList;
-
 public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Double> minStepSize;
   AbstractLayoutInterfaceItem<Double> maxStepSize;
@@ -19,15 +17,6 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     minStepSize.setValue(0.1);
     maxStepSize.setValue(10.);
     numIterations.setValue(100);
-  }
-
-  @Override
-  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
-    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
-    parameterList.add(numIterations);
-    parameterList.add(minStepSize);
-    parameterList.add(maxStepSize);
-    return parameterList;
   }
 
 }

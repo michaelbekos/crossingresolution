@@ -10,27 +10,29 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import javax.swing.*;
 
 public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
-  private JTabbedPane sidePanel;
+  private JPanel sidePanel;
   private GraphComponent view;
+  private GridBagState gridBagState;
 
-  public SidePanelItemFactory(JTabbedPane sidePanel, GraphComponent view) {
+  public SidePanelItemFactory(JPanel sidePanel, GraphComponent view, GridBagState gridBagState) {
     this.sidePanel = sidePanel;
     this.view = view;
+    this.gridBagState = gridBagState;
   }
 
   @Override
   public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold) {
-    return new DoubleSidePanelItem(name, sidePanel, minValue, maxValue, threshold);
+    return new DoubleSidePanelItem(name, minValue, maxValue, threshold, sidePanel, gridBagState);
   }
 
   @Override
   public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, int threshold) {
-    return new IntegerSidePanelItem(name, sidePanel, minValue, maxValue, threshold);
+    return new IntegerSidePanelItem(name, minValue, maxValue, threshold, sidePanel, gridBagState);
   }
 
   @Override
   public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
-    return new BoolSidePanelItem(name, sidePanel);
+    return new BoolSidePanelItem(name, sidePanel, gridBagState);
   }
 
   @Override

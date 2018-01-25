@@ -8,7 +8,6 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,18 +28,6 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
       force.init(itemFactory);
     }
     debugVectors = itemFactory.debugVectors("Forces");
-  }
-
-  @Override
-  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems(){
-    // TODO:
-    ArrayList<AbstractLayoutInterfaceItem> parameterList = new ArrayList<>();
-    /*parameterList.add(nodePairWeight);
-    parameterList.add(nodeNeighborWeight);
-    parameterList.add(crossingForce);
-    parameterList.add(incidentEdgesForce);
-    parameterList.add(perpendicular);*/
-    return parameterList;
   }
 
   public AbstractLayoutInterfaceItem<Mapper<INode, PointD>> getDebugVectors() {

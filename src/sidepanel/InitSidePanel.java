@@ -2,35 +2,33 @@ package sidepanel;
 
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.graph.GraphItemTypes;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.Mapper;
 import layout.algo.*;
 import layout.algo.forces.CrossingForce;
 import layout.algo.forces.IncidentEdgesForce;
 import layout.algo.forces.NodeNeighbourForce;
 import layout.algo.forces.NodePairForce;
-import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticAlgorithm;
+import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
-import layout.algo.layoutinterface.*;
+import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
-import sidepanel.BoolSidePanelItem;
-import sidepanel.DoubleSidePanelItem;
-import sidepanel.IntegerSidePanelItem;
-import sidepanel.SidePanelItemFactory;
 import util.GraphOperations;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.util.Optional;
 
 public class InitSidePanel {
     private MainFrame mainFrame;
-    public JTabbedPane tabbedSidePane;
+    private JTabbedPane tabbedSidePane;
 
     public InitSidePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -52,7 +50,6 @@ public class InitSidePanel {
 //----------------------------------------
 
         RandomMovementConfigurator config = new RandomMovementConfigurator();
-        config.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
 
         RandomMovementLayout layout = new RandomMovementLayout(mainFrame.graph, config);
         IGraphLayoutExecutor layoutExecutor = new IGraphLayoutExecutor(layout, mainFrame.graph, mainFrame.progressBar, -1, 20);
@@ -71,8 +68,6 @@ public class InitSidePanel {
             .addForce(new CrossingForce(graph, cMinimumAngle))
             .addForce(new IncidentEdgesForce(graph));
 
-        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, mainFrame.view));
-
         ForceAlgorithm fd = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
 
         IGraphLayoutExecutor forceExecutor = new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
@@ -84,7 +79,6 @@ public class InitSidePanel {
       //Config, layout, layoutexecutor for all other algos too
 
       GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
-      geneticConfigurator.init(mainFrame.sidePanelItemFactory);
       GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
       IGraphLayoutExecutor geneticExecutor = new IGraphLayoutExecutor(geneticAlgo, graph, mainFrame.progressBar, 1000, 20);
       addAlgorithm("Genetic Algorithm", geneticConfigurator, geneticExecutor);
@@ -144,199 +138,32 @@ public class InitSidePanel {
         GridBagConstraints cCustomPanel = new GridBagConstraints();
         cCustomPanel.gridx = 0;
         cCustomPanel.gridy = 1;
-//        cCustomPanel.anchor = GridBagConstraints.PAGE_START;
 
-        int cCustomPanelY = 1;
-        if (configurator != null && configurator.getAbstractLayoutInterfaceItems() != null) {
-            ArrayList<AbstractLayoutInterfaceItem> parameters = configurator.getAbstractLayoutInterfaceItems();
-            for (int i = 0; i < parameters.size(); i++) {
-                cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
-                cCustomPanel.gridx = 0;
-                cCustomPanel.gridy = cCustomPanelY;
-                if (parameters.get(i).getValue().getClass().equals(Double.class)) {
-                    //add slider
-                    GridBagConstraints cLabel = new GridBagConstraints();
-                    GridBagConstraints cSlider = new GridBagConstraints();
-                    GridBagConstraints cSliderMax = new GridBagConstraints();
-                    cSlider.fill = GridBagConstraints.HORIZONTAL;
+        GridBagState gridBagState = new GridBagState();
+        gridBagState.increaseY();
 
-                    DoubleSidePanelItem item = (DoubleSidePanelItem) parameters.get(i);
-                    double[] threshold = {item.getThreshold()};
-                    JTextField out = new JTextField(Double.toString(item.getValue()));
-                    out.setColumns(5);
-                    GridBagConstraints cout = new GridBagConstraints();
-
-                    double max = item.getMaxValue();
-                    JSlider slider = new JSlider(0, (int) (max * 1000 * threshold[0]));
-//                    slider.setValue((int) (1000 * threshold[0]));
-                    slider.setValue((int) (1000 * item.getValue()));
-                    slider.addChangeListener(new ChangeListener() {
-                        @Override
-                        public void stateChanged(ChangeEvent e) {
-                            JSlider source = (JSlider) e.getSource();
-                            int val = source.getValue();
-                            threshold[0] = val / 1000.0;    //TODO less messy
-                            item.setValue(threshold[0]);
-                            out.setText(Double.toString(threshold[0]));
-//                            System.out.println(threshold[0]);
-                        }
-                    });
-
-                    SpinnerModel model = new SpinnerNumberModel(max * threshold[0], threshold[0] / 10.0, 1000 * max * threshold[0], threshold[0] / 10.0);
-                    JSpinner spinner = new JSpinner(model);
-                    JComponent editor = new JSpinner.NumberEditor(spinner, "#,##0.###");
-                    spinner.setEditor(editor);
-                    ((JSpinner.DefaultEditor) (spinner.getEditor())).getTextField().setColumns(5);
-                    spinner.addChangeListener(new ChangeListener() {
-                        final JSlider s = slider;
-
-                        public void stateChanged(ChangeEvent e) {
-                            JSpinner source = (JSpinner) e.getSource();
-                            Double val = (Double) source.getValue();
-                            int maxValSlider = (int) (val * 1000);
-                            s.setMaximum(maxValSlider);
-                        }
-                    });
-
-
-                    slider.setSize(400, 30);
-                    cLabel.gridx = 1;
-                    cLabel.gridy = ++cCustomPanelY;
-
-                    cout.gridx = 0;
-                    cout.gridy = ++cCustomPanelY;
-                    cout.fill = GridBagConstraints.HORIZONTAL;
-                    cSlider.gridx = 1;
-                    cSlider.gridy = cCustomPanelY;
-                    cSlider.fill = GridBagConstraints.HORIZONTAL;
-                    cSliderMax.gridy = cCustomPanelY;
-                    cSliderMax.gridx = 2;
-                    cSliderMax.fill = GridBagConstraints.HORIZONTAL;
-                    custom.add(new JLabel(parameters.get(i).getName()), cLabel);
-                    custom.add(out, cout);
-                    custom.add(slider, cSlider);
-                    custom.add(spinner, cSliderMax);
-
-                } else if (parameters.get(i).getValue().getClass().equals(Boolean.class)) {
-                    //add checkbox
-                    cCustomPanel.gridy = ++cCustomPanelY;
-                    cCustomPanel.gridx = 0;
-                    JCheckBox checkBox = new JCheckBox(parameters.get(i).getName());
-                    custom.add(checkBox, cCustomPanel);
-                    BoolSidePanelItem item = (BoolSidePanelItem) parameters.get(i);
-                    checkBox.addItemListener(new ItemListener() {
-                        @Override
-                        public void itemStateChanged(ItemEvent itemEvent) {
-                            item.setValue((itemEvent.getStateChange() == ItemEvent.SELECTED));
-                        }
-                    });
-//                    checkBox.addItemListener(this::minimumAngleDisplayEnabled);
-                    checkBox.setSelected((boolean) parameters.get(i).getValue());
-
-                } else if (parameters.get(i).getValue().getClass().equals(Integer.class)) {
-                    //maybe textfield vs slider for ints?
-                    //add slider
-                    GridBagConstraints cLabel = new GridBagConstraints();
-                    GridBagConstraints cSlider = new GridBagConstraints();
-                    GridBagConstraints cSliderMax = new GridBagConstraints();
-                    cSlider.fill = GridBagConstraints.HORIZONTAL;
-
-                    IntegerSidePanelItem item = (IntegerSidePanelItem) parameters.get(i);
-                    double[] threshold = {item.getThreshold()};
-                    JTextField out = new JTextField(Double.toString(item.getValue()));
-                    out.setColumns(5);
-                    GridBagConstraints cout = new GridBagConstraints();
-
-                    double max = item.getMaxValue();
-                    JSlider slider = new JSlider(item.getMinValue(), item.getMaxValue());
-                    slider.setValue(item.getValue());
-                    slider.addChangeListener(new ChangeListener() {
-                        @Override
-                        public void stateChanged(ChangeEvent e) {
-                            JSlider source = (JSlider) e.getSource();
-                            int val = source.getValue();
-                            item.setValue(val);
-                            executor.setMaxIterations(val);
-                            out.setText(Integer.toString(val));
-                        }
-                    });
-
-                    SpinnerModel model = new SpinnerNumberModel(max * threshold[0], threshold[0] / 10.0, 1000 * max * threshold[0], threshold[0] / 10.0);
-                    JSpinner spinner = new JSpinner(model);
-                    JComponent editor = new JSpinner.NumberEditor(spinner, "#,##0.###");
-                    spinner.setEditor(editor);
-                    ((JSpinner.DefaultEditor) (spinner.getEditor())).getTextField().setColumns(5);
-                    spinner.addChangeListener(new ChangeListener() {
-                        final JSlider s = slider;
-
-                        public void stateChanged(ChangeEvent e) {
-                            JSpinner source = (JSpinner) e.getSource();
-                            s.setMaximum((int) source.getValue());
-                        }
-                    });
-
-                    slider.setSize(400, 30);
-                    cLabel.gridx = 1;
-                    cLabel.gridy = ++cCustomPanelY;
-
-                    cout.gridx = 0;
-                    cout.gridy = ++cCustomPanelY;
-                    cout.fill = GridBagConstraints.HORIZONTAL;
-                    cSlider.gridx = 1;
-                    cSlider.gridy = cCustomPanelY;
-//                    cSlider.gridwidth = 7;
-                    cSlider.fill = GridBagConstraints.HORIZONTAL;
-                    cSliderMax.gridy = cCustomPanelY;
-                    cSliderMax.gridx = 2;
-//                    cSlider.gridwidth =  1;
-//                    cSliderMax.weightx = 0.2;
-                    cSliderMax.fill = GridBagConstraints.HORIZONTAL;
-                    custom.add(new JLabel(parameters.get(i).getName()), cLabel);
-                    custom.add(out, cout);
-                    custom.add(slider, cSlider);
-                    custom.add(spinner, cSliderMax);
-
-                }
-            }
-
-
-            cSidePanel.fill = GridBagConstraints.BOTH;
-            cSidePanel.gridx = 0;
-            cSidePanel.gridy = 0;
-//        cSidePanel.weightx = 1;
-            cSidePanel.weighty = 1;
-            cSidePanel.anchor = GridBagConstraints.FIRST_LINE_START;
-            sidePanel.add(custom, cSidePanel);
-
-
-            //default controls (start, pause, manual mode, min angle, output, etc)
-            cSidePanel.fill = GridBagConstraints.HORIZONTAL;
-            cSidePanel.gridx = 0;
-            cSidePanel.gridy = 1;
-            cSidePanel.weightx = 0;
-            cSidePanel.weighty = 0;
-            sidePanel.add(getDefaultPanel(executor), cSidePanel);
-
-            tabbedSidePane.addTab(algorithmName, sidePanel);
-        } else {
-            //empty custom with only lean default controls
-            cSidePanel.fill = GridBagConstraints.BOTH;
-            cSidePanel.gridx = 0;
-            cSidePanel.gridy = 0;
-//        cSidePanel.weightx = 1;
-            cSidePanel.weighty = 1;
-            cSidePanel.anchor = GridBagConstraints.FIRST_LINE_START;
-            sidePanel.add(custom, cSidePanel);
-
-            //default controls (manual mode, min angle, output, etc)
-            cSidePanel.fill = GridBagConstraints.HORIZONTAL;
-            cSidePanel.gridx = 0;
-            cSidePanel.gridy = 1;
-            cSidePanel.weightx = 0;
-            cSidePanel.weighty = 0;
-            sidePanel.add(getLeanDefaultPanel(), cSidePanel);
-            tabbedSidePane.addTab(algorithmName, sidePanel);
+        if (configurator != null){
+            configurator.init(new SidePanelItemFactory(custom, mainFrame.view, gridBagState));
         }
+
+        cSidePanel.fill = GridBagConstraints.BOTH;
+        cSidePanel.gridx = 0;
+        cSidePanel.gridy = 0;
+//        cSidePanel.weightx = 1;
+        cSidePanel.weighty = 1;
+        cSidePanel.anchor = GridBagConstraints.FIRST_LINE_START;
+        sidePanel.add(custom, cSidePanel);
+
+
+        //default controls (start, pause, manual mode, min angle, output, etc)
+        cSidePanel.fill = GridBagConstraints.HORIZONTAL;
+        cSidePanel.gridx = 0;
+        cSidePanel.gridy = 1;
+        cSidePanel.weightx = 0;
+        cSidePanel.weighty = 0;
+        sidePanel.add(getDefaultPanel(executor), cSidePanel);
+
+        tabbedSidePane.addTab(algorithmName, sidePanel);
     }
 
     /**
@@ -689,16 +516,17 @@ public class InitSidePanel {
     }
 
     private void startForceClicked(@SuppressWarnings("unused") ActionEvent evt){
-        if(mainFrame.forceAlgorithm == null){
-            TrashCan.init();
-            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
-            mainFrame.forceAlgorithm = fd;
-            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
-            IGraphLayoutExecutor executor =
-                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
-            executor.start();
-            mainFrame.view.updateUI();
-        }
+        // TODO
+//        if(mainFrame.forceAlgorithm == null){
+//            TrashCan.init();
+//            ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
+//            mainFrame.forceAlgorithm = fd;
+//            mainFrame.graphEditorInputMode.setCreateNodeAllowed(false);
+//            IGraphLayoutExecutor executor =
+//                new IGraphLayoutExecutor(fd, mainFrame.view.getGraph(), mainFrame.progressBar, -1, 20);
+//            executor.start();
+//            mainFrame.view.updateUI();
+//        }
     }
 
     private void stopForceClicked(@SuppressWarnings("unused") ActionEvent evt){

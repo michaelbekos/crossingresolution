@@ -23,7 +23,7 @@ import layout.algo.*;
 import layout.algo.forces.ElectricForce;
 import layout.algo.forces.SlopedForce;
 import layout.algo.forces.SpringForce;
-import sidepanel.SidePanelItemFactory;
+import layout.algo.layoutinterface.VoidItemFactory;
 import layout.algo.utils.PositionMap;
 import util.*;
 import view.visual.InitClinchLayout;
@@ -876,7 +876,7 @@ public class InitMenuBar {
         ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
             .addForce(new SpringForce(graph, 100, 0.01, 150))
             .addForce(new ElectricForce(graph, 0.01, 50000));
-        configurator.init(mainFrame.sidePanelItemFactory);
+        // TODO: configurator.init(mainFrame.sidePanelItemFactory);
 
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, graph, new CachedMinimumAngle());
         IGraphLayoutExecutor executor = new IGraphLayoutExecutor(forceAlgorithm, graph, progressBar, iterations, 20);
@@ -1014,7 +1014,7 @@ public class InitMenuBar {
             .addForce(new SlopedForce(mainFrame.graph, numSlopes * 2, initAngle, 0.7))
             .addForce(new ElectricForce(mainFrame.graph, 0.01, 30000))
             .addForce(new SpringForce(mainFrame.graph, 100, 0.01, 100));
-        configurator.init(mainFrame.sidePanelItemFactory);
+        // TODO configurator.init(mainFrame.sidePanelItemFactory);
 
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, new CachedMinimumAngle());
 
@@ -1046,7 +1046,7 @@ public class InitMenuBar {
         }
         else return;
 
-        ForceAlgorithm fd = mainFrame.defaultForceAlgorithm();
+        ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(graph, new VoidItemFactory());
         mainFrame.forceAlgorithm = fd;
 
         IGraphLayoutExecutor executor =
@@ -1230,13 +1230,14 @@ public class InitMenuBar {
     }
 
     private void randomMovementActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        RandomMovementConfigurator configurator = new RandomMovementConfigurator();
-        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, view));
-
-        RandomMovementLayout layout = new RandomMovementLayout(graph, configurator);
-        IGraphLayoutExecutor layoutExecutor =
-            new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
-        layoutExecutor.start();
+        // TODO
+//        RandomMovementConfigurator configurator = new RandomMovementConfigurator();
+//        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, view, gridBagState));
+//
+//        RandomMovementLayout layout = new RandomMovementLayout(graph, configurator);
+//        IGraphLayoutExecutor layoutExecutor =
+//            new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
+//        layoutExecutor.start();
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

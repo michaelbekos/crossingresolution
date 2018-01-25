@@ -24,8 +24,4 @@ public class GeneticForceAlgorithmConfigurator implements ILayoutConfigurator {
     stepSize.setValue(0.1);
   }
 
-  @Override
-  public ArrayList<AbstractLayoutInterfaceItem> getAbstractLayoutInterfaceItems() {
-    return abstractLayoutInterfaceItems;
-  }
 }
