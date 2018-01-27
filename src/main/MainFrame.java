@@ -47,7 +47,7 @@ public class MainFrame extends JFrame {
     private SimpleLabelStyle defaultLabelStyle;
 
     /* Central gui elements */
-    private JLabel infoLabel;
+    public JLabel infoLabel;
     public JProgressBar progressBar;
 
     public MinimumAngleMonitor minimumAngleMonitor;
@@ -236,7 +236,6 @@ public class MainFrame extends JFrame {
 
         InitSidePanel newSidePanel = new InitSidePanel(this);
         sidePanel = newSidePanel.initSidePanel(mainPanel,c);
-//        initSidePanel(mainPanel, c);
     }
 
     private final Set<INode> movedNodes = new HashSet<>();

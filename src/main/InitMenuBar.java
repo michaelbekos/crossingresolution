@@ -102,7 +102,6 @@ public class InitMenuBar {
         mainMenuBar.add(createEditMenu());
         mainMenuBar.add(createViewMenu());
         mainMenuBar.add(createGraphOpsMenu());
-        mainMenuBar.add(createYfilesLayoutMenu());
         mainMenuBar.add(createLayoutMenu());
 
         return mainMenuBar;
@@ -169,41 +168,6 @@ public class InitMenuBar {
         return layoutMenu;
     }
 
-    private JMenu createYfilesLayoutMenu() {
-        JMenu yFilesLayoutMenu = new JMenu();
-        yFilesLayoutMenu.setText("yFiles Layout");
-
-        JMenuItem orthogonalItem = new JMenuItem();
-        orthogonalItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        orthogonalItem.setText("Orthogonal");
-        orthogonalItem.addActionListener(this::orthogonalItemActionPerformed);
-        yFilesLayoutMenu.add(orthogonalItem);
-
-        JMenuItem circularItem = new JMenuItem();
-        circularItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        circularItem.setText("Circular");
-        circularItem.addActionListener(this::circularItemActionPerformed);
-        yFilesLayoutMenu.add(circularItem);
-
-        JMenuItem treeItem = new JMenuItem();
-        treeItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        treeItem.setText("Tree");
-        treeItem.addActionListener(this::treeItemActionPerformed);
-        yFilesLayoutMenu.add(treeItem);
-
-        JMenuItem organicItem = new JMenuItem();
-        organicItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        organicItem.setText("Organic");
-        organicItem.addActionListener(this::organicItemActionPerformed);
-        yFilesLayoutMenu.add(organicItem);
-
-        JMenuItem yFilesSpringEmbedderItem = new JMenuItem();
-        yFilesSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        yFilesSpringEmbedderItem.setText("yFiles Spring Embedder");
-        yFilesSpringEmbedderItem.addActionListener(this::yFilesSpringEmbedderItemActionPerformed);
-        yFilesLayoutMenu.add(yFilesSpringEmbedderItem);
-        return yFilesLayoutMenu;
-    }
 
     private JMenu createGraphOpsMenu() {
         /* Graph operation Menu */
@@ -859,30 +823,6 @@ public class InitMenuBar {
         }
     }
 
-    public void yFilesSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt){
-        JTextField iterationsTextField = new JTextField("1000");
-        int iterations = 1000;
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                iterations = Integer.parseInt(iterationsTextField.getText());
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
-            .addForce(new SpringForce(graph, 100, 0.01, 150))
-            .addForce(new ElectricForce(graph, 0.01, 50000));
-        // TODO: configurator.init(mainFrame.sidePanelItemFactory);
-
-        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, graph, new CachedMinimumAngle());
-        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(forceAlgorithm, graph, progressBar, iterations, 20);
-        executor.start();
-        this.view.updateUI();
-    }
 
     //helper function
     private List<ICanvasObject> canvasObjects = new ArrayList<>();
@@ -1057,51 +997,6 @@ public class InitMenuBar {
 
     private void saveAsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         showFileChooser(new JFileChooser(this.fileNamePathFolder));
-    }
-
-    public void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        applyLayoutToSelection(new OrganicLayout());
-    }
-
-    public void circularItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        applyLayoutToSelection(new CircularLayout());
-    }
-
-    public void orthogonalItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        applyLayoutToSelection(new OrthogonalLayout());
-
-    }
-
-    public void treeItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        try {
-            applyLayoutToSelection(new TreeLayout());
-        } catch (Exception exc) {
-            this.infoLabel.setText("The input graph is not a tree or a forest.");
-        }
-    }
-
-    private void applyLayoutToSelection(ILayoutAlgorithm layout) {
-        IGraphSelection selection = graphEditorInputMode.getGraphSelection();
-        ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
-
-        if (selectedNodes.getCount() == 0) {
-            LayoutUtilities.morphLayout(this.view, layout, Duration.ofSeconds(1), null);
-            return;
-        }
-
-        FilteredGraphWrapper selectedGraph = new FilteredGraphWrapper(graph, selectedNodes::isSelected,
-            iEdge -> selectedNodes.isSelected(iEdge.getSourceNode()) || selectedNodes.isSelected(iEdge.getTargetNode()));
-
-        PartialLayout partialLayout = new PartialLayout(layout);
-        partialLayout.setSubgraphPlacement(SubgraphPlacement.FROM_SKETCH);
-
-        LayoutExecutor executor = new LayoutExecutor(view, selectedGraph, partialLayout);
-        executor.setDuration(Duration.ofSeconds(1));
-        executor.setViewportAnimationEnabled(true);
-        executor.setEasedAnimationEnabled(true);
-        executor.setContentRectUpdatingEnabled(true);
-
-        executor.start();
     }
 
     //edit menu actions

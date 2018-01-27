@@ -2,15 +2,19 @@ package sidepanel;
 
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.GraphItemTypes;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.layout.ILayoutAlgorithm;
+import com.yworks.yfiles.layout.LayoutExecutor;
+import com.yworks.yfiles.layout.circular.CircularLayout;
+import com.yworks.yfiles.layout.organic.OrganicLayout;
+import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
+import com.yworks.yfiles.layout.partial.PartialLayout;
+import com.yworks.yfiles.layout.partial.SubgraphPlacement;
+import com.yworks.yfiles.layout.tree.TreeLayout;
+import com.yworks.yfiles.view.IGraphSelection;
+import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.*;
-import layout.algo.forces.CrossingForce;
-import layout.algo.forces.IncidentEdgesForce;
-import layout.algo.forces.NodeNeighbourForce;
-import layout.algo.forces.NodePairForce;
+import layout.algo.forces.*;
 import layout.algo.genetic.GeneticAlgorithm;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
@@ -24,6 +28,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.time.Duration;
 import java.util.Optional;
 
 public class InitSidePanel {
@@ -64,9 +69,9 @@ public class InitSidePanel {
 
         ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator();
         configurator.addForce(new NodeNeighbourForce(graph))
-            .addForce(new NodePairForce(graph))
-            .addForce(new CrossingForce(graph, cMinimumAngle))
-            .addForce(new IncidentEdgesForce(graph));
+                .addForce(new NodePairForce(graph))
+                .addForce(new IncidentEdgesForce(graph))
+                .addForce(new CrossingForce(graph, cMinimumAngle));
 
         ForceAlgorithm fd = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
 
@@ -76,12 +81,12 @@ public class InitSidePanel {
         addAlgorithm("Force Algorithm", configurator, forceExecutor);
 //----------------------------------------
 
-      //Config, layout, layoutexecutor for all other algos too
+        //Config, layout, layoutexecutor for all other algos too
 
-      GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
-      GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
-      IGraphLayoutExecutor geneticExecutor = new IGraphLayoutExecutor(geneticAlgo, graph, mainFrame.progressBar, 1000, 20);
-      addAlgorithm("Genetic Algorithm", geneticConfigurator, geneticExecutor);
+        GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
+        GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
+        IGraphLayoutExecutor geneticExecutor = new IGraphLayoutExecutor(geneticAlgo, graph, mainFrame.progressBar, 1000, 20);
+        addAlgorithm("Genetic Algorithm", geneticConfigurator, geneticExecutor);
 
 
 
@@ -191,12 +196,7 @@ public class InitSidePanel {
         cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
         cCustomPanel.gridx = 0;
         cCustomPanel.gridy = cCustomPanelY;
-        orthogonalItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.menuBar.orthogonalItemActionPerformed(actionEvent);
-            }
-        });
+        orthogonalItem.addActionListener(this::orthogonalItemActionPerformed);
         custom.add(orthogonalItem, cCustomPanel);
 
         JButton circularItem = new JButton("Circular Layout");
@@ -204,12 +204,7 @@ public class InitSidePanel {
         cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
         cCustomPanel.gridx = 1;
         cCustomPanel.gridy = cCustomPanelY;
-        circularItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.menuBar.circularItemActionPerformed(actionEvent);
-            }
-        });
+        circularItem.addActionListener(this::circularItemActionPerformed);
         custom.add(circularItem, cCustomPanel);
 
         JButton treeItem = new JButton("Tree Layout");
@@ -217,12 +212,7 @@ public class InitSidePanel {
         cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
         cCustomPanel.gridx = 0;
         cCustomPanel.gridy = ++cCustomPanelY;
-        treeItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.menuBar.treeItemActionPerformed(actionEvent);
-            }
-        });
+        treeItem.addActionListener(this::treeItemActionPerformed);
         custom.add(treeItem, cCustomPanel);
 
         JButton organicItem = new JButton("Organic Layout");
@@ -230,12 +220,7 @@ public class InitSidePanel {
         cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
         cCustomPanel.gridx = 1;
         cCustomPanel.gridy = cCustomPanelY;
-        organicItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.menuBar.organicItemActionPerformed(actionEvent);
-            }
-        });
+        organicItem.addActionListener(this::organicItemActionPerformed);
         custom.add(organicItem, cCustomPanel);
 
 
@@ -244,12 +229,7 @@ public class InitSidePanel {
         cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
         cCustomPanel.gridx = 0;
         cCustomPanel.gridy = ++cCustomPanelY;
-        yFilesSpringEmbedderItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.menuBar.yFilesSpringEmbedderItemActionPerformed(actionEvent);
-            }
-        });
+        yFilesSpringEmbedderItem.addActionListener(this::yFilesSpringEmbedderItemActionPerformed);
         custom.add(yFilesSpringEmbedderItem, cCustomPanel);
 
 
@@ -535,6 +515,76 @@ public class InitSidePanel {
         }
     }
 
+
+    public void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        applyLayoutToSelection(new OrganicLayout());
+    }
+
+    public void circularItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        applyLayoutToSelection(new CircularLayout());
+    }
+
+    public void orthogonalItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        applyLayoutToSelection(new OrthogonalLayout());
+
+    }
+
+    public void treeItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        try {
+            applyLayoutToSelection(new TreeLayout());
+        } catch (Exception exc) {
+            mainFrame.infoLabel.setText("The input graph is not a tree or a forest.");
+        }
+    }
+
+    private void applyLayoutToSelection(ILayoutAlgorithm layout) {
+        IGraphSelection selection = mainFrame.graphEditorInputMode.getGraphSelection();
+        ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
+
+        if (selectedNodes.getCount() == 0) {
+            LayoutUtilities.morphLayout(mainFrame.view, layout, Duration.ofSeconds(1), null);
+            return;
+        }
+
+        FilteredGraphWrapper selectedGraph = new FilteredGraphWrapper(mainFrame.graph, selectedNodes::isSelected,
+                iEdge -> selectedNodes.isSelected(iEdge.getSourceNode()) || selectedNodes.isSelected(iEdge.getTargetNode()));
+
+        PartialLayout partialLayout = new PartialLayout(layout);
+        partialLayout.setSubgraphPlacement(SubgraphPlacement.FROM_SKETCH);
+
+        LayoutExecutor executor = new LayoutExecutor(mainFrame.view, selectedGraph, partialLayout);
+        executor.setDuration(Duration.ofSeconds(1));
+        executor.setViewportAnimationEnabled(true);
+        executor.setEasedAnimationEnabled(true);
+        executor.setContentRectUpdatingEnabled(true);
+
+        executor.start();
+    }
+
+    public void yFilesSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt){
+        JTextField iterationsTextField = new JTextField("1000");
+        int iterations = 1000;
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                iterations = Integer.parseInt(iterationsTextField.getText());
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
+                .addForce(new SpringForce(mainFrame.graph, 100, 0.01, 150))
+                .addForce(new ElectricForce(mainFrame.graph, 0.01, 50000));
+        // TODO: configurator.init(mainFrame.sidePanelItemFactory);
+
+        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, new CachedMinimumAngle());
+        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(forceAlgorithm, mainFrame.graph, mainFrame.progressBar, iterations, 20);
+        executor.start();
+        mainFrame.view.updateUI();
+    }
 
 
 
