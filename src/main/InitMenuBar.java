@@ -499,25 +499,29 @@ public class InitMenuBar {
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
         if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
-            this.removedVertices = GraphOperations.removeVertices(this.graph, true, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
+            this.removedVertices = GraphOperations.removeVertices(this.graph, false,true, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
         } else if (this.graph.getNodes().size() > 0){
             JTextField vertexCount = new JTextField();
             vertexCount.setText(Integer.toString(1));
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             JRadioButton useHighest = new JRadioButton("Remove Highest Degree Vertices"),
-                    useLowest = new JRadioButton("Remove Lowest Degree (0, 1, 2) Vertices");
+                    useLowest = new JRadioButton("Remove Lowest Degree (0, 1, 2) Vertices"),
+                    useChains = new JRadioButton("Remove Chains (Connected Vertices with Deg <= 2) ");
             ButtonGroup bg = new ButtonGroup();
             bg.add(useHighest);
             bg.add(useLowest);
+            bg.add(useChains);
             JLabel label = new JLabel();
             String highDeg = "Number of highest degree vertices to remove: ";
             String lowDeg = "Number of lowest degree vertices to remove: ";
+            String chainNumStr = "Number of chains to remove: ";
             label.setText(highDeg);
             panel.add(label);
             panel.add(vertexCount);
             panel.add(useHighest);
             panel.add(useLowest);
+            panel.add(useChains);
             int numLowest = 0;
             for (INode u : this.graph.getNodes()) {
                 if (u.getPorts().size() <= 2) {
@@ -529,15 +533,27 @@ public class InitMenuBar {
                 if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
                     label.setText(highDeg);
                     vertexCount.setText(Integer.toString(1));
-                } else if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
+                }
+            });
+            useLowest.addItemListener(itemEvent -> {
+                if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
                     label.setText(lowDeg);
                     vertexCount.setText(Integer.toString(numLowestFinal));
                 }
             });
-            useHighest.setSelected(true);
+
+            int chainNum = GraphOperations.getChains(graph).size();
+            useChains.addItemListener(itemEvent -> {
+                if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                    label.setText(chainNumStr);
+                    vertexCount.setText(Integer.toString(chainNum));
+                }
+            });
+            useHighest.setSelected(false);
             useLowest.setSelected(false);
+            useChains.setSelected(true);
             int result = JOptionPane.showOptionDialog(null, panel, "Remove Highest or Lowest Degree Vertices", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-            int numVertices = useHighest.isSelected() ? 1 : numLowest;
+            int numVertices = useHighest.isSelected() ? 1 : useChains.isSelected() ? chainNum : numLowest;
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     numVertices = Integer.parseInt(vertexCount.getText());
@@ -552,7 +568,7 @@ public class InitMenuBar {
                     numVertices = 0;
                 }
                 finally {
-                    this.removedVertices = GraphOperations.removeVertices(this.graph, useHighest.isSelected(), numVertices, null, this.removedVertices);
+                    this.removedVertices = GraphOperations.removeVertices(this.graph, useChains.isSelected(), useHighest.isSelected(), numVertices, null, this.removedVertices);
                 }
             }
         }
@@ -602,8 +618,15 @@ public class InitMenuBar {
                     vertexComponentCount.setText(Integer.toString(removedVertices.componentStack.size()));
                 }
             });
-            useVertices.setSelected(true);
-            useComponents.setSelected(false);
+            useVertices.setSelected(false);
+            useComponents.setSelected(true);
+            if (useVertices.isSelected()) {
+                label.setText(vertex);
+                vertexComponentCount.setText(Integer.toString(removedVertices.size()));
+            } else if (useComponents.isSelected()) {
+                label.setText(component);
+                vertexComponentCount.setText(Integer.toString(removedVertices.componentStack.size()));
+            }
 
             int result = JOptionPane.showOptionDialog(null, panel, "Reinsert Vertices or Components", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             int numVertices = useVertices.isSelected() ? removedVertices.size() : removedVertices.componentStack.size();

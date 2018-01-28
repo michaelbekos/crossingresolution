@@ -9,20 +9,19 @@ import java.util.*;
 
 public class GraphOperations {
 
-	private static Comparator<INode> byPortSize = Comparator.<INode>comparingInt(p -> p.getPorts().size());
+    private static Comparator<INode> byPortSize = Comparator.<INode>comparingInt(p -> p.getPorts().size());
 
     /**
      * Removes numVertices number of nodes with the highest or lowest degree from graph g
-     * @param g
-     * @param numVertices
-     * @return
+     * @param g - underlying graph
+     * @param numVertices - number of vertices to remove
+     * @return - returns a stack of the removed vertices
      */
-    public static VertexStack removeVertices(IGraph g, boolean removeHighestDegree, int numVertices, ISelectionModel<INode> selection, VertexStack removedVertices) {
-
+    public static VertexStack removeVertices(IGraph g, boolean removeChains, boolean removeHighestDegree, int numVertices, ISelectionModel<INode> selection, VertexStack removedVertices) {
         int tagNum = 0;
         for (INode u : g.getNodes()) {
             if (u.getTag() == null) {
-               u.setTag(tagNum);
+                u.setTag(tagNum);
             }
             tagNum++;
         }
@@ -49,7 +48,29 @@ public class GraphOperations {
                     break;
                 }
             }
-            if (removeHighestDegree) {
+            if (removeChains) {
+                ArrayList<ArrayList<INode>> chains = getChains(g);
+                //adding chains to stack individually
+                if (removedVertices == null) {
+                    removedVertices = new VertexStack(g);
+                }
+                int k = 0;
+                int stackedVerticesNum;
+                for (ArrayList<INode> chain : chains) {
+                    if (k >= numVertices) {
+                        break;
+                    }
+                    k++;
+                    stackedVerticesNum = chain.size();
+                    for (INode chainNode : chain) {
+                        removedVertices.push(chainNode, g);
+                        g.remove(chainNode);
+                    }
+                    removedVertices.componentStack.add(stackedVerticesNum);
+                }
+                return removedVertices;
+
+            } else if (removeHighestDegree) {
                 //fill array maxDegVertex with n largest degree vertices (largest->smallest)
                 Arrays.sort(maxDegVertex, byPortSize);
                 while (i < g.getNodes().size()) {
@@ -71,7 +92,7 @@ public class GraphOperations {
                 }
             }
         }
-
+        //Chains do this separately
         if (removedVertices == null) {
             removedVertices = new VertexStack(g);
         }
@@ -87,9 +108,111 @@ public class GraphOperations {
     }
 
     /**
+     * Helper function to compute chains
+     * @param g - graph
+     * @return  - returns a list of chains (nodes with deg <=2)
+     */
+    public static ArrayList<ArrayList<INode>> getChains(IGraph g) {
+        ArrayList<ArrayList<INode>> chains = new ArrayList<>();
+        for (INode u : g.getNodes()) {
+            if (u.getPorts().size() == 2) {
+                ArrayList<INode> newChain = new ArrayList<>();
+                if (chains.size() > 0) {
+                    boolean shouldContinue = false;
+                    for (ArrayList<INode> chain : chains) {
+                        if (chain.contains(u)) {
+                            shouldContinue = true;
+                            break;
+                        }
+                    }
+                    if (shouldContinue) {
+                        continue;
+                    }
+                } else {
+                    if (newChain.contains(u)) {
+                        continue;
+                    }
+                }
+                newChain.add(u);
+                INode neighbor = g.edgesAt(u.getPorts().getItem(0)).first().getSourceNode().equals(u) ?
+                        g.edgesAt(u.getPorts().getItem(0)).first().getTargetNode() : g.edgesAt(u.getPorts().getItem(0)).first().getSourceNode();
+                while (neighbor != null) {
+                    if (neighbor.getPorts().size() == 2) {
+                        //already added node in previous loop
+                        if (chains.size() > 0) {
+                            boolean shouldBreak = false;
+                            for (ArrayList<INode> chain : chains) {
+                                if (chain.contains(neighbor)) {
+                                    shouldBreak = true;
+                                    break;
+                                }
+                            }
+                            if (!shouldBreak) {
+                                shouldBreak = newChain.contains(neighbor);
+                            }
+                            if (shouldBreak) {
+                                break;
+                            }
+                        } else {
+                            if (newChain.contains(neighbor)) {
+                                break;
+                            }
+                        }
+                        newChain.add(neighbor);
+                        neighbor = g.edgesAt(neighbor.getPorts().getItem(0)).first().getSourceNode().equals(neighbor) ?
+                                g.edgesAt(neighbor.getPorts().getItem(0)).first().getTargetNode() : g.edgesAt(neighbor.getPorts().getItem(0)).first().getSourceNode();
+                    } else if (neighbor.getPorts().size() == 1) {
+                        newChain.add(neighbor);
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                //neighbor in the opposite direction
+                INode neighbor2 = g.edgesAt(u.getPorts().getItem(1)).first().getSourceNode().equals(u) ?
+                        g.edgesAt(u.getPorts().getItem(1)).first().getTargetNode() : g.edgesAt(u.getPorts().getItem(1)).first().getSourceNode();
+                while (neighbor2 != null) {
+                    if (neighbor2.getPorts().size() == 2) {
+                        //already added node in previous loop
+                        if (chains.size() > 0) {
+                            boolean shouldBreak = false;
+                            for (ArrayList<INode> chain : chains) {
+                                if (chain.contains(neighbor2)) {
+                                    shouldBreak = true;
+                                    break;
+                                }
+                            }
+                            if (!shouldBreak) {
+                                shouldBreak = newChain.contains(neighbor2);
+                            }
+                            if (shouldBreak) {
+                                break;
+                            }
+                        } else {
+                            if (newChain.contains(neighbor2)) {
+                                break;
+                            }
+                        }
+                        newChain.add(neighbor2);
+                        neighbor2 = g.edgesAt(neighbor2.getPorts().getItem(1)).first().getSourceNode().equals(neighbor2) ?
+                                g.edgesAt(neighbor2.getPorts().getItem(1)).first().getTargetNode() : g.edgesAt(neighbor2.getPorts().getItem(1)).first().getSourceNode();
+                    } else if (neighbor2.getPorts().size() == 1)  {
+                        newChain.add(neighbor2);
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                chains.add(newChain);
+            }
+        }
+        return chains;
+    }
+
+    /**
      * Reinserts the previously removed nodes
-     * @param g
-     * @param removedVertices
+     * @param g - graph
+     * @param removedVertices - stack of all removed vertices
      */
     public static VertexStack reinsertVertices(IGraph g, boolean useVertices, int numVerticesComponents, VertexStack removedVertices) {
         int numVertices = 0;
@@ -151,19 +274,19 @@ public class GraphOperations {
      * @return scaled grid points with scaleValue factor
      */
     public static  Mapper<INode, PointD> scaleUpProcess(IGraph g, Mapper<INode,PointD> nodePose, double scaleValue){
-    	double minX=Double.POSITIVE_INFINITY, minY=Double.POSITIVE_INFINITY;
-    	for(INode u : g.getNodes()){
-    		if(u.getLayout().getCenter().getX()<minX){
-        		minX=u.getLayout().getCenter().getX();
-        	}
-        	if(u.getLayout().getCenter().getY()<minY){
-        		minY=u.getLayout().getCenter().getY();
-        	}
-        }  
+        double minX=Double.POSITIVE_INFINITY, minY=Double.POSITIVE_INFINITY;
         for(INode u : g.getNodes()){
-        	nodePose.setValue(u, new PointD((u.getLayout().getCenter().getX()-minX) * scaleValue, (u.getLayout().getCenter().getY()-minY) * scaleValue));
+            if(u.getLayout().getCenter().getX()<minX){
+                minX=u.getLayout().getCenter().getX();
+            }
+            if(u.getLayout().getCenter().getY()<minY){
+                minY=u.getLayout().getCenter().getY();
+            }
+        }
+        for(INode u : g.getNodes()){
+            nodePose.setValue(u, new PointD((u.getLayout().getCenter().getX()-minX) * scaleValue, (u.getLayout().getCenter().getY()-minY) * scaleValue));
             //g.setNodeLayout(u, new RectD(u.getLayout().getX()*scaleValue,u.getLayout().getY()*scaleValue,u.getLayout().getWidth()*scaleValue,u.getLayout().getHeight()*scaleValue));
-        	g.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),u.getLayout().getWidth(),u.getLayout().getHeight()));
+            g.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),u.getLayout().getWidth(),u.getLayout().getHeight()));
         }
         return nodePose;
     }
