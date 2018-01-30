@@ -1,11 +1,15 @@
 package layout.algo;
 
 import algorithms.graphs.MinimumAngle;
+import com.yworks.yfiles.algorithms.Bfs;
+import com.yworks.yfiles.algorithms.Node;
+import com.yworks.yfiles.algorithms.NodeList;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.layout.YGraphAdapter;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import util.BoundingBox;
@@ -55,7 +59,7 @@ public class RandomMovementLayout implements ILayout {
 
   @Override
   public boolean executeStep(int iteration) {
-    Optional<INode> randomNode = selectRandomNode(graph.getNodes());
+    Optional<INode> randomNode = gaussianNodeSelection();
     if (!randomNode.isPresent()) {
       return true;
     }
@@ -111,7 +115,7 @@ public class RandomMovementLayout implements ILayout {
     nodesOfCrossing.add(crossing.get().segment1.n2);
     nodesOfCrossing.add(crossing.get().segment2.n1);
     nodesOfCrossing.add(crossing.get().segment2.n2);
-    selectRandomNode(nodesOfCrossing)
+    selectRandomNode(nodesOfCrossing, graph.getNodes().size())
         .ifPresent(n -> jump(n, positions.getValue(n)));
     return false;
   }
@@ -151,10 +155,37 @@ public class RandomMovementLayout implements ILayout {
     return randomSamples;
   }
 
-  private Optional<INode> selectRandomNode(Iterable<INode> nodes) {
+  private Optional<INode> gaussianNodeSelection() {
+    return MinimumAngle.getMinimumAngleCrossing(graph, positions)
+        .flatMap(crossing -> {
+          YGraphAdapter graphAdapter = new YGraphAdapter(graph);
+
+          NodeList nodesOfCrossing = new NodeList();
+          nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment1.n1));
+          nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment1.n2));
+          nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment2.n1));
+          nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment2.n2));
+
+          NodeList[] layers = Bfs.getLayers(graphAdapter.getYGraph(), nodesOfCrossing);
+
+          // select a layer according to a normal distribution with a variance that is equal to half of the number
+          // of layers. The reason for this number is that more than 95% of all values are within the interval
+          // [-2 * sigma; 2 * sigma]:
+          //     2 * sigma = #layers
+          // <=>     sigma = #layers / 2
+          int layerIndex = Math.min((int) Math.floor(Math.abs(random.nextGaussian() * layers.length / 2d)), layers.length - 1);
+
+          // this is ok!
+          //noinspection unchecked
+          return selectRandomNode((Iterable<Node>) (Object) layers[layerIndex], layers[layerIndex].size())
+              .map(graphAdapter::getOriginalNode);
+        });
+  }
+
+  private <T> Optional<T> selectRandomNode(Iterable<T> nodes, int size) {
     // select random node (we might think about shuffling instead?)
     return  StreamSupport.stream(nodes.spliterator(), false)
-        .skip(random.nextInt(graph.getNodes().size()))
+        .skip(random.nextInt(size))
         .findFirst();
   }
 
