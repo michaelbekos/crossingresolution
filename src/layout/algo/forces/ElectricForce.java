@@ -9,14 +9,12 @@ import com.yworks.yfiles.layout.YGraphAdapter;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 public class ElectricForce implements IForce {
-  private final YGraphAdapter adapter;
   private final IGraph graph;
   private final double threshold;
   private final double electricalRepulsion;
 
   public ElectricForce(IGraph graph, double threshold, double electricalRepulsion) {
     this.graph = graph;
-    this.adapter = new YGraphAdapter(graph);
     this.threshold = threshold;
     this.electricalRepulsion = electricalRepulsion;
   }
@@ -28,6 +26,7 @@ public class ElectricForce implements IForce {
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
+    YGraphAdapter adapter = new YGraphAdapter(graph);
     boolean[] reached = new boolean[graph.getNodes().size()];
 
     for (INode u : graph.getNodes()) {
