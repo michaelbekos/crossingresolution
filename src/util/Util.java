@@ -3,6 +3,7 @@ package util;
 import java.util.*;
 import java.util.stream.*;
 
+import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.utils.IListEnumerable;
 
 public abstract class Util {
@@ -61,5 +62,9 @@ public abstract class Util {
       }
     }
     return res.stream();
+  }
+
+  public static PointD rotate90DegreesClockwise(PointD p) {
+    return new PointD(p.getY(), -p.getX());
   }
 }

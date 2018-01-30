@@ -9,10 +9,9 @@ import com.yworks.yfiles.layout.CopiedLayoutGraph;
 import com.yworks.yfiles.layout.LayoutGraphAdapter;
 
 import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
-import layout.algo.ForceAlgorithmApplier;
 
 import algorithms.graphs.MinimumAngle;
-import layout.algo.LayoutUtils;
+import layout.algo.utils.PositionMap;
 import util.graph2d.Intersection;
 import util.graph2d.LineSegment;
 
@@ -34,10 +33,10 @@ public class GridPositioning {
      * @param g - Input Graph
      */
     public static void gridGraph(IGraph g){
-        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(g);
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(g);
 
         while (GridPositioning.isGridGraph(g) == false) {
-            ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.respectiveCrossingGrid(g, nodePositions)));
+            PositionMap.applyToGraph(g, postProcess(g, GridPositioning.respectiveCrossingGrid(g, nodePositions)));
             GridPositioning.removeOverlaps(g, 0.0001);
 
         }
@@ -45,10 +44,10 @@ public class GridPositioning {
     }
 
     public static void gridQuickAndDirty(IGraph g){
-        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(g);
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(g);
 
         while(GridPositioning.isGridGraph(g) == false){
-            ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.quickAndDirtyGridding(g, nodePositions)));
+            PositionMap.applyToGraph(g, postProcess(g, GridPositioning.quickAndDirtyGridding(g, nodePositions)));
             GridPositioning.removeOverlaps(g, 0.0001);
         }
     }
@@ -58,10 +57,10 @@ public class GridPositioning {
      * @param g - Input Graph
      */
     public static void gridGraphFast(IGraph g){
-        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(g);
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(g);
 
        while (GridPositioning.isGridGraph(g) == false) {
-            ForceAlgorithmApplier.applyNodePositionsToGraph(g, postProcess(g, GridPositioning.respectiveNodeGrid(g, nodePositions)));
+            PositionMap.applyToGraph(g, postProcess(g, GridPositioning.respectiveNodeGrid(g, nodePositions)));
             GridPositioning.removeOverlaps(g, 0.001);
        }
 
@@ -351,7 +350,7 @@ public class GridPositioning {
      */
     public static Mapper<INode, PointD> getGridNodes(IGraph graph, Mapper<INode, PointD> nodePositions, Set<INode> containedNodes) {
 
-        Mapper<INode, PointD> temp = LayoutUtils.positionMapFromIGraph(graph);
+        Mapper<INode, PointD> temp = PositionMap.FromIGraph(graph);
         List<Tuple2<PointD, Double>> coord = new ArrayList<>();
         // if no node is already gridded compute the gridding for each node
         if(containedNodes.isEmpty()) {

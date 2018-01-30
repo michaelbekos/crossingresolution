@@ -1,3 +1,6 @@
+package main;
+
+import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
@@ -17,11 +20,14 @@ import com.yworks.yfiles.view.input.GraphSnapContext;
 import com.yworks.yfiles.view.input.GridSnapTypes;
 import io.ContestIOHandler;
 import layout.algo.*;
-import layout.algo.event.AlgorithmEvent;
-import layout.algo.event.AlgorithmListener;
+import layout.algo.forces.ElectricForce;
+import layout.algo.forces.SlopedForce;
+import layout.algo.forces.SpringForce;
+import layout.algo.layoutinterface.VoidItemFactory;
+import layout.algo.utils.PositionMap;
 import util.*;
 import view.visual.InitClinchLayout;
-import view.visual.InitClinchLayoutExecutor;
+import view.visual.VectorVisual;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -30,7 +36,9 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -38,10 +46,6 @@ import java.util.Set;
  * Created by khokhi on 10.12.16.
  */
 public class InitMenuBar {
-	
-	/* Box related issue*/
-	private static double boxsize= 10000;
-	// same as in MainFrame
 	
     private MainFrame mainFrame;
 
@@ -98,7 +102,6 @@ public class InitMenuBar {
         mainMenuBar.add(createEditMenu());
         mainMenuBar.add(createViewMenu());
         mainMenuBar.add(createGraphOpsMenu());
-        mainMenuBar.add(createYfilesLayoutMenu());
         mainMenuBar.add(createLayoutMenu());
 
         return mainMenuBar;
@@ -111,13 +114,13 @@ public class InitMenuBar {
         JMenuItem slopedSpringEmbedderItem = new JMenuItem();
         slopedSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         slopedSpringEmbedderItem.setText("Sloped Spring Embedder");
-        slopedSpringEmbedderItem.addActionListener(mainFrame::slopedSpringEmbedderItemActionPerformed);
+        slopedSpringEmbedderItem.addActionListener(this::slopedSpringEmbedderItemActionPerformed);
         layoutMenu.add(slopedSpringEmbedderItem);
 
         JMenuItem springEmbedderItem = new JMenuItem();
         springEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         springEmbedderItem.setText("Spring Embedder");
-        springEmbedderItem.addActionListener(mainFrame::springEmbedderItemActionPerformed);
+        springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
         layoutMenu.add(springEmbedderItem);
 
         JMenuItem jitterItem = new JMenuItem();
@@ -165,41 +168,6 @@ public class InitMenuBar {
         return layoutMenu;
     }
 
-    private JMenu createYfilesLayoutMenu() {
-        JMenu yFilesLayoutMenu = new JMenu();
-        yFilesLayoutMenu.setText("yFiles Layout");
-
-        JMenuItem orthogonalItem = new JMenuItem();
-        orthogonalItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        orthogonalItem.setText("Orthogonal");
-        orthogonalItem.addActionListener(this::orthogonalItemActionPerformed);
-        yFilesLayoutMenu.add(orthogonalItem);
-
-        JMenuItem circularItem = new JMenuItem();
-        circularItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        circularItem.setText("Circular");
-        circularItem.addActionListener(this::circularItemActionPerformed);
-        yFilesLayoutMenu.add(circularItem);
-
-        JMenuItem treeItem = new JMenuItem();
-        treeItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        treeItem.setText("Tree");
-        treeItem.addActionListener(this::treeItemActionPerformed);
-        yFilesLayoutMenu.add(treeItem);
-
-        JMenuItem organicItem = new JMenuItem();
-        organicItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        organicItem.setText("Organic");
-        organicItem.addActionListener(this::organicItemActionPerformed);
-        yFilesLayoutMenu.add(organicItem);
-
-        JMenuItem yFilesSpringEmbedderItem = new JMenuItem();
-        yFilesSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        yFilesSpringEmbedderItem.setText("yFiles Spring Embedder");
-        yFilesSpringEmbedderItem.addActionListener(this::yFilesSpringEmbedderItemActionPerformed);
-        yFilesLayoutMenu.add(yFilesSpringEmbedderItem);
-        return yFilesLayoutMenu;
-    }
 
     private JMenu createGraphOpsMenu() {
         /* Graph operation Menu */
@@ -413,7 +381,7 @@ public class InitMenuBar {
             int result = JOptionPane.showOptionDialog(null, new Object[]{"Dimensions: ", dim}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (result == JOptionPane.OK_OPTION) {
                 int dimensions = Integer.parseInt(dim.getText());
-                ForceAlgorithmApplier.init();
+                TrashCan.init();
                 HypercubeGenerator.generate(graph, dimensions);
                 view.updateUI();
             }
@@ -432,7 +400,7 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int rC = Integer.parseInt(rCount.getText());
-                ForceAlgorithmApplier.init();
+                TrashCan.init();
                 GridGenerator.generate(graph, xC, yC, rC);
                 view.updateUI();
             }
@@ -451,7 +419,7 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int lC = Integer.parseInt(layers.getText());
-                ForceAlgorithmApplier.init();
+                TrashCan.init();
                 LayeredGridGenerator.generate(graph, xC, yC, lC);
                 view.updateUI();
             }
@@ -515,41 +483,45 @@ public class InitMenuBar {
 
     private void scaleUpGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
-        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 2.0);
-        this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
 
     private void scaleDownGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.5);
-        this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+        this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
     }
 
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
 
         if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
-            this.removedVertices = GraphOperations.removeVertices(this.graph, true, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
+            this.removedVertices = GraphOperations.removeVertices(this.graph, false,true, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
         } else if (this.graph.getNodes().size() > 0){
             JTextField vertexCount = new JTextField();
             vertexCount.setText(Integer.toString(1));
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             JRadioButton useHighest = new JRadioButton("Remove Highest Degree Vertices"),
-                    useLowest = new JRadioButton("Remove Lowest Degree (0, 1, 2) Vertices");
+                    useLowest = new JRadioButton("Remove Lowest Degree (0, 1, 2) Vertices"),
+                    useChains = new JRadioButton("Remove Chains (Connected Vertices with Deg <= 2) ");
             ButtonGroup bg = new ButtonGroup();
             bg.add(useHighest);
             bg.add(useLowest);
+            bg.add(useChains);
             JLabel label = new JLabel();
             String highDeg = "Number of highest degree vertices to remove: ";
             String lowDeg = "Number of lowest degree vertices to remove: ";
+            String chainNumStr = "Number of chains to remove: ";
             label.setText(highDeg);
             panel.add(label);
             panel.add(vertexCount);
             panel.add(useHighest);
             panel.add(useLowest);
+            panel.add(useChains);
             int numLowest = 0;
             for (INode u : this.graph.getNodes()) {
                 if (u.getPorts().size() <= 2) {
@@ -561,15 +533,27 @@ public class InitMenuBar {
                 if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
                     label.setText(highDeg);
                     vertexCount.setText(Integer.toString(1));
-                } else if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
+                }
+            });
+            useLowest.addItemListener(itemEvent -> {
+                if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
                     label.setText(lowDeg);
                     vertexCount.setText(Integer.toString(numLowestFinal));
                 }
             });
-            useHighest.setSelected(true);
+
+            int chainNum = GraphOperations.getChains(graph).size();
+            useChains.addItemListener(itemEvent -> {
+                if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                    label.setText(chainNumStr);
+                    vertexCount.setText(Integer.toString(chainNum));
+                }
+            });
+            useHighest.setSelected(false);
             useLowest.setSelected(false);
+            useChains.setSelected(true);
             int result = JOptionPane.showOptionDialog(null, panel, "Remove Highest or Lowest Degree Vertices", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-            int numVertices = useHighest.isSelected() ? 1 : numLowest;
+            int numVertices = useHighest.isSelected() ? 1 : useChains.isSelected() ? chainNum : numLowest;
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     numVertices = Integer.parseInt(vertexCount.getText());
@@ -584,21 +568,21 @@ public class InitMenuBar {
                     numVertices = 0;
                 }
                 finally {
-                    this.removedVertices = GraphOperations.removeVertices(this.graph, useHighest.isSelected(), numVertices, null, this.removedVertices);
+                    this.removedVertices = GraphOperations.removeVertices(this.graph, useChains.isSelected(), useHighest.isSelected(), numVertices, null, this.removedVertices);
                 }
             }
         }
     }
     
     private void enforcelegal(@SuppressWarnings("unused") ActionEvent evt){
-    	Mapper<INode, PointD> nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+    	Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
     	boolean change=true;
     	while(change){
     		change=false;
 	    	for(INode u : graph.getNodes()){
-	        	if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX()>boxsize || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY()>boxsize){
+	        	if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE){
 	        		nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.9);
-	        	    this.graph =  ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+	        	    this.graph =  PositionMap.applyToGraph(graph, nodePositions);
 	        	    this.view.fitGraphBounds();
 	        	    change=true;
 				}
@@ -634,8 +618,15 @@ public class InitMenuBar {
                     vertexComponentCount.setText(Integer.toString(removedVertices.componentStack.size()));
                 }
             });
-            useVertices.setSelected(true);
-            useComponents.setSelected(false);
+            useVertices.setSelected(false);
+            useComponents.setSelected(true);
+            if (useVertices.isSelected()) {
+                label.setText(vertex);
+                vertexComponentCount.setText(Integer.toString(removedVertices.size()));
+            } else if (useComponents.isSelected()) {
+                label.setText(component);
+                vertexComponentCount.setText(Integer.toString(removedVertices.componentStack.size()));
+            }
 
             int result = JOptionPane.showOptionDialog(null, panel, "Reinsert Vertices or Components", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             int numVertices = useVertices.isSelected() ? removedVertices.size() : removedVertices.componentStack.size();
@@ -702,7 +693,7 @@ public class InitMenuBar {
                 rgg.setNodeCount(10);
                 rgg.setEdgeCount(10);
             } finally {
-                ForceAlgorithmApplier.init();
+                TrashCan.init();
                 rgg.generate(this.graph);
                 LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
                 this.view.fitGraphBounds();
@@ -855,7 +846,155 @@ public class InitMenuBar {
         }
     }
 
-    private void yFilesSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt){
+
+    //helper function
+    private List<ICanvasObject> canvasObjects = new ArrayList<>();
+    private void drawSlopes(double numSlopes, double initAngleDeg) {
+        numSlopes *=2;
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        double stepSize = (2* Math.PI)/numSlopes;
+        double pos = 2 * Math.PI*(initAngleDeg/360);
+        INode tmpNode = mainFrame.graph.createNode(mainFrame.view.getCenter());
+        for (int i = 0; i < numSlopes; i++) {
+            double x_val = 1/mainFrame.view.getZoom() * 3 * Math.cos(pos);
+            double y_val = 1/mainFrame.view.getZoom() * 3 * Math.sin(pos);
+            canvasObjects.add(mainFrame.view.getBackgroundGroup().addChild(new VectorVisual(mainFrame.view, new PointD(x_val,y_val), tmpNode, Color.GREEN,(int)(5/mainFrame.view.getZoom())), ICanvasObjectDescriptor.VISUAL));
+            pos += stepSize;
+            if (pos > 2 * Math.PI) {
+                pos -= 2 * Math.PI;
+            }
+        }
+        mainFrame.view.updateUI();
+        mainFrame.graph.remove(tmpNode);
+    }
+
+    private int iterations = 1000;
+    private int numSlopes = 1;
+    private int initAngle = 0;
+    void slopedSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        JTextField iterationsTextField = new JTextField(Integer.toString(iterations));
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel iterationLabel = new JLabel("Number of Iterations: ");
+        panel.add(iterationLabel);
+        panel.add(iterationsTextField);
+
+        JLabel numSlopesLabel = new JLabel("Number of Slopes: ");
+        JTextField numSlopesTextField = new JTextField(Integer.toString(numSlopes));
+
+        panel.add(numSlopesLabel);
+        panel.add(numSlopesTextField);
+
+        JLabel initAngleLabel = new JLabel("Angle (°) of First Slope: "); //other slopes are equidistant to first slope, default angle is 0 (right), clockwise is positive
+        panel.add(initAngleLabel);
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridLayout(1,2));
+//        panel2.setMaximumSize(new Dimension(100,50));
+        JTextField initAngleTextField = new JTextField(Integer.toString(initAngle));
+        drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+        JSlider initAngleSlider = new JSlider(JSlider.HORIZONTAL, 0, 360, initAngle);
+        initAngleSlider.addChangeListener(changeEvent -> {
+            initAngleTextField.setText(Integer.toString(initAngleSlider.getValue()));
+            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+        });
+
+
+        initAngleTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                try {
+                    if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) { //checks is int
+                        initAngleSlider.setValue(Integer.parseInt(initAngleTextField.getText()));
+                        if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) {
+                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+                        }
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Invalid Input");
+                }
+            }
+        });
+
+        numSlopesTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                try {
+                    if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) { //checks is int
+                        if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) {
+                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
+                        }
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Invalid Input");
+                }
+            }
+        });
+
+        panel2.add(initAngleSlider);
+        panel2.add(initAngleTextField);
+        panel.add(panel2);
+
+
+        int result = JOptionPane.showOptionDialog(null, panel, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                iterations = Integer.parseInt(iterationsTextField.getText());
+                numSlopes = Integer.parseInt(numSlopesTextField.getText());
+                initAngle = Integer.parseInt(initAngleTextField.getText());
+
+            } catch (NumberFormatException exc) {
+                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 1000, slopes to 1 and inital angle to 0.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                for (ICanvasObject o : canvasObjects) {
+                    o.remove();
+                }
+                canvasObjects.clear();
+                mainFrame.view.updateUI();
+                return;
+            }
+        }
+        else {
+            for (ICanvasObject o : canvasObjects) {
+                o.remove();
+            }
+            canvasObjects.clear();
+            mainFrame.view.updateUI();
+            return;
+        }
+
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
+            .addForce(new SlopedForce(mainFrame.graph, numSlopes * 2, initAngle, 0.7))
+            .addForce(new ElectricForce(mainFrame.graph, 0.01, 30000))
+            .addForce(new SpringForce(mainFrame.graph, 100, 0.01, 100));
+        // TODO configurator.init(mainFrame.sidePanelItemFactory);
+
+        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, new CachedMinimumAngle());
+
+        IGraphLayoutExecutor executor =
+            new IGraphLayoutExecutor(forceAlgorithm, mainFrame.graph, progressBar, iterations, 20);
+        executor.start();
+
+        for (ICanvasObject o : canvasObjects) {
+            o.remove();
+        }
+        canvasObjects.clear();
+
+        mainFrame.view.updateUI();
+    }
+
+
+    void springEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         JTextField iterationsTextField = new JTextField("1000");
         int iterations = 1000;
 
@@ -868,79 +1007,19 @@ public class InitMenuBar {
                 JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
             }
         }
+        else return;
 
-        ForceDirectedAlgorithm fd = new ForceDirectedAlgorithm(view, iterations) {
-            public void calculateVectors() {
-                ForceDirectedFactory.calculateSpringForcesEades(graph, 150, 100, 0.01, map);
-                ForceDirectedFactory.calculateElectricForcesEades(graph, 50000, 0.01, map);
-            }
-        };
-        fd.addAlgorithmListener(new AlgorithmListener() {
-            public void algorithmStarted(AlgorithmEvent evt) {
-            }
+        ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(graph, new VoidItemFactory());
+        mainFrame.forceAlgorithm = fd;
 
-            public void algorithmFinished(AlgorithmEvent evt) {
-                progressBar.setValue(0);
-                view.fitContent();
-                view.updateUI();
-            }
-
-            public void algorithmStateChanged(AlgorithmEvent evt) {
-                progressBar.setValue(evt.currentStatus());
-            }
-        });
-        Thread thread = new Thread(fd);
-        thread.start();
-        this.view.updateUI();
+        IGraphLayoutExecutor executor =
+            new IGraphLayoutExecutor(fd, graph, progressBar, iterations, 20);
+        executor.start();
+        mainFrame.view.updateUI();
     }
 
     private void saveAsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         showFileChooser(new JFileChooser(this.fileNamePathFolder));
-    }
-
-    private void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        applyLayoutToSelection(new OrganicLayout());
-    }
-
-    private void circularItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        applyLayoutToSelection(new CircularLayout());
-    }
-
-    private void orthogonalItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        applyLayoutToSelection(new OrthogonalLayout());
-
-    }
-
-    private void treeItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        try {
-            applyLayoutToSelection(new TreeLayout());
-        } catch (Exception exc) {
-            this.infoLabel.setText("The input graph is not a tree or a forest.");
-        }
-    }
-
-    private void applyLayoutToSelection(ILayoutAlgorithm layout) {
-        IGraphSelection selection = graphEditorInputMode.getGraphSelection();
-        ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
-
-        if (selectedNodes.getCount() == 0) {
-            LayoutUtilities.morphLayout(this.view, layout, Duration.ofSeconds(1), null);
-            return;
-        }
-
-        FilteredGraphWrapper selectedGraph = new FilteredGraphWrapper(graph, selectedNodes::isSelected,
-            iEdge -> selectedNodes.isSelected(iEdge.getSourceNode()) || selectedNodes.isSelected(iEdge.getTargetNode()));
-
-        PartialLayout partialLayout = new PartialLayout(layout);
-        partialLayout.setSubgraphPlacement(SubgraphPlacement.FROM_SKETCH);
-
-        LayoutExecutor executor = new LayoutExecutor(view, selectedGraph, partialLayout);
-        executor.setDuration(Duration.ofSeconds(1));
-        executor.setViewportAnimationEnabled(true);
-        executor.setEasedAnimationEnabled(true);
-        executor.setContentRectUpdatingEnabled(true);
-
-        executor.start();
     }
 
     //edit menu actions
@@ -1065,14 +1144,18 @@ public class InitMenuBar {
 
     private void clinchNodesActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         IGraphSelection selection = graphEditorInputMode.getGraphSelection();
-//        InitClinchLayout.run(graph, selection, progressBar);
-        InitClinchLayoutExecutor.run(view, selection, progressBar);
+        InitClinchLayout.run(graph, selection, progressBar);
     }
 
     private void randomMovementActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        RandomMovementLayout layout = new RandomMovementLayout(graph);
-        IGraphLayoutExecutor layoutExecutor = new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
-        layoutExecutor.run();
+        // TODO
+//        RandomMovementConfigurator configurator = new RandomMovementConfigurator();
+//        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, view, gridBagState));
+//
+//        RandomMovementLayout layout = new RandomMovementLayout(graph, configurator);
+//        IGraphLayoutExecutor layoutExecutor =
+//            new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
+//        layoutExecutor.start();
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

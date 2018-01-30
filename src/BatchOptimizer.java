@@ -1,6 +1,10 @@
 
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
+import layout.algo.genetic.GeneticForceAlgorithmLayout;
+import layout.algo.layoutinterface.VoidItemFactory;
+import layout.algo.utils.PositionMap;
 import util.GridPositioning;
 import algorithms.graphs.MinimumAngle;
 import util.*;
@@ -78,17 +82,15 @@ public class BatchOptimizer {
   public static void printUsage(){
     String msg = "Usage:\n"
     + "\tjava BatchOptimizer [-i init-time] [-r rounds] [-f] path-to-rome-graphs\n"
-    + "\t\t-i init-time: how long one round of ForceAlgorithmApplier should run\n"
+    + "\t\t-i init-time: how long one round of ForceAlgorithm should run\n"
     + "\t\t-r rounds:    how many rounds of genetic generations should be run\n"
-    + "\t\t-f:           only apply ForceAlgorithmApplier, don't do genetic part\n";
+    + "\t\t-f:           only apply ForceAlgorithm, don't do genetic part\n";
     System.out.println(msg);
   }
-  // easier instantiation of FAA
-  public static ForceAlgorithmApplier defaultForceAlgorithmApplier(int iterations){
-    ForceAlgorithmApplier fd = InitForceAlgorithm.defaultForceAlgorithmApplier(iterations, view);
+  // easier instantiation of ForceAlgorithm
+  public static ForceAlgorithm defaultForceAlgorithm(){
+    ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(graph, new VoidItemFactory());
     springThreshholds[1] = 50 * Math.log(graph.getNodes().size());
-    fd.modifiers = springThreshholds.clone();
-    fd.switches = algoModifiers.clone();
     return fd;
   }
   public static void main(String[] args) throws IOException {
@@ -147,28 +149,35 @@ public class BatchOptimizer {
     // if there is a crossing, map to get the angle, then get it, otherwise "no crossings".
     String initialAngle = minAngleCr.map(intersection->intersection.angle.toString()).orElse("no crossings");
     
-    ForceAlgorithmApplier.init();
+    TrashCan.init();
     
     long startTime = System.nanoTime();
     if(forceAlgoOnly){
-      System.out.println("running FAA only");
-      ForceAlgorithmApplier firstFAA = defaultForceAlgorithmApplier(initTime);
-      firstFAA.runNoDraw();
+      System.out.println("running ForceAlgorithm only");
+      ForceAlgorithm firstForceAlgorithm = defaultForceAlgorithm();
+      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstForceAlgorithm, graph, initTime, initTime);
+
+      executor.start();
     }
     else {
       System.out.println("running genetic");
-      List<ForceAlgorithmApplier> initials = new LinkedList<>();
-      initials.add(defaultForceAlgorithmApplier(initTime));
+      List<ForceAlgorithm> initials = new LinkedList<>();
+      initials.add(defaultForceAlgorithm());
       LayoutUtilities.applyLayout(graph, new OrganicLayout());
-      initials.add(defaultForceAlgorithmApplier(initTime));
-      GeneticAlgorithm ga = InitGeneticAlgorithm.defaultGeneticAlgorithm(initials, graph, view);
-      ga.runRounds(rounds);
+      initials.add(defaultForceAlgorithm());
+
+      GeneticForceAlgorithmConfigurator configurator = new GeneticForceAlgorithmConfigurator();
+      configurator.init(new VoidItemFactory());
+      GeneticForceAlgorithmLayout layout = new GeneticForceAlgorithmLayout(configurator, graph);
+      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(layout, graph, rounds, rounds);
+
+      executor.start();
     }
 
     // afterwards: apply new positions to graph...
-    if (ForceAlgorithmApplier.bestSolution != null) {
-      Mapper<INode, PointD> nodePositions = ForceAlgorithmApplier.bestSolution.a;
-      ForceAlgorithmApplier.applyNodePositionsToGraph(graph, nodePositions);
+    if (TrashCan.bestSolution != null) {
+      Mapper<INode, PointD> nodePositions = TrashCan.bestSolution.a;
+      PositionMap.applyToGraph(graph, nodePositions);
     }
     Optional<Intersection>
             minAngleOpt = MinimumAngle.getMinimumAngleCrossing(graph);

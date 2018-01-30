@@ -5,6 +5,7 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import layout.algo.utils.PositionMap;
 import util.graph2d.Intersection;
 
 import java.util.Random;
@@ -22,11 +23,11 @@ public class NodeSwapper {
      * @param crossing - true if crossing nodes should be swapped
      */
     public static void swapNodes(IGraph g, int amount, boolean crossing){
-        Mapper<INode, PointD> nodePos = LayoutUtils.positionMapFromIGraph(g);
+        Mapper<INode, PointD> nodePos = PositionMap.FromIGraph(g);
         if(amount <= 4 && crossing){
-            ForceAlgorithmApplier.applyNodePositionsToGraph(g, swapCrossingNodes(g, nodePos, amount));
+            PositionMap.applyToGraph(g, swapCrossingNodes(g, nodePos, amount));
         } else {
-            ForceAlgorithmApplier.applyNodePositionsToGraph(g, swapRandomNodes(g, nodePos, amount));
+            PositionMap.applyToGraph(g, swapRandomNodes(g, nodePos, amount));
         }
     }
 
@@ -84,7 +85,7 @@ public class NodeSwapper {
             }
             nodePos.setValue(swapNodes[amount-1], temp);
 
-        ForceAlgorithmApplier.applyNodePositionsToGraph(g, nodePos);
+        PositionMap.applyToGraph(g, nodePos);
         } else {System.out.println("Not enough nodes in the graph to swap.");}
 
         return nodePos;

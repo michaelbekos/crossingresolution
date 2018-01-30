@@ -1,3 +1,5 @@
+package main;
+
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;

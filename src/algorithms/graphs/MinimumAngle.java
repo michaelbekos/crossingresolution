@@ -9,8 +9,7 @@ import com.yworks.yfiles.view.*;
 import java.util.*;
 import java.util.stream.*;
 
-import layout.algo.ForceAlgorithmApplier;
-import layout.algo.LayoutUtils;
+import layout.algo.utils.PositionMap;
 import util.*;
 import util.graph2d.*;
 
@@ -35,7 +34,7 @@ public class MinimumAngle {
 
     private Optional<Intersection> getMinimumAngleCrossingForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
       if (nodePositions == null) {
-        nodePositions = LayoutUtils.positionMapFromIGraph(graph);
+        nodePositions = PositionMap.FromIGraph(graph);
       }
       List<Intersection> crossings = getCrossingsForNode(graph, node, nodePositions);
 
@@ -85,7 +84,7 @@ public class MinimumAngle {
 
     public List<Intersection> getCrossings(IGraph graph, boolean edgesOnly, @Nullable IMapper<INode, PointD> np){
       if (np == null) {
-        np = LayoutUtils.positionMapFromIGraph(graph);
+        np = PositionMap.FromIGraph(graph);
       }
       return yFilesSweepLine.getCrossings(graph, edgesOnly, np);
     }

@@ -6,6 +6,8 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import layout.algo.utils.LayoutUtils;
+import layout.algo.utils.PositionMap;
 import util.BoundingBox;
 import util.graph2d.Intersection;
 
@@ -16,23 +18,23 @@ import java.util.stream.StreamSupport;
 public class RandomMovementLayout implements ILayout {
   private static final int NUM_SAMPLES = 50;
   private static final int NUM_SAMPLES_PER_TEST = 10;
-  private final double minStepSize = 0.1;
-  private final double maxStepSize = 10;
 
   private IGraph graph;
+  private RandomMovementConfigurator configurator;
   private Mapper<INode, PointD> positions;
   private ArrayList<Sample> sampleDirections;
   private Random random;
   private RectD boundingBox;
   private int stepsSinceLastUpdate;
 
-  public RandomMovementLayout(IGraph graph) {
+  public RandomMovementLayout(IGraph graph, RandomMovementConfigurator configurator) {
     this.graph = graph;
+    this.configurator = configurator;
   }
 
   @Override
   public void init() {
-    positions = LayoutUtils.positionMapFromIGraph(graph);
+    positions = PositionMap.FromIGraph(graph);
     sampleDirections = initSampleDirections();
     random = new Random(System.currentTimeMillis());
     boundingBox = BoundingBox.from(positions);
@@ -67,6 +69,8 @@ public class RandomMovementLayout implements ILayout {
 
     Sample[] goodSamples = samples.stream()
         .peek(sample -> {
+          double maxStepSize = configurator.maxStepSize.getValue();
+          double minStepSize = configurator.minStepSize.getValue();
           double stepSize = random.nextDouble() * (maxStepSize - minStepSize) + minStepSize;
           sample.position = LayoutUtils.stepInDirection(originalPosition, sample.direction, stepSize);
         })
@@ -158,4 +162,10 @@ public class RandomMovementLayout implements ILayout {
   public Mapper<INode, PointD> getNodePositions() {
     return positions;
   }
+
+  @Override
+  public void showDebug() {}
+
+  @Override
+  public void clearDebug() {}
 }
