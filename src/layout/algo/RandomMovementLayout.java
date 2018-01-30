@@ -22,6 +22,7 @@ import java.util.stream.StreamSupport;
 public class RandomMovementLayout implements ILayout {
   private static final int NUM_SAMPLES = 50;
   private static final int NUM_SAMPLES_PER_TEST = 10;
+  private static final int MAX_NUMBER_OF_NODES_FOR_UNIFORM_DISTRIBUTION = 20;
 
   private IGraph graph;
   private RandomMovementConfigurator configurator;
@@ -59,7 +60,11 @@ public class RandomMovementLayout implements ILayout {
 
   @Override
   public boolean executeStep(int iteration) {
-    Optional<INode> randomNode = gaussianNodeSelection();
+    int numberOfNodes = graph.getNodes().size();
+    Optional<INode> randomNode = numberOfNodes <= MAX_NUMBER_OF_NODES_FOR_UNIFORM_DISTRIBUTION ?
+        selectRandomNode(graph.getNodes(), numberOfNodes) :
+        gaussianNodeSelection();
+
     if (!randomNode.isPresent()) {
       return true;
     }
