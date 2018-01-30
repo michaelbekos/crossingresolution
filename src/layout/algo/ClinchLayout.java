@@ -7,21 +7,23 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.utils.IListEnumerable;
+import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import util.BoundingBox;
+import util.Tuple2;
+import util.Util;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClinchLayout implements ILayout {
-  private static final double INITIAL_STEP_SIZE = 2.5;
-  private static final double STEP_SIZE_MULTIPLIER = 1.5;
-  private static final double CLOSE_ENOUGH = INITIAL_STEP_SIZE * 1.5;
-
   private static final int NUMBER_OF_SAMPLES = 10;
 
   private static final double COMPARISON_EPSILON = 0.001;
 
+  private ClinchLayoutConfigurator configurator;
   private IGraph graph;
   private PointD anchor1;
   private PointD anchor2;
@@ -33,15 +35,14 @@ public class ClinchLayout implements ILayout {
   private PointD lineDirection;
   private Random random;
 
-  public ClinchLayout(IGraph graph, PointD anchor1, PointD anchor2, Set<INode> fixNodes) {
+  public ClinchLayout(ClinchLayoutConfigurator configurator, IGraph graph) {
+    this.configurator = configurator;
     this.graph = graph;
-    this.anchor1 = anchor1;
-    this.anchor2 = anchor2;
-    this.fixNodes = fixNodes;
   }
 
   @Override
   public void init() {
+    initLine();
     positions = PositionMap.FromIGraph(graph);
     stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
@@ -66,11 +67,38 @@ public class ClinchLayout implements ILayout {
   @Override
   public void clearDebug() {}
 
+  private void initLine() {
+    ISelectionModel<INode> selectedNodes = configurator.selection.getValue().getSelectedNodes();
+
+    if (selectedNodes.getCount() > 0) {
+      fixNodes = graph.getNodes().stream()
+          .filter(node -> !selectedNodes.isSelected(node))
+          .collect(Collectors.toSet());
+    } else {
+      fixNodes = new HashSet<>(2);
+    }
+
+    IListEnumerable<INode> nodes = graph.getNodes();
+    Optional<Tuple2<INode, INode>> mostDistantNodes = Util.distinctPairs(nodes.stream(), nodes.stream())
+        .filter(pair -> !fixNodes.contains(pair.a) && !fixNodes.contains(pair.b))
+        .max(Comparator.comparingDouble(pair -> pair.a.getLayout().getCenter().distanceTo(pair.b.getLayout().getCenter())));
+
+    if (!mostDistantNodes.isPresent()) {
+      return;
+    }
+
+    anchor1 = mostDistantNodes.get().a.getLayout().getCenter();
+    anchor2 = mostDistantNodes.get().b.getLayout().getCenter();
+
+    fixNodes.add(mostDistantNodes.get().a);
+    fixNodes.add(mostDistantNodes.get().b);
+  }
+
   private Mapper<INode, Double> initStepSizes() {
     final Mapper<INode, Double> stepSizes = new Mapper<>(new WeakHashMap<>());
 
     for (INode node : graph.getNodes()) {
-      stepSizes.setValue(node, INITIAL_STEP_SIZE);
+      stepSizes.setValue(node, configurator.initialStepSize.getValue());
     }
 
     return stepSizes;
@@ -124,7 +152,7 @@ public class ClinchLayout implements ILayout {
 
       PointD oldPosition = positions.getValue(node);
       final double distanceToLine = oldPosition.getProjectionOnSegment(anchor1, anchor2).distanceTo(oldPosition);
-      if (distanceToLine < CLOSE_ENOUGH) {
+      if (distanceToLine < configurator.initialStepSize.getValue() * 1.5) {
         continue;
       }
 
@@ -153,10 +181,10 @@ public class ClinchLayout implements ILayout {
 
       if (bestSample.isPresent() && bestSample.get().minimumAngle >= minAngle) {
         positions.setValue(node, bestSample.get().position);
-        stepSizes.setValue(node, Math.min(stepSize * STEP_SIZE_MULTIPLIER, distanceToLine - stepSize));
+        stepSizes.setValue(node, Math.min(stepSize * configurator.stepSizeMultiplier.getValue(), distanceToLine - stepSize));
         changed = true;
       } else {
-        stepSizes.setValue(node, INITIAL_STEP_SIZE);
+        stepSizes.setValue(node, configurator.initialStepSize.getValue());
         positions.setValue(node, oldPosition);
       }
     }

@@ -3,17 +3,13 @@ package main;
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
-import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.LayoutUtilities;
+import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.graph.styles.INodeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
-import com.yworks.yfiles.layout.ILayoutAlgorithm;
-import com.yworks.yfiles.layout.LayoutExecutor;
-import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import com.yworks.yfiles.layout.partial.PartialLayout;
-import com.yworks.yfiles.layout.partial.SubgraphPlacement;
-import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import com.yworks.yfiles.view.input.GraphSnapContext;
@@ -23,10 +19,8 @@ import layout.algo.*;
 import layout.algo.forces.ElectricForce;
 import layout.algo.forces.SlopedForce;
 import layout.algo.forces.SpringForce;
-import layout.algo.layoutinterface.VoidItemFactory;
 import layout.algo.utils.PositionMap;
 import util.*;
-import view.visual.InitClinchLayout;
 import view.visual.VectorVisual;
 
 import javax.swing.*;
@@ -35,7 +29,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -117,12 +110,6 @@ public class InitMenuBar {
         slopedSpringEmbedderItem.addActionListener(this::slopedSpringEmbedderItemActionPerformed);
         layoutMenu.add(slopedSpringEmbedderItem);
 
-        JMenuItem springEmbedderItem = new JMenuItem();
-        springEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        springEmbedderItem.setText("Spring Embedder");
-        springEmbedderItem.addActionListener(this::springEmbedderItemActionPerformed);
-        layoutMenu.add(springEmbedderItem);
-
         JMenuItem jitterItem = new JMenuItem();
         jitterItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
         jitterItem.setText("Jitter");
@@ -152,18 +139,6 @@ public class InitMenuBar {
         dirtyGridPositioningItem.setText("Quick and Dirty Gridding");
         dirtyGridPositioningItem.addActionListener(this::quickAndDirtyGridItemActionPerformed);
         layoutMenu.add(dirtyGridPositioningItem);
-
-        JMenuItem clinchLayout = new JMenuItem();
-        clinchLayout.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        clinchLayout.setText("Clinch nodes");
-        clinchLayout.addActionListener(this::clinchNodesActionPerformed);
-        layoutMenu.add(clinchLayout);
-
-        JMenuItem randomMovement = new JMenuItem();
-        randomMovement.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        randomMovement.setText("Random Movement");
-        randomMovement.addActionListener(this::randomMovementActionPerformed);
-        layoutMenu.add(randomMovement);
 
         return layoutMenu;
     }
@@ -994,30 +969,6 @@ public class InitMenuBar {
     }
 
 
-    void springEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        JTextField iterationsTextField = new JTextField("1000");
-        int iterations = 1000;
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Iterations: ", iterationsTextField}, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                iterations = Integer.parseInt(iterationsTextField.getText());
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 5000.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        else return;
-
-        ForceAlgorithm fd = InitForceAlgorithm.defaultForceAlgorithm(graph, new VoidItemFactory());
-        mainFrame.forceAlgorithm = fd;
-
-        IGraphLayoutExecutor executor =
-            new IGraphLayoutExecutor(fd, graph, progressBar, iterations, 20);
-        executor.start();
-        mainFrame.view.updateUI();
-    }
-
     private void saveAsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         showFileChooser(new JFileChooser(this.fileNamePathFolder));
     }
@@ -1140,22 +1091,6 @@ public class InitMenuBar {
         }
         this.gridVisualCreator.setVisible(this.isGridVisible);
         this.view.updateUI();
-    }
-
-    private void clinchNodesActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        IGraphSelection selection = graphEditorInputMode.getGraphSelection();
-        InitClinchLayout.run(graph, selection, progressBar);
-    }
-
-    private void randomMovementActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        // TODO
-//        RandomMovementConfigurator configurator = new RandomMovementConfigurator();
-//        configurator.init(new SidePanelItemFactory(mainFrame.sidePanel, view, gridBagState));
-//
-//        RandomMovementLayout layout = new RandomMovementLayout(graph, configurator);
-//        IGraphLayoutExecutor layoutExecutor =
-//            new IGraphLayoutExecutor(layout, graph, progressBar, 1000000, 20);
-//        layoutExecutor.start();
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

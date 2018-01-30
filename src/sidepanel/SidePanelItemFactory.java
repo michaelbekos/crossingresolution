@@ -4,6 +4,8 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.GraphComponent;
+import com.yworks.yfiles.view.IGraphSelection;
+import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
@@ -12,11 +14,13 @@ import javax.swing.*;
 public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   private JPanel sidePanel;
   private GraphComponent view;
+  private GraphEditorInputMode graphEditorInputMode;
   private GridBagState gridBagState;
 
-  public SidePanelItemFactory(JPanel sidePanel, GraphComponent view, GridBagState gridBagState) {
+  SidePanelItemFactory(JPanel sidePanel, GraphComponent view, GraphEditorInputMode graphEditorInputMode, GridBagState gridBagState) {
     this.sidePanel = sidePanel;
     this.view = view;
+    this.graphEditorInputMode = graphEditorInputMode;
     this.gridBagState = gridBagState;
   }
 
@@ -33,6 +37,11 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   @Override
   public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
     return new BoolSidePanelItem(name, sidePanel, gridBagState);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<IGraphSelection> selection(String name) {
+    return new SelectionItem(name, graphEditorInputMode);
   }
 
   @Override

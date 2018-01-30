@@ -55,12 +55,19 @@ public class InitSidePanel {
         addForceAlgorithm(graph);
         addGeneticAlgorithm(graph);
         addSpringEmbedderAlgorithm(graph);
+        addClinchLayout(graph);
 
-        addAlgorithm("Clinch Nodes", null, null);
+        // TODO:
         addAlgorithm("Sloped Spring Embedder", null, null);
 
         addMiscAlgorithms();
         return tabbedSidePane;
+    }
+
+    private void addClinchLayout(IGraph graph) {
+        ClinchLayoutConfigurator configurator = new ClinchLayoutConfigurator();
+        ClinchLayout clinchLayout = new ClinchLayout(configurator, graph);
+        addAlgorithm("Clinch Nodes", configurator, clinchLayout);
     }
 
     private void addSpringEmbedderAlgorithm(IGraph graph) {
@@ -118,7 +125,7 @@ public class InitSidePanel {
         gridBagState.increaseY();
 
         if (configurator != null){
-            configurator.init(new SidePanelItemFactory(custom, mainFrame.view, gridBagState));
+            configurator.init(new SidePanelItemFactory(custom, mainFrame.view, mainFrame.graphEditorInputMode, gridBagState));
         }
 
         cSidePanel.fill = GridBagConstraints.BOTH;
