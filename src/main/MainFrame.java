@@ -235,7 +235,7 @@ public class MainFrame extends JFrame {
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel);
 
         InitSidePanel newSidePanel = new InitSidePanel(this);
-        sidePanel = newSidePanel.initSidePanel(mainPanel,c);
+        sidePanel = newSidePanel.initSidePanel(mainPanel);
     }
 
     private final Set<INode> movedNodes = new HashSet<>();
