@@ -1,7 +1,7 @@
 package layout.algo.layoutinterface;
 
 public abstract class AbstractLayoutInterfaceItem<T> {
-  private T value;
+  private volatile T value;
   private final String name;
 
   protected AbstractLayoutInterfaceItem(String name) {

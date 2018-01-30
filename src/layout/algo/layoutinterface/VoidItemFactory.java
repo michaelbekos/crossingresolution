@@ -3,6 +3,7 @@ package layout.algo.layoutinterface;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.view.IGraphSelection;
 
 public class VoidItemFactory implements ILayoutInterfaceItemFactory{
 
@@ -18,6 +19,11 @@ public class VoidItemFactory implements ILayoutInterfaceItemFactory{
 
   @Override
   public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
+    return new VoidItem<>(name);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<IGraphSelection> selection(String name) {
     return new VoidItem<>(name);
   }
 
