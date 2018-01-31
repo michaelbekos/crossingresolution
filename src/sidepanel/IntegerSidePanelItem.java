@@ -37,7 +37,16 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
       JSlider source = (JSlider) e.getSource();
       int val = source.getValue();
       setValue(val);
-      textField.setText(Integer.toString(val));
+    });
+
+    textField.addActionListener(e -> {
+      try {
+        if (textField.getText().matches("\\d+") && Integer.parseInt(textField.getText()) > minValue && Integer.parseInt(textField.getText()) <= maxValue) { //checks is double
+          setValue(Integer.parseInt(textField.getText()));
+        }
+      } catch (NumberFormatException nfe) {
+        System.out.println("Invalid Input");
+      }
     });
 
     double max = maxValue;
