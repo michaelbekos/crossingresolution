@@ -339,7 +339,6 @@ public class CanonicalOrder {
 
         ArrayList<Node> newOuterChain = new ArrayList<>();
         ArrayList<Node> deleteChain = new ArrayList<>();
-
         int deleteLength = outV.get(deleteFace) - 2;
         for (int i = 0; i < deleteLength; i++) {
             Node n = faceNodes.remove(0);
@@ -696,8 +695,19 @@ public class CanonicalOrder {
         ArrayList<Node> lastFace = sortedNodesFromFace(v1v2Face, v2);
         Collections.reverse(lastFace);
         // now v1,.....,v2
-        lastFace.remove(0);
-        lastFace.remove(lastFace.size() - 1);
+
+
+
+System.out.println("************* " + lastFace.get(0) + "    " + lastFace.get(1) + "   " + lastFace.get(lastFace.size()-1) + "     "  + lastFace.size() );
+       // lastFace.remove(0);
+        lastFace.remove(v1);
+        System.out.println("************* " + lastFace.get(0) + "    " + lastFace.get(1) + "   " + lastFace.get(lastFace.size()-1) + "     "  + lastFace.size() );
+        lastFace.remove(v2);
+       // lastFace.remove(lastFace.size() - 1);
+
+
+
+
 
         addChainToCanonicalOrder(lastFace);
         addNodeToCanonicalOrder(v2);

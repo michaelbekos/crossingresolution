@@ -2,7 +2,7 @@ import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
-import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
+import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
 import com.yworks.yfiles.view.Colors;
 import com.yworks.yfiles.view.Pen;
 
@@ -45,7 +45,7 @@ public class DefaultStyling {
 
     public void defaultLabelStyle(){
          /* Default Label Styling */
-        SimpleLabelStyle defaultLabelStyle = new SimpleLabelStyle();
+        DefaultLabelStyle defaultLabelStyle = new DefaultLabelStyle();
         defaultLabelStyle.setFont(new Font("Dialog", Font.PLAIN, 12));
         defaultLabelStyle.setTextPaint(Colors.WHITE);
         this.graph.getNodeDefaults().getLabelDefaults().setStyle(defaultLabelStyle);

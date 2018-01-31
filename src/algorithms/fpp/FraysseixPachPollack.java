@@ -142,7 +142,7 @@ public class FraysseixPachPollack {
         // 1. Phase: Build a binary tree with relative distances for more Details:
         // "A Linear-time Algorithm for Drawing a Planar Graph on a Grid, M. Chrobak, T.H.Payne"
         for (int k = 3; k < canonicalOrder.size(); k++) {
-
+            System.out.println("Draw Node: " + k);
             // clear hashset for every new run
             neighbours.clear();
 
