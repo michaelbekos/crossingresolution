@@ -41,7 +41,7 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
 
     textField.addActionListener(e -> {
       try {
-        if (textField.getText().matches("\\d+") && Integer.parseInt(textField.getText()) > minValue && Integer.parseInt(textField.getText()) <= maxValue) { //checks is double
+        if (textField.getText().matches("\\d+") && Integer.parseInt(textField.getText()) > slider.getMinimum() && Integer.parseInt(textField.getText()) <= slider.getMaximum()) { //checks is double
           setValue(Integer.parseInt(textField.getText()));
         }
       } catch (NumberFormatException nfe) {

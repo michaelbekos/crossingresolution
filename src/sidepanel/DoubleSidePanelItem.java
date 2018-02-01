@@ -42,7 +42,7 @@ class DoubleSidePanelItem extends SidePanelItem<Double> {
 
     textField.addActionListener(e -> {
       try {
-        if (Double.parseDouble(textField.getText()) > minValue && Double.parseDouble(textField.getText()) <= maxValue) {
+        if (Double.parseDouble(textField.getText()) > slider.getMinimum() && Double.parseDouble(textField.getText()) <= slider.getMaximum()) {
           setValue(Double.parseDouble(textField.getText()));
         }
       } catch (NumberFormatException nfe) {
