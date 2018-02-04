@@ -47,6 +47,10 @@ public class RandomMovementLayout implements ILayout {
     double maxStepSize = Math.max(boundingBox.getWidth(), boundingBox.getHeight()) * 0.5;
     configurator.maxStepSize.setValue(maxStepSize);
     configurator.minStepSize.setValue(maxStepSize * 0.01);
+
+    if (graph.getNodes().size() <= MAX_NUMBER_OF_NODES_FOR_UNIFORM_DISTRIBUTION) {
+      configurator.useGaussianDistribution.setValue(false);
+    }
   }
 
   private ArrayList<Sample> initSampleDirections() {
@@ -64,10 +68,12 @@ public class RandomMovementLayout implements ILayout {
 
   @Override
   public boolean executeStep(int iteration) {
-    int numberOfNodes = graph.getNodes().size();
-    Optional<INode> randomNode = numberOfNodes <= MAX_NUMBER_OF_NODES_FOR_UNIFORM_DISTRIBUTION ?
-        selectRandomNode(graph.getNodes(), numberOfNodes) :
-        gaussianNodeSelection();
+    Optional<INode> randomNode;
+    if (configurator.useGaussianDistribution.getValue()) {
+      randomNode = gaussianNodeSelection();
+    } else {
+      randomNode = selectRandomNode(graph.getNodes(), graph.getNodes().size());
+    }
 
     if (!randomNode.isPresent()) {
       return true;
