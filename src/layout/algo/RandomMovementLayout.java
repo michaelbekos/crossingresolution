@@ -43,6 +43,10 @@ public class RandomMovementLayout implements ILayout {
     sampleDirections = initSampleDirections();
     random = new Random(System.currentTimeMillis());
     boundingBox = BoundingBox.from(positions);
+
+    double maxStepSize = Math.max(boundingBox.getWidth(), boundingBox.getHeight()) * 0.5;
+    configurator.maxStepSize.setValue(maxStepSize);
+    configurator.minStepSize.setValue(maxStepSize * 0.1);
   }
 
   private ArrayList<Sample> initSampleDirections() {
