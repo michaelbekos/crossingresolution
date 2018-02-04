@@ -457,22 +457,25 @@ public class InitMenuBar {
     }
 
     private void scaleUpGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-
+        mainFrame.initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 2.0);
         this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void scaleDownGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
         nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.5);
         this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-
+        mainFrame.initSidePanel.removeDefaultListeners();
         if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
             this.removedVertices = GraphOperations.removeVertices(this.graph, false,true, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
         } else if (this.graph.getNodes().size() > 0){
@@ -547,9 +550,11 @@ public class InitMenuBar {
                 }
             }
         }
+        mainFrame.initSidePanel.addDefaultListeners();
     }
     
     private void enforcelegal(@SuppressWarnings("unused") ActionEvent evt){
+        mainFrame.initSidePanel.removeDefaultListeners();
     	Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
     	boolean change=true;
     	while(change){
@@ -563,9 +568,11 @@ public class InitMenuBar {
 				}
 	        }
     	}
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void reinsertVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         if (this.removedVertices != null && !this.removedVertices.isEmpty()){
             JTextField vertexComponentCount = new JTextField();
             vertexComponentCount.setText(Integer.toString(removedVertices.size()));
@@ -626,10 +633,13 @@ public class InitMenuBar {
                 }
             }
         }
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void fitContentItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         this.view.fitGraphBounds();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void zoomOutItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
@@ -643,9 +653,11 @@ public class InitMenuBar {
 
 
     private void blankGraphItemGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         this.graph.clear();
         this.removedVertices = null;
         this.view.updateUI();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void randomGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
@@ -660,6 +672,7 @@ public class InitMenuBar {
         int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes: ", nodeCount, "Number of Edges: ", edgeCount}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
         if (result == JOptionPane.OK_OPTION) {
+            mainFrame.initSidePanel.removeDefaultListeners();
             try {
                 rgg.setNodeCount(Integer.parseInt(nodeCount.getText()));
                 rgg.setEdgeCount(Integer.parseInt(edgeCount.getText()));
@@ -674,6 +687,7 @@ public class InitMenuBar {
                 this.view.fitGraphBounds();
                 this.view.updateUI();
                 this.removedVertices = null;
+                mainFrame.initSidePanel.addDefaultListeners();
             }
         }
     }
@@ -693,7 +707,7 @@ public class InitMenuBar {
 
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             this.fileNamePath = chooser.getSelectedFile().toString();
-
+            mainFrame.initSidePanel.removeDefaultListeners();
             try {
                 this.view.importFromGraphML(fileNamePath);
                 this.view.fitGraphBounds();
@@ -703,6 +717,8 @@ public class InitMenuBar {
 
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
+            } finally {
+                mainFrame.initSidePanel.addDefaultListeners();
             }
         }
     }
@@ -722,7 +738,7 @@ public class InitMenuBar {
 
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             this.fileNamePath = chooser.getSelectedFile().toString();
-
+            mainFrame.initSidePanel.removeDefaultListeners();
             try {
                 ContestIOHandler.read(this.graph, this.fileNamePath);
                 this.view.fitGraphBounds();
@@ -732,12 +748,15 @@ public class InitMenuBar {
 
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
+            } finally {
+                mainFrame.initSidePanel.addDefaultListeners();
             }
         }
     }
 
     private void reloadItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.fileNamePath != null) {
+            mainFrame.initSidePanel.removeDefaultListeners();
             try {
                 this.graph.clear();
                 if (this.fileNamePath.endsWith(".graphml")) {
@@ -750,6 +769,8 @@ public class InitMenuBar {
                 this.removedVertices = null;
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
+            } finally {
+                mainFrame.initSidePanel.addDefaultListeners();
             }
         } else {
             infoLabel.setText("No file was recently opened.");
@@ -975,7 +996,9 @@ public class InitMenuBar {
 
     //edit menu actions
     private void deselectAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         this.graphEditorInputMode.clearSelection();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void selectAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
@@ -983,18 +1006,24 @@ public class InitMenuBar {
     }
 
     private void clearAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         this.graph.clear();
         this.removedVertices = null;
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void clearSelectedItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.graphEditorInputMode.isClearSelectionAllowed()) {
+            mainFrame.initSidePanel.removeDefaultListeners();
             this.graphEditorInputMode.clearSelection();
+            mainFrame.initSidePanel.addDefaultListeners();
         }
     }
 
     private void pasteItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         this.graphEditorInputMode.paste();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void copyItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
@@ -1002,27 +1031,36 @@ public class InitMenuBar {
     }
 
     private void cutItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         this.graphEditorInputMode.cut();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void redoItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.graphEditorInputMode.isUndoOperationsAllowed()) {
+            mainFrame.initSidePanel.removeDefaultListeners();
             this.graphEditorInputMode.redo();
+            mainFrame.initSidePanel.addDefaultListeners();
         }
     }
 
     private void undoItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.graphEditorInputMode.isUndoOperationsAllowed()) {
+            mainFrame.initSidePanel.removeDefaultListeners();
             this.graphEditorInputMode.undo();
+            mainFrame.initSidePanel.addDefaultListeners();
         }
     }
 
     private void jitterItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         GridPositioning.removeOverlaps(this.graph, 5);
         this.view.updateUI();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void swapperItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         JTextField nodesTextField = new JTextField("2");
         int nodes = 2;
 
@@ -1048,10 +1086,11 @@ public class InitMenuBar {
 
         NodeSwapper.swapNodes(this.graph, nodes, crossing);
         this.view.updateUI();
-
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void gridCrossingItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         do {
             GridPositioning.gridGraph(this.graph);
             GridPositioning.removeOverlaps(this.graph, 0.1);
@@ -1059,10 +1098,12 @@ public class InitMenuBar {
 
         System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
         this.view.updateUI();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
 
     private void graphGridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         do {
             GridPositioning.gridGraphFast(this.graph);
             GridPositioning.removeOverlaps(this.graph, 0.1);
@@ -1070,18 +1111,22 @@ public class InitMenuBar {
 
         System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
         this.view.updateUI();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void quickAndDirtyGridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         GridPositioning.gridQuickAndDirty(this.graph);
         if (!GridPositioning.isGridGraph(this.graph)) {
             System.out.println("Error occured with the gridding of the graph");
         }
         System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
         this.view.updateUI();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void gridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
         if (this.isGridVisible) {
             this.isGridVisible = false;
             this.graphSnapContext.setGridSnapType(GridSnapTypes.NONE);
@@ -1091,6 +1136,7 @@ public class InitMenuBar {
         }
         this.gridVisualCreator.setVisible(this.isGridVisible);
         this.view.updateUI();
+        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

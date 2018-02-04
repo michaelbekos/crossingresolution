@@ -59,7 +59,7 @@ public class MainFrame extends JFrame {
     @Nullable
     public ForceAlgorithm forceAlgorithm = null;
     public JTabbedPane sidePanel;
-
+    public InitSidePanel initSidePanel;
     public InitMenuBar menuBar;
 
     /**
@@ -235,8 +235,8 @@ public class MainFrame extends JFrame {
 
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel);
 
-        InitSidePanel newSidePanel = new InitSidePanel(this);
-        sidePanel = newSidePanel.initSidePanel(mainPanel);
+        this.initSidePanel = new InitSidePanel(this);
+        this.sidePanel = this.initSidePanel.initSidePanel(mainPanel);
     }
 
     private final Set<INode> movedNodes = new HashSet<>();

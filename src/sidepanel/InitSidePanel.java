@@ -37,8 +37,10 @@ public class InitSidePanel {
     //Default Controls
     private ArrayList<JCheckBox> defaultControlEnableMinimumAngleDisplay;
     private JCheckBox masterEnableMinimumAngle;
+    private boolean stateEnableMinimumAngle;
     private ArrayList<JCheckBox> defaultControlAllowClickCreateNodeEdge;
     private JCheckBox masterAllowClickCreateNodeEdge;
+    private boolean stateAllowClickCreateNoteEdge;
 
 
     public InitSidePanel(MainFrame mainFrame) {
@@ -82,10 +84,12 @@ public class InitSidePanel {
         masterEnableMinimumAngle = new JCheckBox("Show minimum angle");
         masterEnableMinimumAngle.addItemListener(this::masterMinAngleDisplayEnabled);
         masterEnableMinimumAngle.setSelected(false);
+        stateEnableMinimumAngle = false;
 
         masterAllowClickCreateNodeEdge = new JCheckBox("Manual Mode");
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
         masterAllowClickCreateNodeEdge.setSelected(false);
+        stateAllowClickCreateNoteEdge = false;
 
         defaultControlEnableMinimumAngleDisplay = new ArrayList<>();
         defaultControlAllowClickCreateNodeEdge = new ArrayList<>();
@@ -388,29 +392,50 @@ public class InitSidePanel {
         JOptionPane.showMessageDialog(null, msg);
     }
 
+    public void removeDefaultListeners() {
+        stateEnableMinimumAngle = masterEnableMinimumAngle.isSelected();
+        stateAllowClickCreateNoteEdge = masterAllowClickCreateNodeEdge.isSelected();
+        masterEnableMinimumAngle.setSelected(false);
+        masterAllowClickCreateNodeEdge.setSelected(false);
+    }
+
+    public void addDefaultListeners() {
+        masterEnableMinimumAngle.setSelected(stateEnableMinimumAngle);
+        masterAllowClickCreateNodeEdge.setSelected(stateAllowClickCreateNoteEdge);
+    }
+
     /*********************************************************************
      * Implementation of actions
      ********************************************************************/
 
 
     private void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        removeDefaultListeners();
         applyLayoutToSelection(new OrganicLayout());
+        addDefaultListeners();
     }
 
     private void circularItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        removeDefaultListeners();
         applyLayoutToSelection(new CircularLayout());
+        addDefaultListeners();
     }
 
     private void orthogonalItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        removeDefaultListeners();
         applyLayoutToSelection(new OrthogonalLayout());
+        addDefaultListeners();
 
     }
 
     private void treeItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        removeDefaultListeners();
         try {
             applyLayoutToSelection(new TreeLayout());
         } catch (Exception exc) {
             mainFrame.infoLabel.setText("The input graph is not a tree or a forest.");
+        } finally {
+            addDefaultListeners();
         }
     }
 
