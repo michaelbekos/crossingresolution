@@ -85,6 +85,7 @@ class DoubleSidePanelItem extends SidePanelItem<Double> {
 
   @Override
   public void setValue(Double value) {
+    value = Math.min(Math.max(minValue, value), maxValue);
     super.setValue(value);
     textField.setText(Double.toString(value));
     slider.setValue((int) (1000 * value));

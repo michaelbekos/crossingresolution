@@ -114,6 +114,11 @@ public class RandomMovementLayout implements ILayout {
   }
 
   private boolean resolveLocalMaximum() {
+    if (configurator.doubleStepSizeOnLocalMaximum.getValue()) {
+      configurator.maxStepSize.setValue(configurator.maxStepSize.getValue() * 2);
+      return false;
+    }
+
     Optional<Intersection> crossing = MinimumAngle.getMinimumAngleCrossing(graph, positions);
     if (!crossing.isPresent()) {
       return true;
