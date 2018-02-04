@@ -27,11 +27,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class InitSidePanel {
     private MainFrame mainFrame;
     private JTabbedPane tabbedSidePane;
+
+    //Default Controls
+    private ArrayList<JCheckBox> defaultControlEnableMinimumAngleDisplay;
+    private JCheckBox masterEnableMinimumAngle;
+    private ArrayList<JCheckBox> defaultControlAllowClickCreateNodeEdge;
+    private JCheckBox masterAllowClickCreateNodeEdge;
+
 
     public InitSidePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -39,6 +47,7 @@ public class InitSidePanel {
 
     public JTabbedPane initSidePanel(JPanel mainPanel) {
         tabbedSidePane = new JTabbedPane();
+        initDefault();
         GridBagConstraints cc = new GridBagConstraints();
         cc.gridx = 1;
         cc.gridy = 1;
@@ -61,7 +70,29 @@ public class InitSidePanel {
         addAlgorithm("Sloped Spring Embedder", null, null);
 
         addMiscAlgorithms();
+
+        //min angle and manual mode default on
+        defaultControlEnableMinimumAngleDisplay.get(0).setSelected(true);
+        defaultControlAllowClickCreateNodeEdge.get(0).setSelected(true);
+
         return tabbedSidePane;
+    }
+
+    private void initDefault() {
+        masterEnableMinimumAngle = new JCheckBox("Show minimum angle");
+        masterEnableMinimumAngle.addItemListener(this::masterMinAngleDisplayEnabled);
+        masterEnableMinimumAngle.setSelected(false);
+
+        masterAllowClickCreateNodeEdge = new JCheckBox("Manual Mode");
+        masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
+        masterAllowClickCreateNodeEdge.setSelected(false);
+
+        defaultControlEnableMinimumAngleDisplay = new ArrayList<>();
+        defaultControlAllowClickCreateNodeEdge = new ArrayList<>();
+        tabbedSidePane.addChangeListener(changeEvent -> {
+            defaultControlEnableMinimumAngleDisplay.get(tabbedSidePane.getSelectedIndex()).setSelected(masterEnableMinimumAngle.isSelected());
+            defaultControlAllowClickCreateNodeEdge.get(tabbedSidePane.getSelectedIndex()).setSelected(masterAllowClickCreateNodeEdge.isSelected());
+        });
     }
 
     private void addClinchLayout(IGraph graph) {
@@ -301,7 +332,8 @@ public class InitSidePanel {
         cDefaultPanel.weighty = 0;
         defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);
         enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
-        enableMinimumAngleDisplay.setSelected(true);
+        enableMinimumAngleDisplay.setSelected(false);
+        defaultControlEnableMinimumAngleDisplay.add(enableMinimumAngleDisplay);
 
         JCheckBox allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -311,7 +343,8 @@ public class InitSidePanel {
         cDefaultPanel.weighty = 0;
         defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
-        allowClickCreateNodeEdge.setSelected(true);
+        allowClickCreateNodeEdge.setSelected(false);
+        defaultControlAllowClickCreateNodeEdge.add(allowClickCreateNodeEdge);
 
         JTextArea output = new JTextArea("Output");
         output.setLineWrap(true);
@@ -405,12 +438,16 @@ public class InitSidePanel {
         executor.start();
     }
 
-    private void minimumAngleDisplayEnabled(ItemEvent evt) {
+    private void masterMinAngleDisplayEnabled(ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             mainFrame.minimumAngleMonitor.registerGraphChangedListeners();
         } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
             mainFrame.minimumAngleMonitor.removeGraphChangedListeners();
         }
+    }
+
+    private void minimumAngleDisplayEnabled(ItemEvent evt) {
+        masterEnableMinimumAngle.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
     private void scalingToBox(){
@@ -429,12 +466,16 @@ public class InitSidePanel {
         mainFrame.view.fitGraphBounds();
     }
 
-    private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
+    private void masterAllowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
         mainFrame.graphEditorInputMode.setCreateNodeAllowed(evt.getStateChange() == ItemEvent.DESELECTED);     //no new nodes
         mainFrame.graphEditorInputMode.setCreateEdgeAllowed(evt.getStateChange() == ItemEvent.DESELECTED);     //no new edges
         mainFrame.graphEditorInputMode.setEditLabelAllowed(evt.getStateChange() == ItemEvent.DESELECTED);      //no editing of labels
         mainFrame.graphEditorInputMode.setShowHandleItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports
         mainFrame.graphEditorInputMode.setDeletableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
         mainFrame.graphEditorInputMode.setSelectableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
+    }
+
+    private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
+        masterAllowClickCreateNodeEdge.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 }
