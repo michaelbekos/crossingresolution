@@ -38,8 +38,18 @@ class DoubleSidePanelItem extends SidePanelItem<Double> {
       JSlider source = (JSlider) e.getSource();
       double val = source.getValue() / 1000.0;
       setValue(val);
-      textField.setText(Double.toString(val));
     });
+
+    textField.addActionListener(e -> {
+      try {
+        if (Double.parseDouble(textField.getText()) > slider.getMinimum() && Double.parseDouble(textField.getText()) <= slider.getMaximum()) {
+          setValue(Double.parseDouble(textField.getText()));
+        }
+      } catch (NumberFormatException nfe) {
+        System.out.println("Invalid Input");
+      }
+    });
+
 
     SpinnerModel model = new SpinnerNumberModel(max * threshold, threshold / 10.0, 1000 * max * threshold, threshold / 10.0);
     JSpinner spinner = new JSpinner(model);
