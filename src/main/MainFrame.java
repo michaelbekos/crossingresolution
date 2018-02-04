@@ -90,6 +90,7 @@ public class MainFrame extends JFrame {
 
         this.infoLabel = new JLabel();
         this.infoLabel.setText("Number of Vertices: 0     Number of Edges: 0");
+        this.infoLabel.setPreferredSize(new Dimension(250,20));
         progressBarPanel.add(infoLabel);
 
         this.progressBar = new JProgressBar();
