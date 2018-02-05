@@ -39,7 +39,7 @@ public class MinimumAngleMonitor {
   }
 
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
-    if (bestSolution.getBestMinimumAngle() == null) {
+    if (bestSolution.getBestMinimumAngle(graph.getNodes().size()) == null) {
       oldAngle = 0;
     }
     Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
@@ -50,13 +50,13 @@ public class MinimumAngleMonitor {
       if (oldAngle <= minAngleCr.get().angle){
         oldAngle = minAngleCr.get().angle;
 
-        bestSolution.setBestMinimumAngle(oldAngle);
-        bestSolution.setBestSolutionMapping(nodePositions);
+        bestSolution.setBestMinimumAngle(oldAngle, graph.getNodes().size());
+        bestSolution.setBestSolutionMapping(nodePositions, graph.getNodes().size());
       }
     }
 
     Optional<String> labText = minAngleCr.map(cr -> {
-      String text = DisplayMessagesGui.createMinimumAngleMsg(cr);
+      String text = DisplayMessagesGui.createMinimumAngleMsg(cr, graph.getNodes().size());
 
       if (viewCenter) {
         view.setCenter(cr.intersectionPoint);

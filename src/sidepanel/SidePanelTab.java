@@ -268,12 +268,13 @@ public class SidePanelTab {
      ********************************************************************/
 
     private void showBestSolution(@SuppressWarnings("unused") ActionEvent evt) {
-        if (initSidePanel.mainFrame.bestSolution.getBestSolutionMapping() == null) {
+    	int nodes= initSidePanel.mainFrame.graph.getNodes().size();
+        if (initSidePanel.mainFrame.bestSolution.getBestSolutionMapping(nodes) == null) {
             return;
         }
 
-        Mapper<INode, PointD> nodePositions = initSidePanel.mainFrame.bestSolution.getBestSolutionMapping();
-        Double minCrossingAngle = initSidePanel.mainFrame.bestSolution.getBestMinimumAngle();
+        Mapper<INode, PointD> nodePositions = initSidePanel.mainFrame.bestSolution.getBestSolutionMapping(nodes);
+        Double minCrossingAngle = initSidePanel.mainFrame.bestSolution.getBestMinimumAngle(nodes);
         initSidePanel.removeDefaultListeners();
         PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.addDefaultListeners();
