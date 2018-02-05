@@ -14,6 +14,7 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import layout.algo.ForceAlgorithm;
+import layout.algo.utils.BestSolution;
 import sidepanel.InitSidePanel;
 
 import javax.swing.*;
@@ -51,6 +52,7 @@ public class MainFrame extends JFrame {
     public JProgressBar progressBar;
 
     public MinimumAngleMonitor minimumAngleMonitor;
+    public BestSolution bestSolution;
 
     public JSlider[] sliders;
 
@@ -233,7 +235,8 @@ public class MainFrame extends JFrame {
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
 
-        this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel);
+        bestSolution = new BestSolution();
+        this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel, bestSolution);
 
         this.initSidePanel = new InitSidePanel(this);
         this.sidePanel = this.initSidePanel.initSidePanel(mainPanel);

@@ -356,7 +356,7 @@ public class InitMenuBar {
             int result = JOptionPane.showOptionDialog(null, new Object[]{"Dimensions: ", dim}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (result == JOptionPane.OK_OPTION) {
                 int dimensions = Integer.parseInt(dim.getText());
-                TrashCan.init();
+               mainFrame.bestSolution.reset();
                 HypercubeGenerator.generate(graph, dimensions);
                 view.updateUI();
             }
@@ -375,7 +375,7 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int rC = Integer.parseInt(rCount.getText());
-                TrashCan.init();
+               mainFrame.bestSolution.reset();
                 GridGenerator.generate(graph, xC, yC, rC);
                 view.updateUI();
             }
@@ -394,7 +394,7 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int lC = Integer.parseInt(layers.getText());
-                TrashCan.init();
+               mainFrame.bestSolution.reset();
                 LayeredGridGenerator.generate(graph, xC, yC, lC);
                 view.updateUI();
             }
@@ -657,6 +657,7 @@ public class InitMenuBar {
         this.graph.clear();
         this.removedVertices = null;
         this.view.updateUI();
+       mainFrame.bestSolution.reset();
         mainFrame.initSidePanel.addDefaultListeners();
     }
 
@@ -676,12 +677,12 @@ public class InitMenuBar {
             try {
                 rgg.setNodeCount(Integer.parseInt(nodeCount.getText()));
                 rgg.setEdgeCount(Integer.parseInt(edgeCount.getText()));
+               mainFrame.bestSolution.reset();
             } catch (NumberFormatException exc) {
                 JOptionPane.showMessageDialog(null, "Incorrect input.\nThe graph will be created with 10 nodes and 10 edges.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 rgg.setNodeCount(10);
                 rgg.setEdgeCount(10);
             } finally {
-                TrashCan.init();
                 rgg.generate(this.graph);
                 LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
                 this.view.fitGraphBounds();
@@ -714,7 +715,7 @@ public class InitMenuBar {
                 this.view.updateUI();
                 this.removedVertices = null;
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-
+               mainFrame.bestSolution.reset();
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {
@@ -745,7 +746,7 @@ public class InitMenuBar {
                 this.view.updateUI();
                 this.removedVertices = null;
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-
+               mainFrame.bestSolution.reset();
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {

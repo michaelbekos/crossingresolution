@@ -60,7 +60,6 @@ public class InitSidePanel {
         cc.fill = GridBagConstraints.BOTH;
         mainPanel.add(tabbedSidePane, cc);
 
-        TrashCan.init();
         IGraph graph = mainFrame.view.getGraph();
 
         addRandomMovementAlgorithm(graph);
@@ -98,7 +97,7 @@ public class InitSidePanel {
             int selectedTab = tabbedSidePane.getSelectedIndex();
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
-            for (int i = 0; i < sidePanelTabs.size(); i++) {
+            for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
                 if (i != selectedTab) {
                     sidePanelTabs.get(i).stopExecution();
                 }
@@ -161,7 +160,8 @@ public class InitSidePanel {
      * Adds all algorithms that do not need a separate tab
      */
     private void addMiscAlgorithms() {
-        SidePanelTab miscTab = new SidePanelTab();
+        SidePanelTab miscTab = new SidePanelTab(this);
+        sidePanelTabs.add(miscTab);
         tabbedSidePane.addTab("Misc.", miscTab.getMiscAlgorithmTab());
     }
 

@@ -7,21 +7,21 @@ import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
-import layout.algo.TrashCan;
+import layout.algo.utils.BestSolution;
 import layout.algo.utils.PositionMap;
 import util.DisplayMessagesGui;
-import util.Tuple4;
 import util.graph2d.Intersection;
 
 import javax.swing.*;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class MinimumAngleMonitor {
   private IGraph graph;
   private JLabel infoLabel;
   private GraphComponent view;
-  private double oldAngle=0;
+  private double oldAngle;
+
+  private BestSolution bestSolution;
   
 
   private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
@@ -30,27 +30,29 @@ public class MinimumAngleMonitor {
   private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
   private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> showMinimumAngle(graph, view, infoLabel, false);
 
-  MinimumAngleMonitor(GraphComponent view, IGraph graph, JLabel infoLabel) {
+  MinimumAngleMonitor(GraphComponent view, IGraph graph, JLabel infoLabel, BestSolution bestSolution) {
     this.graph = graph;
     this.infoLabel = infoLabel;
     this.view = view;
+    this.bestSolution = bestSolution;
+    this.oldAngle = 0;
   }
 
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
-	  Mapper<INode, PointD> nodePositions= PositionMap.FromIGraph(graph);
+    if (bestSolution.getBestMinimumAngle() == null) {
+      oldAngle = 0;
+    }
+    Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
     MinimumAngle.resetHighlighting(graph);
-    Optional<Intersection>
-        minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
-    
+    Optional<Intersection> minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
+
     if (minAngleCr.isPresent()){
-    	if (oldAngle <= minAngleCr.get().angle){
-    		oldAngle= minAngleCr.get().angle;
-    		Optional<Double> newAngle = null;
-    		newAngle.of(minAngleCr.get().angle);
-    		Supplier<Tuple4<Mapper<INode, PointD>, Optional<Double>, Double[], Boolean[]>> thisSol
-			= (() -> new Tuple4<>(nodePositions, newAngle , new Double[0], new Boolean[0]));
-			TrashCan.bestSolution=thisSol.get();
-    	}
+      if (oldAngle <= minAngleCr.get().angle){
+        oldAngle = minAngleCr.get().angle;
+
+        bestSolution.setBestMinimumAngle(oldAngle);
+        bestSolution.setBestSolutionMapping(nodePositions);
+      }
     }
 
     Optional<String> labText = minAngleCr.map(cr -> {
@@ -68,6 +70,10 @@ public class MinimumAngleMonitor {
     });
 
     infoLabel.setText(labText.orElse("Graph has no crossings."));
+  }
+
+  public void updateMinimumAngleInfoBar() {
+    showMinimumAngle(graph, view, infoLabel, false);
   }
 
   public void registerGraphChangedListeners() {

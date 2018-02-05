@@ -17,7 +17,6 @@ import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.IGraphLayoutExecutor;
 import layout.algo.ILayout;
-import layout.algo.TrashCan;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
@@ -28,8 +27,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Optional;
 
 public class SidePanelTab {
     public JPanel sidePanelTab;
@@ -45,8 +42,9 @@ public class SidePanelTab {
     private JCheckBox enableMinimumAngleDisplay;
     private JCheckBox allowClickCreateNodeEdge;
 
-    public SidePanelTab() {
+    public SidePanelTab(InitSidePanel initSidePanel) {
         //default empty
+        this.initSidePanel = initSidePanel;
     }
 
     public SidePanelTab(InitSidePanel initSidePanel, String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
@@ -143,7 +141,7 @@ public class SidePanelTab {
     }
 
     private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY) {
-        JButton showBestSolution = new JButton("Show best");    //TODO: fix best solution
+        JButton showBestSolution = new JButton("Show best");
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
         showBestSolution.addActionListener(this::showBestSolution);
@@ -270,30 +268,19 @@ public class SidePanelTab {
      ********************************************************************/
 
     private void showBestSolution(@SuppressWarnings("unused") ActionEvent evt) {
-        if (TrashCan.bestSolution == null) {
+        if (initSidePanel.mainFrame.bestSolution.getBestSolutionMapping() == null) {
             return;
         }
 
-        Mapper<INode, PointD> nodePositions = TrashCan.bestSolution.a;
-        Optional<Double> minCrossingAngle = TrashCan.bestSolution.b;
-        Double[] mods = TrashCan.bestSolution.c;
-        Boolean[] switchs = TrashCan.bestSolution.d;
+        Mapper<INode, PointD> nodePositions = initSidePanel.mainFrame.bestSolution.getBestSolutionMapping();
+        Double minCrossingAngle = initSidePanel.mainFrame.bestSolution.getBestMinimumAngle();
+        initSidePanel.removeDefaultListeners();
         PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
-        String msg = minCrossingAngle.map(d -> "Minimum crossing angle: " + d.toString()).orElse("No crossings!");
+        initSidePanel.addDefaultListeners();
+        String msg = (minCrossingAngle > 0) ? "Minimum crossing angle: " + minCrossingAngle.toString() : "No crossings!";
         msg += "\n";
-        msg += "Modifiers:\n";
-        for (int i = 0; i < mods.length; i++) {
-            Double d = mods[i];
-            initSidePanel.mainFrame.sliders[i].setValue((int) (1000 * d));
-            //noinspection StringConcatenationInLoop
-            msg += "\t" + d.toString() + "\n";
-        }
-        msg += "\n";
-        msg += "Switches:\n";
-        for (Boolean b : switchs) {
-            //noinspection StringConcatenationInLoop
-            msg += "\n\t" + b.toString() + "\n";
-        }
+        initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+        //maybe add what algorithm (+ settings) was used to achieve best solution
         JOptionPane.showMessageDialog(null, msg);
     }
 

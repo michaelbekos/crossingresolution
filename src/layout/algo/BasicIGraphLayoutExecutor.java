@@ -17,7 +17,6 @@ public class BasicIGraphLayoutExecutor {
   private boolean finished;
   private int currentIteration;
   private ICompoundEdit compoundEdit;
-  public Mapper<INode, PointD> bestSolution; //TODO
 
   public BasicIGraphLayoutExecutor(ILayout layout,
                                    IGraph graph,
