@@ -18,6 +18,8 @@ class BoolSidePanelItem extends SidePanelItem<Boolean> {
     GridBagConstraints cCustomPanel = new GridBagConstraints();
     cCustomPanel.gridy = gridBagState.increaseY();
     cCustomPanel.gridx = 0;
+    cCustomPanel.gridwidth = 3;
+    cCustomPanel.anchor = GridBagConstraints.LINE_START;
     checkBox = new JCheckBox(getName());
     sidePanel.add(checkBox, cCustomPanel);
     checkBox.addItemListener(itemEvent -> setValue((itemEvent.getStateChange() == ItemEvent.SELECTED)));
