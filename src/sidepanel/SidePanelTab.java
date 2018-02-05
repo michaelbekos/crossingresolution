@@ -297,9 +297,17 @@ public class SidePanelTab {
         JOptionPane.showMessageDialog(null, msg);
     }
 
-    public void startPauseActionPerformed(ActionEvent evt) {
+    private void startPauseActionPerformed(ActionEvent evt) {
+        startPauseExecution();
+    }
+
+    private void stopActionPerformed(ActionEvent evt) {
+        stopExecution();
+    }
+
+    public void startPauseExecution() {
         if (startPauseButton.getText().equals("Start") || startPauseButton.getText().equals("Continue")) {
-            if (executor.isRunning()) {
+            if (executor.isPaused()) {
                 startPauseButton.setText("Pause");
                 executor.unpause();
             } else {
@@ -317,9 +325,9 @@ public class SidePanelTab {
         }
     }
 
-    public void stopActionPerformed(ActionEvent evt) {
-            startPauseButton.setText("Start");
-            executor.stop();
+    public void stopExecution() {
+        startPauseButton.setText("Start");
+        executor.stop();
     }
 
     private void minimumAngleDisplayEnabled(ItemEvent evt) {

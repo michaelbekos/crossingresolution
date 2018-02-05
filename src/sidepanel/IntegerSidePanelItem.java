@@ -57,7 +57,7 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
     ((JSpinner.DefaultEditor) (spinner.getEditor())).getTextField().setColumns(5);
     spinner.addChangeListener(e -> {
       JSpinner source = (JSpinner) e.getSource();
-      slider.setMaximum((int) (double) source.getValue());
+      slider.setMaximum((int)source.getValue());
     });
 
     slider.setSize(400, 30);

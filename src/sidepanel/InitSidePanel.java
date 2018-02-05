@@ -95,8 +95,14 @@ public class InitSidePanel {
         sidePanelTabs = new ArrayList<>();
 
         tabbedSidePane.addChangeListener(changeEvent -> {
-            sidePanelTabs.get(tabbedSidePane.getSelectedIndex()).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
-            sidePanelTabs.get(tabbedSidePane.getSelectedIndex()).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
+            int selectedTab = tabbedSidePane.getSelectedIndex();
+            sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
+            sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
+            for (int i = 0; i < sidePanelTabs.size(); i++) {
+                if (i != selectedTab) {
+                    sidePanelTabs.get(i).stopExecution();
+                }
+            }
         });
     }
 

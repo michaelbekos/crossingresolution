@@ -53,6 +53,7 @@ public class BasicIGraphLayoutExecutor {
       running = false;
       finished = true;
     }
+    reset();
   }
 
   public void pause()
@@ -62,7 +63,15 @@ public class BasicIGraphLayoutExecutor {
 
   public void unpause() {
     running = true;
-    notify();
+    synchronized (BasicIGraphLayoutExecutor.this) {
+      notify();
+    }
+  }
+
+  private void reset() {
+    running = false;
+    finished = false;
+    currentIteration = 0;
   }
 
   private void run() {
@@ -96,7 +105,7 @@ public class BasicIGraphLayoutExecutor {
           }
         }
       }
-
+      reset();
       synchronized (BasicIGraphLayoutExecutor.this) {
         BasicIGraphLayoutExecutor.this.notifyAll();
       }
@@ -117,6 +126,10 @@ public class BasicIGraphLayoutExecutor {
 
   public boolean isRunning() {
     return running;
+  }
+
+  public boolean isPaused() {
+    return (!isRunning() && !isFinished() && currentIteration > 0);
   }
 
   public boolean isFinished() {
