@@ -309,24 +309,33 @@ public class SidePanelTab {
         if (startPauseButton.getText().equals("Start") || startPauseButton.getText().equals("Continue")) {
             if (executor.isPaused()) {
                 startPauseButton.setText("Pause");
+                startPauseButton.setBackground(Color.yellow);
+                stopButton.setBackground(Color.red);
                 executor.unpause();
             } else {
                 if (executor.isFinished()) {
                     startPauseButton.setText("Start");
+                    startPauseButton.setBackground(null);
+                    stopButton.setBackground(null);
                 } else {
                     startPauseButton.setText("Pause");
-//                        startPauseButton.setBackground(Color.green);
+                    startPauseButton.setBackground(Color.yellow);
+                    stopButton.setBackground(Color.red);
                     executor.start();
                 }
             }
         } else if (startPauseButton.getText().equals("Pause")) {
             startPauseButton.setText("Continue");
+            startPauseButton.setBackground(Color.green);
+            stopButton.setBackground(Color.red);
             executor.pause();
         }
     }
 
     public void stopExecution() {
         startPauseButton.setText("Start");
+        startPauseButton.setBackground(null);
+        stopButton.setBackground(null);
         executor.stop();
     }
 
