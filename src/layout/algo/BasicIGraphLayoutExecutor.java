@@ -135,6 +135,14 @@ public class BasicIGraphLayoutExecutor {
     return finished;
   }
 
+  public synchronized void waitUntilFinished() {
+    try {
+      wait();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
   public void setMaxIterations(int maxIterations) {
     this.maxIterations = maxIterations;
     if (this.currentIteration >= maxIterations) {
