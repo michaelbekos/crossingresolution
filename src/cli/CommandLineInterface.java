@@ -2,6 +2,10 @@ package cli;
 
 import com.yworks.yfiles.graph.DefaultGraph;
 import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.layout.circular.CircularLayout;
+import com.yworks.yfiles.layout.organic.OrganicLayout;
+import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
+import com.yworks.yfiles.layout.tree.TreeLayout;
 import io.ContestIOHandler;
 import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.ILayout;
@@ -9,6 +13,7 @@ import layout.algo.RandomMovementConfigurator;
 import layout.algo.RandomMovementLayout;
 import layout.algo.layoutinterface.VoidItemFactory;
 import org.apache.commons.cli.*;
+import yfilesadapter.YFilesLayoutAdapter;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -112,9 +117,15 @@ public class CommandLineInterface {
   private static ILayout getAlgorithm(String name, IGraph graph) {
     VoidItemFactory itemFactory = new VoidItemFactory();
     switch (name) {
-      // TODO:
       case "organic":
-        return null;
+        return new YFilesLayoutAdapter(graph, new OrganicLayout());
+      case "orthogonal":
+        return new YFilesLayoutAdapter(graph, new OrthogonalLayout());
+      case "tree":
+        return new YFilesLayoutAdapter(graph, new TreeLayout());
+      case "circular":
+        return new YFilesLayoutAdapter(graph, new CircularLayout());
+
       case "random_movement":
         RandomMovementConfigurator configurator = new RandomMovementConfigurator();
         configurator.init(itemFactory);
