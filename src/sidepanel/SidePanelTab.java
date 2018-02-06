@@ -336,6 +336,7 @@ public class SidePanelTab {
     }
 
     private void scalingToBox(){
+        initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(initSidePanel.mainFrame.graph);
         double maxX=0, maxY=0;
         for(INode u : initSidePanel.mainFrame.graph.getNodes()){
@@ -349,6 +350,7 @@ public class SidePanelTab {
         nodePositions = GraphOperations.scaleUpProcess(initSidePanel.mainFrame.graph,nodePositions, Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)));
         initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
+        initSidePanel.addDefaultListeners();
     }
 
     private void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

@@ -22,7 +22,6 @@ public class MinimumAngleMonitor {
   private double oldAngle;
 
   private BestSolution bestSolution;
-  
 
   private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
   private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o, EdgeEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);

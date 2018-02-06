@@ -17,10 +17,10 @@ public class BestSolution {
 
     //call to reset the BestSolution (e.g. loading new graph)
     public void reset() {
-        if (bestSolutionMapping.size()!=0){
+        if (bestSolutionMapping.size() != 0){
             bestSolutionMapping.clear();
         }
-        if (bestSolutionMinimumAngle.size()!=0){
+        if (bestSolutionMinimumAngle.size() != 0){
             bestSolutionMinimumAngle.clear();
         }
     }

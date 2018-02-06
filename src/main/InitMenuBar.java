@@ -39,7 +39,7 @@ import java.util.Set;
  * Created by khokhi on 10.12.16.
  */
 public class InitMenuBar {
-	
+
     private MainFrame mainFrame;
 
     private JProgressBar progressBar;
@@ -181,7 +181,7 @@ public class InitMenuBar {
         reinsertVerticesItem.setText("Reinsert Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
         graphOpsMenu.add(reinsertVerticesItem);
-        
+
         /*
          * Check legality
          */
@@ -191,7 +191,7 @@ public class InitMenuBar {
         enforcelegal.setText("Enforce legality");
         enforcelegal.addActionListener(this::enforcelegal);
         graphOpsMenu.add(enforcelegal);
-        
+
         return graphOpsMenu;
     }
 
@@ -356,7 +356,7 @@ public class InitMenuBar {
             int result = JOptionPane.showOptionDialog(null, new Object[]{"Dimensions: ", dim}, "Graph Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (result == JOptionPane.OK_OPTION) {
                 int dimensions = Integer.parseInt(dim.getText());
-               mainFrame.bestSolution.reset();
+                mainFrame.bestSolution.reset();
                 HypercubeGenerator.generate(graph, dimensions);
                 view.updateUI();
             }
@@ -375,7 +375,7 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int rC = Integer.parseInt(rCount.getText());
-               mainFrame.bestSolution.reset();
+                mainFrame.bestSolution.reset();
                 GridGenerator.generate(graph, xC, yC, rC);
                 view.updateUI();
             }
@@ -394,7 +394,7 @@ public class InitMenuBar {
                 int xC = Integer.parseInt(xCount.getText());
                 int yC = Integer.parseInt(yCount.getText());
                 int lC = Integer.parseInt(layers.getText());
-               mainFrame.bestSolution.reset();
+                mainFrame.bestSolution.reset();
                 LayeredGridGenerator.generate(graph, xC, yC, lC);
                 view.updateUI();
             }
@@ -552,22 +552,22 @@ public class InitMenuBar {
         }
         mainFrame.initSidePanel.addDefaultListeners();
     }
-    
+
     private void enforcelegal(@SuppressWarnings("unused") ActionEvent evt){
         mainFrame.initSidePanel.removeDefaultListeners();
-    	Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
-    	boolean change=true;
-    	while(change){
-    		change=false;
-	    	for(INode u : graph.getNodes()){
-	        	if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE){
-	        		nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.9);
-	        	    this.graph =  PositionMap.applyToGraph(graph, nodePositions);
-	        	    this.view.fitGraphBounds();
-	        	    change=true;
-				}
-	        }
-    	}
+        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
+        boolean change=true;
+        while(change){
+            change=false;
+            for(INode u : graph.getNodes()){
+                if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE){
+                    nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.9);
+                    this.graph =  PositionMap.applyToGraph(graph, nodePositions);
+                    this.view.fitGraphBounds();
+                    change=true;
+                }
+            }
+        }
         mainFrame.initSidePanel.addDefaultListeners();
     }
 
@@ -657,7 +657,7 @@ public class InitMenuBar {
         this.graph.clear();
         this.removedVertices = null;
         this.view.updateUI();
-       mainFrame.bestSolution.reset();
+        mainFrame.bestSolution.reset();
         mainFrame.initSidePanel.addDefaultListeners();
     }
 
@@ -677,7 +677,7 @@ public class InitMenuBar {
             try {
                 rgg.setNodeCount(Integer.parseInt(nodeCount.getText()));
                 rgg.setEdgeCount(Integer.parseInt(edgeCount.getText()));
-               mainFrame.bestSolution.reset();
+                mainFrame.bestSolution.reset();
             } catch (NumberFormatException exc) {
                 JOptionPane.showMessageDialog(null, "Incorrect input.\nThe graph will be created with 10 nodes and 10 edges.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 rgg.setNodeCount(10);
@@ -715,7 +715,7 @@ public class InitMenuBar {
                 this.view.updateUI();
                 this.removedVertices = null;
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-               mainFrame.bestSolution.reset();
+                mainFrame.bestSolution.reset();
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {
@@ -746,7 +746,7 @@ public class InitMenuBar {
                 this.view.updateUI();
                 this.removedVertices = null;
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-               mainFrame.bestSolution.reset();
+                mainFrame.bestSolution.reset();
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {
@@ -971,15 +971,15 @@ public class InitMenuBar {
         }
 
         ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
-            .addForce(new SlopedForce(mainFrame.graph, numSlopes * 2, initAngle, 0.7))
-            .addForce(new ElectricForce(mainFrame.graph, 0.01, 30000))
-            .addForce(new SpringForce(mainFrame.graph, 100, 0.01, 100));
+                .addForce(new SlopedForce(mainFrame.graph, numSlopes * 2, initAngle, 0.7))
+                .addForce(new ElectricForce(mainFrame.graph, 0.01, 30000))
+                .addForce(new SpringForce(mainFrame.graph, 100, 0.01, 100));
         // TODO configurator.init(mainFrame.sidePanelItemFactory);
 
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, new CachedMinimumAngle());
 
         IGraphLayoutExecutor executor =
-            new IGraphLayoutExecutor(forceAlgorithm, mainFrame.graph, progressBar, iterations, 20);
+                new IGraphLayoutExecutor(forceAlgorithm, mainFrame.graph, progressBar, iterations, 20);
         executor.start();
 
         for (ICanvasObject o : canvasObjects) {

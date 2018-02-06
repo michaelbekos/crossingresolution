@@ -13,7 +13,6 @@ import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
-import layout.algo.ForceAlgorithm;
 import layout.algo.utils.BestSolution;
 import sidepanel.InitSidePanel;
 
@@ -21,19 +20,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashSet;
-import java.util.Set;
-
 
 
 /**
  * Created by michael on 28.10.16.
  */
 public class MainFrame extends JFrame {
-	
-	/* Box related issue*/
-	public static final double BOX_SIZE= 10000;
-	
+
+    /* Box related issue*/
+    public static final double BOX_SIZE= 10000;
+
     /* Graph Drawing related objects */
     public GraphComponent view;
     public IGraph graph;
@@ -147,18 +143,20 @@ public class MainFrame extends JFrame {
             infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size());
         });
         this.graph.addNodeRemovedListener((o, iNodeItemEventArgs) ->
-            infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size()
-        ));
+                infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size()
+                ));
 
         this.graph.addEdgeRemovedListener((o, iNodeItemEventArgs) ->
-            infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size()
-        ));
+                infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size()
+                ));
 
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
+            this.initSidePanel.removeDefaultListeners();
             double scaleValue = 1/this.view.getZoom();
             for(INode u : this.graph.getNodes()){
                 this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
             }
+            this.initSidePanel.addDefaultListeners();
         });
 
 
@@ -213,16 +211,16 @@ public class MainFrame extends JFrame {
 
     private void initMenuBar() {
         this.menuBar = new InitMenuBar(
-            this,
-            graph,
-            infoLabel,
-            view,
-            progressBar,
-            graphEditorInputMode,
-            defaultLayouter,
-            graphSnapContext,
-            gridVisualCreator,
-            minimumAngleMonitor
+                this,
+                graph,
+                infoLabel,
+                view,
+                progressBar,
+                graphEditorInputMode,
+                defaultLayouter,
+                graphSnapContext,
+                gridVisualCreator,
+                minimumAngleMonitor
         );
         super.setJMenuBar(menuBar.initMenuBar());
     }
@@ -255,7 +253,7 @@ public class MainFrame extends JFrame {
 
     private void populateNodePopupMenu(PopulateItemPopupMenuEventArgs<IModelItem> args) {
         ISelectionModel<INode> selection = this.view.getSelection().getSelectedNodes();
-            if (args.getItem() instanceof INode) {
+        if (args.getItem() instanceof INode) {
             INode node = (INode) args.getItem();
             selection.clear();
             selection.setSelected(node, true);
