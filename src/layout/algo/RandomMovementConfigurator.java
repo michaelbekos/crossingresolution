@@ -17,7 +17,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     maxStepSize = itemFactory.doubleParameter("Maximum step size", 0.1, 50000, 1);
     numIterations = itemFactory.intParameter("Number of Iterations", -1,1000, 1);
     useGaussianDistribution = itemFactory.booleanParameter("Gaussian node distribution");
-    doubleStepSizeOnLocalMaximum = itemFactory.booleanParameter("Double step size on local Minimum");
+    doubleStepSizeOnLocalMaximum = itemFactory.booleanParameter("Double step size on local Maximum");
 
     useGaussianDistribution.setValue(true);
     minStepSize.setValue(10.);
