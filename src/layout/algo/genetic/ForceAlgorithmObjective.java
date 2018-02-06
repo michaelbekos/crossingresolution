@@ -32,14 +32,7 @@ class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
     int iterations = configurator.iterationsPerGeneration.getValue();
     final BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, iterations, iterations);
     executor.start();
-    synchronized (executor) {
-      try {
-        executor.wait();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-        return forceAlgorithm;
-      }
-    }
+    executor.waitUntilFinished();
     return forceAlgorithm;
   }
 
