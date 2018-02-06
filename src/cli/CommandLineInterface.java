@@ -24,7 +24,6 @@ public class CommandLineInterface {
   private static final String ITERATIONS_PARAMETER = "iterations";
   /*
   TODO:
-   - blobs
    - stats
    */
 
@@ -34,7 +33,7 @@ public class CommandLineInterface {
         .hasArgs()
         .required()
         .longOpt(GRAPHS_PARAMETER)
-        .desc("A list of graph files [*.txt]. Blobs are supported")
+        .desc("A list of graph files [*.txt]")
         .build());
     options.addOption(Option.builder()
         .hasArgs()
