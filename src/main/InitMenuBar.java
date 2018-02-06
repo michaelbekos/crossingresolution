@@ -19,6 +19,7 @@ import layout.algo.*;
 import layout.algo.forces.ElectricForce;
 import layout.algo.forces.SlopedForce;
 import layout.algo.forces.SpringForce;
+import layout.algo.gridding.QuickGridder;
 import layout.algo.utils.PositionMap;
 import util.*;
 import view.visual.VectorVisual;
@@ -1116,14 +1117,9 @@ public class InitMenuBar {
     }
 
     private void quickAndDirtyGridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        mainFrame.initSidePanel.removeDefaultListeners();
-        GridPositioning.gridQuickAndDirty(this.graph);
-        if (!GridPositioning.isGridGraph(this.graph)) {
-            System.out.println("Error occured with the gridding of the graph");
-        }
-        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
-        this.view.updateUI();
-        mainFrame.initSidePanel.addDefaultListeners();
+        QuickGridder gridder = new QuickGridder(graph);
+        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(gridder, graph, mainFrame.progressBar, 50, 1);
+        executor.start();
     }
 
     private void gridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
