@@ -7,10 +7,9 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.tree.TreeLayout;
 import io.ContestIOHandler;
-import layout.algo.BasicIGraphLayoutExecutor;
-import layout.algo.ILayout;
-import layout.algo.RandomMovementConfigurator;
-import layout.algo.RandomMovementLayout;
+import layout.algo.*;
+import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
+import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.VoidItemFactory;
 import org.apache.commons.cli.*;
 import yfilesadapter.YFilesLayoutAdapter;
@@ -129,6 +128,16 @@ public class CommandLineInterface {
         RandomMovementConfigurator configurator = new RandomMovementConfigurator();
         configurator.init(itemFactory);
         return new RandomMovementLayout(graph, configurator);
+      case "force":
+        return InitForceAlgorithm.defaultForceAlgorithm(graph, itemFactory);
+      case "genetic":
+        GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
+        geneticConfigurator.init(itemFactory);
+        return new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
+      case "clinch":
+        ClinchLayoutConfigurator clinchLayoutConfigurator = new ClinchLayoutConfigurator();
+        clinchLayoutConfigurator.init(itemFactory);
+        return new ClinchLayout(clinchLayoutConfigurator, graph);
     }
     return null;
   }

@@ -8,6 +8,7 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.utils.IListEnumerable;
+import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
@@ -68,9 +69,9 @@ public class ClinchLayout implements ILayout {
   public void clearDebug() {}
 
   private void initLine() {
-    ISelectionModel<INode> selectedNodes = configurator.selection.getValue().getSelectedNodes();
-
-    if (selectedNodes.getCount() > 0) {
+    IGraphSelection selection = configurator.selection.getValue();
+    if (selection != null) {
+      ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
       fixNodes = graph.getNodes().stream()
           .filter(node -> !selectedNodes.isSelected(node))
           .collect(Collectors.toSet());
