@@ -178,8 +178,8 @@ public class CanonicalOrder {
                 + vn.degree());
         possibleNextNodes.add(vn);
         possibleNextNodes2.add(vn);
-
-
+//TODO: here
+/*
 
         Edge edge = v1.getEdge(v2);
         Dart dart1 = planarEmbedding.getDarts(edge)[0];
@@ -203,8 +203,9 @@ public class CanonicalOrder {
             System.out.println("!!!!!!!!!!!!!!! v1v2Face is empty !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
-
-
+*/
+        Dart d = getDart(v1, v2);
+        v1v2Face = d.getFace();
     }
 
     /**
@@ -222,10 +223,17 @@ public class CanonicalOrder {
         possibleNextFaces = new HashSet<>();
         possibleNextNodes2 = new LinkedList<>();
         possibleNextFaces2 = new LinkedList<>();
-        Node node;
 
+
+        //TODO: here
+        /*Node node;
         for (Dart dart : planarEmbedding.getOuterFace()) {
             node = getTargetNode(dart);
+            outerFace.add(node);
+        }*/
+        for (Dart dart : planarEmbedding.getOuterFace()) {
+            Dart dartReverse = dart.getOppositeDart();
+            Node node = getSourceNode(dartReverse);
             outerFace.add(node);
         }
     }
@@ -410,8 +418,8 @@ public class CanonicalOrder {
         ArrayList<Node> nodes = new ArrayList<>();
 
         for (Dart dart : f) {
-            Edge edge = dart.getAssociatedEdge();
-            Node node = edge.target();
+           // Edge edge = dart.getAssociatedEdge();
+            Node node = getTargetNode(dart);
             nodes.add(node);
         }
         return nodes; // counter-clockwise
