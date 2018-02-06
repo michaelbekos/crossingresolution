@@ -41,7 +41,6 @@ public class InitSidePanel {
     public JCheckBox masterEnableMinimumAngle;
     private boolean stateEnableMinimumAngle;
     public JCheckBox masterAllowClickCreateNodeEdge;
-    private boolean stateAllowClickCreateNoteEdge;
 
 
     public InitSidePanel(MainFrame mainFrame) {
@@ -89,7 +88,6 @@ public class InitSidePanel {
         masterAllowClickCreateNodeEdge = new JCheckBox("Manual Mode");
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
         masterAllowClickCreateNodeEdge.setSelected(false);
-        stateAllowClickCreateNoteEdge = false;
 
         sidePanelTabs = new ArrayList<>();
 
@@ -168,14 +166,11 @@ public class InitSidePanel {
 
     public void removeDefaultListeners() {
         stateEnableMinimumAngle = masterEnableMinimumAngle.isSelected();
-        stateAllowClickCreateNoteEdge = masterAllowClickCreateNodeEdge.isSelected();
         masterEnableMinimumAngle.setSelected(false);
-        masterAllowClickCreateNodeEdge.setSelected(false);
     }
 
     public void addDefaultListeners() {
         masterEnableMinimumAngle.setSelected(stateEnableMinimumAngle);
-        masterAllowClickCreateNodeEdge.setSelected(stateAllowClickCreateNoteEdge);
     }
 
     /*********************************************************************
