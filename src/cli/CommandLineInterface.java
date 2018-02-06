@@ -16,10 +16,10 @@ import java.util.Arrays;
 public class CommandLineInterface {
   private static final String ALGORITHMS_PARAMETER = "algorithms";
   private static final String GRAPHS_PARAMETER = "graphs";
+  private static final String ITERATIONS_PARAMETER = "iterations";
   /*
   TODO:
    - blobs
-   - iterations as CLI parameter
    - stats
    */
 
@@ -35,6 +35,13 @@ public class CommandLineInterface {
         .hasArgs()
         .longOpt(ALGORITHMS_PARAMETER)
         .desc("A list of algorithms that should be applied to each graph in order. Available algorithms: TODO")
+        .build());
+    options.addOption(Option.builder()
+        .hasArg()
+        .numberOfArgs(1)
+        .optionalArg(true)
+        .longOpt(ITERATIONS_PARAMETER)
+        .desc("Maximum number of iterations for each algorithm")
         .build());
     return options;
   }
@@ -59,14 +66,17 @@ public class CommandLineInterface {
       algorithms = new String[]{"organic", "random_movement"};
     }
 
-    run(graphFiles, algorithms);
+    String iterationsString = cmd.getOptionValue(ITERATIONS_PARAMETER, "1000");
+    int iterations = Integer.parseInt(iterationsString);
+
+    run(graphFiles, algorithms, iterations);
   }
 
-  private static void run(String[] graphFiles, String[] algorithms) {
+  private static void run(String[] graphFiles, String[] algorithms, int iterations) {
     Arrays.stream(graphFiles)
         .parallel()
         .map(CommandLineInterface::loadGraph)
-        .peek(fileData -> runAlgorithms(algorithms, fileData))
+        .peek(fileData -> runAlgorithms(algorithms, fileData, iterations))
         .forEach(CommandLineInterface::writeGraph);
   }
 
@@ -80,12 +90,12 @@ public class CommandLineInterface {
     return new FileData(file, graph);
   }
 
-  private static void runAlgorithms(String[] algorithms, FileData fileData) {
+  private static void runAlgorithms(String[] algorithms, FileData fileData, int iterations) {
     Arrays.stream(algorithms)
         .forEach(algorithmName -> {
           ILayout algorithm = getAlgorithm(algorithmName, fileData.graph);
           BasicIGraphLayoutExecutor executor =
-              new BasicIGraphLayoutExecutor(algorithm, fileData.graph, 1000, 1000);
+              new BasicIGraphLayoutExecutor(algorithm, fileData.graph, iterations, iterations);
           executor.start();
           executor.waitUntilFinished();
         });
