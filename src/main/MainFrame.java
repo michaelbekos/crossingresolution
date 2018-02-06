@@ -54,12 +54,7 @@ public class MainFrame extends JFrame {
     public MinimumAngleMonitor minimumAngleMonitor;
     public BestSolution bestSolution;
 
-    public JSlider[] sliders;
-
-    public int faRunningTimeGenetic = 250;
-
     @Nullable
-    public ForceAlgorithm forceAlgorithm = null;
     public JTabbedPane sidePanel;
     public InitSidePanel initSidePanel;
     public InitMenuBar menuBar;
@@ -103,14 +98,12 @@ public class MainFrame extends JFrame {
         JPanel mainPanel = new JPanel();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.setPreferredSize(new Dimension(300, 300));
-        //mainPanel.setLayout(new BorderLayout(0, 10));
         mainPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 2;
         c.insets = new Insets(5, 0, 5, 0);
         mainPanel.add(progressBarPanel, c);
-        //mainPanel.add(progressBarPanel, BorderLayout.PAGE_END);
 
         this.view = new GraphComponent();
         this.view.setSize(330, 330);
@@ -121,7 +114,6 @@ public class MainFrame extends JFrame {
         c.gridy = 1;
         c.weightx = 0.8;
         mainPanel.add(this.view, c);
-        //mainPanel.add(this.view, BorderLayout.CENTER);
 
         this.graph = this.view.getGraph();
         this.graph.setUndoEngineEnabled(true);
@@ -162,27 +154,6 @@ public class MainFrame extends JFrame {
             infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size()
         ));
 
-        this.graph.addNodeLayoutChangedListener((o, u, iNodeItemEventArgs) -> {
-            synchronized(movedNodes){
-                movedNodes.add(u);
-            }
-        });
-        //this.graph.addNodeStyleChangedListener((o, iNodeItemEventArgs) -> {
-            //view.updateUI();
-       // });
-        this.view.addUpdatingListener((o, args) -> {
-          //  MinimumAngle.resetHighlighting(this.graph);
-            Set<INode> movedNodesCP;
-            synchronized(movedNodes){
-                if(movedNodes.size() <= 0) return;
-                movedNodesCP = new HashSet<>(movedNodes);
-                movedNodes.clear();
-            }
-            // TODO: do we really need this?
-            /*if (forceAlgorithm != null) {
-                forceAlgorithm.resetNodePositions(movedNodesCP);
-            }*/
-        });
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
             double scaleValue = 1/this.view.getZoom();
             for(INode u : this.graph.getNodes()){
@@ -199,7 +170,6 @@ public class MainFrame extends JFrame {
         this.view.getBackgroundGroup().addChild(this.gridVisualCreator, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE);
         this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
         this.graphSnapContext.setNodeGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
-        //this.graphSnapContext.setBendGridConstraintProvider(new GridConstraintProvider<>(gridInfo));
 
         /* Default Node Styling */
         this.defaultNodeStyle = new ShinyPlateNodeStyle();
@@ -224,12 +194,10 @@ public class MainFrame extends JFrame {
 
         super.getContentPane().setLayout(new java.awt.BorderLayout(20, 20));
         super.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
-        //super.getContentPane().add(mainPanel, c);
 
         c.gridy = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
         c. insets = new Insets(5, 0, 10, 0);
-        //mainPanel.add(toolBar, BorderLayout.PAGE_START);
 
         this.defaultLayouter = new OrganicLayout();
         this.defaultLayouter.setPreferredEdgeLength(100);
@@ -241,10 +209,6 @@ public class MainFrame extends JFrame {
         this.initSidePanel = new InitSidePanel(this);
         this.sidePanel = this.initSidePanel.initSidePanel(mainPanel);
     }
-
-    private final Set<INode> movedNodes = new HashSet<>();
-
-
 
 
     private void initMenuBar() {

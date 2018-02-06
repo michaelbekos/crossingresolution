@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 class IntegerSidePanelItem extends SidePanelItem<Integer> {
-  private final int minValue;
-  private final int maxValue;
+  private int minValue;
+  private int maxValue;
   private final int threshold;
   private JTextField textField;
   private JSlider slider;
@@ -57,7 +57,9 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
     ((JSpinner.DefaultEditor) (spinner.getEditor())).getTextField().setColumns(5);
     spinner.addChangeListener(e -> {
       JSpinner source = (JSpinner) e.getSource();
-      slider.setMaximum((int)(double)source.getValue());
+      int val = (int)(double)source.getValue();
+      slider.setMaximum(val);
+      this.maxValue = val;
     });
 
     slider.setSize(400, 30);

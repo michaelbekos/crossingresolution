@@ -8,21 +8,21 @@ import com.yworks.yfiles.graph.Mapper;
 
 
 public class BestSolution {
-    private Hashtable<Integer, Mapper<INode, PointD>> bestSolutionMapping= new Hashtable<Integer, Mapper<INode, PointD>>();
-    private static Hashtable<Integer, Double> bestSolutionMinimumAngle= new Hashtable<Integer, Double>();
+    private Hashtable<Integer, Mapper<INode, PointD>> bestSolutionMapping = new Hashtable<>();
+    private static Hashtable<Integer, Double> bestSolutionMinimumAngle = new Hashtable<>();
 
     public BestSolution() {
         reset();
     }
 
-    //call init to reset the BestSolution (e.g. loading new graph)
+    //call to reset the BestSolution (e.g. loading new graph)
     public void reset() {
-    	if (bestSolutionMapping.size()!=0){
-        bestSolutionMapping.clear();
-    		}
-    	if (bestSolutionMinimumAngle.size()!=0){
+        if (bestSolutionMapping.size()!=0){
+            bestSolutionMapping.clear();
+        }
+        if (bestSolutionMinimumAngle.size()!=0){
             bestSolutionMinimumAngle.clear();
-        	}
+        }
     }
 
     public void setBestMinimumAngle(double minAngle, int nodes) {

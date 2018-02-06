@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 class DoubleSidePanelItem extends SidePanelItem<Double> {
-  private final double minValue;
-  private final double maxValue;
+  private double minValue;
+  private double maxValue;
   private final double threshold;
 
   private JTextField textField;
@@ -61,6 +61,7 @@ class DoubleSidePanelItem extends SidePanelItem<Double> {
       Double val = (Double) source.getValue();
       int maxValSlider = (int) (val * 1000);
       slider.setMaximum(maxValSlider);
+      this.maxValue = val;
     });
 
 
