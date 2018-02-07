@@ -171,6 +171,9 @@ public class InitSidePanel {
 
     public void addDefaultListeners() {
         masterEnableMinimumAngle.setSelected(stateEnableMinimumAngle);
+        if (stateEnableMinimumAngle) {
+            mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+        }
     }
 
     /*********************************************************************

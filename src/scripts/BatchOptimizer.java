@@ -1,3 +1,4 @@
+package scripts;
 
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
