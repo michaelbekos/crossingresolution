@@ -10,6 +10,7 @@ import layout.algo.utils.PositionMap;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class QuickGridder implements ILayout {
   private IGraph graph;
@@ -17,9 +18,11 @@ public class QuickGridder implements ILayout {
   private Random random;
   private Set<PointD> reservedPositions;
   private HashSet<INode> griddedNodes;
+  private QuickGridderConfigurator configurator;
 
-  public QuickGridder(IGraph graph) {
+  public QuickGridder(IGraph graph, QuickGridderConfigurator configurator) {
     this.graph = graph;
+    this.configurator = configurator;
   }
 
   @Override
@@ -40,13 +43,17 @@ public class QuickGridder implements ILayout {
       PointD oldPosition = positions.getValue(node);
       double oldAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
 
-      List<PointD> goodPositions = getNeighborGridPositions(oldPosition, iteration).stream()
-          .filter(position -> !reservedPositions.contains(position))
-          .filter(position -> {
-            positions.setValue(node, position);
-            return MinimumAngle.getMinimumAngleForNode(positions, node, graph) >= oldAngle;
-          })
-          .collect(Collectors.toList());
+      Stream<PointD> samplePositions = getNeighborGridPositions(oldPosition, iteration).stream()
+          .filter(position -> !reservedPositions.contains(position));
+
+      if (configurator.respectMinimumAngle.getValue()) {
+        samplePositions = samplePositions.filter(position -> {
+          positions.setValue(node, position);
+          return MinimumAngle.getMinimumAngleForNode(positions, node, graph) >= oldAngle;
+        });
+      }
+
+      List<PointD> goodPositions = samplePositions.collect(Collectors.toList());
 
       if (goodPositions.size() == 0) {
         positions.setValue(node, oldPosition);
@@ -60,7 +67,12 @@ public class QuickGridder implements ILayout {
       griddedNodes.add(node);
     }
 
-    return griddedNodes.size() == graph.getNodes().size();
+    if (configurator.respectMinimumAngle.getValue()) {
+      return griddedNodes.size() == graph.getNodes().size();
+    } else {
+      // max two iterations
+      return iteration >= 1 || griddedNodes.size() == graph.getNodes().size();
+    }
   }
 
   private List<PointD> getNeighborGridPositions(PointD position, int window) {
