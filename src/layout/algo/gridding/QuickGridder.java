@@ -64,7 +64,8 @@ public class QuickGridder implements ILayout {
   }
 
   private List<PointD> getNeighborGridPositions(PointD position, int window) {
-    ArrayList<PointD> positions = new ArrayList<>(window * window);
+    int w = 2 * window + 1;
+    ArrayList<PointD> positions = new ArrayList<>(w * w);
 
     long px = Math.round(position.getX());
     long py = Math.round(position.getY());
