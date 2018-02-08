@@ -20,6 +20,7 @@ import layout.algo.forces.ElectricForce;
 import layout.algo.forces.SlopedForce;
 import layout.algo.forces.SpringForce;
 import layout.algo.gridding.QuickGridder;
+import layout.algo.gridding.QuickGridderConfigurator;
 import layout.algo.utils.PositionMap;
 import util.*;
 import view.visual.VectorVisual;
@@ -134,12 +135,6 @@ public class InitMenuBar {
         graphGridItem.setText("Graph Gridding");
         graphGridItem.addActionListener(this::graphGridItemActionPerformed);
         layoutMenu.add(graphGridItem);
-
-        JMenuItem dirtyGridPositioningItem = new JMenuItem();
-        dirtyGridPositioningItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        dirtyGridPositioningItem.setText("Quick and Dirty Gridding");
-        dirtyGridPositioningItem.addActionListener(this::quickAndDirtyGridItemActionPerformed);
-        layoutMenu.add(dirtyGridPositioningItem);
 
         return layoutMenu;
     }
@@ -1114,12 +1109,6 @@ public class InitMenuBar {
         System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
         this.view.updateUI();
         mainFrame.initSidePanel.addDefaultListeners();
-    }
-
-    private void quickAndDirtyGridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        QuickGridder gridder = new QuickGridder(graph);
-        IGraphLayoutExecutor executor = new IGraphLayoutExecutor(gridder, graph, mainFrame.progressBar, 50, 1);
-        executor.start();
     }
 
     private void gridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
