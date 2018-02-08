@@ -21,6 +21,7 @@ import layout.algo.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
+import util.Chains;
 import util.GraphOperations;
 import util.VertexStack;
 
@@ -393,7 +394,7 @@ public class SidePanelTab {
         if (this.removedChains != null && !this.removedChains.isEmpty()) {
 
             //TODO reinsert chains (currently regular reinsert 1 chain)
-            this.removedChains = GraphOperations.reinsertVertices(initSidePanel.mainFrame.graph, false, 1, this.removedChains);
+            this.removedChains = Chains.reinsertChain(initSidePanel.mainFrame.graph, this.removedChains);
             //
 
             double scaleValue = 1 / initSidePanel.mainFrame.view.getZoom();  //scale reinserted nodes
