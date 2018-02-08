@@ -29,6 +29,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -736,6 +737,7 @@ public class InitMenuBar {
                 this.removedVertices = null;
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
                 mainFrame.bestSolution.reset();
+                mainFrame.setTitle(Paths.get(fileNamePath).getFileName().toString());
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {
@@ -767,6 +769,7 @@ public class InitMenuBar {
                 this.removedVertices = null;
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
                 mainFrame.bestSolution.reset();
+                mainFrame.setTitle(Paths.get(fileNamePath).getFileName().toString());
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {
