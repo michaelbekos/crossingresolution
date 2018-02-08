@@ -67,11 +67,16 @@ public class QuickGridder implements ILayout {
       griddedNodes.add(node);
     }
 
+    boolean success = griddedNodes.size() == graph.getNodes().size();
+    if (success) {
+      configurator.statusMessage.setValue("Success! (" + (iteration + 1) + " iterations)");
+    }
+
     if (configurator.respectMinimumAngle.getValue()) {
-      return griddedNodes.size() == graph.getNodes().size();
+      return success;
     } else {
       // max two iterations
-      return iteration >= 1 || griddedNodes.size() == graph.getNodes().size();
+      return iteration >= 1 || success;
     }
   }
 
