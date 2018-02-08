@@ -1,34 +1,20 @@
 package sidepanel;
 
 import algorithms.graphs.CachedMinimumAngle;
-import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.layout.ILayoutAlgorithm;
-import com.yworks.yfiles.layout.LayoutExecutor;
-import com.yworks.yfiles.layout.circular.CircularLayout;
-import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import com.yworks.yfiles.layout.partial.PartialLayout;
-import com.yworks.yfiles.layout.partial.SubgraphPlacement;
-import com.yworks.yfiles.layout.tree.TreeLayout;
-import com.yworks.yfiles.view.IGraphSelection;
-import com.yworks.yfiles.view.ISelectionModel;
+import com.yworks.yfiles.graph.GraphItemTypes;
+import com.yworks.yfiles.graph.IGraph;
 import layout.algo.*;
 import layout.algo.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
+import layout.algo.gridding.QuickGridder;
 import layout.algo.layoutinterface.ILayoutConfigurator;
-import layout.algo.utils.PositionMap;
 import main.MainFrame;
-import util.GraphOperations;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class InitSidePanel {
     public MainFrame mainFrame;
@@ -66,6 +52,7 @@ public class InitSidePanel {
         addGeneticAlgorithm(graph);
         addSpringEmbedderAlgorithm(graph);
         addClinchLayout(graph);
+        addGriddingAlgorithm(graph);
 
         // TODO:
         addAlgorithm("Sloped Spring Embedder", null, null);
@@ -77,6 +64,11 @@ public class InitSidePanel {
         sidePanelTabs.get(0).setEnableMinimumAngleDisplay(true);
 
         return tabbedSidePane;
+    }
+
+    private void addGriddingAlgorithm(IGraph graph) {
+        QuickGridder gridder = new QuickGridder(graph);
+        addAlgorithm("Gridding", null, gridder);
     }
 
     private void initDefault() {
