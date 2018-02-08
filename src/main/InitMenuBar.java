@@ -181,6 +181,14 @@ public class InitMenuBar {
         reinsertVerticesItem.setText("Reinsert Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
         graphOpsMenu.add(reinsertVerticesItem);
+        
+        
+        JMenuItem reinsertChain = new JMenuItem();
+        reinsertChain.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        reinsertChain.setIcon(new ImageIcon(getClass().getResource("/resources/reinsertNode.png"))); // test Image
+        reinsertChain.setText("Chain");
+        reinsertChain.addActionListener(this::reinsertChainItemActionPerformed);
+        graphOpsMenu.add(reinsertChain);
 
         /*
          * Check legality
@@ -636,6 +644,18 @@ public class InitMenuBar {
         mainFrame.initSidePanel.addDefaultListeners();
     }
 
+    private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        mainFrame.initSidePanel.removeDefaultListeners();
+        if (this.removedVertices != null && !this.removedVertices.isEmpty()){
+                    this.removedVertices = Chains.reinsertChain(this.graph, this.removedVertices);
+                    double scaleValue = 1/this.view.getZoom();  //scale reinserted nodes
+                    for(INode u : this.graph.getNodes()){
+                        this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
+                    }
+        }
+        mainFrame.initSidePanel.addDefaultListeners();
+    }
+    
     private void fitContentItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         this.view.fitGraphBounds();

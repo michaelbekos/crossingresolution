@@ -1,6 +1,7 @@
 package sidepanel;
 
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.FilteredGraphWrapper;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
@@ -153,7 +154,14 @@ public class SidePanelTab {
         defaultPanel.add(scaleToBox, cDefaultPanel);
         scaleToBox.addActionListener(e -> scalingToBox());
         scaleToBox.setSelected(false);
-
+        
+/*        JButton chainInsert = new JButton("Insert Chain");
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        defaultPanel.add(scaleToBox, cDefaultPanel);
+        scaleToBox.addActionListener(e -> insertChain());
+        scaleToBox.setSelected(false);
+*/
         enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
@@ -188,7 +196,8 @@ public class SidePanelTab {
         defaultPanel.add(test, cDefaultPanel);
     }
 
-    public JPanel getMiscAlgorithmTab() {
+
+	public JPanel getMiscAlgorithmTab() {
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new GridBagLayout());
         GridBagConstraints cSidePanel = new GridBagConstraints();
