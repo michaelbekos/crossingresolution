@@ -18,7 +18,7 @@ import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 
 public class InitSidePanel {
-    public MainFrame mainFrame;
+    protected MainFrame mainFrame;
     private JTabbedPane tabbedSidePane;
 
     //Algorithm Tabs

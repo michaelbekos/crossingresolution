@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.time.Duration;
+import java.util.ArrayList;
 
 public class SidePanelTab {
     public JPanel sidePanelTab;
@@ -45,6 +46,7 @@ public class SidePanelTab {
     private JButton stopButton;
     private JCheckBox enableMinimumAngleDisplay;
     private JCheckBox allowClickCreateNodeEdge;
+    private JCheckBox showScaleCheckbox;
     private JTextArea outputTextArea;
 
     public SidePanelTab(InitSidePanel initSidePanel) {
@@ -98,6 +100,26 @@ public class SidePanelTab {
         cSidePanel.weighty = 0;
         sidePanelTab.add(getDefaultPanel(layout), cSidePanel);
     }
+
+    public void setTextGraphInfo() {
+        ArrayList<Integer> verticesDegree = new ArrayList<>();
+        for (INode u : initSidePanel.mainFrame.graph.getNodes()) {
+            int deg = u.getPorts().size();
+            while(deg >= verticesDegree.size()) {
+                verticesDegree.add(0);
+            }
+            verticesDegree.set(deg, verticesDegree.get(deg) + 1);
+
+        }
+        StringBuilder graphInfo = new StringBuilder();
+        graphInfo.append("Deg. Num.\n");
+        for (int i = 0 ; i < verticesDegree.size(); i++) {
+            if (verticesDegree.get(i) > 0) {
+                graphInfo.append("  " + i + "   :   " + verticesDegree.get(i).toString() + "\n");
+            }
+        }
+        graphInfo.append("Total Vertices: " + initSidePanel.mainFrame.graph.getNodes().size() + "\nTotal Edges:    " + initSidePanel.mainFrame.graph.getEdges().size());
+        outputTextArea.setText(graphInfo.toString());    }
 
     /**
      * returns default panel without start/stop controls
@@ -189,6 +211,24 @@ public class SidePanelTab {
         cDefaultPanel.gridy = cDefaultPanelY;
         defaultPanel.add(reinsertChain, cDefaultPanel);
         reinsertChain.addActionListener(this::reinsertChainItemActionPerformed);
+
+        JButton showGraphInfo = new JButton("Graph Info");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.insets = new Insets(0,0,0,0);
+        defaultPanel.add(showGraphInfo, cDefaultPanel);
+        showGraphInfo.addActionListener(this::showGraphInfoActionPerformed);
+
+        showScaleCheckbox = new JCheckBox("Show Scale");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(showScaleCheckbox, cDefaultPanel);
+        showScaleCheckbox.addItemListener(this::showScaleEnabled);
+        showScaleCheckbox.setSelected(false);
 
         enableMinimumAngleDisplay = new JCheckBox("Show Minimum Angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -424,6 +464,16 @@ public class SidePanelTab {
 
         }
 
+        initSidePanel.addDefaultListeners();
+    }
+
+    private void showGraphInfoActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        setTextGraphInfo();
+    }
+
+    private void showScaleEnabled(@SuppressWarnings("unused") ItemEvent evt) {
+        initSidePanel.removeDefaultListeners();
+        //TODO: placeholder
         initSidePanel.addDefaultListeners();
     }
 
