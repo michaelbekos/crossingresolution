@@ -21,6 +21,7 @@ import layout.algo.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
+import util.Chains;
 import util.GraphOperations;
 import util.VertexStack;
 
@@ -28,6 +29,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.beans.PropertyChangeEvent;
 import java.time.Duration;
 
 public class SidePanelTab {
@@ -127,7 +129,7 @@ public class SidePanelTab {
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = cDefaultPanelY;
-        cDefaultPanel.weighty = 0;
+        cDefaultPanel.insets = new Insets(0,0,5,0);
         startPauseButton.addActionListener(this::startPauseActionPerformed);
         defaultPanel.add(startPauseButton, cDefaultPanel);
 
@@ -135,10 +137,19 @@ public class SidePanelTab {
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
-//        cDefaultPanel.weightx = 0.;
-        cDefaultPanel.weighty = 0;
+        cDefaultPanel.insets = new Insets(0,0,5,0);
         stopButton.addActionListener(this::stopActionPerformed);
         defaultPanel.add(stopButton, cDefaultPanel);
+        executor.addPropertyChangeListener(this::finishedPropertyChanged);
+
+        JSeparator separator = new JSeparator();
+        separator.setPreferredSize(new Dimension(5,1));
+        GridBagConstraints cgc = new GridBagConstraints();
+        cgc.gridy = ++cDefaultPanelY;
+        cgc.fill = GridBagConstraints.HORIZONTAL;
+        cgc.gridwidth = 2;
+        defaultPanel.add(separator, cgc);
+        defaultPanel.add(new JSeparator());
 
         addDefaultControls(defaultPanel, cDefaultPanel, cDefaultPanelY, outputTextArea);
 
@@ -146,18 +157,19 @@ public class SidePanelTab {
     }
 
     private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY, JTextArea outputTextArea) {
-        JButton showBestSolution = new JButton("Show best");
+        JButton showBestSolution = new JButton("Show Best");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.insets = new Insets(5,0,0,0);
         showBestSolution.addActionListener(this::showBestSolution);
         defaultPanel.add(showBestSolution, cDefaultPanel);
 
-        JButton scaleToBox = new JButton("Scale me to the box");
+        JButton scaleToBox = new JButton("Scale Me to the Box");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
-        cDefaultPanel.weighty = 0;
+        cDefaultPanel.insets = new Insets(5,0,0,0);
         defaultPanel.add(scaleToBox, cDefaultPanel);
         scaleToBox.addActionListener(e -> scalingToBox());
         scaleToBox.setSelected(false);
@@ -166,8 +178,8 @@ public class SidePanelTab {
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.insets = new Insets(0,0,0,0);
         defaultPanel.add(removeChains, cDefaultPanel);
-        cDefaultPanel.weighty = 0;
         removeChains.addActionListener(this::removeChainsItemActionPerformed);
 
         JButton reinsertChain = new JButton("Reinsert One Chain");
@@ -175,10 +187,9 @@ public class SidePanelTab {
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
         defaultPanel.add(reinsertChain, cDefaultPanel);
-        cDefaultPanel.weighty = 0;
         reinsertChain.addActionListener(this::reinsertChainItemActionPerformed);
 
-        enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
+        enableMinimumAngleDisplay = new JCheckBox("Show Minimum Angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
@@ -352,6 +363,12 @@ public class SidePanelTab {
         executor.stop();
     }
 
+    private void finishedPropertyChanged(PropertyChangeEvent evt) {
+        if ("finished".equals(evt.getPropertyName()) && (boolean)evt.getNewValue()) {
+            stopExecution();
+        }
+    }
+
     private void minimumAngleDisplayEnabled(ItemEvent evt) {
         initSidePanel.masterEnableMinimumAngle.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
@@ -395,7 +412,7 @@ public class SidePanelTab {
         if (this.removedChains != null && !this.removedChains.isEmpty()) {
 
             //TODO reinsert chains (currently regular reinsert 1 chain)
-            this.removedChains = GraphOperations.reinsertVertices(initSidePanel.mainFrame.graph, false, 1, this.removedChains);
+            this.removedChains = Chains.reinsertChain(initSidePanel.mainFrame.graph, this.removedChains);
             //
 
             double scaleValue = 1 / initSidePanel.mainFrame.view.getZoom();  //scale reinserted nodes
