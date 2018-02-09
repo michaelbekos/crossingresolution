@@ -98,7 +98,7 @@ public class CommandLineInterface {
         .forEach(algorithmName -> {
           ILayout algorithm = getAlgorithm(algorithmName, fileData.graph);
           BasicIGraphLayoutExecutor executor =
-              new BasicIGraphLayoutExecutor(algorithm, fileData.graph, iterations, iterations);
+              new BasicIGraphLayoutExecutor(algorithm, fileData.graph, iterations, iterations, new VoidItemFactory());
           executor.start();
           executor.waitUntilFinished();
         });

@@ -74,9 +74,12 @@ public class SidePanelTab {
         GridBagState gridBagState = new GridBagState();
         gridBagState.increaseY();
 
-        if (configurator != null){
-            configurator.init(new SidePanelItemFactory(custom, initSidePanel.mainFrame.view, initSidePanel.mainFrame.graphEditorInputMode, gridBagState));
+        SidePanelItemFactory itemFactory = new SidePanelItemFactory(custom, initSidePanel.mainFrame.view, initSidePanel.mainFrame.graphEditorInputMode, gridBagState);
+        executor = new IGraphLayoutExecutor(layout, initSidePanel.mainFrame.graph, initSidePanel.mainFrame.progressBar, -1, 20, itemFactory);
+        if (configurator != null) {
+            configurator.init(itemFactory);
         }
+
 
         cSidePanel.fill = GridBagConstraints.BOTH;
         cSidePanel.gridx = 0;
@@ -115,8 +118,6 @@ public class SidePanelTab {
      * @return default panel
      */
     private JPanel getDefaultPanel(ILayout layout) {
-        executor = new IGraphLayoutExecutor(layout, initSidePanel.mainFrame.graph, initSidePanel.mainFrame.progressBar, -1, 20);
-
         JPanel defaultPanel = new JPanel();
         defaultPanel.setLayout(new GridBagLayout());
         GridBagConstraints cDefaultPanel = new GridBagConstraints();

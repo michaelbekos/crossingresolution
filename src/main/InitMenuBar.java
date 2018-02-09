@@ -19,6 +19,7 @@ import layout.algo.*;
 import layout.algo.forces.ElectricForce;
 import layout.algo.forces.SlopedForce;
 import layout.algo.forces.SpringForce;
+import layout.algo.layoutinterface.VoidItemFactory;
 import layout.algo.utils.PositionMap;
 import util.*;
 import view.visual.VectorVisual;
@@ -1002,7 +1003,7 @@ public class InitMenuBar {
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, new CachedMinimumAngle());
 
         IGraphLayoutExecutor executor =
-                new IGraphLayoutExecutor(forceAlgorithm, mainFrame.graph, progressBar, iterations, 20);
+                new IGraphLayoutExecutor(forceAlgorithm, mainFrame.graph, progressBar, iterations, 20, new VoidItemFactory());
         executor.start();
 
         for (ICanvasObject o : canvasObjects) {

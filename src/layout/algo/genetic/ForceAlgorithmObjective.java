@@ -9,6 +9,7 @@ import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.ForceAlgorithm;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.VoidItem;
+import layout.algo.layoutinterface.VoidItemFactory;
 import util.G;
 import util.graph2d.Intersection;
 
@@ -30,7 +31,7 @@ class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
   @Override
   public ForceAlgorithm advance(ForceAlgorithm forceAlgorithm) {
     int iterations = configurator.iterationsPerGeneration.getValue();
-    final BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, iterations, iterations);
+    final BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, iterations, iterations, new VoidItemFactory());
     executor.start();
     executor.waitUntilFinished();
     return forceAlgorithm;
