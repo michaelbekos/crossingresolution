@@ -3,8 +3,12 @@ package util;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.utils.IEnumerable;
+import com.yworks.yfiles.utils.IListEnumerable;
 import com.yworks.yfiles.view.ISelectionModel;
+import com.yworks.yfiles.algorithms.*;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class GraphOperations {
@@ -216,60 +220,62 @@ public class GraphOperations {
      */
     public static VertexStack reinsertVertices(IGraph g, boolean useVertices, int numVerticesComponents, VertexStack removedVertices) {
         int numVertices = 0;
-        if (useVertices) {  //reinsert vertices
-            numVertices = numVerticesComponents;
-            int diff = -numVertices;
-            for (int i = removedVertices.componentStack.size(); i >= 0 ; --i) {         //fix component stack for vertices removed
-                diff += removedVertices.componentStack.get(removedVertices.componentStack.size() - 1);
-                if (diff < 0) {
-                    removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
-                } else if (diff == 0) {
-                    removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
-                    break;
-                } else {
-                    removedVertices.componentStack.set(removedVertices.componentStack.size() - 1, diff);
-                    break;
-                }
-            }
-        } else {            //reinsert components
-            for (int i = 0; i < numVerticesComponents; i++) {
-                numVertices += removedVertices.componentStack.get(removedVertices.componentStack.size() - 1);
-                removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
-            }
-        }
+	        if (useVertices) {  //reinsert vertices
+	            numVertices = numVerticesComponents;
+	            int diff = -numVertices;
+	            for (int i = removedVertices.componentStack.size(); i >= 0 ; --i) {         //fix component stack for vertices removed
+	                diff += removedVertices.componentStack.get(removedVertices.componentStack.size() - 1);
+	                if (diff < 0) {
+	                    removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
+	                } else if (diff == 0) {
+	                    removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
+	                    break;
+	                } else {
+	                    removedVertices.componentStack.set(removedVertices.componentStack.size() - 1, diff);
+	                    break;
+	                }
+	            }
+	        } else {            //reinsert components
+	            for (int i = 0; i < numVerticesComponents; i++) {
+	                numVertices += removedVertices.componentStack.get(removedVertices.componentStack.size() - 1);
+	                removedVertices.componentStack.remove(removedVertices.componentStack.size() - 1);
+	            }
+	        }
+	    
 
-        INode[] reinsertedNodes = new INode[numVertices];
-        for (int i = 0; i < numVertices; i++) {
-            INode removedNode = removedVertices.pop().vertex;
-            reinsertedNodes[(numVertices - 1) - i] =  g.createNode(removedNode.getLayout().toPointD(), removedNode.getStyle(), removedNode.getTag());
-        }
-
-        Mapper<Integer, INode> tagMap = new Mapper<>(new WeakHashMap<>());
-        for (INode n : g.getNodes()) {
-            tagMap.setValue(Integer.parseInt(n.getTag().toString()), n);
-        }
-        for (INode u : reinsertedNodes) {
-            int tag = Integer.parseInt(u.getTag().toString());
-            for (int i = 0; i < removedVertices.edgeList.length; i++) {
-                if (tag == removedVertices.edgeList[i][0]) {    //u = source node
-                    INode target = tagMap.getValue(removedVertices.edgeList[i][1]);  //find target node with tag
-                    if (target != null && g.getEdge(u, target) == null){
-                        g.createEdge(u, target);
-                    }
-                } else if (tag == removedVertices.edgeList[i][1]) { //u = target node
-                    INode source = tagMap.getValue(removedVertices.edgeList[i][0]);  //find source node with tag
-                    if (source != null && g.getEdge(source, u) == null ){
-                        g.createEdge(source, u);
-                    }
-                }
-            }
-        }
-
+	        INode[] reinsertedNodes = new INode[numVertices];
+	        for (int i = 0; i < numVertices; i++) {
+	            INode removedNode = removedVertices.pop().vertex;
+	            reinsertedNodes[(numVertices - 1) - i] =  g.createNode(removedNode.getLayout().toPointD(), removedNode.getStyle(), removedNode.getTag());
+	        }
+	
+	        Mapper<Integer, INode> tagMap = new Mapper<>(new WeakHashMap<>());
+	        for (INode n : g.getNodes()) {
+	            tagMap.setValue(Integer.parseInt(n.getTag().toString()), n);
+	        }
+	        for (INode u : reinsertedNodes) {
+	            int tag = Integer.parseInt(u.getTag().toString());
+	            for (int i = 0; i < removedVertices.edgeList.length; i++) {
+	                if (tag == removedVertices.edgeList[i][0]) {    //u = source node
+	                    INode target = tagMap.getValue(removedVertices.edgeList[i][1]);  //find target node with tag
+	                    if (target != null && g.getEdge(u, target) == null){
+	                        g.createEdge(u, target);
+	                    }
+	                } else if (tag == removedVertices.edgeList[i][1]) { //u = target node
+	                    INode source = tagMap.getValue(removedVertices.edgeList[i][0]);  //find source node with tag
+	                    if (source != null && g.getEdge(source, u) == null ){
+	                        g.createEdge(source, u);
+	                    }
+	                }
+	            }
+	        }
         return removedVertices;
     }
 
 
-    /**
+
+
+	/**
      * Multiply the Coord. from each Node with the factor scaleValue
      * @return scaled grid points with scaleValue factor
      */

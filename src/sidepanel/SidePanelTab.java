@@ -1,6 +1,7 @@
 package sidepanel;
 
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.FilteredGraphWrapper;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
@@ -21,6 +22,7 @@ import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
 import util.GraphOperations;
+import util.VertexStack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -145,17 +147,36 @@ public class SidePanelTab {
 
     private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY, JTextArea outputTextArea) {
         JButton showBestSolution = new JButton("Show best");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
         showBestSolution.addActionListener(this::showBestSolution);
         defaultPanel.add(showBestSolution, cDefaultPanel);
 
         JButton scaleToBox = new JButton("Scale me to the box");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
+        cDefaultPanel.weighty = 0;
         defaultPanel.add(scaleToBox, cDefaultPanel);
         scaleToBox.addActionListener(e -> scalingToBox());
         scaleToBox.setSelected(false);
+
+        JButton removeChains = new JButton("Remove All Chains");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        defaultPanel.add(removeChains, cDefaultPanel);
+        cDefaultPanel.weighty = 0;
+        removeChains.addActionListener(this::removeChainsItemActionPerformed);
+
+        JButton reinsertChain = new JButton("Reinsert One Chain");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        defaultPanel.add(reinsertChain, cDefaultPanel);
+        cDefaultPanel.weighty = 0;
+        reinsertChain.addActionListener(this::reinsertChainItemActionPerformed);
 
         enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -190,7 +211,8 @@ public class SidePanelTab {
         defaultPanel.add(test, cDefaultPanel);
     }
 
-    public JPanel getMiscAlgorithmTab() {
+
+	public JPanel getMiscAlgorithmTab() {
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new GridBagLayout());
         GridBagConstraints cSidePanel = new GridBagConstraints();
@@ -284,7 +306,8 @@ public class SidePanelTab {
         msg += "\n";
         initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
         //maybe add what algorithm (+ settings) was used to achieve best solution
-        JOptionPane.showMessageDialog(null, msg);
+        //No popup
+//        JOptionPane.showMessageDialog(null, msg);
     }
 
     private void startPauseActionPerformed(ActionEvent evt) {
@@ -352,6 +375,37 @@ public class SidePanelTab {
         nodePositions = GraphOperations.scaleUpProcess(initSidePanel.mainFrame.graph,nodePositions, Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)));
         initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
+        initSidePanel.addDefaultListeners();
+    }
+
+    //!!Separate vertex stack for chains (will not mesh with regular remove/reinsert vertexes e.g. chains removed here *have* to be reinserted using the button)!!
+    private VertexStack removedChains;
+    private void removeChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        initSidePanel.removeDefaultListeners();
+        //lean chain-only version from InitMenuBar::removeVerticesItemActionPerformed
+        if (initSidePanel.mainFrame.graph.getNodes().size() > 0){
+            int chainNum = GraphOperations.getChains(initSidePanel.mainFrame.graph).size();
+            this.removedChains = GraphOperations.removeVertices(initSidePanel.mainFrame.graph, true, false, chainNum, null, this.removedChains);
+        }
+        initSidePanel.addDefaultListeners();
+    }
+
+    private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        initSidePanel.removeDefaultListeners();
+        if (this.removedChains != null && !this.removedChains.isEmpty()) {
+
+            //TODO reinsert chains (currently regular reinsert 1 chain)
+            this.removedChains = GraphOperations.reinsertVertices(initSidePanel.mainFrame.graph, false, 1, this.removedChains);
+            //
+
+            double scaleValue = 1 / initSidePanel.mainFrame.view.getZoom();  //scale reinserted nodes
+            for (INode u : initSidePanel.mainFrame.graph.getNodes()) {
+                initSidePanel.mainFrame.graph.setNodeLayout(u, new RectD(u.getLayout().getX(), u.getLayout().getY(), initSidePanel.mainFrame.graph.getNodeDefaults().getSize().width * scaleValue, initSidePanel.mainFrame.graph.getNodeDefaults().getSize().height * scaleValue));
+            }
+
+
+        }
+
         initSidePanel.addDefaultListeners();
     }
 

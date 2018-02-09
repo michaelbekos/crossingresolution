@@ -77,7 +77,6 @@ public class InitSidePanel {
         masterEnableMinimumAngle = new JCheckBox("Show minimum angle");
         masterEnableMinimumAngle.addItemListener(this::masterMinAngleDisplayEnabled);
         masterEnableMinimumAngle.setSelected(false);
-        stateEnableMinimumAngle = false;
 
         masterAllowClickCreateNodeEdge = new JCheckBox("Manual Mode");
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
@@ -158,13 +157,20 @@ public class InitSidePanel {
     }
 
 
+    private boolean removedListeners = false;
     public void removeDefaultListeners() {
-        stateEnableMinimumAngle = masterEnableMinimumAngle.isSelected();
-        masterEnableMinimumAngle.setSelected(false);
+        if (stateEnableMinimumAngle && !removedListeners) {
+            removedListeners = true;
+            mainFrame.minimumAngleMonitor.removeGraphChangedListeners();
+        }
     }
 
     public void addDefaultListeners() {
-        masterEnableMinimumAngle.setSelected(stateEnableMinimumAngle);
+        if (stateEnableMinimumAngle && removedListeners) {
+            removedListeners = false;
+            mainFrame.minimumAngleMonitor.registerGraphChangedListeners();
+            mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+        }
     }
 
     /*********************************************************************
@@ -173,8 +179,10 @@ public class InitSidePanel {
 
     private void masterMinAngleDisplayEnabled(ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
+            stateEnableMinimumAngle = true;
             mainFrame.minimumAngleMonitor.registerGraphChangedListeners();
         } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
+            stateEnableMinimumAngle = false;
             mainFrame.minimumAngleMonitor.removeGraphChangedListeners();
         }
     }
