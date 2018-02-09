@@ -6,6 +6,8 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Map;
 
 public class BasicIGraphLayoutExecutor {
@@ -17,6 +19,7 @@ public class BasicIGraphLayoutExecutor {
   private boolean finished;
   private int currentIteration;
   private ICompoundEdit compoundEdit;
+  private PropertyChangeSupport propertyChange;
 
   public BasicIGraphLayoutExecutor(ILayout layout,
                                    IGraph graph,
@@ -29,6 +32,7 @@ public class BasicIGraphLayoutExecutor {
     this.currentIteration = 0;
     this.running = false;
     this.finished = false;
+    this.propertyChange = new PropertyChangeSupport(this);
   }
 
   public void start() {
@@ -51,8 +55,13 @@ public class BasicIGraphLayoutExecutor {
       updateGraph(layout.getNodePositions());
       running = false;
       finished = true;
+      propertyChange.firePropertyChange("finished", false, true);
     }
     reset();
+  }
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    propertyChange.addPropertyChangeListener(listener);
   }
 
   public void pause()

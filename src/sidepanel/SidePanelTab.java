@@ -29,6 +29,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.beans.PropertyChangeEvent;
 import java.time.Duration;
 
 public class SidePanelTab {
@@ -136,6 +137,7 @@ public class SidePanelTab {
         cDefaultPanel.insets = new Insets(0,0,5,0);
         stopButton.addActionListener(this::stopActionPerformed);
         defaultPanel.add(stopButton, cDefaultPanel);
+        executor.addPropertyChangeListener(this::finishedPropertyChanged);
 
         JSeparator separator = new JSeparator();
         separator.setPreferredSize(new Dimension(5,1));
@@ -357,6 +359,12 @@ public class SidePanelTab {
         startPauseButton.setBackground(null);
         stopButton.setBackground(null);
         executor.stop();
+    }
+
+    private void finishedPropertyChanged(PropertyChangeEvent evt) {
+        if ("finished".equals(evt.getPropertyName()) && (boolean)evt.getNewValue()) {
+            stopExecution();
+        }
     }
 
     private void minimumAngleDisplayEnabled(ItemEvent evt) {
