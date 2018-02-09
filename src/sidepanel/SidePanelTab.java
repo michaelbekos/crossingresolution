@@ -125,7 +125,7 @@ public class SidePanelTab {
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = cDefaultPanelY;
-        cDefaultPanel.weighty = 0;
+        cDefaultPanel.insets = new Insets(0,0,5,0);
         startPauseButton.addActionListener(this::startPauseActionPerformed);
         defaultPanel.add(startPauseButton, cDefaultPanel);
 
@@ -133,10 +133,18 @@ public class SidePanelTab {
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
-//        cDefaultPanel.weightx = 0.;
-        cDefaultPanel.weighty = 0;
+        cDefaultPanel.insets = new Insets(0,0,5,0);
         stopButton.addActionListener(this::stopActionPerformed);
         defaultPanel.add(stopButton, cDefaultPanel);
+
+        JSeparator separator = new JSeparator();
+        separator.setPreferredSize(new Dimension(5,1));
+        GridBagConstraints cgc = new GridBagConstraints();
+        cgc.gridy = ++cDefaultPanelY;
+        cgc.fill = GridBagConstraints.HORIZONTAL;
+        cgc.gridwidth = 2;
+        defaultPanel.add(separator, cgc);
+        defaultPanel.add(new JSeparator());
 
         addDefaultControls(defaultPanel, cDefaultPanel, cDefaultPanelY);
 
@@ -144,18 +152,19 @@ public class SidePanelTab {
     }
 
     private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY) {
-        JButton showBestSolution = new JButton("Show best");
+        JButton showBestSolution = new JButton("Show Best");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.insets = new Insets(5,0,0,0);
         showBestSolution.addActionListener(this::showBestSolution);
         defaultPanel.add(showBestSolution, cDefaultPanel);
 
-        JButton scaleToBox = new JButton("Scale me to the box");
+        JButton scaleToBox = new JButton("Scale Me to the Box");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
-        cDefaultPanel.weighty = 0;
+        cDefaultPanel.insets = new Insets(5,0,0,0);
         defaultPanel.add(scaleToBox, cDefaultPanel);
         scaleToBox.addActionListener(e -> scalingToBox());
         scaleToBox.setSelected(false);
@@ -164,8 +173,8 @@ public class SidePanelTab {
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.insets = new Insets(0,0,0,0);
         defaultPanel.add(removeChains, cDefaultPanel);
-        cDefaultPanel.weighty = 0;
         removeChains.addActionListener(this::removeChainsItemActionPerformed);
 
         JButton reinsertChain = new JButton("Reinsert One Chain");
@@ -173,10 +182,9 @@ public class SidePanelTab {
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
         defaultPanel.add(reinsertChain, cDefaultPanel);
-        cDefaultPanel.weighty = 0;
         reinsertChain.addActionListener(this::reinsertChainItemActionPerformed);
 
-        enableMinimumAngleDisplay = new JCheckBox("Show minimum angle");
+        enableMinimumAngleDisplay = new JCheckBox("Show Minimum Angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
