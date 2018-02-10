@@ -96,7 +96,7 @@ public class BasicIGraphLayoutExecutor {
       mainLoop:
       while (!finished) {
         while (running) {
-          finished = layout.executeStep(currentIteration++);
+          finished = layout.executeStep(currentIteration++, maxIterations.getValue());
 
           if (finished || maxIterations.getValue() > 0 && currentIteration == maxIterations.getValue()) {
             stop();

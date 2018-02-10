@@ -67,7 +67,7 @@ public class RandomMovementLayout implements ILayout {
   }
 
   @Override
-  public boolean executeStep(int iteration) {
+  public boolean executeStep(int iteration, int maxIterations) {
     Optional<INode> randomNode;
     if (configurator.useGaussianDistribution.getValue()) {
       randomNode = gaussianNodeSelection();

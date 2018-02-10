@@ -52,7 +52,7 @@ public class GeneticForceAlgorithmLayout implements ILayout {
   }
 
   @Override
-  public boolean executeStep(int iteration) {
+  public boolean executeStep(int iteration, int maxIterations) {
     geneticAlgorithm.iterate();
     return false;
   }
