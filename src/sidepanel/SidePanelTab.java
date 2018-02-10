@@ -75,10 +75,12 @@ public class SidePanelTab {
         gridBagState.increaseY();
 
         JTextArea outputTextArea = new JTextArea("Output");
-
-        if (configurator != null){
-            configurator.init(new SidePanelItemFactory(custom, initSidePanel.mainFrame.view, initSidePanel.mainFrame.graphEditorInputMode, outputTextArea, gridBagState));
+        SidePanelItemFactory itemFactory = new SidePanelItemFactory(custom, initSidePanel.mainFrame.view, initSidePanel.mainFrame.graphEditorInputMode, outputTextArea, gridBagState);
+        executor = new IGraphLayoutExecutor(layout, initSidePanel.mainFrame.graph, initSidePanel.mainFrame.progressBar, -1, 20, itemFactory);
+        if (configurator != null) {
+            configurator.init(itemFactory);
         }
+
 
         cSidePanel.fill = GridBagConstraints.BOTH;
         cSidePanel.gridx = 0;
@@ -94,7 +96,7 @@ public class SidePanelTab {
         cSidePanel.gridy = 1;
         cSidePanel.weightx = 0;
         cSidePanel.weighty = 0;
-        sidePanelTab.add(getDefaultPanel(layout, outputTextArea), cSidePanel);
+        sidePanelTab.add(getDefaultPanel(outputTextArea), cSidePanel);
     }
 
     /**
@@ -113,13 +115,10 @@ public class SidePanelTab {
 
     /**
      * returns the default panel for all algorithms (start/pause, stop, manual mode, min angle, output)
-     * @param layout - interface start/stop etc to algorithm
      * @param outputTextArea
      * @return default panel
      */
-    private JPanel getDefaultPanel(ILayout layout, JTextArea outputTextArea) {
-        executor = new IGraphLayoutExecutor(layout, initSidePanel.mainFrame.graph, initSidePanel.mainFrame.progressBar, -1, 20);
-
+    private JPanel getDefaultPanel(JTextArea outputTextArea) {
         JPanel defaultPanel = new JPanel();
         defaultPanel.setLayout(new GridBagLayout());
         GridBagConstraints cDefaultPanel = new GridBagConstraints();

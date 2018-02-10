@@ -34,7 +34,7 @@ public class QuickGridder implements ILayout {
   }
 
   @Override
-  public boolean executeStep(int iteration) {
+  public boolean executeStep(int iteration, int maxIterations) {
     for (INode node : graph.getNodes()) {
       if (griddedNodes.contains(node)) {
         continue;

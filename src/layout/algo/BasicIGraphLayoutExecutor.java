@@ -5,6 +5,8 @@ import com.yworks.yfiles.graph.ICompoundEdit;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
+import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -13,7 +15,7 @@ import java.util.Map;
 public class BasicIGraphLayoutExecutor {
   private final IGraph graph;
   private final ILayout layout;
-  int maxIterations;
+  AbstractLayoutInterfaceItem<Integer> maxIterations;
   private final int numberOfCyclesBetweenViewUpdates;
   private boolean running;
   private boolean finished;
@@ -24,15 +26,18 @@ public class BasicIGraphLayoutExecutor {
   public BasicIGraphLayoutExecutor(ILayout layout,
                                    IGraph graph,
                                    int maxIterations,
-                                   int numberOfCyclesBetweenGraphUpdates) {
+                                   int numberOfCyclesBetweenGraphUpdates,
+                                   ILayoutInterfaceItemFactory itemFactory) {
     this.layout = layout;
     this.graph = graph;
-    this.maxIterations = maxIterations;
     this.numberOfCyclesBetweenViewUpdates = numberOfCyclesBetweenGraphUpdates;
     this.currentIteration = 0;
     this.running = false;
     this.finished = false;
     this.propertyChange = new PropertyChangeSupport(this);
+
+    this.maxIterations = itemFactory.intParameter("Maximum number of iterations", -1, 10000, 1);
+    this.maxIterations.setValue(maxIterations);
   }
 
   public void start() {
@@ -91,9 +96,9 @@ public class BasicIGraphLayoutExecutor {
       mainLoop:
       while (!finished) {
         while (running) {
-          finished = layout.executeStep(currentIteration++);
+          finished = layout.executeStep(currentIteration++, maxIterations.getValue());
 
-          if (finished || maxIterations > 0 && currentIteration == maxIterations) {
+          if (finished || maxIterations.getValue() > 0 && currentIteration == maxIterations.getValue()) {
             stop();
             break mainLoop;
           }
@@ -129,7 +134,7 @@ public class BasicIGraphLayoutExecutor {
   }
 
   protected void updateProgress(int iteration) {
-    System.out.println(iteration + "/" + maxIterations);
+    System.out.println(iteration + "/" + maxIterations.getValue());
   }
 
   public boolean isRunning() {
@@ -153,10 +158,14 @@ public class BasicIGraphLayoutExecutor {
   }
 
   public void setMaxIterations(int maxIterations) {
-    this.maxIterations = maxIterations;
-    if (this.currentIteration >= maxIterations) {
-      this.currentIteration = maxIterations;
+    this.maxIterations.setValue(maxIterations);
+    if (currentIteration >= maxIterations) {
+      currentIteration = maxIterations;
       stop();
     }
+  }
+
+  public int getMaxIterations() {
+    return maxIterations.getValue();
   }
 }

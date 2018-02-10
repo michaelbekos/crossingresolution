@@ -5,7 +5,6 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.VoidItemFactory;
-import layout.algo.utils.PositionMap;
 import util.GridPositioning;
 import algorithms.graphs.MinimumAngle;
 import util.*;
@@ -156,7 +155,7 @@ public class BatchOptimizer {
     if(forceAlgoOnly){
       System.out.println("running ForceAlgorithm only");
       ForceAlgorithm firstForceAlgorithm = defaultForceAlgorithm();
-      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstForceAlgorithm, graph, initTime, initTime);
+      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(firstForceAlgorithm, graph, initTime, initTime, new VoidItemFactory());
 
       executor.start();
     }
@@ -170,7 +169,7 @@ public class BatchOptimizer {
       GeneticForceAlgorithmConfigurator configurator = new GeneticForceAlgorithmConfigurator();
       configurator.init(new VoidItemFactory());
       GeneticForceAlgorithmLayout layout = new GeneticForceAlgorithmLayout(configurator, graph);
-      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(layout, graph, rounds, rounds);
+      BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(layout, graph, rounds, rounds, new VoidItemFactory());
 
       executor.start();
     }

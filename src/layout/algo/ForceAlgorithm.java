@@ -37,7 +37,7 @@ public class ForceAlgorithm implements ILayout {
   }
 
   @Override
-  public boolean executeStep(int iteration) {
+  public boolean executeStep(int iteration, int maxIterations) {
     nodePositions = applyAlgos();
     return false;
   }

@@ -6,7 +6,7 @@ import com.yworks.yfiles.graph.Mapper;
 
 public interface ILayout {
   void init();
-  boolean executeStep(int iteration);
+  boolean executeStep(int iteration, int maxIterations);
   Mapper<INode, PointD> getNodePositions();
   void showDebug();
   void clearDebug();

@@ -1,6 +1,7 @@
 package layout.algo;
 
 import com.yworks.yfiles.graph.IGraph;
+import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import javax.swing.*;
 
@@ -11,14 +12,15 @@ public class IGraphLayoutExecutor extends BasicIGraphLayoutExecutor {
                               IGraph graph,
                               JProgressBar progressBar,
                               int maxIterations,
-                              int numberOfCyclesBetweenViewUpdates) {
-    super(layout, graph, maxIterations, numberOfCyclesBetweenViewUpdates);
+                              int numberOfCyclesBetweenViewUpdates,
+                              ILayoutInterfaceItemFactory itemFactory) {
+    super(layout, graph, maxIterations, numberOfCyclesBetweenViewUpdates, itemFactory);
     this.progressBar = progressBar;
   }
 
   protected void updateProgress(int iteration) {
     synchronized (progressBar) {
-      progressBar.setValue((int) (100 * iteration / (float) maxIterations));
+      progressBar.setValue((int) (100 * iteration / (float) maxIterations.getValue()));
     }
   }
 }

@@ -22,7 +22,7 @@ public class YFilesLayoutAdapter implements ILayout {
   public void init() {}
 
   @Override
-  public boolean executeStep(int iteration) {
+  public boolean executeStep(int iteration, int maxIterations) {
     LayoutUtilities.applyLayout(graph, layout);
     return true;
   }
