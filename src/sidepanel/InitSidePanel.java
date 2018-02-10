@@ -1,34 +1,18 @@
 package sidepanel;
 
 import algorithms.graphs.CachedMinimumAngle;
-import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.layout.ILayoutAlgorithm;
-import com.yworks.yfiles.layout.LayoutExecutor;
-import com.yworks.yfiles.layout.circular.CircularLayout;
-import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import com.yworks.yfiles.layout.partial.PartialLayout;
-import com.yworks.yfiles.layout.partial.SubgraphPlacement;
-import com.yworks.yfiles.layout.tree.TreeLayout;
-import com.yworks.yfiles.view.IGraphSelection;
-import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.*;
 import layout.algo.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
-import layout.algo.utils.PositionMap;
 import main.MainFrame;
-import util.GraphOperations;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class InitSidePanel {
     public MainFrame mainFrame;
@@ -64,11 +48,7 @@ public class InitSidePanel {
         addRandomMovementAlgorithm(graph);
         addForceAlgorithm(graph);
         addGeneticAlgorithm(graph);
-        addSpringEmbedderAlgorithm(graph);
         addClinchLayout(graph);
-
-        // TODO:
-        addAlgorithm("Sloped Spring Embedder", null, null);
 
         addMiscAlgorithms();
 
@@ -108,15 +88,6 @@ public class InitSidePanel {
         addAlgorithm("Clinch Nodes", configurator, clinchLayout);
     }
 
-    private void addSpringEmbedderAlgorithm(IGraph graph) {
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
-                .addForce(new SpringForce(graph, 100, 0.01, 150))
-                .addForce(new ElectricForce(graph, 0.01, 50000));
-
-        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, graph, new CachedMinimumAngle());
-        addAlgorithm("Spring Embedder", configurator, forceAlgorithm);
-    }
-
     private void addGeneticAlgorithm(IGraph graph) {
         GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
         GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
@@ -124,12 +95,16 @@ public class InitSidePanel {
     }
 
     private void addForceAlgorithm(IGraph graph) {
+        mainFrame.bestSolution.getBestMinimumAngle();
         CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator();
-        configurator.addForce(new NodeNeighbourForce(graph))
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
+                .addForce(new NodeNeighbourForce(graph))
                 .addForce(new NodePairForce(graph))
                 .addForce(new IncidentEdgesForce(graph))
-                .addForce(new CrossingForce(graph, cMinimumAngle));
+                .addForce(new SpringForce(graph, 100, 0.01))
+                .addForce(new ElectricForce(graph, 0.01))
+                .addForce(new CrossingForce(graph, cMinimumAngle))
+                .addForce(new SlopedForce(graph, mainFrame.view));
 
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
         addAlgorithm("Force Algorithm", configurator, forceAlgorithm);

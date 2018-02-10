@@ -24,12 +24,15 @@ public class IncidentEdgesForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Incident Edges Force", 0.1, 1, 1);
+    weight = itemFactory.doubleParameter("Incident Edges Force", 0.0, 1, 1, true);
     weight.setValue(0.1);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
+    if (weight.getValue() == 0) {
+      return forces;
+    }
 //http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/
     //for (INode n1 : graph.getNodes()) {
     graph.getNodes().parallelStream().forEach(n1 -> {

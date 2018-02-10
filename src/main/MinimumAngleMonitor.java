@@ -38,7 +38,7 @@ public class MinimumAngleMonitor {
   }
 
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
-    if (bestSolution.getBestMinimumAngle(graph.getNodes().size()) == null) {
+    if (bestSolution.getBestMinimumAngleNodes(graph.getNodes().size()) == null) {
       oldAngle = 0;
     }
     Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);

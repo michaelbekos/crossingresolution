@@ -6,26 +6,31 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.YGraphAdapter;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 public class ElectricForce implements IForce {
   private final IGraph graph;
   private final double threshold;
-  private final double electricalRepulsion;
+  private AbstractLayoutInterfaceItem<Double> electricalRepulsion;
 
-  public ElectricForce(IGraph graph, double threshold, double electricalRepulsion) {
+  public ElectricForce(IGraph graph, double threshold) {
     this.graph = graph;
     this.threshold = threshold;
-    this.electricalRepulsion = electricalRepulsion;
   }
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-
+    electricalRepulsion = itemFactory.doubleParameter("Electric Repulsion Force", 0.0, 1000000, 0.1, true);
+    electricalRepulsion.setValue(50000.0);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
+    if (electricalRepulsion.getValue() == 0) {
+      return forces;
+    }
+
     YGraphAdapter adapter = new YGraphAdapter(graph);
     boolean[] reached = new boolean[graph.getNodes().size()];
 
@@ -40,7 +45,7 @@ public class ElectricForce implements IForce {
 
         PointD p_v = nodePositions.getValue(v);
         PointD force = PointD.subtract(p_u, p_v).getNormalized();
-        force = PointD.times(threshold * electricalRepulsion / Math.pow(p_u.distanceTo(p_v), 2), force);
+        force = PointD.times(threshold * electricalRepulsion.getValue() / Math.pow(p_u.distanceTo(p_v), 2), force);
 
         forces.setValue(u, PointD.add(forces.getValue(u), force));
       }

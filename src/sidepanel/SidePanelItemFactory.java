@@ -25,8 +25,8 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold) {
-    return new DoubleSidePanelItem(name, minValue, maxValue, threshold, sidePanel, gridBagState);
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold, boolean enableCheckbox) {
+    return new DoubleSidePanelItem(name, minValue, maxValue, threshold, sidePanel, gridBagState, enableCheckbox);
   }
 
   @Override

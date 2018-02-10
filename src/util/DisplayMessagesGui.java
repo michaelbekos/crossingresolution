@@ -16,7 +16,7 @@ public class DisplayMessagesGui {
     public static String createMinimumAngleMsg(Intersection currCross, int nodes) {
 
         String text = "Minimum Angle: " + currCross.angle.toString();
-        text += " | Stored Best: " + BestSolution.getBestMinimumAngle(nodes);
+        text += " | Stored Best: " + BestSolution.getBestMinimumAngleNodes(nodes);
         text += " | Nodes: " + currCross.segment1.n1.getLabels().first().getText();
         text += " , " +  currCross.segment1.n2.getLabels().first().getText();
         text += " | " +  currCross.segment2.n1.getLabels().first().getText();

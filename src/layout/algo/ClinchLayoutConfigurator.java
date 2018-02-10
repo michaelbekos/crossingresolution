@@ -13,8 +13,8 @@ public class ClinchLayoutConfigurator implements ILayoutConfigurator {
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
     selection = itemFactory.selection("Selection");
-    initialStepSize = itemFactory.doubleParameter("Initial Step Size", 0.5, 5.0, 1.0);
-    stepSizeMultiplier = itemFactory.doubleParameter("Step Size Multiplier", 1.0, 5.0, 1.0);
+    initialStepSize = itemFactory.doubleParameter("Initial Step Size", 0.5, 5.0, 1.0, false);
+    stepSizeMultiplier = itemFactory.doubleParameter("Step Size Multiplier", 1.0, 5.0, 1.0, false);
 
     initialStepSize.setValue(2.5);
     stepSizeMultiplier.setValue(1.5);

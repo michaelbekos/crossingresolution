@@ -141,13 +141,11 @@ public class SidePanelTab {
         executor.addPropertyChangeListener(this::finishedPropertyChanged);
 
         JSeparator separator = new JSeparator();
-        separator.setPreferredSize(new Dimension(5,1));
         GridBagConstraints cgc = new GridBagConstraints();
         cgc.gridy = ++cDefaultPanelY;
         cgc.fill = GridBagConstraints.HORIZONTAL;
         cgc.gridwidth = 2;
         defaultPanel.add(separator, cgc);
-        defaultPanel.add(new JSeparator());
 
         addDefaultControls(defaultPanel, cDefaultPanel, cDefaultPanelY);
 
@@ -308,7 +306,7 @@ public class SidePanelTab {
         }
 
         Mapper<INode, PointD> nodePositions = initSidePanel.mainFrame.bestSolution.getBestSolutionMapping(nodes);
-        Double minCrossingAngle = initSidePanel.mainFrame.bestSolution.getBestMinimumAngle(nodes);
+        Double minCrossingAngle = initSidePanel.mainFrame.bestSolution.getBestMinimumAngleNodes(nodes);
         initSidePanel.removeDefaultListeners();
         PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.addDefaultListeners();

@@ -1,6 +1,7 @@
 package sidepanel;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 class IntegerSidePanelItem extends SidePanelItem<Integer> {
@@ -63,20 +64,17 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
     });
 
     slider.setSize(400, 30);
-    cLabel.gridx = 1;
+    cLabel.gridx = gridBagState.getX() + 1;
     cLabel.gridy = gridBagState.increaseY();
 
-    cout.gridx = 0;
+    cout.gridx = gridBagState.getX();
     cout.gridy = gridBagState.increaseY();
     cout.fill = GridBagConstraints.HORIZONTAL;
-    cSlider.gridx = 1;
+    cSlider.gridx = gridBagState.getX() + 1;
     cSlider.gridy = gridBagState.getY();
-//                    cSlider.gridwidth = 7;
     cSlider.fill = GridBagConstraints.HORIZONTAL;
     cSliderMax.gridy = gridBagState.getY();
-    cSliderMax.gridx = 2;
-//                    cSlider.gridwidth =  1;
-//                    cSliderMax.weightx = 0.2;
+    cSliderMax.gridx = gridBagState.getX() + 2;
     cSliderMax.fill = GridBagConstraints.HORIZONTAL;
     sidePanel.add(new JLabel(getName()), cLabel);
     sidePanel.add(textField, cout);
@@ -89,5 +87,12 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
     super.setValue(value);
     textField.setText(Integer.toString(value));
     slider.setValue(value);
+  }
+
+  @Override
+  public void addListener(Object listener) {
+    if (listener instanceof ChangeListener) {
+      slider.addChangeListener((ChangeListener) listener);
+    }
   }
 }
