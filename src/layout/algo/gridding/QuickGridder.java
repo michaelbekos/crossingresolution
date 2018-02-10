@@ -18,9 +18,9 @@ public class QuickGridder implements ILayout {
   private Random random;
   private Set<PointD> reservedPositions;
   private HashSet<INode> griddedNodes;
-  private QuickGridderConfigurator configurator;
+  private GridderConfigurator configurator;
 
-  public QuickGridder(IGraph graph, QuickGridderConfigurator configurator) {
+  public QuickGridder(IGraph graph, GridderConfigurator configurator) {
     this.graph = graph;
     this.configurator = configurator;
   }

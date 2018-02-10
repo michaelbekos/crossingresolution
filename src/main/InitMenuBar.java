@@ -19,8 +19,6 @@ import layout.algo.*;
 import layout.algo.forces.ElectricForce;
 import layout.algo.forces.SlopedForce;
 import layout.algo.forces.SpringForce;
-import layout.algo.gridding.QuickGridder;
-import layout.algo.gridding.QuickGridderConfigurator;
 import layout.algo.layoutinterface.VoidItemFactory;
 import layout.algo.utils.PositionMap;
 import util.*;
