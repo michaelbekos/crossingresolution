@@ -457,8 +457,8 @@ public class SidePanelTab {
         IGraphSelection selection = initSidePanel.mainFrame.graphEditorInputMode.getGraphSelection();
         ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
 
-        if (selectedNodes.getCount() == 0) {
-            LayoutUtilities.morphLayout(initSidePanel.mainFrame.view, layout, Duration.ofSeconds(1), null);
+        if (selectedNodes.size() == 0) {
+            LayoutUtilities.morphLayout(initSidePanel.mainFrame.view, layout, Duration.ofSeconds(1));
             return;
         }
 

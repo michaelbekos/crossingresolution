@@ -9,7 +9,7 @@ import com.yworks.yfiles.graph.IModelItem;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
-import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
+import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
@@ -41,7 +41,7 @@ public class MainFrame extends JFrame {
     /* Default Styles */
     private ShinyPlateNodeStyle defaultNodeStyle;
     private PolylineEdgeStyle defaultEdgeStyle;
-    private SimpleLabelStyle defaultLabelStyle;
+    private DefaultLabelStyle defaultLabelStyle;
 
     /* Central gui elements */
     public JLabel infoLabel;
@@ -184,7 +184,7 @@ public class MainFrame extends JFrame {
         this.graph.getEdgeDefaults().setStyle(this.defaultEdgeStyle);
 
         /* Default Label Styling */
-        this.defaultLabelStyle = new SimpleLabelStyle();
+        this.defaultLabelStyle = new DefaultLabelStyle();
         this.defaultLabelStyle.setFont(new Font("Dialog", Font.PLAIN, 0));
         this.defaultLabelStyle.setTextPaint(Colors.WHITE);
         this.graph.getNodeDefaults().getLabelDefaults().setStyle(this.defaultLabelStyle);
