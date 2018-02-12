@@ -10,6 +10,5 @@ out/
 !/rome/out/
 !/rome/out/*
 /rome/out
-src/algorithms/canonicalOrder/CanonicalOrder.java
 src/algorithms/canonicalOrder/CanonicalOrderMy.java
-src/algorithms/fpp/FraysseixPachPollack.java
+src/commons-cli-1.4.jar
