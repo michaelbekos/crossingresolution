@@ -16,6 +16,7 @@ import util.BoundingBox;
 import util.graph2d.Intersection;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -31,6 +32,7 @@ public class RandomMovementLayout implements ILayout {
   private Random random;
   private RectD boundingBox;
   private int stepsSinceLastUpdate;
+  private Set<INode> fixNodes;
 
   public RandomMovementLayout(IGraph graph, RandomMovementConfigurator configurator) {
     this.graph = graph;
@@ -51,6 +53,13 @@ public class RandomMovementLayout implements ILayout {
     if (graph.getNodes().size() <= MAX_NUMBER_OF_NODES_FOR_UNIFORM_DISTRIBUTION) {
       configurator.useGaussianDistribution.setValue(false);
     }
+
+    fixNodes = new HashSet<>();
+  }
+
+  @Override
+  public void setFixNodes(Set<INode> fixNodes) {
+    this.fixNodes = fixNodes;
   }
 
   private ArrayList<Sample> initSampleDirections() {
@@ -195,16 +204,17 @@ public class RandomMovementLayout implements ILayout {
           // <=>     sigma = #layers / 2
           int layerIndex = Math.min((int) Math.floor(Math.abs(random.nextGaussian() * layers.length / 2d)), layers.length - 1);
 
-          // this is ok!
-          //noinspection unchecked
-          return selectRandomNode((Iterable<Node>) (Object) layers[layerIndex], layers[layerIndex].size())
-              .map(graphAdapter::getOriginalNode);
+          Set<INode> nodesOfLayer = layers[layerIndex].stream()
+              .map(node -> graphAdapter.getOriginalNode((Node) node))
+              .collect(Collectors.toSet());
+
+          return selectRandomNode(nodesOfLayer, nodesOfLayer.size());
         });
   }
 
-  private <T> Optional<T> selectRandomNode(Iterable<T> nodes, int size) {
-    // select random node (we might think about shuffling instead?)
+  private Optional<INode> selectRandomNode(Iterable<INode> nodes, int size) {
     return  StreamSupport.stream(nodes.spliterator(), false)
+        .filter(node -> !fixNodes.contains(node))
         .skip(random.nextInt(size))
         .findFirst();
   }
