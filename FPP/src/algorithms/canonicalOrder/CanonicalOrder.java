@@ -50,6 +50,7 @@ public class CanonicalOrder {
 	// sets
 	private HashSet<Node> outerFace; // set of nodes in the current outerface
 	private HashSet<Node> possibleNextNodes;
+	private HashSet<Node> possibleNextNodes;
 	private HashSet<Face> possibleNextFaces;
 
 	// saves the order of added elements in possibleNextNodes and possibleNextFaces to obtain determinism

@@ -862,6 +862,7 @@ public class InitMenuBar {
         showFileChooser(new JFileChooser(this.fileNamePathFolder));
     }
 
+
     //edit menu actions
     private void deselectAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();

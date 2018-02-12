@@ -935,5 +935,6 @@ public class Utilities {
         System.out.println(calculateCrossing3(p1, p2, p3, p4));
     }
 
+
 }
 

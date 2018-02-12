@@ -20,9 +20,9 @@ public class EdgeComparator implements Comparator<Edge> {
         this.e = e;
         this.g = g;
         EdgeRealizer r = g.getRealizer(e);
-        // compare = new YVector((r.bendCount() > 0 ?
-        // Utilities.getBendPoint(r.getBend(0)) : Utilities.getTargetPoint(e)),
-        // Utilities.getSourcePoint(e));
+         compare = new YVector((r.bendCount() > 0 ?
+         Utilities.getBendPoint(r.getBend(0)) : Utilities.getTargetPoint(e)),
+         Utilities.getSourcePoint(e));
         compare = new YVector(new YPoint(-1, -1), new YPoint(0, 0));
     }
 
