@@ -75,7 +75,8 @@ public class SidePanelTab {
         GridBagState gridBagState = new GridBagState();
         gridBagState.increaseY();
 
-        SidePanelItemFactory itemFactory = new SidePanelItemFactory(custom, initSidePanel.mainFrame.view, initSidePanel.mainFrame.graphEditorInputMode, gridBagState);
+        JTextArea outputTextArea = new JTextArea("Output");
+        SidePanelItemFactory itemFactory = new SidePanelItemFactory(custom, initSidePanel.mainFrame.view, initSidePanel.mainFrame.graphEditorInputMode, outputTextArea, gridBagState);
         executor = new IGraphLayoutExecutor(layout, initSidePanel.mainFrame.graph, initSidePanel.mainFrame.progressBar, -1, 20, itemFactory);
         if (configurator != null) {
             configurator.init(itemFactory);
@@ -96,7 +97,7 @@ public class SidePanelTab {
         cSidePanel.gridy = 1;
         cSidePanel.weightx = 0;
         cSidePanel.weighty = 0;
-        sidePanelTab.add(getDefaultPanel(layout), cSidePanel);
+        sidePanelTab.add(getDefaultPanel(outputTextArea), cSidePanel);
     }
 
     /**
@@ -108,17 +109,17 @@ public class SidePanelTab {
         JPanel defaultPanel = new JPanel();
         defaultPanel.setLayout(new GridBagLayout());
         GridBagConstraints cDefaultPanel = new GridBagConstraints();
-        addDefaultControls(defaultPanel, cDefaultPanel, 0);
+        addDefaultControls(defaultPanel, cDefaultPanel, 0, new JTextArea("Output"));
 
         return defaultPanel;
     }
 
     /**
      * returns the default panel for all algorithms (start/pause, stop, manual mode, min angle, output)
-     * @param layout - interface start/stop etc to algorithm
+     * @param outputTextArea
      * @return default panel
      */
-    private JPanel getDefaultPanel(ILayout layout) {
+    private JPanel getDefaultPanel(JTextArea outputTextArea) {
         JPanel defaultPanel = new JPanel();
         defaultPanel.setLayout(new GridBagLayout());
         GridBagConstraints cDefaultPanel = new GridBagConstraints();
@@ -148,12 +149,12 @@ public class SidePanelTab {
         cgc.gridwidth = 2;
         defaultPanel.add(separator, cgc);
 
-        addDefaultControls(defaultPanel, cDefaultPanel, cDefaultPanelY);
+        addDefaultControls(defaultPanel, cDefaultPanel, cDefaultPanelY, outputTextArea);
 
         return defaultPanel;
     }
 
-    private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY) {
+    private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY, JTextArea outputTextArea) {
         JButton showBestSolution = new JButton("Show Best");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
@@ -206,10 +207,9 @@ public class SidePanelTab {
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
         allowClickCreateNodeEdge.setSelected(false);
 
-        JTextArea output = new JTextArea("Output");
-        output.setLineWrap(true);
-        output.setRows(5);
-        JScrollPane test = new JScrollPane(output);
+        outputTextArea.setLineWrap(true);
+        outputTextArea.setRows(5);
+        JScrollPane test = new JScrollPane(outputTextArea);
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
@@ -394,7 +394,7 @@ public class SidePanelTab {
                 maxY=u.getLayout().getCenter().getY();
             }
         }
-        nodePositions = GraphOperations.scaleUpProcess(initSidePanel.mainFrame.graph,nodePositions, Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)));
+        GraphOperations.scaleUpProcess(nodePositions, Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)));
         initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
         initSidePanel.addDefaultListeners();

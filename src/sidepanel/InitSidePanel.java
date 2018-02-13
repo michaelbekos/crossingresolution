@@ -1,11 +1,16 @@
 package sidepanel;
 
 import algorithms.graphs.CachedMinimumAngle;
-import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.graph.GraphItemTypes;
+import com.yworks.yfiles.graph.IGraph;
 import layout.algo.*;
 import layout.algo.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
+import layout.algo.gridding.CombinedGridder;
+import layout.algo.gridding.EnsembleGridder;
+import layout.algo.gridding.GridderConfigurator;
+import layout.algo.gridding.IGridder;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import main.MainFrame;
 
@@ -49,6 +54,7 @@ public class InitSidePanel {
         addForceAlgorithm(graph);
         addGeneticAlgorithm(graph);
         addClinchLayout(graph);
+        addGriddingAlgorithm(graph);
 
         addMiscAlgorithms();
 
@@ -57,6 +63,12 @@ public class InitSidePanel {
         sidePanelTabs.get(0).setEnableMinimumAngleDisplay(true);
 
         return tabbedSidePane;
+    }
+
+    private void addGriddingAlgorithm(IGraph graph) {
+        GridderConfigurator configurator = new GridderConfigurator();
+        IGridder gridder = new CombinedGridder(graph, configurator);
+        addAlgorithm("Gridding", configurator, gridder);
     }
 
     private void initDefault() {

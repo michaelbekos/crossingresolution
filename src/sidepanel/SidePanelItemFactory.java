@@ -15,12 +15,14 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   private JPanel sidePanel;
   private GraphComponent view;
   private GraphEditorInputMode graphEditorInputMode;
+  private JTextArea outputTextArea;
   private GridBagState gridBagState;
 
-  SidePanelItemFactory(JPanel sidePanel, GraphComponent view, GraphEditorInputMode graphEditorInputMode, GridBagState gridBagState) {
+  SidePanelItemFactory(JPanel sidePanel, GraphComponent view, GraphEditorInputMode graphEditorInputMode, JTextArea outputTextArea, GridBagState gridBagState) {
     this.sidePanel = sidePanel;
     this.view = view;
     this.graphEditorInputMode = graphEditorInputMode;
+    this.outputTextArea = outputTextArea;
     this.gridBagState = gridBagState;
   }
 
@@ -47,5 +49,10 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   @Override
   public AbstractLayoutInterfaceItem<Mapper<INode, PointD>> debugVectors(String name) {
     return new DebugVectorsItem(name, view);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<String> statusMessage(String name) {
+    return new SidePanelStatusMessageItem(name, outputTextArea);
   }
 }

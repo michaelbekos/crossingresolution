@@ -5,7 +5,7 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.IGraphSelection;
 
-public class VoidItemFactory implements ILayoutInterfaceItemFactory{
+public class VoidItemFactory implements ILayoutInterfaceItemFactory {
 
   @Override
   public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold, boolean enableCheckbox) {
@@ -29,6 +29,11 @@ public class VoidItemFactory implements ILayoutInterfaceItemFactory{
 
   @Override
   public AbstractLayoutInterfaceItem<Mapper<INode, PointD>> debugVectors(String name) {
+    return new VoidItem<>(name);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<String> statusMessage(String name) {
     return new VoidItem<>(name);
   }
 }

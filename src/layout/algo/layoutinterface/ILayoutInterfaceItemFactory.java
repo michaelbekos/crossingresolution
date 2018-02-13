@@ -13,4 +13,6 @@ public interface ILayoutInterfaceItemFactory {
   AbstractLayoutInterfaceItem<IGraphSelection> selection(String name);
 
   AbstractLayoutInterfaceItem<Mapper<INode, PointD>> debugVectors(String name);
+
+  AbstractLayoutInterfaceItem<String> statusMessage(String name);
 }

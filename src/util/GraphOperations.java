@@ -1,14 +1,11 @@
 package util;
 
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.geometry.RectD;
-import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.utils.IEnumerable;
-import com.yworks.yfiles.utils.IListEnumerable;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.ISelectionModel;
-import com.yworks.yfiles.algorithms.*;
 
-import java.nio.file.Path;
 import java.util.*;
 
 public class GraphOperations {
@@ -275,26 +272,30 @@ public class GraphOperations {
 
 
 
-	/**
+	  /**
      * Multiply the Coord. from each Node with the factor scaleValue
-     * @return scaled grid points with scaleValue factor
      */
-    public static  Mapper<INode, PointD> scaleUpProcess(IGraph g, Mapper<INode,PointD> nodePose, double scaleValue){
-        double minX=Double.POSITIVE_INFINITY, minY=Double.POSITIVE_INFINITY;
-        for(INode u : g.getNodes()){
-            if(u.getLayout().getCenter().getX()<minX){
-                minX=u.getLayout().getCenter().getX();
+    public static void scaleUpProcess(Mapper<INode, PointD> nodePose, double scaleValue){
+        double minX = Double.POSITIVE_INFINITY, minY = Double.POSITIVE_INFINITY;
+
+        for (Map.Entry<INode, PointD> entry : nodePose.getEntries()) {
+            INode node = entry.getKey();
+            if (node.getLayout().getCenter().getX() < minX) {
+                minX = node.getLayout().getCenter().getX();
             }
-            if(u.getLayout().getCenter().getY()<minY){
-                minY=u.getLayout().getCenter().getY();
+            if (node.getLayout().getCenter().getY() < minY) {
+                minY = node.getLayout().getCenter().getY();
             }
         }
-        for(INode u : g.getNodes()){
-            nodePose.setValue(u, new PointD((u.getLayout().getCenter().getX()-minX) * scaleValue, (u.getLayout().getCenter().getY()-minY) * scaleValue));
-            //g.setNodeLayout(u, new RectD(u.getLayout().getX()*scaleValue,u.getLayout().getY()*scaleValue,u.getLayout().getWidth()*scaleValue,u.getLayout().getHeight()*scaleValue));
-            g.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),u.getLayout().getWidth(),u.getLayout().getHeight()));
+
+        for (Map.Entry<INode, PointD> entry : nodePose.getEntries()) {
+            INode node = entry.getKey();
+            PointD center = node.getLayout().getCenter();
+            nodePose.setValue(node, new PointD(
+                (center.getX() - minX) * scaleValue,
+                (center.getY() - minY) * scaleValue)
+            );
         }
-        return nodePose;
     }
 
 }
