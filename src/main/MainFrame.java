@@ -75,11 +75,6 @@ public class MainFrame extends JFrame {
         super.setMinimumSize(new Dimension(400, 300));
         super.setExtendedState(MAXIMIZED_BOTH);
         super.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        super.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent evt) {
-                System.exit(0);
-            }
-        });
     }
 
     /**
@@ -293,7 +288,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public static void start(@Nullable Consumer<MainFrame> onReady) {
+    public static void start(int closeOperation, @Nullable Consumer<MainFrame> onReady) {
         try {
             // check for 'os.name == Windows 7' does not work, since JDK 1.4 uses the compatibility mode
             if (!"com.sun.java.swing.plaf.motif.MotifLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !"com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !UIManager.getSystemLookAndFeelClassName().equals(UIManager.getLookAndFeel().getClass().getName()) && !(System.getProperty("java.version").startsWith("1.4") && System.getProperty("os.name").startsWith("Windows") && "6.1".equals(System.getProperty("os.version")))) {
@@ -308,6 +303,7 @@ public class MainFrame extends JFrame {
             MainFrame frame = new MainFrame();
             frame.init();
             frame.setVisible(true);
+            frame.setDefaultCloseOperation(closeOperation);
             if (onReady != null) {
                 onReady.accept(frame);
             }

@@ -5,6 +5,9 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.RandomMovementLayout;
 
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,6 +15,8 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class Main {
+  private static volatile int openFrames;
+
   public static void main(String[] args) {
     if (args.length == 0) {
       runSingleFrame();
@@ -60,16 +65,29 @@ public class Main {
   }
 
   private static void runSingleFrame() {
-    MainFrame.start(null);
+    MainFrame.start(WindowConstants.EXIT_ON_CLOSE, null);
   }
 
   private static void openFrames(int startIndex, int endIndex, String folderPath, String pattern) {
     IntStream.range(startIndex, endIndex + 1)
         .parallel()
-        .forEach(index -> MainFrame.start(mainFrame -> {
+        .forEach(index -> MainFrame.start(WindowConstants.DISPOSE_ON_CLOSE, mainFrame -> {
+          addClosingListener(mainFrame);
           loadGraph(mainFrame, folderPath, pattern, index);
           runAlgorithms(mainFrame);
         }));
+  }
+
+  private static void addClosingListener(MainFrame mainFrame) {
+    openFrames++;
+    mainFrame.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent evt) {
+        openFrames--;
+        if (openFrames == 0) {
+          System.exit(0);
+        }
+      }
+    });
   }
 
   private static void loadGraph(MainFrame mainFrame, String folderPath, String pattern, int index) {
