@@ -32,6 +32,11 @@ public class EnsembleGridder implements ILayout {
   }
 
   @Override
+  public void setFixNodes(Set<INode> fixNodes) {
+    quickGridders.forEach(quickGridder -> setFixNodes(fixNodes));
+  }
+
+  @Override
   public boolean executeStep(int iteration, int maxIterations) {
     return quickGridders.stream()
         .allMatch(quickGridder -> quickGridder.executeStep(iteration, maxIterations));

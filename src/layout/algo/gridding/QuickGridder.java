@@ -34,6 +34,11 @@ public class QuickGridder implements ILayout {
   }
 
   @Override
+  public void setFixNodes(Set<INode> fixNodes) {
+    throw new UnsupportedOperationException("setFixNodes make no sense for Quickgridder");
+  }
+
+  @Override
   public boolean executeStep(int iteration, int maxIterations) {
     for (INode node : graph.getNodes()) {
       if (griddedNodes.contains(node)) {
