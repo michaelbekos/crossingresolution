@@ -454,7 +454,7 @@ public class InitMenuBar {
     private void scaleUpGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
-        nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 2.0);
+        GraphOperations.scaleUpProcess(nodePositions, 2.0);
         this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
         mainFrame.initSidePanel.addDefaultListeners();
@@ -463,7 +463,7 @@ public class InitMenuBar {
     private void scaleDownGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
-        nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.5);
+        GraphOperations.scaleUpProcess(nodePositions, 0.5);
         this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
         mainFrame.initSidePanel.addDefaultListeners();
@@ -556,7 +556,7 @@ public class InitMenuBar {
             change=false;
             for(INode u : graph.getNodes()){
                 if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE){
-                    nodePositions = GraphOperations.scaleUpProcess(graph,nodePositions, 0.9);
+                    GraphOperations.scaleUpProcess(nodePositions, 0.9);
                     this.graph =  PositionMap.applyToGraph(graph, nodePositions);
                     this.view.fitGraphBounds();
                     change=true;
