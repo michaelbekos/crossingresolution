@@ -25,6 +25,7 @@ import main.MainFrame;
 import util.Chains;
 import util.GraphOperations;
 import util.VertexStack;
+import algorithms.fpp.FraysseixPachPollack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -262,6 +263,13 @@ public class SidePanelTab {
         organicItem.addActionListener(this::organicItemActionPerformed);
         custom.add(organicItem, cCustomPanel);
 
+        JButton fppItem = new JButton("FPP");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 0;
+        cCustomPanel.gridy = ++cCustomPanelY;
+        fppItem.addActionListener(this::fppItemActionPerformed);
+        custom.add(fppItem, cCustomPanel);
+
         cSidePanel.fill = GridBagConstraints.HORIZONTAL;
         cSidePanel.gridx = 0;
         cSidePanel.gridy = 0;
@@ -452,6 +460,13 @@ public class SidePanelTab {
         } finally {
             initSidePanel.addDefaultListeners();
         }
+    }
+
+    private void fppItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        initSidePanel.removeDefaultListeners();
+        FraysseixPachPollack fpp = new FraysseixPachPollack(initSidePanel.mainFrame.graph, new FraysseixPachPollack.FPPSettings());
+        initSidePanel.addDefaultListeners();
+
     }
 
     private void applyLayoutToSelection(ILayoutAlgorithm layout) {
