@@ -5,14 +5,13 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ILayout;
 import layout.algo.utils.PositionMap;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class QuickGridder implements ILayout {
+public class QuickGridder implements IGridder {
   private IGraph graph;
   private Mapper<INode, PointD> positions;
   private Random random;

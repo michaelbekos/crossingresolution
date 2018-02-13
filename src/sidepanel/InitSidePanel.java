@@ -7,8 +7,10 @@ import layout.algo.*;
 import layout.algo.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
+import layout.algo.gridding.CombinedGridder;
 import layout.algo.gridding.EnsembleGridder;
 import layout.algo.gridding.GridderConfigurator;
+import layout.algo.gridding.IGridder;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import main.MainFrame;
 
@@ -65,7 +67,7 @@ public class InitSidePanel {
 
     private void addGriddingAlgorithm(IGraph graph) {
         GridderConfigurator configurator = new GridderConfigurator();
-        EnsembleGridder gridder = new EnsembleGridder(graph, configurator);
+        IGridder gridder = new CombinedGridder(graph, configurator);
         addAlgorithm("Gridding", configurator, gridder);
     }
 

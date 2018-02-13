@@ -386,7 +386,7 @@ public class SidePanelTab {
                 maxY=u.getLayout().getCenter().getY();
             }
         }
-        nodePositions = GraphOperations.scaleUpProcess(initSidePanel.mainFrame.graph,nodePositions, Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)));
+        GraphOperations.scaleUpProcess(nodePositions, Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)));
         initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
         initSidePanel.addDefaultListeners();

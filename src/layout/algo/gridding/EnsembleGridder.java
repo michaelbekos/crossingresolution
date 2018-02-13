@@ -9,51 +9,58 @@ import layout.algo.ILayout;
 
 import java.util.Comparator;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class EnsembleGridder implements ILayout {
+public class EnsembleGridder implements IGridder {
   private IGraph graph;
   private GridderConfigurator configurator;
-  private Set<QuickGridder> quickGridders;
+  private Supplier<IGridder> gridderFactory;
+  private Set<IGridder> gridders;
 
-  public EnsembleGridder(IGraph graph, GridderConfigurator configurator) {
+  public EnsembleGridder(IGraph graph, GridderConfigurator configurator, Supplier<IGridder> gridderFactory) {
     this.graph = graph;
     this.configurator = configurator;
+    this.gridderFactory = gridderFactory;
   }
 
   @Override
   public void init() {
-    quickGridders = Stream.generate(() -> new QuickGridder(graph, configurator))
+    gridders = Stream.generate(gridderFactory)
         .limit(configurator.numberOfParallelExecutions.getValue())
         .collect(Collectors.toSet());
 
-    quickGridders.forEach(QuickGridder::init);
+    gridders.forEach(IGridder::init);
   }
 
   @Override
   public void setFixNodes(Set<INode> fixNodes) {
-    quickGridders.forEach(quickGridder -> setFixNodes(fixNodes));
+    gridders.forEach(quickGridder -> setFixNodes(fixNodes));
   }
 
   @Override
   public boolean executeStep(int iteration, int maxIterations) {
-    return quickGridders.stream()
+    return gridders.stream()
         .allMatch(quickGridder -> quickGridder.executeStep(iteration, maxIterations));
   }
 
   @Override
   public Mapper<INode, PointD> getNodePositions() {
-    return quickGridders.stream()
-        .map(QuickGridder::getNodePositions)
+    return gridders.stream()
+        .map(IGridder::getNodePositions)
         .max(Comparator.comparingDouble(nodePositions ->
             MinimumAngle.getMinimumAngle(graph, nodePositions).orElse(Double.POSITIVE_INFINITY)))
         .orElse(null); // should not occur...
   }
 
   @Override
-  public void showDebug() {}
+  public void showDebug() {
+    gridders.forEach(ILayout::showDebug);
+  }
 
   @Override
-  public void clearDebug() {}
+  public void clearDebug() {
+    gridders.forEach(ILayout::clearDebug);
+  }
 }
