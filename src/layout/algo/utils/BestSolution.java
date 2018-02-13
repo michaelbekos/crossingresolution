@@ -33,7 +33,12 @@ public class BestSolution {
         bestSolutionMapping.put(nodes,bestSolution);
     }
 
-    public static Double getBestMinimumAngle(int nodes) {
+    //overall main graph best
+    public Double getBestMinimumAngle() {
+        return bestSolutionMinimumAngle.get(bestSolutionMinimumAngle.size());
+    }
+
+    public static Double getBestMinimumAngleNodes(int nodes) {
         return bestSolutionMinimumAngle.get(nodes);
     }
 

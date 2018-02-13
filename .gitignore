@@ -10,3 +10,5 @@ out/
 !/rome/out/
 !/rome/out/*
 /rome/out
+src/algorithms/canonicalOrder/CanonicalOrderMy.java
+src/commons-cli-1.4.jar

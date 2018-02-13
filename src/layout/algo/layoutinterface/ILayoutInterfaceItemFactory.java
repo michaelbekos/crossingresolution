@@ -6,7 +6,7 @@ import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.IGraphSelection;
 
 public interface ILayoutInterfaceItemFactory {
-  AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold);
+  AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold, boolean enableCheckbox);
   AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, int threshold);
   AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name);
 

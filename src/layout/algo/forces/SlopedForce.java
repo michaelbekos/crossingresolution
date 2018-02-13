@@ -5,35 +5,83 @@ import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.view.GraphComponent;
+import com.yworks.yfiles.view.ICanvasObject;
+import com.yworks.yfiles.view.ICanvasObjectDescriptor;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
+import view.visual.VectorVisual;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SlopedForce implements IForce {
-  private double threshold;
-  private int numberOfSlopes;
-  private double initialAngleDeg;
+  private AbstractLayoutInterfaceItem<Double> threshold;
+  private AbstractLayoutInterfaceItem<Integer> numberOfSlopes;
+  private AbstractLayoutInterfaceItem<Double> initialAngleDeg;
+  private AbstractLayoutInterfaceItem<Boolean> showSlopesEnabled;
   private IGraph graph;
+  private GraphComponent view;
 
-  public SlopedForce(IGraph graph, int numberOfSlopes, double initialAngleDeg, double threshold) {
-    this.threshold = threshold;
-    this.numberOfSlopes = numberOfSlopes;
-    this.initialAngleDeg = initialAngleDeg;
+  public SlopedForce(IGraph graph, GraphComponent view) {
     this.graph = graph;
+    this.view = view;
   }
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-
+    threshold = itemFactory.doubleParameter("Slope Force", 0.0, 20, 0.1, true);
+    threshold.setValue(0.7);
+    numberOfSlopes = itemFactory.intParameter("Slope Force: Num. Slopes",0,360,1);
+    numberOfSlopes.setValue(1);
+    numberOfSlopes.addListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent changeEvent) {
+        if (showSlopesEnabled.getValue()) {
+          drawSlopes(numberOfSlopes.getValue(), initialAngleDeg.getValue());
+        }
+      }
+    });
+    initialAngleDeg = itemFactory.doubleParameter("Slope Force: Initial Angle", 0, 3600, 0.1, false);
+    initialAngleDeg.setValue(0.0);
+    initialAngleDeg.addListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent changeEvent) {
+        if (showSlopesEnabled.getValue()) {
+          drawSlopes(numberOfSlopes.getValue(), initialAngleDeg.getValue());
+        }
+      }
+    });
+    showSlopesEnabled = itemFactory.booleanParameter("Slope Force: Show Slopes");
+    showSlopesEnabled.setValue(false);
+    showSlopesEnabled.addListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent itemEvent) {
+        if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+          //draw
+          drawSlopes(numberOfSlopes.getValue(),initialAngleDeg.getValue());
+        } else {
+          //clear
+          clearSlopes();
+        }
+      }
+    });
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
+    if (threshold.getValue() == 0) {
+      return forces;
+    }
     List<Double> slopeAngles = new ArrayList<>();
-    double stepSize = (2 * Math.PI)/numberOfSlopes;
-    double pos = 2 * Math.PI*(initialAngleDeg/360.0);
-    for (int i = 0; i < numberOfSlopes; i++) {
+    double stepSize = (2 * Math.PI)/numberOfSlopes.getValue();
+    double pos = 2 * Math.PI*(initialAngleDeg.getValue()/360.0);
+    for (int i = 0; i < numberOfSlopes.getValue(); i++) {
       double x = 10 * Math.cos(pos);
       double y = 10 * Math.sin(pos);
 
@@ -101,13 +149,12 @@ public class SlopedForce implements IForce {
       );
 
 
-
       sourceVector = sourceVector.getNormalized();
-      sourceVector = PointD.times(threshold * Math.abs(fittedSlopeAngle - edgeSlopeAngle), sourceVector);
+      sourceVector = PointD.times(threshold.getValue() * Math.abs(fittedSlopeAngle - edgeSlopeAngle), sourceVector);
       forces.setValue(sourceNode, PointD.add(forces.getValue(sourceNode), sourceVector));
 
       targetVector = targetVector.getNormalized();
-      targetVector = PointD.times(threshold * Math.abs(fittedSlopeAngle - edgeSlopeAngle), targetVector);
+      targetVector = PointD.times(threshold.getValue() * Math.abs(fittedSlopeAngle - edgeSlopeAngle), targetVector);
       forces.setValue(targetNode, PointD.add(forces.getValue(targetNode), targetVector));
 
     }
@@ -128,5 +175,36 @@ public class SlopedForce implements IForce {
     double dy = u2_y - u1_y;
 
     return Math.atan2(dy,dx);
+  }
+
+
+  //helper function
+  private List<ICanvasObject> canvasObjects = new ArrayList<>();
+  private void clearSlopes() {
+    for (ICanvasObject o : canvasObjects) {
+      o.remove();
+    }
+    canvasObjects.clear();
+  }
+  private void drawSlopes(double numSlopes, double initAngleDeg) {
+    clearSlopes();
+    numSlopes *=2;
+    double stepSize = (2* Math.PI)/numSlopes;
+    double pos = 2 * Math.PI*(initAngleDeg/360);
+    INode tmpNode = graph.createNode(view.getCenter());
+    double x_val;
+    double y_val;
+    double zoom = 1/view.getZoom() * 3;
+    for (int i = 0; i < numSlopes; i++) {
+      x_val = zoom * Math.cos(pos);
+      y_val = zoom * Math.sin(pos);
+      canvasObjects.add(view.getBackgroundGroup().addChild(new VectorVisual(view, new PointD(x_val,y_val), tmpNode, Color.GREEN,(int)(5/view.getZoom())), ICanvasObjectDescriptor.VISUAL));
+      pos += stepSize;
+      if (pos > 2 * Math.PI) {
+        pos -= 2 * Math.PI;
+      }
+    }
+    view.updateUI();
+    graph.remove(tmpNode);
   }
 }

@@ -8,7 +8,7 @@ import com.yworks.yfiles.view.IGraphSelection;
 public class VoidItemFactory implements ILayoutInterfaceItemFactory {
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold) {
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold, boolean enableCheckbox) {
     return new VoidItem<>(name);
   }
 

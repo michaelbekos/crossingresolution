@@ -44,6 +44,11 @@ public class GeneticForceAlgorithmLayout implements ILayout {
     geneticAlgorithm = new GeneticAlgorithm<>(objective, firstIndividuals, 5, rand);
   }
 
+  @Override
+  public void setFixNodes(Set<INode> fixNodes) {
+    throw new UnsupportedOperationException("setFixNodes is not yet supported");
+  }
+
   private void spawnIndividual(LinkedList<ForceAlgorithm> firstIndividuals, Map<ForceAlgorithm, List<AbstractLayoutInterfaceItem>> weightsMap) {
     MutationItemFactory itemFactory = new MutationItemFactory();
     ForceAlgorithm forceAlgorithm = InitForceAlgorithm.defaultForceAlgorithm(graph, itemFactory);

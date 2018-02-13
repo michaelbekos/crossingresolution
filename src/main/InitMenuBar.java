@@ -1,6 +1,5 @@
 package main;
 
-import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
@@ -10,30 +9,28 @@ import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.graph.styles.INodeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.view.*;
+import com.yworks.yfiles.view.GraphComponent;
+import com.yworks.yfiles.view.GridVisualCreator;
+import com.yworks.yfiles.view.Pen;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import com.yworks.yfiles.view.input.GraphSnapContext;
 import com.yworks.yfiles.view.input.GridSnapTypes;
 import io.ContestIOHandler;
-import layout.algo.*;
-import layout.algo.forces.ElectricForce;
-import layout.algo.forces.SlopedForce;
-import layout.algo.forces.SpringForce;
-import layout.algo.layoutinterface.VoidItemFactory;
+import layout.algo.NodeSwapper;
 import layout.algo.utils.PositionMap;
 import util.*;
-import view.visual.VectorVisual;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -105,12 +102,6 @@ public class InitMenuBar {
     private JMenu createLayoutMenu() {
         JMenu layoutMenu = new JMenu();
         layoutMenu.setText("Layout");
-
-        JMenuItem slopedSpringEmbedderItem = new JMenuItem();
-        slopedSpringEmbedderItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        slopedSpringEmbedderItem.setText("Sloped Spring Embedder");
-        slopedSpringEmbedderItem.addActionListener(this::slopedSpringEmbedderItemActionPerformed);
-        layoutMenu.add(slopedSpringEmbedderItem);
 
         JMenuItem jitterItem = new JMenuItem();
         jitterItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
@@ -480,8 +471,8 @@ public class InitMenuBar {
 
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
-        if (this.view.getSelection().getSelectedNodes().getCount() > 0) {
-            this.removedVertices = GraphOperations.removeVertices(this.graph, false,true, this.view.getSelection().getSelectedNodes().getCount(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
+        if (this.view.getSelection().getSelectedNodes().size() > 0) {
+            this.removedVertices = GraphOperations.removeVertices(this.graph, false,true, this.view.getSelection().getSelectedNodes().size(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
         } else if (this.graph.getNodes().size() > 0){
             JTextField vertexCount = new JTextField();
             vertexCount.setText(Integer.toString(1));
@@ -861,157 +852,10 @@ public class InitMenuBar {
         }
     }
 
-
-    //helper function
-    private List<ICanvasObject> canvasObjects = new ArrayList<>();
-    private void drawSlopes(double numSlopes, double initAngleDeg) {
-        numSlopes *=2;
-        for (ICanvasObject o : canvasObjects) {
-            o.remove();
-        }
-        canvasObjects.clear();
-
-        double stepSize = (2* Math.PI)/numSlopes;
-        double pos = 2 * Math.PI*(initAngleDeg/360);
-        INode tmpNode = mainFrame.graph.createNode(mainFrame.view.getCenter());
-        for (int i = 0; i < numSlopes; i++) {
-            double x_val = 1/mainFrame.view.getZoom() * 3 * Math.cos(pos);
-            double y_val = 1/mainFrame.view.getZoom() * 3 * Math.sin(pos);
-            canvasObjects.add(mainFrame.view.getBackgroundGroup().addChild(new VectorVisual(mainFrame.view, new PointD(x_val,y_val), tmpNode, Color.GREEN,(int)(5/mainFrame.view.getZoom())), ICanvasObjectDescriptor.VISUAL));
-            pos += stepSize;
-            if (pos > 2 * Math.PI) {
-                pos -= 2 * Math.PI;
-            }
-        }
-        mainFrame.view.updateUI();
-        mainFrame.graph.remove(tmpNode);
-    }
-
-    private int iterations = 1000;
-    private int numSlopes = 1;
-    private int initAngle = 0;
-    void slopedSpringEmbedderItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        for (ICanvasObject o : canvasObjects) {
-            o.remove();
-        }
-        canvasObjects.clear();
-
-        JTextField iterationsTextField = new JTextField(Integer.toString(iterations));
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        JLabel iterationLabel = new JLabel("Number of Iterations: ");
-        panel.add(iterationLabel);
-        panel.add(iterationsTextField);
-
-        JLabel numSlopesLabel = new JLabel("Number of Slopes: ");
-        JTextField numSlopesTextField = new JTextField(Integer.toString(numSlopes));
-
-        panel.add(numSlopesLabel);
-        panel.add(numSlopesTextField);
-
-        JLabel initAngleLabel = new JLabel("Angle (°) of First Slope: "); //other slopes are equidistant to first slope, default angle is 0 (right), clockwise is positive
-        panel.add(initAngleLabel);
-        JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayout(1,2));
-//        panel2.setMaximumSize(new Dimension(100,50));
-        JTextField initAngleTextField = new JTextField(Integer.toString(initAngle));
-        drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
-        JSlider initAngleSlider = new JSlider(JSlider.HORIZONTAL, 0, 360, initAngle);
-        initAngleSlider.addChangeListener(changeEvent -> {
-            initAngleTextField.setText(Integer.toString(initAngleSlider.getValue()));
-            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
-        });
-
-
-        initAngleTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                try {
-                    if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) { //checks is int
-                        initAngleSlider.setValue(Integer.parseInt(initAngleTextField.getText()));
-                        if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) {
-                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
-                        }
-                    }
-                } catch (NumberFormatException nfe) {
-                    System.out.println("Invalid Input");
-                }
-            }
-        });
-
-        numSlopesTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                try {
-                    if (numSlopesTextField.getText().matches("\\d+") && Integer.parseInt(numSlopesTextField.getText()) > 0 && Integer.parseInt(numSlopesTextField.getText()) <= 180) { //checks is int
-                        if (initAngleTextField.getText().matches("\\d+") && Integer.parseInt(initAngleTextField.getText()) >= 0 && Integer.parseInt(initAngleTextField.getText()) <= 360) {
-                            drawSlopes(Integer.parseInt(numSlopesTextField.getText()), Integer.parseInt(initAngleTextField.getText()));
-                        }
-                    }
-                } catch (NumberFormatException nfe) {
-                    System.out.println("Invalid Input");
-                }
-            }
-        });
-
-        panel2.add(initAngleSlider);
-        panel2.add(initAngleTextField);
-        panel.add(panel2);
-
-
-        int result = JOptionPane.showOptionDialog(null, panel, "Algorithm Properties", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                iterations = Integer.parseInt(iterationsTextField.getText());
-                numSlopes = Integer.parseInt(numSlopesTextField.getText());
-                initAngle = Integer.parseInt(initAngleTextField.getText());
-
-            } catch (NumberFormatException exc) {
-                JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of iterations will be set to 1000, slopes to 1 and inital angle to 0.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                for (ICanvasObject o : canvasObjects) {
-                    o.remove();
-                }
-                canvasObjects.clear();
-                mainFrame.view.updateUI();
-                return;
-            }
-        }
-        else {
-            for (ICanvasObject o : canvasObjects) {
-                o.remove();
-            }
-            canvasObjects.clear();
-            mainFrame.view.updateUI();
-            return;
-        }
-
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
-                .addForce(new SlopedForce(mainFrame.graph, numSlopes * 2, initAngle, 0.7))
-                .addForce(new ElectricForce(mainFrame.graph, 0.01, 30000))
-                .addForce(new SpringForce(mainFrame.graph, 100, 0.01, 100));
-        // TODO configurator.init(mainFrame.sidePanelItemFactory);
-
-        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, new CachedMinimumAngle());
-
-        IGraphLayoutExecutor executor =
-                new IGraphLayoutExecutor(forceAlgorithm, mainFrame.graph, progressBar, iterations, 20, new VoidItemFactory());
-        executor.start();
-
-        for (ICanvasObject o : canvasObjects) {
-            o.remove();
-        }
-        canvasObjects.clear();
-
-        mainFrame.view.updateUI();
-    }
-
-
     private void saveAsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         showFileChooser(new JFileChooser(this.fileNamePathFolder));
     }
+
 
     //edit menu actions
     private void deselectAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

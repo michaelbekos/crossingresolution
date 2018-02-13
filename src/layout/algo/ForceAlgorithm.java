@@ -8,14 +8,17 @@ import com.yworks.yfiles.graph.Mapper;
 import layout.algo.forces.IForce;
 import layout.algo.utils.PositionMap;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class ForceAlgorithm implements ILayout {
   public ForceAlgorithmConfigurator configurator;
   private IGraph graph;
   private Mapper<INode, PointD> nodePositions;
   private CachedMinimumAngle cMinimumAngle;
+  private Set<INode> fixNodes;
 
   public ForceAlgorithm(ForceAlgorithmConfigurator configurator, IGraph graph, CachedMinimumAngle cMinimumAngle){
     this.configurator = configurator;
@@ -34,6 +37,12 @@ public class ForceAlgorithm implements ILayout {
   @Override
   public void init() {
     nodePositions = PositionMap.FromIGraph(graph);
+    fixNodes = new HashSet<>();
+  }
+
+  @Override
+  public void setFixNodes(Set<INode> fixNodes) {
+    this.fixNodes = fixNodes;
   }
 
   @Override
@@ -75,7 +84,7 @@ public class ForceAlgorithm implements ILayout {
 
   // applyAlgos: calculateForces -> applyForces -> reset cache
   private Mapper<INode, PointD> applyAlgos(){
-    Mapper<INode, PointD> res = applyForces(nodePositions, calculateAllForces());
+    Mapper<INode, PointD> res = applyForces(calculateAllForces());
     cMinimumAngle.invalidate();
     return res;
   }
@@ -88,9 +97,13 @@ public class ForceAlgorithm implements ILayout {
   }
 
   // add all forces to the corresponding nodes
-  private static Mapper<INode, PointD> applyForces(Mapper<INode, PointD> nodePositions, Mapper<INode, PointD> forces) {
+  private Mapper<INode, PointD> applyForces(Mapper<INode, PointD> forces) {
     for (Map.Entry<INode, PointD> e : nodePositions.getEntries()) {
       INode node = e.getKey();
+
+      if (fixNodes.contains(node)) {
+        continue;
+      }
 
       PointD position = e.getValue();
       PointD force = forces.getValue(node);

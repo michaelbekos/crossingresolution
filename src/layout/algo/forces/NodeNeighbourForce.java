@@ -20,12 +20,15 @@ public class NodeNeighbourForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Node Neighbor Force", 1, 300, 200);
+    weight = itemFactory.doubleParameter("Node Neighbor Force", 0.0, 300, 200, true);
     weight.setValue(170.0);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
+    if (weight.getValue() == 0) {
+      return forces;
+    }
     //for(INode n1: graph.getNodes()){
     graph.getNodes().parallelStream().forEach(n1 -> {
       PointD p1 = nodePositions.getValue(n1);

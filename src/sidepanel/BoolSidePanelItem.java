@@ -3,6 +3,7 @@ package sidepanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 class BoolSidePanelItem extends SidePanelItem<Boolean> {
   private JCheckBox checkBox;
@@ -17,12 +18,12 @@ class BoolSidePanelItem extends SidePanelItem<Boolean> {
     //add checkbox
     GridBagConstraints cCustomPanel = new GridBagConstraints();
     cCustomPanel.gridy = gridBagState.increaseY();
-    cCustomPanel.gridx = 0;
+    cCustomPanel.gridx = gridBagState.getX();
     cCustomPanel.gridwidth = 3;
     cCustomPanel.anchor = GridBagConstraints.LINE_START;
     checkBox = new JCheckBox(getName());
     sidePanel.add(checkBox, cCustomPanel);
-    checkBox.addItemListener(itemEvent -> setValue((itemEvent.getStateChange() == ItemEvent.SELECTED)));
+    checkBox.addItemListener(this::itemListener);
   }
 
   @Override
@@ -30,4 +31,16 @@ class BoolSidePanelItem extends SidePanelItem<Boolean> {
     super.setValue(value);
     checkBox.setSelected(value);
   }
+
+  public void itemListener(ItemEvent itemEvent) {
+    setValue((itemEvent.getStateChange() == ItemEvent.SELECTED));
+  }
+
+  @Override
+  public void addListener(Object listener) {
+    if (listener instanceof  ItemListener) {
+      checkBox.addItemListener((ItemListener) listener);
+    }
+  }
+
 }

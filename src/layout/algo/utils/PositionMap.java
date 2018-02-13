@@ -8,7 +8,8 @@ import com.yworks.yfiles.graph.Mapper;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class PositionMap extends Mapper<INode, PointD> {
+public final class PositionMap {
+  private PositionMap() {}
 
   public static Mapper<INode, PointD> newPositionMap() {
     return new Mapper<>(new WeakHashMap<>());

@@ -8,7 +8,6 @@ import layout.algo.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.gridding.EnsembleGridder;
-import layout.algo.gridding.QuickGridder;
 import layout.algo.gridding.GridderConfigurator;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import main.MainFrame;
@@ -52,12 +51,8 @@ public class InitSidePanel {
         addRandomMovementAlgorithm(graph);
         addForceAlgorithm(graph);
         addGeneticAlgorithm(graph);
-        addSpringEmbedderAlgorithm(graph);
         addClinchLayout(graph);
         addGriddingAlgorithm(graph);
-
-        // TODO:
-        addAlgorithm("Sloped Spring Embedder", null, null);
 
         addMiscAlgorithms();
 
@@ -103,15 +98,6 @@ public class InitSidePanel {
         addAlgorithm("Clinch Nodes", configurator, clinchLayout);
     }
 
-    private void addSpringEmbedderAlgorithm(IGraph graph) {
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
-                .addForce(new SpringForce(graph, 100, 0.01, 150))
-                .addForce(new ElectricForce(graph, 0.01, 50000));
-
-        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, graph, new CachedMinimumAngle());
-        addAlgorithm("Spring Embedder", configurator, forceAlgorithm);
-    }
-
     private void addGeneticAlgorithm(IGraph graph) {
         GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
         GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
@@ -119,12 +105,16 @@ public class InitSidePanel {
     }
 
     private void addForceAlgorithm(IGraph graph) {
+        mainFrame.bestSolution.getBestMinimumAngle();
         CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator();
-        configurator.addForce(new NodeNeighbourForce(graph))
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
+                .addForce(new NodeNeighbourForce(graph))
                 .addForce(new NodePairForce(graph))
                 .addForce(new IncidentEdgesForce(graph))
-                .addForce(new CrossingForce(graph, cMinimumAngle));
+                .addForce(new SpringForce(graph, 100, 0.01))
+                .addForce(new ElectricForce(graph, 0.01))
+                .addForce(new CrossingForce(graph, cMinimumAngle))
+                .addForce(new SlopedForce(graph, mainFrame.view));
 
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
         addAlgorithm("Force Algorithm", configurator, forceAlgorithm);

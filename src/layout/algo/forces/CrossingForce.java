@@ -25,7 +25,7 @@ public class CrossingForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Crossings Force", 0.01, 1, 0.1);
+    weight = itemFactory.doubleParameter("Crossings Force", 0.0, 1, 0.1, true);
     weight.setValue(0.01);
     isPerpendicular = itemFactory.booleanParameter("Perpendicular");
     isPerpendicular.setValue(false);
@@ -33,6 +33,10 @@ public class CrossingForce implements IForce {
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
+    if (weight.getValue() == 0) {
+      return forces;
+    }
+
     cMinimumAngle.getCrossings(graph, nodePositions).parallelStream().forEach(intersection -> {
       LineSegment l1 = intersection.segment1,
           l2 = intersection.segment2;

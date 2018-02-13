@@ -18,12 +18,15 @@ public class NodePairForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Node Pair Force", 0.01, 1, 0.1);
+    weight = itemFactory.doubleParameter("Node Pair Force", 0.0, 1, 0.1, true);
     weight.setValue(0.01);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
+    if (weight.getValue() == 0) {
+      return forces;
+    }
     graph.getNodes().parallelStream().forEach(n1 -> {
       PointD p1 = nodePositions.getValue(n1);
       PointD f1 = new PointD(0, 0);
