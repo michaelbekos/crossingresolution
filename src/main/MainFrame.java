@@ -7,12 +7,15 @@ import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.IModelItem;
 import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
-import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
+import io.ContestIOHandler;
+import layout.algo.BasicIGraphLayoutExecutor;
+import layout.algo.ILayout;
 import layout.algo.utils.BestSolution;
 import sidepanel.InitSidePanel;
 
@@ -20,6 +23,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 
 /**
@@ -58,7 +65,9 @@ public class MainFrame extends JFrame {
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() {
+    private MainFrame() {}
+
+    private void init() {
         this.initComponents();
         this.initMenuBar();
 
@@ -284,12 +293,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+    public static void start(@Nullable Consumer<MainFrame> onReady) {
         try {
             // check for 'os.name == Windows 7' does not work, since JDK 1.4 uses the compatibility mode
             if (!"com.sun.java.swing.plaf.motif.MotifLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !"com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !UIManager.getSystemLookAndFeelClassName().equals(UIManager.getLookAndFeel().getClass().getName()) && !(System.getProperty("java.version").startsWith("1.4") && System.getProperty("os.name").startsWith("Windows") && "6.1".equals(System.getProperty("os.version")))) {
@@ -300,9 +304,32 @@ public class MainFrame extends JFrame {
         }
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
-
+        java.awt.EventQueue.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.init();
+            frame.setVisible(true);
+            if (onReady != null) {
+                onReady.accept(frame);
+            }
+        });
     }
 
+    public Optional<BasicIGraphLayoutExecutor> getExecutorForAlgorithm(Class<? extends ILayout> layoutClass) {
+        return initSidePanel.getExecutorForAlgorithm(layoutClass);
+    }
 
+    public void openContestFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            ContestIOHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
 }

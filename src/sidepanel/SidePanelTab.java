@@ -16,6 +16,7 @@ import com.yworks.yfiles.layout.partial.SubgraphPlacement;
 import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
+import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.IGraphLayoutExecutor;
 import layout.algo.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
@@ -477,4 +478,7 @@ public class SidePanelTab {
         executor.start();
     }
 
+    public BasicIGraphLayoutExecutor getExecutor() {
+        return executor;
+    }
 }

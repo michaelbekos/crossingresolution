@@ -8,7 +8,6 @@ import layout.algo.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.gridding.CombinedGridder;
-import layout.algo.gridding.EnsembleGridder;
 import layout.algo.gridding.GridderConfigurator;
 import layout.algo.gridding.IGridder;
 import layout.algo.layoutinterface.ILayoutConfigurator;
@@ -18,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class InitSidePanel {
     public MainFrame mainFrame;
@@ -63,6 +63,14 @@ public class InitSidePanel {
         sidePanelTabs.get(0).setEnableMinimumAngleDisplay(true);
 
         return tabbedSidePane;
+    }
+
+
+    public Optional<BasicIGraphLayoutExecutor> getExecutorForAlgorithm(Class<? extends ILayout> layoutClass) {
+        return sidePanelTabs.stream()
+            .map(SidePanelTab::getExecutor)
+            .filter(executor -> layoutClass.isInstance(executor.getLayout()))
+            .findFirst();
     }
 
     private void addGriddingAlgorithm(IGraph graph) {

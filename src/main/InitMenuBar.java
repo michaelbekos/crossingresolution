@@ -747,20 +747,9 @@ public class InitMenuBar {
 
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             this.fileNamePath = chooser.getSelectedFile().toString();
-            mainFrame.initSidePanel.removeDefaultListeners();
-            try {
-                ContestIOHandler.read(this.graph, this.fileNamePath);
-                this.view.fitGraphBounds();
-                this.view.updateUI();
-                this.removedVertices = null;
-                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
-                mainFrame.bestSolution.reset();
-                mainFrame.setTitle(Paths.get(fileNamePath).getFileName().toString());
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured while reading the input file.");
-            } finally {
-                mainFrame.initSidePanel.addDefaultListeners();
-            }
+            mainFrame.openContestFile(fileNamePath);
+            this.removedVertices = null;
+            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
         }
     }
 

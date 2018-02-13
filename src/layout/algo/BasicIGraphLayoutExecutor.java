@@ -168,4 +168,8 @@ public class BasicIGraphLayoutExecutor {
   public int getMaxIterations() {
     return maxIterations.getValue();
   }
+
+  public ILayout getLayout() {
+    return layout;
+  }
 }
