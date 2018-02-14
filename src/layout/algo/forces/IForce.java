@@ -8,4 +8,5 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 public interface IForce {
   void init(ILayoutInterfaceItemFactory itemFactory);
   Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions);
+  void toggleCheckbox(boolean value);
 }

@@ -20,7 +20,7 @@ public class NodeNeighbourForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Node Neighbor Force", 0.0, 300, 200, true);
+    weight = itemFactory.doubleParameter("Node Neighbor Force", 0.0, 300, true);
     weight.setValue(170.0);
   }
 
@@ -67,5 +67,9 @@ public class NodeNeighbourForce implements IForce {
     t = PointD.times(t, forceStrength);
     //return new PointD(0, 0);
     return t;
+  }
+
+  public void toggleCheckbox(boolean value) {
+    weight.toggleCheckbox(value);
   }
 }

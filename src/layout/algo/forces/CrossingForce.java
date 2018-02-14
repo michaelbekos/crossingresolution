@@ -25,9 +25,9 @@ public class CrossingForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Crossings Force", 0.0, 1, 0.1, true);
+    weight = itemFactory.doubleParameter("Crossings Force", 0.0, 1, true);
     weight.setValue(0.01);
-    isPerpendicular = itemFactory.booleanParameter("Perpendicular");
+    isPerpendicular = itemFactory.booleanParameter("Perpendicular", false);
     isPerpendicular.setValue(false);
   }
 
@@ -108,5 +108,9 @@ public class CrossingForce implements IForce {
             t1 = PointD.times(t1, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
             t2 = PointD.times(t2, threshold * Math.cos(2.0 / 3.0 * Math.toRadians(angle)));
         */
+  }
+
+  public void toggleCheckbox(boolean value) {
+    weight.toggleCheckbox(value);
   }
 }

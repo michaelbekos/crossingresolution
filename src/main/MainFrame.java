@@ -21,8 +21,6 @@ import sidepanel.InitSidePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -35,7 +33,7 @@ import java.util.function.Consumer;
 public class MainFrame extends JFrame {
 
     /* Box related issue*/
-    public static final double BOX_SIZE= 10000;
+    public static final double BOX_SIZE = 10000;
 
     /* Graph Drawing related objects */
     public GraphComponent view;

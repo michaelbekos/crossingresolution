@@ -1,5 +1,6 @@
 package sidepanel;
 
+import algorithms.fpp.FraysseixPachPollack;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.FilteredGraphWrapper;
@@ -25,7 +26,6 @@ import main.MainFrame;
 import util.Chains;
 import util.GraphOperations;
 import util.VertexStack;
-import algorithms.fpp.FraysseixPachPollack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.time.Duration;
+import java.util.ArrayList;
 
 public class SidePanelTab {
     public JPanel sidePanelTab;
@@ -47,10 +48,13 @@ public class SidePanelTab {
     private JButton stopButton;
     private JCheckBox enableMinimumAngleDisplay;
     private JCheckBox allowClickCreateNodeEdge;
+    private JCheckBox enableShowScale;
+    private JTextArea outputTextArea;
 
     public SidePanelTab(InitSidePanel initSidePanel) {
         //default empty
         this.initSidePanel = initSidePanel;
+        this.outputTextArea = new JTextArea("Output");
     }
 
     public SidePanelTab(InitSidePanel initSidePanel, String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
@@ -76,7 +80,7 @@ public class SidePanelTab {
         GridBagState gridBagState = new GridBagState();
         gridBagState.increaseY();
 
-        JTextArea outputTextArea = new JTextArea("Output");
+        outputTextArea = new JTextArea("Output");
         SidePanelItemFactory itemFactory = new SidePanelItemFactory(custom, initSidePanel.mainFrame.view, initSidePanel.mainFrame.graphEditorInputMode, outputTextArea, gridBagState);
         executor = new IGraphLayoutExecutor(layout, initSidePanel.mainFrame.graph, initSidePanel.mainFrame.progressBar, -1, 20, itemFactory);
         if (configurator != null) {
@@ -98,7 +102,7 @@ public class SidePanelTab {
         cSidePanel.gridy = 1;
         cSidePanel.weightx = 0;
         cSidePanel.weighty = 0;
-        sidePanelTab.add(getDefaultPanel(outputTextArea), cSidePanel);
+        sidePanelTab.add(getDefaultPanel(), cSidePanel);
     }
 
     /**
@@ -110,17 +114,16 @@ public class SidePanelTab {
         JPanel defaultPanel = new JPanel();
         defaultPanel.setLayout(new GridBagLayout());
         GridBagConstraints cDefaultPanel = new GridBagConstraints();
-        addDefaultControls(defaultPanel, cDefaultPanel, 0, new JTextArea("Output"));
+        addDefaultControls(defaultPanel, cDefaultPanel, 0);
 
         return defaultPanel;
     }
 
     /**
      * returns the default panel for all algorithms (start/pause, stop, manual mode, min angle, output)
-     * @param outputTextArea
      * @return default panel
      */
-    private JPanel getDefaultPanel(JTextArea outputTextArea) {
+    private JPanel getDefaultPanel() {
         JPanel defaultPanel = new JPanel();
         defaultPanel.setLayout(new GridBagLayout());
         GridBagConstraints cDefaultPanel = new GridBagConstraints();
@@ -150,12 +153,12 @@ public class SidePanelTab {
         cgc.gridwidth = 2;
         defaultPanel.add(separator, cgc);
 
-        addDefaultControls(defaultPanel, cDefaultPanel, cDefaultPanelY, outputTextArea);
+        addDefaultControls(defaultPanel, cDefaultPanel, cDefaultPanelY);
 
         return defaultPanel;
     }
 
-    private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY, JTextArea outputTextArea) {
+    private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY) {
         JButton showBestSolution = new JButton("Show Best");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
@@ -188,6 +191,24 @@ public class SidePanelTab {
         defaultPanel.add(reinsertChain, cDefaultPanel);
         reinsertChain.addActionListener(this::reinsertChainItemActionPerformed);
 
+        JButton showGraphInfo = new JButton("Graph Info");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.insets = new Insets(0,0,0,0);
+        defaultPanel.add(showGraphInfo, cDefaultPanel);
+        showGraphInfo.addActionListener(this::showGraphInfoActionPerformed);
+
+        enableShowScale = new JCheckBox("Show Scale");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(enableShowScale, cDefaultPanel);
+        enableShowScale.addItemListener(this::showScaleEnabled);
+        enableShowScale.setSelected(false);
+
         enableMinimumAngleDisplay = new JCheckBox("Show Minimum Angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
@@ -210,7 +231,7 @@ public class SidePanelTab {
 
         outputTextArea.setLineWrap(true);
         outputTextArea.setRows(5);
-        JScrollPane test = new JScrollPane(outputTextArea);
+        JScrollPane scrollPane = new JScrollPane(outputTextArea);
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
@@ -218,11 +239,11 @@ public class SidePanelTab {
         cDefaultPanel.weighty = 0;
         cDefaultPanel.insets = new Insets(10,10,10,10);
         cDefaultPanel.gridwidth = 3;
-        defaultPanel.add(test, cDefaultPanel);
+        defaultPanel.add(scrollPane, cDefaultPanel);
     }
 
 
-	public JPanel getMiscAlgorithmTab() {
+    public JPanel getMiscAlgorithmTab() {
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new GridBagLayout());
         GridBagConstraints cSidePanel = new GridBagConstraints();
@@ -291,17 +312,26 @@ public class SidePanelTab {
         return this.enableMinimumAngleDisplay.isSelected();
     }
 
-    public boolean getAllowClickCreateNodeEdge() {
-        return this.allowClickCreateNodeEdge.isSelected();
-    }
-
     public void setEnableMinimumAngleDisplay(boolean value) {
         this.enableMinimumAngleDisplay.setSelected(value);
+    }
+
+    public boolean getAllowClickCreateNodeEdge() {
+        return this.allowClickCreateNodeEdge.isSelected();
     }
 
     public void setAllowClickCreateNodeEdge(boolean value) {
         this.allowClickCreateNodeEdge.setSelected(value);
     }
+
+    public boolean getShowScale() {
+        return this.enableShowScale.isSelected();
+    }
+
+    public void setShowScale(boolean value) {
+        this.enableShowScale.setSelected(value);
+    }
+
 
 
     /*********************************************************************
@@ -309,7 +339,7 @@ public class SidePanelTab {
      ********************************************************************/
 
     private void showBestSolution(@SuppressWarnings("unused") ActionEvent evt) {
-    	int nodes= initSidePanel.mainFrame.graph.getNodes().size();
+        int nodes= initSidePanel.mainFrame.graph.getNodes().size();
         if (initSidePanel.mainFrame.bestSolution.getBestSolutionMapping(nodes) == null) {
             return;
         }
@@ -383,6 +413,10 @@ public class SidePanelTab {
         initSidePanel.masterAllowClickCreateNodeEdge.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
+    private void showScaleEnabled(@SuppressWarnings("unused") ItemEvent evt) {
+        initSidePanel.masterShowScale.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
     private void scalingToBox(){
         initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(initSidePanel.mainFrame.graph);
@@ -430,6 +464,43 @@ public class SidePanelTab {
         }
 
         initSidePanel.addDefaultListeners();
+    }
+
+    private void showGraphInfoActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        ArrayList<Integer> verticesDegree = new ArrayList<>();
+        double min_x = Double.MAX_VALUE;
+        double min_y = Double.MAX_VALUE;
+        double max_x = Double.MIN_VALUE;
+        double max_y = Double.MIN_VALUE;
+        for (INode u : initSidePanel.mainFrame.graph.getNodes()) {
+            if (u.getLayout().getCenter().getX() < min_x) {
+                min_x = u.getLayout().getCenter().getX();
+            } else if (u.getLayout().getCenter().getX() > max_x) {
+                max_x = u.getLayout().getCenter().getX();
+            }
+            if (u.getLayout().getCenter().getY() < min_y) {
+                min_y = u.getLayout().getCenter().getY();
+            } else if (u.getLayout().getCenter().getY() > max_y) {
+                max_y = u.getLayout().getCenter().getY();
+            }
+
+            int deg = u.getPorts().size();
+            while(deg >= verticesDegree.size()) {
+                verticesDegree.add(0);
+            }
+            verticesDegree.set(deg, verticesDegree.get(deg) + 1);
+
+        }
+        StringBuilder graphInfo = new StringBuilder();
+        graphInfo.append("Deg. Num.\n");
+        for (int i = 0 ; i < verticesDegree.size(); i++) {
+            if (verticesDegree.get(i) > 0) {
+                graphInfo.append("  ").append(i).append("   :   ").append(verticesDegree.get(i).toString()).append("\n");
+            }
+        }
+        graphInfo.append("\nTotal Vertices: " + initSidePanel.mainFrame.graph.getNodes().size() + "\nTotal Edges:    " + initSidePanel.mainFrame.graph.getEdges().size() + "\n");
+        graphInfo.append("\nCurrent Graph Size: \nX: " + (max_x - min_x) + "\nY: " + (max_y - min_y) + "\n");
+        outputTextArea.setText(graphInfo.toString());
     }
 
     private void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

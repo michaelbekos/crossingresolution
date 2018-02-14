@@ -36,7 +36,7 @@ public class BasicIGraphLayoutExecutor {
     this.finished = false;
     this.propertyChange = new PropertyChangeSupport(this);
 
-    this.maxIterations = itemFactory.intParameter("Maximum number of iterations", -1, 10000, 1);
+    this.maxIterations = itemFactory.intParameter("Maximum number of iterations", -1, 10000);
     this.maxIterations.setValue(maxIterations);
   }
 

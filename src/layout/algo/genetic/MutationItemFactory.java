@@ -10,20 +10,20 @@ public class MutationItemFactory extends VoidItemFactory {
   List<AbstractLayoutInterfaceItem> weights = new LinkedList<>();
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold, boolean enableCheckbox) {
-    AbstractLayoutInterfaceItem<Double> item = super.doubleParameter(name, minValue, maxValue, threshold, enableCheckbox);
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, boolean enableCheckbox) {
+    AbstractLayoutInterfaceItem<Double> item = super.doubleParameter(name, minValue, maxValue, enableCheckbox);
     weights.add(item);
     return item;
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, int threshold) {
+  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue) {
     throw new UnsupportedOperationException("Integer parameters are not supported by the genetic algorithm");
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
-    AbstractLayoutInterfaceItem<Boolean> item = super.booleanParameter(name);
+  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, boolean enableMasterCheckbox) {
+    AbstractLayoutInterfaceItem<Boolean> item = super.booleanParameter(name, enableMasterCheckbox);
     weights.add(item);
     return item;
   }

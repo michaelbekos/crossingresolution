@@ -24,7 +24,7 @@ public class IncidentEdgesForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Incident Edges Force", 0.0, 1, 1, true);
+    weight = itemFactory.doubleParameter("Incident Edges Force", 0.0, 1, true);
     weight.setValue(0.1);
   }
 
@@ -120,5 +120,10 @@ public class IncidentEdgesForce implements IForce {
     t2 = PointD.negate(t2);
     t2 = Util.rotate90DegreesClockwise(t2);
     return new Tuple2<>(t1, t2);
+  }
+
+
+  public void toggleCheckbox(boolean value) {
+    weight.toggleCheckbox(value);
   }
 }

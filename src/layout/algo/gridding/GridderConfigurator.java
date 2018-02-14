@@ -14,19 +14,19 @@ public class GridderConfigurator implements ILayoutConfigurator {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    numberOfParallelExecutions = itemFactory.intParameter("Number of parallel executions", 1, 100, 1);
+    numberOfParallelExecutions = itemFactory.intParameter("Number of parallel executions", 1, 100);
     numberOfParallelExecutions.setValue(1);
 
-    respectMinimumAngle = itemFactory.booleanParameter("Respect Minimum Angle");
+    respectMinimumAngle = itemFactory.booleanParameter("Respect Minimum Angle", false);
     respectMinimumAngle.setValue(true);
 
-    scaleUpIfNecessary = itemFactory.booleanParameter("Scale up if necessary");
+    scaleUpIfNecessary = itemFactory.booleanParameter("Scale up if necessary", false);
     scaleUpIfNecessary.setValue(false);
 
-    iterationsUntilScaleUp = itemFactory.intParameter("Iterations until scale-up", 1, 50, 1);
+    iterationsUntilScaleUp = itemFactory.intParameter("Iterations until scale-up", 1, 50);
     iterationsUntilScaleUp.setValue(20);
 
-    scaleBy = itemFactory.doubleParameter("Scale by", 1.0, 5.0, 1.0, false);
+    scaleBy = itemFactory.doubleParameter("Scale by", 1.0, 5.0, false);
     scaleBy.setValue(2.0);
 
     statusMessage = itemFactory.statusMessage("Status message");

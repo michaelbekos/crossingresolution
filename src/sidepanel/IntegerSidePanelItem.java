@@ -7,22 +7,19 @@ import java.awt.*;
 class IntegerSidePanelItem extends SidePanelItem<Integer> {
   private int minValue;
   private int maxValue;
-  private final int threshold;
   private JTextField textField;
   private JSlider slider;
 
-  IntegerSidePanelItem(String name, int minValue, int maxValue, int threshold, JPanel sidePanel, GridBagState gridBagState) {
+  IntegerSidePanelItem(String name, int minValue, int maxValue, JPanel sidePanel, GridBagState gridBagState) {
     super(name, sidePanel, gridBagState);
     this.minValue = minValue;
     this.maxValue = maxValue;
-    this.threshold = threshold;
 
     init();
   }
 
   @Override
   void createComponents(JPanel sidePanel, GridBagState gridBagState) {
-    //maybe textfield vs slider for ints?
     //add slider
     GridBagConstraints cLabel = new GridBagConstraints();
     GridBagConstraints cSlider = new GridBagConstraints();
@@ -31,7 +28,7 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
 
     textField = new JTextField(null);
     textField.setColumns(5);
-    GridBagConstraints cout = new GridBagConstraints();
+    GridBagConstraints cOut = new GridBagConstraints();
 
     slider = new JSlider(minValue, maxValue);
     slider.addChangeListener(e -> {
@@ -50,15 +47,14 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
       }
     });
 
-    double max = maxValue;
-    SpinnerModel model = new SpinnerNumberModel(max * threshold, threshold / 10.0, 1000 * max * threshold, threshold);
+    SpinnerModel model = new SpinnerNumberModel(maxValue, minValue, 1000 * maxValue, maxValue / 10);
     JSpinner spinner = new JSpinner(model);
     JComponent editor = new JSpinner.NumberEditor(spinner, "#,##0");
     spinner.setEditor(editor);
     ((JSpinner.DefaultEditor) (spinner.getEditor())).getTextField().setColumns(5);
     spinner.addChangeListener(e -> {
       JSpinner source = (JSpinner) e.getSource();
-      int val = (int)(double)source.getValue();
+      int val = (int)source.getValue();
       slider.setMaximum(val);
       this.maxValue = val;
     });
@@ -67,9 +63,9 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
     cLabel.gridx = gridBagState.getX() + 1;
     cLabel.gridy = gridBagState.increaseY();
 
-    cout.gridx = gridBagState.getX();
-    cout.gridy = gridBagState.increaseY();
-    cout.fill = GridBagConstraints.HORIZONTAL;
+    cOut.gridx = gridBagState.getX();
+    cOut.gridy = gridBagState.increaseY();
+    cOut.fill = GridBagConstraints.HORIZONTAL;
     cSlider.gridx = gridBagState.getX() + 1;
     cSlider.gridy = gridBagState.getY();
     cSlider.fill = GridBagConstraints.HORIZONTAL;
@@ -77,7 +73,7 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
     cSliderMax.gridx = gridBagState.getX() + 2;
     cSliderMax.fill = GridBagConstraints.HORIZONTAL;
     sidePanel.add(new JLabel(getName()), cLabel);
-    sidePanel.add(textField, cout);
+    sidePanel.add(textField, cOut);
     sidePanel.add(slider, cSlider);
     sidePanel.add(spinner, cSliderMax);
   }

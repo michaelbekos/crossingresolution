@@ -27,18 +27,18 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold, boolean enableCheckbox) {
-    return new DoubleSidePanelItem(name, minValue, maxValue, threshold, sidePanel, gridBagState, enableCheckbox);
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, boolean enableCheckbox) {
+    return new DoubleSidePanelItem(name, minValue, maxValue, sidePanel, gridBagState, enableCheckbox);
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, int threshold) {
-    return new IntegerSidePanelItem(name, minValue, maxValue, threshold, sidePanel, gridBagState);
+  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue) {
+    return new IntegerSidePanelItem(name, minValue, maxValue, sidePanel, gridBagState);
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
-    return new BoolSidePanelItem(name, sidePanel, gridBagState);
+  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, boolean enableMasterCheckbox) {
+    return new BoolSidePanelItem(name, sidePanel, gridBagState, enableMasterCheckbox);
   }
 
   @Override

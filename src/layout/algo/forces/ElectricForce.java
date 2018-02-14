@@ -21,7 +21,7 @@ public class ElectricForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    electricalRepulsion = itemFactory.doubleParameter("Electric Repulsion Force", 0.0, 1000000, 0.1, true);
+    electricalRepulsion = itemFactory.doubleParameter("Electric Repulsion Force", 0.0, 100000, true);
     electricalRepulsion.setValue(50000.0);
   }
 
@@ -52,5 +52,9 @@ public class ElectricForce implements IForce {
     }
 
     return forces;
+  }
+
+  public void toggleCheckbox(boolean value) {
+    electricalRepulsion.toggleCheckbox(value);
   }
 }

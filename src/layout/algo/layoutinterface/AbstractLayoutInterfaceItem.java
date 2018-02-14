@@ -20,4 +20,6 @@ public abstract class AbstractLayoutInterfaceItem<T> {
   }
 
   public void addListener(Object listener){}
+
+  public void toggleCheckbox(boolean value){}
 }

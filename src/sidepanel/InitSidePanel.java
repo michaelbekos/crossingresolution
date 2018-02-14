@@ -3,6 +3,8 @@ package sidepanel;
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.graph.GraphItemTypes;
 import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.view.ICanvasObject;
+import com.yworks.yfiles.view.ICanvasObjectDescriptor;
 import layout.algo.*;
 import layout.algo.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
@@ -12,6 +14,7 @@ import layout.algo.gridding.GridderConfigurator;
 import layout.algo.gridding.IGridder;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import main.MainFrame;
+import view.visual.DrawScale;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class InitSidePanel {
-    public MainFrame mainFrame;
+    protected MainFrame mainFrame;
     private JTabbedPane tabbedSidePane;
 
     //Algorithm Tabs
@@ -30,6 +33,7 @@ public class InitSidePanel {
     public JCheckBox masterEnableMinimumAngle;
     private boolean stateEnableMinimumAngle;
     public JCheckBox masterAllowClickCreateNodeEdge;
+    public JCheckBox masterShowScale;
 
 
     public InitSidePanel(MainFrame mainFrame) {
@@ -61,6 +65,7 @@ public class InitSidePanel {
         //min angle and manual mode default on
         sidePanelTabs.get(0).setAllowClickCreateNodeEdge(true);
         sidePanelTabs.get(0).setEnableMinimumAngleDisplay(true);
+        sidePanelTabs.get(0).setShowScale(false);
 
         return tabbedSidePane;
     }
@@ -88,12 +93,17 @@ public class InitSidePanel {
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
         masterAllowClickCreateNodeEdge.setSelected(false);
 
+        masterShowScale = new JCheckBox("Show Scale");
+        masterShowScale.addItemListener(this::masterShowScaleEnabled);
+        masterShowScale.setSelected(false);
+
         sidePanelTabs = new ArrayList<>();
 
         tabbedSidePane.addChangeListener(changeEvent -> {
             int selectedTab = tabbedSidePane.getSelectedIndex();
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
+            sidePanelTabs.get(selectedTab).setShowScale(masterShowScale.isSelected());
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
                 if (i != selectedTab) {
                     sidePanelTabs.get(i).stopExecution();
@@ -195,6 +205,17 @@ public class InitSidePanel {
         mainFrame.graphEditorInputMode.setShowHandleItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports
         mainFrame.graphEditorInputMode.setDeletableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
         mainFrame.graphEditorInputMode.setSelectableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
+    }
+
+    private ICanvasObject scale = null;
+    private void masterShowScaleEnabled(@SuppressWarnings("unused") ItemEvent evt) {
+        removeDefaultListeners();
+        if (evt.getStateChange() == ItemEvent.SELECTED){
+            scale = (mainFrame.view.getBackgroundGroup().addChild(new DrawScale(mainFrame.view), ICanvasObjectDescriptor.VISUAL));
+        } else {
+            scale.remove();
+        }
+        addDefaultListeners();
     }
 
 }

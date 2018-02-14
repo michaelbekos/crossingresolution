@@ -8,6 +8,8 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +26,17 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
+    AbstractLayoutInterfaceItem<Boolean> enableDisableAll = itemFactory.booleanParameter("Select All", true);
+    enableDisableAll.setValue(true);
+    enableDisableAll.addListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent itemEvent) {
+        for (IForce force : forces) {
+          force.toggleCheckbox(itemEvent.getStateChange() == ItemEvent.SELECTED);
+        }
+      }
+    });
+
     for (IForce force : forces) {
       force.init(itemFactory);
     }

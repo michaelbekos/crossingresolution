@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SlopedForce implements IForce {
-  private AbstractLayoutInterfaceItem<Double> threshold;
+  private AbstractLayoutInterfaceItem<Double> weight;
   private AbstractLayoutInterfaceItem<Integer> numberOfSlopes;
   private AbstractLayoutInterfaceItem<Double> initialAngleDeg;
   private AbstractLayoutInterfaceItem<Boolean> showSlopesEnabled;
@@ -35,9 +35,9 @@ public class SlopedForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    threshold = itemFactory.doubleParameter("Slope Force", 0.0, 20, 0.1, true);
-    threshold.setValue(0.7);
-    numberOfSlopes = itemFactory.intParameter("Slope Force: Num. Slopes",0,360,1);
+    weight = itemFactory.doubleParameter("Slope Force", 0.0, 0.5, true);
+    weight.setValue(0.05);
+    numberOfSlopes = itemFactory.intParameter("Slope Force: Num. Slopes",0,360);
     numberOfSlopes.setValue(1);
     numberOfSlopes.addListener(new ChangeListener() {
       @Override
@@ -47,7 +47,7 @@ public class SlopedForce implements IForce {
         }
       }
     });
-    initialAngleDeg = itemFactory.doubleParameter("Slope Force: Initial Angle", 0, 3600, 0.1, false);
+    initialAngleDeg = itemFactory.doubleParameter("Slope Force: Initial Angle", 0, 360, false);
     initialAngleDeg.setValue(0.0);
     initialAngleDeg.addListener(new ChangeListener() {
       @Override
@@ -57,7 +57,7 @@ public class SlopedForce implements IForce {
         }
       }
     });
-    showSlopesEnabled = itemFactory.booleanParameter("Slope Force: Show Slopes");
+    showSlopesEnabled = itemFactory.booleanParameter("Slope Force: Show Slopes", false);
     showSlopesEnabled.setValue(false);
     showSlopesEnabled.addListener(new ItemListener() {
       @Override
@@ -75,7 +75,7 @@ public class SlopedForce implements IForce {
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
-    if (threshold.getValue() == 0) {
+    if (weight.getValue() == 0) {
       return forces;
     }
     List<Double> slopeAngles = new ArrayList<>();
@@ -140,23 +140,22 @@ public class SlopedForce implements IForce {
       }
 
       PointD sourceVector = new PointD(
-          u1_x - (sign * dy + u1_x),
-          u1_y + (sign * dx + u1_y)
+              (-sign * dy),
+              (sign * dx)
       );
       PointD targetVector = new PointD(
-          u2_x + (sign * dy + u2_x),
-          u2_y - (sign * dx + u2_y)
+              (sign * dy),
+              (-sign * dx)
       );
 
 
       sourceVector = sourceVector.getNormalized();
-      sourceVector = PointD.times(threshold.getValue() * Math.abs(fittedSlopeAngle - edgeSlopeAngle), sourceVector);
+      sourceVector = PointD.times(weight.getValue() * Math.abs(fittedSlopeAngle - edgeSlopeAngle), sourceVector);
       forces.setValue(sourceNode, PointD.add(forces.getValue(sourceNode), sourceVector));
 
       targetVector = targetVector.getNormalized();
-      targetVector = PointD.times(threshold.getValue() * Math.abs(fittedSlopeAngle - edgeSlopeAngle), targetVector);
+      targetVector = PointD.times(weight.getValue() * Math.abs(fittedSlopeAngle - edgeSlopeAngle), targetVector);
       forces.setValue(targetNode, PointD.add(forces.getValue(targetNode), targetVector));
-
     }
 
     return forces;
@@ -204,7 +203,11 @@ public class SlopedForce implements IForce {
         pos -= 2 * Math.PI;
       }
     }
-    view.updateUI();
     graph.remove(tmpNode);
+  }
+
+
+  public void toggleCheckbox(boolean value) {
+    weight.toggleCheckbox(value);
   }
 }

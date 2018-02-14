@@ -21,7 +21,7 @@ public class SpringForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    springStiffness = itemFactory.doubleParameter("Spring Stiffness Force", 0.0, 1500, 0.1, true);
+    springStiffness = itemFactory.doubleParameter("Spring Stiffness Force", 0.0, 150, true);
     springStiffness.setValue(150.0);
   }
 
@@ -44,5 +44,10 @@ public class SpringForce implements IForce {
     }
 
     return forces;
+  }
+
+
+  public void toggleCheckbox(boolean value) {
+    springStiffness.toggleCheckbox(value);
   }
 }

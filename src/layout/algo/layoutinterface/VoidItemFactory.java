@@ -8,17 +8,17 @@ import com.yworks.yfiles.view.IGraphSelection;
 public class VoidItemFactory implements ILayoutInterfaceItemFactory {
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, double threshold, boolean enableCheckbox) {
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, boolean enableCheckbox) {
     return new VoidItem<>(name);
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, int threshold) {
+  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue) {
     return new VoidItem<>(name);
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
+  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, boolean enableMasterCheckbox) {
     return new VoidItem<>(name);
   }
 
