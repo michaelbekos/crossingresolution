@@ -6,14 +6,14 @@ import java.awt.*;
 
 class IntegerSidePanelItem extends SidePanelItem<Integer> {
   private int minValue;
-  private int maxValue;
+  private int initialMaxValue;
   private JTextField textField;
   private JSlider slider;
 
-  IntegerSidePanelItem(String name, int minValue, int maxValue, JPanel sidePanel, GridBagState gridBagState) {
+  IntegerSidePanelItem(String name, int minValue, int initialMaxValue, JPanel sidePanel, GridBagState gridBagState) {
     super(name, sidePanel, gridBagState);
     this.minValue = minValue;
-    this.maxValue = maxValue;
+    this.initialMaxValue = initialMaxValue;
 
     init();
   }
@@ -30,7 +30,7 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
     textField.setColumns(5);
     GridBagConstraints cOut = new GridBagConstraints();
 
-    slider = new JSlider(minValue, maxValue);
+    slider = new JSlider(minValue, initialMaxValue);
     slider.addChangeListener(e -> {
       JSlider source = (JSlider) e.getSource();
       int val = source.getValue();
@@ -47,7 +47,7 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
       }
     });
 
-    SpinnerModel model = new SpinnerNumberModel(maxValue, minValue, 1000 * maxValue, maxValue / 10);
+    SpinnerModel model = new SpinnerNumberModel(initialMaxValue, minValue, Integer.MAX_VALUE, initialMaxValue / 10);
     JSpinner spinner = new JSpinner(model);
     JComponent editor = new JSpinner.NumberEditor(spinner, "#,##0");
     spinner.setEditor(editor);
@@ -56,7 +56,7 @@ class IntegerSidePanelItem extends SidePanelItem<Integer> {
       JSpinner source = (JSpinner) e.getSource();
       int val = (int)source.getValue();
       slider.setMaximum(val);
-      this.maxValue = val;
+      this.initialMaxValue = val;
     });
 
     slider.setSize(400, 30);
