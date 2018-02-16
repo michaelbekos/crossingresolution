@@ -16,7 +16,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     minStepSize = itemFactory.doubleParameter("Minimum step size", 0.1, 500, false);
     minStepSize.setValue(10.);
 
-    maxStepSize = itemFactory.doubleParameter("Maximum step size", 0.1, 50000, false);
+    maxStepSize = itemFactory.doubleParameter("Maximum step size", 0.1, 5_000_000, false);
     maxStepSize.setValue(150.);
 
     iterationsForLocalMaximum = itemFactory.intParameter("Failed iterations necessary to detect a local maximum", 1, 500);
