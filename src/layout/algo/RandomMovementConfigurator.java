@@ -7,7 +7,7 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Double> minStepSize;
   AbstractLayoutInterfaceItem<Double> maxStepSize;
-  AbstractLayoutInterfaceItem<Boolean> doubleStepSizeOnLocalMaximum;
+  AbstractLayoutInterfaceItem<Boolean> jumpOnLocalMaximum;
   AbstractLayoutInterfaceItem<Boolean> useGaussianDistribution;
 
   @Override
@@ -15,12 +15,12 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     minStepSize = itemFactory.doubleParameter("Minimum step size", 0.1, 500, false);
     maxStepSize = itemFactory.doubleParameter("Maximum step size", 0.1, 50000, false);
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes", false);
-    doubleStepSizeOnLocalMaximum = itemFactory.booleanParameter("Double step size on local Maximum", false);
+    jumpOnLocalMaximum = itemFactory.booleanParameter("Allow decreasing minimum angle at local maximum", false);
 
     useGaussianDistribution.setValue(true);
     minStepSize.setValue(10.);
     maxStepSize.setValue(150.);
-    doubleStepSizeOnLocalMaximum.setValue(true);
+    jumpOnLocalMaximum.setValue(false);
   }
 
 }
