@@ -34,6 +34,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     useGaussianDistribution.setValue(true);
 
     toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes", false);
+    toggleNodeDistributions.setValue(false);
   }
 
 }
