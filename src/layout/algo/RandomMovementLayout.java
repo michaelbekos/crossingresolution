@@ -31,7 +31,7 @@ public class RandomMovementLayout implements ILayout {
   private ArrayList<Sample> sampleDirections;
   private Random random;
   private RectD boundingBox;
-  private int stepsSinceLastUpdate;
+  private int successfulSteps, failedSteps;
   private Set<INode> fixNodes;
 
   public RandomMovementLayout(IGraph graph, RandomMovementConfigurator configurator) {
@@ -111,15 +111,27 @@ public class RandomMovementLayout implements ILayout {
         .toArray(Sample[]::new);
 
     if (goodSamples.length > 0) {
-      stepsSinceLastUpdate = 0;
+      failedSteps = 0;
+      successfulSteps++;
       Sample sample = goodSamples[random.nextInt(goodSamples.length)];
       positions.setValue(node, sample.position);
+
+      if (configurator.toggleNodeDistributions.getValue()
+          && successfulSteps >= configurator.iterationsForLocalMaximum.getValue()) {
+        configurator.useGaussianDistribution.setValue(true);
+      }
     } else {
-      stepsSinceLastUpdate++;
+      failedSteps++;
       positions.setValue(node, originalPosition);
 
-      if (stepsSinceLastUpdate >= configurator.iterationsForLocalMaximum.getValue()) {
-        stepsSinceLastUpdate = 0;
+      if (failedSteps >= configurator.iterationsForLocalMaximum.getValue()) {
+        failedSteps = 0;
+        successfulSteps = 0;
+
+        if (configurator.toggleNodeDistributions.getValue()) {
+          configurator.useGaussianDistribution.setValue(false);
+        }
+
         return resolveLocalMaximum();
       }
     }

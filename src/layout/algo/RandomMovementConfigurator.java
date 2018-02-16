@@ -11,6 +11,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Boolean> useGaussianDistribution;
   AbstractLayoutInterfaceItem<Integer> iterationsForLocalMaximum;
   AbstractLayoutInterfaceItem<Integer> numSamplesForJumping;
+  AbstractLayoutInterfaceItem<Boolean> toggleNodeDistributions;
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
@@ -31,6 +32,8 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes", false);
     useGaussianDistribution.setValue(true);
+
+    toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes", false);
   }
 
 }
