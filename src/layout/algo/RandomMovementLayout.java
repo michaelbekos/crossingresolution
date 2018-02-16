@@ -118,7 +118,7 @@ public class RandomMovementLayout implements ILayout {
       stepsSinceLastUpdate++;
       positions.setValue(node, originalPosition);
 
-      if (stepsSinceLastUpdate >= 50) {
+      if (stepsSinceLastUpdate >= configurator.iterationsForLocalMaximum.getValue()) {
         stepsSinceLastUpdate = 0;
         return resolveLocalMaximum();
       }
