@@ -7,7 +7,7 @@ import java.awt.event.ItemEvent;
 
 public class DoubleSidePanelItem extends SidePanelItem<Double> {
   private double minValue;
-  private double maxValue;
+  private double initialMaxValue;
   private final boolean enableCheckbox;
   private JCheckBox checkBox;
 
@@ -15,10 +15,10 @@ public class DoubleSidePanelItem extends SidePanelItem<Double> {
   private JSlider slider;
   private double currentValue;
 
-  DoubleSidePanelItem(String name, double minValue, double maxValue, JPanel sidePanel, GridBagState gridBagState, boolean enableCheckbox) {
+  DoubleSidePanelItem(String name, double minValue, double initialMaxValue, JPanel sidePanel, GridBagState gridBagState, boolean enableCheckbox) {
     super(name, sidePanel, gridBagState);
     this.minValue = minValue;
-    this.maxValue = maxValue;
+    this.initialMaxValue = initialMaxValue;
     this.enableCheckbox = enableCheckbox;
     this.checkBox = new JCheckBox();
     this.checkBox.setSelected(true);
@@ -38,7 +38,7 @@ public class DoubleSidePanelItem extends SidePanelItem<Double> {
     textField.setColumns(5);
     GridBagConstraints cout = new GridBagConstraints();
 
-    slider = new JSlider((int) minValue, (int) (maxValue * 1000));
+    slider = new JSlider((int) minValue, (int) (initialMaxValue * 1000));
     slider.addChangeListener(e -> {
       if (checkBox.isSelected()) {
         JSlider source = (JSlider) e.getSource();
@@ -61,22 +61,22 @@ public class DoubleSidePanelItem extends SidePanelItem<Double> {
       }
     });
 
-    SpinnerModel model = new SpinnerNumberModel(maxValue, minValue, 1000 * maxValue, maxValue / 10);
+    SpinnerModel model = new SpinnerNumberModel(initialMaxValue, minValue, Double.MAX_VALUE, initialMaxValue / 10);
     JSpinner spinner = new JSpinner(model);
     JComponent editor = new JSpinner.NumberEditor(spinner, "#,##0.###");
     spinner.setEditor(editor);
     ((JSpinner.DefaultEditor) (spinner.getEditor())).getTextField().setColumns(5);
-    spinner.setValue(this.maxValue);
+    spinner.setValue(this.initialMaxValue);
     spinner.addChangeListener(e -> {
       if (checkBox.isSelected()) {
         JSpinner source = (JSpinner) e.getSource();
         Double val = (Double) source.getValue();
         int maxValSlider = (int) (val * 1000);
         slider.setMaximum(maxValSlider);
-        this.maxValue = val;
+        this.initialMaxValue = val;
       } else {
         setValue(0.0);
-        spinner.setValue(this.maxValue);
+        spinner.setValue(this.initialMaxValue);
       }
     });
 
@@ -127,7 +127,7 @@ public class DoubleSidePanelItem extends SidePanelItem<Double> {
 
   @Override
   public void setValue(Double value) {
-    value = Math.min(Math.max(minValue, value), maxValue);
+    value = Math.min(Math.max(minValue, value), initialMaxValue);
     super.setValue(value);
     textField.setText(Double.toString(value));
     slider.setValue((int) (1000 * value));
