@@ -168,7 +168,7 @@ public class RandomMovementLayout implements ILayout {
           double y = random.nextDouble() * bounds.getHeight() + bounds.getY();
           return new PointD(x, y);
         })
-        .limit(NUM_SAMPLES_PER_TEST)
+        .limit(configurator.numSamplesForJumping.getValue())
         .max(Comparator.comparingDouble(position -> {
           positions.setValue(node, position);
           return MinimumAngle.getMinimumAngleForNode(positions, node, graph);

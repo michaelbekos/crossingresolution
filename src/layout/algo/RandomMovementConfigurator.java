@@ -10,6 +10,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Boolean> jumpOnLocalMaximum;
   AbstractLayoutInterfaceItem<Boolean> useGaussianDistribution;
   AbstractLayoutInterfaceItem<Integer> iterationsForLocalMaximum;
+  AbstractLayoutInterfaceItem<Integer> numSamplesForJumping;
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
@@ -21,6 +22,9 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
     iterationsForLocalMaximum = itemFactory.intParameter("Failed iterations necessary to detect a local maximum", 1, 500);
     iterationsForLocalMaximum.setValue(50);
+
+    numSamplesForJumping = itemFactory.intParameter("Number of test samples for local maximum resolving", 1, 500);
+    numSamplesForJumping.setValue(50);
 
     jumpOnLocalMaximum = itemFactory.booleanParameter("Allow decreasing minimum angle at local maximum", false);
     jumpOnLocalMaximum.setValue(false);
