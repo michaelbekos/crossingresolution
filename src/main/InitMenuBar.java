@@ -18,6 +18,9 @@ import com.yworks.yfiles.view.input.GridSnapTypes;
 import io.ContestIOHandler;
 import layout.algo.NodeSwapper;
 import layout.algo.utils.PositionMap;
+import graphoperations.Chains;
+import graphoperations.GraphOperations;
+import graphoperations.VertexStack;
 import util.*;
 
 import javax.swing.*;

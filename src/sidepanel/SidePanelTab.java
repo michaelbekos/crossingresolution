@@ -23,9 +23,9 @@ import layout.algo.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
-import util.Chains;
-import util.GraphOperations;
-import util.VertexStack;
+import graphoperations.Chains;
+import graphoperations.GraphOperations;
+import graphoperations.VertexStack;
 
 import javax.swing.*;
 import java.awt.*;

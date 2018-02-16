@@ -3,7 +3,7 @@ package layout.algo.gridding;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import util.GraphOperations;
+import graphoperations.GraphOperations;
 
 import java.util.Set;
 

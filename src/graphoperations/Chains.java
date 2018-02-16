@@ -1,10 +1,5 @@
-package util;
+package graphoperations;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
 
@@ -13,13 +8,10 @@ import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import com.yworks.yfiles.utils.IEnumerable;
 import com.yworks.yfiles.utils.IListEnumerable;
 
 import algorithms.graphs.MinimumAngle;
-import algorithms.graphs.yFilesSweepLine;
 import layout.algo.utils.PositionMap;
-import main.InitMenuBar;
 import util.graph2d.Intersection;
 
 

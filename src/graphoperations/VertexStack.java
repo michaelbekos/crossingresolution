@@ -1,4 +1,4 @@
-package util;
+package graphoperations;
 
 import com.yworks.yfiles.graph.*;
 
