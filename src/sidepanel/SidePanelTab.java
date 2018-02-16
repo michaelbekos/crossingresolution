@@ -17,6 +17,7 @@ import com.yworks.yfiles.layout.partial.SubgraphPlacement;
 import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
+import graphoperations.Scaling;
 import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.IGraphLayoutExecutor;
 import layout.algo.ILayout;
@@ -406,7 +407,7 @@ public class SidePanelTab {
                 maxY=u.getLayout().getCenter().getY();
             }
         }
-        GraphOperations.scaleUpProcess(nodePositions, Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)));
+        Scaling.scaleBy(Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)), nodePositions);
         initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
         initSidePanel.addDefaultListeners();

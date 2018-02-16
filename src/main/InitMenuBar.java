@@ -15,6 +15,7 @@ import com.yworks.yfiles.view.Pen;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import com.yworks.yfiles.view.input.GraphSnapContext;
 import com.yworks.yfiles.view.input.GridSnapTypes;
+import graphoperations.Scaling;
 import io.ContestIOHandler;
 import layout.algo.NodeSwapper;
 import layout.algo.utils.PositionMap;
@@ -457,7 +458,7 @@ public class InitMenuBar {
     private void scaleUpGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
-        GraphOperations.scaleUpProcess(nodePositions, 2.0);
+        Scaling.scaleBy(2.0, nodePositions);
         this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
         mainFrame.initSidePanel.addDefaultListeners();
@@ -466,7 +467,7 @@ public class InitMenuBar {
     private void scaleDownGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
-        GraphOperations.scaleUpProcess(nodePositions, 0.5);
+        Scaling.scaleBy(0.5, nodePositions);
         this.graph =  PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
         mainFrame.initSidePanel.addDefaultListeners();
@@ -559,7 +560,7 @@ public class InitMenuBar {
             change=false;
             for(INode u : graph.getNodes()){
                 if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE){
-                    GraphOperations.scaleUpProcess(nodePositions, 0.9);
+                    Scaling.scaleBy(0.9, nodePositions);
                     this.graph =  PositionMap.applyToGraph(graph, nodePositions);
                     this.view.fitGraphBounds();
                     change=true;

@@ -270,32 +270,4 @@ public class GraphOperations {
     }
 
 
-
-
-	  /**
-     * Multiply the Coord. from each Node with the factor scaleValue
-     */
-    public static void scaleUpProcess(Mapper<INode, PointD> nodePose, double scaleValue){
-        double minX = Double.POSITIVE_INFINITY, minY = Double.POSITIVE_INFINITY;
-
-        for (Map.Entry<INode, PointD> entry : nodePose.getEntries()) {
-            INode node = entry.getKey();
-            if (node.getLayout().getCenter().getX() < minX) {
-                minX = node.getLayout().getCenter().getX();
-            }
-            if (node.getLayout().getCenter().getY() < minY) {
-                minY = node.getLayout().getCenter().getY();
-            }
-        }
-
-        for (Map.Entry<INode, PointD> entry : nodePose.getEntries()) {
-            INode node = entry.getKey();
-            PointD center = node.getLayout().getCenter();
-            nodePose.setValue(node, new PointD(
-                (center.getX() - minX) * scaleValue,
-                (center.getY() - minY) * scaleValue)
-            );
-        }
-    }
-
 }
