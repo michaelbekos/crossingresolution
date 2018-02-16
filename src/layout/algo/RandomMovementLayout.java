@@ -142,7 +142,9 @@ public class RandomMovementLayout implements ILayout {
 
   private boolean resolveLocalMaximum() {
     if (!configurator.jumpOnLocalMaximum.getValue()) {
-      configurator.maxStepSize.setValue(configurator.maxStepSize.getValue() * 2);
+      double boxDiagonal =
+          Math.sqrt(boundingBox.getWidth() * boundingBox.getWidth() + boundingBox.getHeight() * boundingBox.getHeight());
+      configurator.maxStepSize.setValue(Math.min(configurator.maxStepSize.getValue() * 2, boxDiagonal));
       return false;
     }
 
