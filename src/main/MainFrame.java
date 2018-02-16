@@ -106,8 +106,8 @@ public class MainFrame extends JFrame {
         this.view = new GraphComponent();
         this.view.setSize(330, 330);
         this.view.requestFocus();
-        view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        view.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        this.view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        this.view.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         c.fill = GridBagConstraints.BOTH;
         c.gridy = 1;
         c.weightx = 0.8;

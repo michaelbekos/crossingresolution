@@ -48,7 +48,6 @@ public class SidePanelTab {
     private JButton stopButton;
     private JCheckBox enableMinimumAngleDisplay;
     private JCheckBox allowClickCreateNodeEdge;
-    private JCheckBox enableShowScale;
     private JTextArea outputTextArea;
 
     public SidePanelTab(InitSidePanel initSidePanel) {
@@ -199,16 +198,6 @@ public class SidePanelTab {
         defaultPanel.add(showGraphInfo, cDefaultPanel);
         showGraphInfo.addActionListener(this::showGraphInfoActionPerformed);
 
-        enableShowScale = new JCheckBox("Show Scale");
-        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-        cDefaultPanel.gridx = 1;
-        cDefaultPanel.gridy = cDefaultPanelY;
-        cDefaultPanel.weightx = 0.5;
-        cDefaultPanel.weighty = 0;
-        defaultPanel.add(enableShowScale, cDefaultPanel);
-        enableShowScale.addItemListener(this::showScaleEnabled);
-        enableShowScale.setSelected(false);
-
         enableMinimumAngleDisplay = new JCheckBox("Show Minimum Angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
@@ -324,14 +313,6 @@ public class SidePanelTab {
         this.allowClickCreateNodeEdge.setSelected(value);
     }
 
-    public boolean getShowScale() {
-        return this.enableShowScale.isSelected();
-    }
-
-    public void setShowScale(boolean value) {
-        this.enableShowScale.setSelected(value);
-    }
-
 
 
     /*********************************************************************
@@ -411,10 +392,6 @@ public class SidePanelTab {
 
     private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
         initSidePanel.masterAllowClickCreateNodeEdge.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
-    }
-
-    private void showScaleEnabled(@SuppressWarnings("unused") ItemEvent evt) {
-        initSidePanel.masterShowScale.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
     private void scalingToBox(){
@@ -499,7 +476,9 @@ public class SidePanelTab {
             }
         }
         graphInfo.append("\nTotal Vertices: " + initSidePanel.mainFrame.graph.getNodes().size() + "\nTotal Edges:    " + initSidePanel.mainFrame.graph.getEdges().size() + "\n");
-        graphInfo.append("\nCurrent Graph Size: \nX: " + (max_x - min_x) + "\nY: " + (max_y - min_y) + "\n");
+        double width = (max_x - min_x) < 1 ? 0 : (max_x - min_x);   //smaller than 1 is not a graph
+        double height = (max_y - min_y) < 1 ? 0 : (max_y - min_y);
+        graphInfo.append("\nCurrent Graph Size: \nX: " + width + "\nY: " + height + "\n");
         outputTextArea.setText(graphInfo.toString());
     }
 

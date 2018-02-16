@@ -33,7 +33,6 @@ public class InitSidePanel {
     public JCheckBox masterEnableMinimumAngle;
     private boolean stateEnableMinimumAngle;
     public JCheckBox masterAllowClickCreateNodeEdge;
-    public JCheckBox masterShowScale;
 
 
     public InitSidePanel(MainFrame mainFrame) {
@@ -65,7 +64,6 @@ public class InitSidePanel {
         //min angle and manual mode default on
         sidePanelTabs.get(0).setAllowClickCreateNodeEdge(true);
         sidePanelTabs.get(0).setEnableMinimumAngleDisplay(true);
-        sidePanelTabs.get(0).setShowScale(false);
 
         return tabbedSidePane;
     }
@@ -85,6 +83,9 @@ public class InitSidePanel {
     }
 
     private void initDefault() {
+        //show scale
+        mainFrame.view.getBackgroundGroup().addChild(new DrawScale(mainFrame.view), ICanvasObjectDescriptor.VISUAL);
+
         masterEnableMinimumAngle = new JCheckBox("Show minimum angle");
         masterEnableMinimumAngle.addItemListener(this::masterMinAngleDisplayEnabled);
         masterEnableMinimumAngle.setSelected(false);
@@ -93,17 +94,12 @@ public class InitSidePanel {
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
         masterAllowClickCreateNodeEdge.setSelected(false);
 
-        masterShowScale = new JCheckBox("Show Scale");
-        masterShowScale.addItemListener(this::masterShowScaleEnabled);
-        masterShowScale.setSelected(false);
-
         sidePanelTabs = new ArrayList<>();
 
         tabbedSidePane.addChangeListener(changeEvent -> {
             int selectedTab = tabbedSidePane.getSelectedIndex();
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
-            sidePanelTabs.get(selectedTab).setShowScale(masterShowScale.isSelected());
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
                 if (i != selectedTab) {
                     sidePanelTabs.get(i).stopExecution();
@@ -155,7 +151,8 @@ public class InitSidePanel {
     private void addAlgorithm(String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
         SidePanelTab sidePanel = new SidePanelTab(this, algorithmName, configurator, layout);
         sidePanelTabs.add(sidePanel);
-        tabbedSidePane.addTab(sidePanel.algorithmName, sidePanel.sidePanelTab);
+//        tabbedSidePane.addTab(sidePanel.algorithmName, sidePanel.sidePanelTab);
+        tabbedSidePane.addTab(sidePanel.algorithmName, new JScrollPane(sidePanel.sidePanelTab));
     }
 
     /**
