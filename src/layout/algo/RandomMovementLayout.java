@@ -151,13 +151,15 @@ public class RandomMovementLayout implements ILayout {
 
   private void jump(INode node, PointD originalPosition) {
     // select some bounds around the node and limit them by the global bounding box
-    double minX = Math.max(originalPosition.getX() - 50, boundingBox.getX());
-    double minY = Math.max(originalPosition.getY() - 50, boundingBox.getY());
+    double windowSize = configurator.maxStepSize.getValue();
+    double halfWindowSize = windowSize / 2;
+    double minX = Math.max(originalPosition.getX() - halfWindowSize, boundingBox.getX());
+    double minY = Math.max(originalPosition.getY() - halfWindowSize, boundingBox.getY());
     RectD bounds = new RectD(
         minX,
         minY,
-        Math.min(minX + 100, boundingBox.getX() + boundingBox.getWidth()) - minX,
-        Math.min(minY + 100, boundingBox.getY() + boundingBox.getHeight()) - minY
+        Math.min(minX + windowSize, boundingBox.getX() + boundingBox.getWidth()) - minX,
+        Math.min(minY + windowSize, boundingBox.getY() + boundingBox.getHeight()) - minY
     );
 
     Stream
