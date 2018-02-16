@@ -101,6 +101,10 @@ public class RandomMovementLayout implements ILayout {
           double minStepSize = configurator.minStepSize.getValue();
           double stepSize = random.nextDouble() * (maxStepSize - minStepSize) + minStepSize;
           sample.position = LayoutUtils.stepInDirection(originalPosition, sample.direction, stepSize);
+
+          if (configurator.onlyGridPositions.getValue()) {
+            sample.position = LayoutUtils.round(sample.position);
+          }
         })
         .filter(sample -> boundingBox.contains(sample.position))
         .peek(sample -> {
@@ -180,7 +184,13 @@ public class RandomMovementLayout implements ILayout {
         .generate(() -> {
           double x = random.nextDouble() * bounds.getWidth() + bounds.getX();
           double y = random.nextDouble() * bounds.getHeight() + bounds.getY();
-          return new PointD(x, y);
+
+          PointD point = new PointD(x, y);
+          if (configurator.onlyGridPositions.getValue()) {
+            return LayoutUtils.round(point);
+          } else {
+            return point;
+          }
         })
         .limit(configurator.numSamplesForJumping.getValue())
         .max(Comparator.comparingDouble(position -> {
