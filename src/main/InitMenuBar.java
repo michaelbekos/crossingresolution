@@ -209,7 +209,7 @@ public class InitMenuBar {
         viewMenu.add(zoomOutItem);
 
         JMenuItem fitContentItem = new JMenuItem();
-        fitContentItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, InputEvent.CTRL_MASK));
+        fitContentItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK));
         fitContentItem.setIcon(new ImageIcon(getClass().getResource("/resources/zoom-original2-16.png")));
         fitContentItem.setText("Fit Content");
         fitContentItem.addActionListener(this::fitContentItemActionPerformed);
