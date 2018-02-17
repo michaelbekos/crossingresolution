@@ -121,7 +121,6 @@ public class InitSidePanel {
     }
 
     private void addForceAlgorithm(IGraph graph) {
-        mainFrame.bestSolution.getBestMinimumAngle();
         CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
         ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
                 .addForce(new NodeNeighbourForce(graph))

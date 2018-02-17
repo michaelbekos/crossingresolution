@@ -16,7 +16,7 @@ import com.yworks.yfiles.view.input.*;
 import io.ContestIOHandler;
 import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.ILayout;
-import layout.algo.utils.BestSolution;
+import layout.algo.utils.BestSolutionMonitor;
 import sidepanel.InitSidePanel;
 
 import javax.swing.*;
@@ -53,7 +53,7 @@ public class MainFrame extends JFrame {
     public JProgressBar progressBar;
 
     public MinimumAngleMonitor minimumAngleMonitor;
-    public BestSolution bestSolution;
+    public BestSolutionMonitor bestSolution;
 
     @Nullable
     public JTabbedPane sidePanel;
@@ -203,7 +203,7 @@ public class MainFrame extends JFrame {
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
 
-        bestSolution = new BestSolution();
+        bestSolution = new BestSolutionMonitor();
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel, bestSolution);
 
         this.initSidePanel = new InitSidePanel(this);

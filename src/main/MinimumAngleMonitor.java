@@ -7,7 +7,7 @@ import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
-import layout.algo.utils.BestSolution;
+import layout.algo.utils.BestSolutionMonitor;
 import layout.algo.utils.PositionMap;
 import util.DisplayMessagesGui;
 import util.graph2d.Intersection;
@@ -21,7 +21,7 @@ public class MinimumAngleMonitor {
   private GraphComponent view;
   private double oldAngle;
 
-  private BestSolution bestSolution;
+  private BestSolutionMonitor bestSolution;
 
   private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
   private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o, EdgeEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
@@ -29,7 +29,7 @@ public class MinimumAngleMonitor {
   private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
   private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> showMinimumAngle(graph, view, infoLabel, false);
 
-  MinimumAngleMonitor(GraphComponent view, IGraph graph, JLabel infoLabel, BestSolution bestSolution) {
+  MinimumAngleMonitor(GraphComponent view, IGraph graph, JLabel infoLabel, BestSolutionMonitor bestSolution) {
     this.graph = graph;
     this.infoLabel = infoLabel;
     this.view = view;
@@ -38,7 +38,7 @@ public class MinimumAngleMonitor {
   }
 
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
-    if (bestSolution.getBestMinimumAngleNodes(graph.getNodes().size()) == null) {
+    if (!bestSolution.getBestMinimumAngleForNodes(graph.getNodes().size()).isPresent()) {
       oldAngle = 0;
     }
     Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
@@ -55,7 +55,7 @@ public class MinimumAngleMonitor {
     }
 
     Optional<String> labText = minAngleCr.map(cr -> {
-      String text = DisplayMessagesGui.createMinimumAngleMsg(cr, graph.getNodes().size());
+      String text = DisplayMessagesGui.createMinimumAngleMsg(cr, graph.getNodes().size(), bestSolution);
 
       if (viewCenter) {
         view.setCenter(cr.intersectionPoint);

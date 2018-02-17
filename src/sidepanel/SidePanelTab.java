@@ -32,6 +32,7 @@ import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class SidePanelTab {
     public JPanel sidePanelTab;
@@ -319,21 +320,16 @@ public class SidePanelTab {
 
     private void showBestSolution(@SuppressWarnings("unused") ActionEvent evt) {
         int nodes= initSidePanel.mainFrame.graph.getNodes().size();
-        if (initSidePanel.mainFrame.bestSolution.getBestSolutionMapping(nodes) == null) {
+        Optional<Mapper<INode, PointD>> bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionPositions(nodes);
+        if (!bestPositions.isPresent()) {
             return;
         }
 
-        Mapper<INode, PointD> nodePositions = initSidePanel.mainFrame.bestSolution.getBestSolutionMapping(nodes);
-        Double minCrossingAngle = initSidePanel.mainFrame.bestSolution.getBestMinimumAngleNodes(nodes);
+        Mapper<INode, PointD> nodePositions = bestPositions.get();
         initSidePanel.removeDefaultListeners();
         PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.addDefaultListeners();
-        String msg = (minCrossingAngle > 0) ? "Minimum crossing angle: " + minCrossingAngle.toString() : "No crossings!";
-        msg += "\n";
         initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
-        //maybe add what algorithm (+ settings) was used to achieve best solution
-        //No popup
-//        JOptionPane.showMessageDialog(null, msg);
     }
 
     private void startPauseActionPerformed(ActionEvent evt) {
