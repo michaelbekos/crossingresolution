@@ -17,16 +17,13 @@ import com.yworks.yfiles.layout.partial.SubgraphPlacement;
 import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
-import graphoperations.Scaling;
+import graphoperations.*;
 import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.IGraphLayoutExecutor;
 import layout.algo.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
-import graphoperations.Chains;
-import graphoperations.GraphOperations;
-import graphoperations.VertexStack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -414,24 +411,22 @@ public class SidePanelTab {
     }
 
     //!!Separate vertex stack for chains (will not mesh with regular remove/reinsert vertexes e.g. chains removed here *have* to be reinserted using the button)!!
-    private VertexStack removedChains;
+    private RemovedChains removedChains;
     private void removeChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         initSidePanel.removeDefaultListeners();
         //lean chain-only version from InitMenuBar::removeVerticesItemActionPerformed
         if (initSidePanel.mainFrame.graph.getNodes().size() > 0){
-            int chainNum = GraphOperations.getChains(initSidePanel.mainFrame.graph).size();
-            this.removedChains = GraphOperations.removeVertices(initSidePanel.mainFrame.graph, true, false, chainNum, null, this.removedChains);
+            removedChains = Chains.analyze(initSidePanel.mainFrame.graph).remove();
         }
         initSidePanel.addDefaultListeners();
     }
 
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         initSidePanel.removeDefaultListeners();
-        if (this.removedChains != null && !this.removedChains.isEmpty()) {
+        if (this.removedChains != null && this.removedChains.number() > 0) {
 
             //TODO reinsert chains (currently regular reinsert 1 chain)
-            this.removedChains = Chains.reinsertChain(initSidePanel.mainFrame.graph, this.removedChains);
-            //
+            removedChains.reinsertOne();
 
             double scaleValue = 1 / initSidePanel.mainFrame.view.getZoom();  //scale reinserted nodes
             for (INode u : initSidePanel.mainFrame.graph.getNodes()) {

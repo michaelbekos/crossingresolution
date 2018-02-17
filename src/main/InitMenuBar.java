@@ -15,13 +15,10 @@ import com.yworks.yfiles.view.Pen;
 import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import com.yworks.yfiles.view.input.GraphSnapContext;
 import com.yworks.yfiles.view.input.GridSnapTypes;
-import graphoperations.Scaling;
+import graphoperations.*;
 import io.ContestIOHandler;
 import layout.algo.NodeSwapper;
 import layout.algo.utils.PositionMap;
-import graphoperations.Chains;
-import graphoperations.GraphOperations;
-import graphoperations.VertexStack;
 import util.*;
 
 import javax.swing.*;
@@ -59,6 +56,7 @@ public class InitMenuBar {
 
     /* Object that tracks removed/replaced Vertices */
     private VertexStack removedVertices;
+    private RemovedChains removedChains;
 
     private boolean isGridVisible = true;
     private GraphSnapContext graphSnapContext;
@@ -476,7 +474,7 @@ public class InitMenuBar {
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         if (this.view.getSelection().getSelectedNodes().size() > 0) {
-            this.removedVertices = GraphOperations.removeVertices(this.graph, false,true, this.view.getSelection().getSelectedNodes().size(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
+            this.removedVertices = GraphOperations.removeVertices(this.graph, true, this.view.getSelection().getSelectedNodes().size(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
         } else if (this.graph.getNodes().size() > 0){
             JTextField vertexCount = new JTextField();
             vertexCount.setText(Integer.toString(1));
@@ -519,7 +517,9 @@ public class InitMenuBar {
                 }
             });
 
-            int chainNum = GraphOperations.getChains(graph).size();
+
+            Chains chains = Chains.analyze(graph);
+            int chainNum = chains.number();
             useChains.addItemListener(itemEvent -> {
                 if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
                     label.setText(chainNumStr);
@@ -545,7 +545,11 @@ public class InitMenuBar {
                     numVertices = 0;
                 }
                 finally {
-                    this.removedVertices = GraphOperations.removeVertices(this.graph, useChains.isSelected(), useHighest.isSelected(), numVertices, null, this.removedVertices);
+                    if (useChains.isSelected()) {
+                        removedChains = chains.remove();
+                    } else {
+                        this.removedVertices = GraphOperations.removeVertices(this.graph, useHighest.isSelected(), numVertices, null, this.removedVertices);
+                    }
                 }
             }
         }
