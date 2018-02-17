@@ -8,7 +8,10 @@ import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.graph.styles.INodeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
+import com.yworks.yfiles.layout.CopiedLayoutGraph;
+import com.yworks.yfiles.layout.LayoutGraphAdapter;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.GridVisualCreator;
 import com.yworks.yfiles.view.Pen;
@@ -118,18 +121,6 @@ public class InitMenuBar {
         swapperItem.setText("Nodes Swapper");
         swapperItem.addActionListener(this::swapperItemActionPerformed);
         layoutMenu.add(swapperItem);
-
-        JMenuItem gridPositioningItem = new JMenuItem();
-        gridPositioningItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        gridPositioningItem.setText("Respective Crossing Angle Gridding");
-        gridPositioningItem.addActionListener(this::gridCrossingItemActionPerformed);
-        layoutMenu.add(gridPositioningItem);
-
-        JMenuItem graphGridItem = new JMenuItem();
-        graphGridItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        graphGridItem.setText("Graph Gridding");
-        graphGridItem.addActionListener(this::graphGridItemActionPerformed);
-        layoutMenu.add(graphGridItem);
 
         return layoutMenu;
     }
@@ -910,7 +901,11 @@ public class InitMenuBar {
 
     private void jitterItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
-        GridPositioning.removeOverlaps(this.graph, 5);
+        RemoveOverlapsStage removal = new RemoveOverlapsStage((double) 5);
+        LayoutGraphAdapter adap = new LayoutGraphAdapter(this.graph);
+        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
+        removal.applyLayout(g2);
+        LayoutUtilities.applyLayout(this.graph, removal);
         this.view.updateUI();
         mainFrame.initSidePanel.addDefaultListeners();
     }
@@ -941,31 +936,6 @@ public class InitMenuBar {
         }
 
         NodeSwapper.swapNodes(this.graph, nodes, crossing);
-        this.view.updateUI();
-        mainFrame.initSidePanel.addDefaultListeners();
-    }
-
-    private void gridCrossingItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        mainFrame.initSidePanel.removeDefaultListeners();
-        do {
-            GridPositioning.gridGraph(this.graph);
-            GridPositioning.removeOverlaps(this.graph, 0.1);
-        } while (!GridPositioning.isGridGraph(this.graph));
-
-        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
-        this.view.updateUI();
-        mainFrame.initSidePanel.addDefaultListeners();
-    }
-
-
-    private void graphGridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        mainFrame.initSidePanel.removeDefaultListeners();
-        do {
-            GridPositioning.gridGraphFast(this.graph);
-            GridPositioning.removeOverlaps(this.graph, 0.1);
-        } while (!GridPositioning.isGridGraph(this.graph));
-
-        System.out.println("Graph is gridded: " + GridPositioning.isGridGraph(this.graph));
         this.view.updateUI();
         mainFrame.initSidePanel.addDefaultListeners();
     }

@@ -72,9 +72,6 @@ public class ContestIOHandler extends GraphIOHandler {
    * Writing graph in file with contest format
    */
   public static void write(IGraph graph, String outputFileName) throws IOException {
-    // grid the graph before writing it out
-    // necessary here? gridding may be part of other processing steps
-    // GridPositioning.gridGraph(graph);
     boolean isFromContestFile = true;
 
     if(lines == null){
