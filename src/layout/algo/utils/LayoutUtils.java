@@ -10,4 +10,7 @@ public class LayoutUtils {
     );
   }
 
+  public static PointD round(PointD p) {
+    return new PointD(Math.round(p.getX()), Math.round(p.getY()));
+  }
 }

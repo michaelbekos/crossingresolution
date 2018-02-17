@@ -10,6 +10,9 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Boolean> jumpOnLocalMaximum;
   AbstractLayoutInterfaceItem<Boolean> useGaussianDistribution;
   AbstractLayoutInterfaceItem<Integer> iterationsForLocalMaximum;
+  AbstractLayoutInterfaceItem<Integer> numSamplesForJumping;
+  AbstractLayoutInterfaceItem<Boolean> toggleNodeDistributions;
+  AbstractLayoutInterfaceItem<Boolean> onlyGridPositions;
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
@@ -22,11 +25,20 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     iterationsForLocalMaximum = itemFactory.intParameter("Failed iterations necessary to detect a local maximum", 1, 500);
     iterationsForLocalMaximum.setValue(50);
 
+    numSamplesForJumping = itemFactory.intParameter("Number of test samples for local maximum resolving", 1, 500);
+    numSamplesForJumping.setValue(50);
+
     jumpOnLocalMaximum = itemFactory.booleanParameter("Allow decreasing minimum angle at local maximum", false);
     jumpOnLocalMaximum.setValue(false);
 
+    onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates", false);
+    onlyGridPositions.setValue(false);
+
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes", false);
     useGaussianDistribution.setValue(true);
+
+    toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes", false);
+    toggleNodeDistributions.setValue(false);
   }
 
 }

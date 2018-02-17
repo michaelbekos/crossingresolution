@@ -31,7 +31,7 @@ public class RandomMovementLayout implements ILayout {
   private ArrayList<Sample> sampleDirections;
   private Random random;
   private RectD boundingBox;
-  private int stepsSinceLastUpdate;
+  private int successfulSteps, failedSteps;
   private Set<INode> fixNodes;
 
   public RandomMovementLayout(IGraph graph, RandomMovementConfigurator configurator) {
@@ -101,6 +101,10 @@ public class RandomMovementLayout implements ILayout {
           double minStepSize = configurator.minStepSize.getValue();
           double stepSize = random.nextDouble() * (maxStepSize - minStepSize) + minStepSize;
           sample.position = LayoutUtils.stepInDirection(originalPosition, sample.direction, stepSize);
+
+          if (configurator.onlyGridPositions.getValue()) {
+            sample.position = LayoutUtils.round(sample.position);
+          }
         })
         .filter(sample -> boundingBox.contains(sample.position))
         .peek(sample -> {
@@ -111,15 +115,27 @@ public class RandomMovementLayout implements ILayout {
         .toArray(Sample[]::new);
 
     if (goodSamples.length > 0) {
-      stepsSinceLastUpdate = 0;
+      failedSteps = 0;
+      successfulSteps++;
       Sample sample = goodSamples[random.nextInt(goodSamples.length)];
       positions.setValue(node, sample.position);
+
+      if (configurator.toggleNodeDistributions.getValue()
+          && successfulSteps >= configurator.iterationsForLocalMaximum.getValue()) {
+        configurator.useGaussianDistribution.setValue(true);
+      }
     } else {
-      stepsSinceLastUpdate++;
+      failedSteps++;
       positions.setValue(node, originalPosition);
 
-      if (stepsSinceLastUpdate >= configurator.iterationsForLocalMaximum.getValue()) {
-        stepsSinceLastUpdate = 0;
+      if (failedSteps >= configurator.iterationsForLocalMaximum.getValue()) {
+        failedSteps = 0;
+        successfulSteps = 0;
+
+        if (configurator.toggleNodeDistributions.getValue()) {
+          configurator.useGaussianDistribution.setValue(false);
+        }
+
         return resolveLocalMaximum();
       }
     }
@@ -130,7 +146,9 @@ public class RandomMovementLayout implements ILayout {
 
   private boolean resolveLocalMaximum() {
     if (!configurator.jumpOnLocalMaximum.getValue()) {
-      configurator.maxStepSize.setValue(configurator.maxStepSize.getValue() * 2);
+      double boxDiagonal =
+          Math.sqrt(boundingBox.getWidth() * boundingBox.getWidth() + boundingBox.getHeight() * boundingBox.getHeight());
+      configurator.maxStepSize.setValue(Math.min(configurator.maxStepSize.getValue() * 2, boxDiagonal));
       return false;
     }
 
@@ -151,22 +169,30 @@ public class RandomMovementLayout implements ILayout {
 
   private void jump(INode node, PointD originalPosition) {
     // select some bounds around the node and limit them by the global bounding box
-    double minX = Math.max(originalPosition.getX() - 50, boundingBox.getX());
-    double minY = Math.max(originalPosition.getY() - 50, boundingBox.getY());
+    double windowSize = configurator.maxStepSize.getValue();
+    double halfWindowSize = windowSize / 2;
+    double minX = Math.max(originalPosition.getX() - halfWindowSize, boundingBox.getMinX());
+    double minY = Math.max(originalPosition.getY() - halfWindowSize, boundingBox.getMinY());
     RectD bounds = new RectD(
         minX,
         minY,
-        Math.min(minX + 100, boundingBox.getX() + boundingBox.getWidth()) - minX,
-        Math.min(minY + 100, boundingBox.getY() + boundingBox.getHeight()) - minY
+        Math.min(minX + windowSize, boundingBox.getMaxX()) - minX,
+        Math.min(minY + windowSize, boundingBox.getMaxY()) - minY
     );
 
     Stream
         .generate(() -> {
           double x = random.nextDouble() * bounds.getWidth() + bounds.getX();
           double y = random.nextDouble() * bounds.getHeight() + bounds.getY();
-          return new PointD(x, y);
+
+          PointD point = new PointD(x, y);
+          if (configurator.onlyGridPositions.getValue()) {
+            return LayoutUtils.round(point);
+          } else {
+            return point;
+          }
         })
-        .limit(NUM_SAMPLES_PER_TEST)
+        .limit(configurator.numSamplesForJumping.getValue())
         .max(Comparator.comparingDouble(position -> {
           positions.setValue(node, position);
           return MinimumAngle.getMinimumAngleForNode(positions, node, graph);
