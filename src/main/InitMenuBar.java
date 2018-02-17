@@ -54,8 +54,7 @@ public class InitMenuBar {
     private String fileNamePath;
     private String fileNamePathFolder;
 
-    /* Object that tracks removed/replaced Vertices */
-    private VertexStack removedVertices;
+    private RemovedNodes removedNodes;
     private RemovedChains removedChains;
 
     private boolean isGridVisible = true;
@@ -86,6 +85,8 @@ public class InitMenuBar {
         this.gridVisualCreator = gridVisualCreator;
         this.minimumAngleMonitor = minimumAngleMonitor;
         this.fileNamePathFolder = "contest-2017";
+
+        this.removedNodes = new RemovedNodes(graph);
     }
 
 
@@ -474,7 +475,7 @@ public class InitMenuBar {
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         if (this.view.getSelection().getSelectedNodes().size() > 0) {
-            this.removedVertices = GraphOperations.removeVertices(this.graph, true, this.view.getSelection().getSelectedNodes().size(), this.view.getSelection().getSelectedNodes(), this.removedVertices);
+            removedNodes.removeSelected(view.getSelection().getSelectedNodes());
         } else if (this.graph.getNodes().size() > 0){
             JTextField vertexCount = new JTextField();
             vertexCount.setText(Integer.toString(1));
@@ -530,26 +531,25 @@ public class InitMenuBar {
             useLowest.setSelected(false);
             useChains.setSelected(true);
             int result = JOptionPane.showOptionDialog(null, panel, "Remove Highest or Lowest Degree Vertices", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-            int numVertices = useHighest.isSelected() ? 1 : useChains.isSelected() ? chainNum : numLowest;
             if (result == JOptionPane.OK_OPTION) {
                 try {
-                    numVertices = Integer.parseInt(vertexCount.getText());
+                    int numVertices = Integer.parseInt(vertexCount.getText());
                     if(numVertices > graph.getNodes().size()){
                         numVertices = graph.getNodes().size();
                         if( 0 != JOptionPane.showConfirmDialog(null, "Input is greater than the number of all nodes.\n Remove all nodes?")){
                             numVertices = 0;
                         }
                     }
-                } catch (NumberFormatException exc) {
-                    JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                    numVertices = 0;
-                }
-                finally {
+
                     if (useChains.isSelected()) {
                         removedChains = chains.remove();
+                    } else if (useHighest.isSelected()) {
+                        removedNodes.removeHighestDegree(numVertices);
                     } else {
-                        this.removedVertices = GraphOperations.removeVertices(this.graph, useHighest.isSelected(), numVertices, null, this.removedVertices);
+                        removedNodes.removeLowestDegree(numVertices);
                     }
+                } catch (NumberFormatException exc) {
+                    JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -576,9 +576,9 @@ public class InitMenuBar {
 
     private void reinsertVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
-        if (this.removedVertices != null && !this.removedVertices.isEmpty()){
+        if (!removedNodes.isEmpty()){
             JTextField vertexComponentCount = new JTextField();
-            vertexComponentCount.setText(Integer.toString(removedVertices.size()));
+            vertexComponentCount.setText(Integer.toString(removedNodes.size()));
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             JRadioButton useVertices = new JRadioButton("Use Vertices"),
@@ -597,57 +597,64 @@ public class InitMenuBar {
             useVertices.addItemListener(itemEvent -> {
                 if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
                     label.setText(vertex);
-                    vertexComponentCount.setText(Integer.toString(removedVertices.size()));
+                    vertexComponentCount.setText(Integer.toString(1));
                 } else if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
                     label.setText(component);
-                    vertexComponentCount.setText(Integer.toString(removedVertices.componentStack.size()));
+                    vertexComponentCount.setText(Integer.toString(removedNodes.size()));
                 }
             });
             useVertices.setSelected(false);
             useComponents.setSelected(true);
             if (useVertices.isSelected()) {
                 label.setText(vertex);
-                vertexComponentCount.setText(Integer.toString(removedVertices.size()));
+                vertexComponentCount.setText(Integer.toString(1));
             } else if (useComponents.isSelected()) {
                 label.setText(component);
-                vertexComponentCount.setText(Integer.toString(removedVertices.componentStack.size()));
+                vertexComponentCount.setText(Integer.toString(removedNodes.size()));
             }
 
             int result = JOptionPane.showOptionDialog(null, panel, "Reinsert Vertices or Components", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-            int numVertices = useVertices.isSelected() ? removedVertices.size() : removedVertices.componentStack.size();
             if (result == JOptionPane.OK_OPTION) {
+                int numVertices;
                 try {
                     numVertices = Integer.parseInt(vertexComponentCount.getText());
-                    if(useVertices.isSelected() && numVertices > removedVertices.size()){
-                        numVertices = removedVertices.size();
-                    } else if (useComponents.isSelected() && numVertices > removedVertices.componentStack.size()) {
-                        numVertices = removedVertices.componentStack.size();
+
+                    if (!useVertices.isSelected()) {
+                        removedNodes.reinsert(numVertices);
+                    } else {
+                        removedNodes.reinsertSingleNodes(numVertices);
                     }
+
+                    scaleNodes();
                 } catch (NumberFormatException exc) {
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                    numVertices = 0;
-                }
-                finally {
-                    this.removedVertices = GraphOperations.reinsertVertices(this.graph, useVertices.isSelected(), numVertices, this.removedVertices);
-                    double scaleValue = 1/this.view.getZoom();  //scale reinserted nodes
-                    for(INode u : this.graph.getNodes()){
-                        this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
-                    }
                 }
             }
         }
         mainFrame.initSidePanel.addDefaultListeners();
     }
 
+    private void scaleNodes() {
+        double scaleValue = 1 / this.view.getZoom(); // scale reinserted nodes
+        for (INode u : this.graph.getNodes()) {
+            this.graph.setNodeLayout(u, new RectD(
+                u.getLayout().getX(),
+                u.getLayout().getY(),
+                this.graph.getNodeDefaults().getSize().width * scaleValue,
+                this.graph.getNodeDefaults().getSize().height * scaleValue
+            ));
+        }
+    }
+
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
-        if (this.removedVertices != null && !this.removedVertices.isEmpty()){
-                    this.removedVertices = Chains.reinsertChain(this.graph, this.removedVertices);
-                    double scaleValue = 1/this.view.getZoom();  //scale reinserted nodes
-                    for(INode u : this.graph.getNodes()){
-                        this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
-                    }
+
+        if (removedChains != null && removedChains.number() > 0) {
+            removedChains.reinsertAll();
+            scaleNodes();
+            removedChains = null;
         }
+
         mainFrame.initSidePanel.addDefaultListeners();
     }
     
@@ -670,7 +677,7 @@ public class InitMenuBar {
     private void blankGraphItemGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         this.graph.clear();
-        this.removedVertices = null;
+        this.removedNodes.clear();
         this.view.updateUI();
         mainFrame.bestSolution.reset();
         mainFrame.initSidePanel.addDefaultListeners();
@@ -702,7 +709,7 @@ public class InitMenuBar {
                 LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
-                this.removedVertices = null;
+                removedNodes.clear();
                 mainFrame.initSidePanel.addDefaultListeners();
             }
         }
@@ -728,7 +735,7 @@ public class InitMenuBar {
                 this.view.importFromGraphML(fileNamePath);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
-                this.removedVertices = null;
+                this.removedNodes.clear();
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
                 mainFrame.bestSolution.reset();
                 mainFrame.setTitle(Paths.get(fileNamePath).getFileName().toString());
@@ -756,7 +763,7 @@ public class InitMenuBar {
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             this.fileNamePath = chooser.getSelectedFile().toString();
             mainFrame.openContestFile(fileNamePath);
-            this.removedVertices = null;
+            removedNodes.clear();
             this.fileNamePathFolder = chooser.getSelectedFile().getParent();
         }
     }
@@ -773,7 +780,7 @@ public class InitMenuBar {
                 }
                 this.view.fitGraphBounds();
                 this.view.updateUI();
-                this.removedVertices = null;
+                this.removedNodes.clear();
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {
@@ -868,7 +875,7 @@ public class InitMenuBar {
     private void clearAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         this.graph.clear();
-        this.removedVertices = null;
+        removedNodes.clear();
         mainFrame.initSidePanel.addDefaultListeners();
     }
 
