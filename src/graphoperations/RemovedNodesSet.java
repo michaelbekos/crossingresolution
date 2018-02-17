@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * This class is meant for single use only!
  */
-public final class RemovedNodesSet {
+final class RemovedNodesSet {
   private final IGraph graph;
   private final Map<String, Set<String>> edges = new HashMap<>();
   private final Set<String> nodes = new HashSet<>();

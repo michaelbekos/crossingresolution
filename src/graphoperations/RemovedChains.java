@@ -7,7 +7,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class RemovedChains {
+public final class RemovedChains {
   private final IGraph graph;
   private final Deque<RemovedNodesSet> removedChains = new LinkedList<>();
 

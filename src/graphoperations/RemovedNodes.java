@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class RemovedNodes {
+public final class RemovedNodes {
   private final IGraph graph;
   private final Deque<RemovedNodesSet> removedNodes = new LinkedList<>();
 
