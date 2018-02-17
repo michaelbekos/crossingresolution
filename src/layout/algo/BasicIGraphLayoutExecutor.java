@@ -96,6 +96,10 @@ public class BasicIGraphLayoutExecutor {
       mainLoop:
       while (!finished) {
         while (running) {
+          if (!(graph.getNodes().size() > 0)) {
+            continue;
+          }
+
           finished = layout.executeStep(currentIteration++, maxIterations.getValue());
 
           if (finished || maxIterations.getValue() > 0 && currentIteration == maxIterations.getValue()) {
