@@ -8,6 +8,7 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.ILayoutAlgorithm;
+import com.yworks.yfiles.layout.LayoutEventArgs;
 import com.yworks.yfiles.layout.LayoutExecutor;
 import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
@@ -15,6 +16,7 @@ import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.partial.PartialLayout;
 import com.yworks.yfiles.layout.partial.SubgraphPlacement;
 import com.yworks.yfiles.layout.tree.TreeLayout;
+import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.BasicIGraphLayoutExecutor;
@@ -333,6 +335,7 @@ public class SidePanelTab {
         String msg = (minCrossingAngle > 0) ? "Minimum crossing angle: " + minCrossingAngle.toString() : "No crossings!";
         msg += "\n";
         initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+        outputTextArea.setText("Showing Best Solution with Minimum Angle: " + minCrossingAngle.toString());
         //maybe add what algorithm (+ settings) was used to achieve best solution
         //No popup
 //        JOptionPane.showMessageDialog(null, msg);
@@ -382,6 +385,11 @@ public class SidePanelTab {
 
     private void finishedPropertyChanged(PropertyChangeEvent evt) {
         if ("finished".equals(evt.getPropertyName()) && (boolean)evt.getNewValue()) {
+            if (executor.getMaxIterations() >= 0) {
+                outputTextArea.setText("Finished After " + executor.getMaxIterations() + " Iterations.");
+            } else {
+                outputTextArea.setText(algorithmName + " has been Stopped.");
+            }
             stopExecution();
         }
     }
@@ -410,6 +418,7 @@ public class SidePanelTab {
         initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
         initSidePanel.addDefaultListeners();
+        outputTextArea.setText("Scaled to Box with Size: " + MainFrame.BOX_SIZE);
     }
 
     //!!Separate vertex stack for chains (will not mesh with regular remove/reinsert vertexes e.g. chains removed here *have* to be reinserted using the button)!!
@@ -420,6 +429,7 @@ public class SidePanelTab {
         if (initSidePanel.mainFrame.graph.getNodes().size() > 0){
             int chainNum = GraphOperations.getChains(initSidePanel.mainFrame.graph).size();
             this.removedChains = GraphOperations.removeVertices(initSidePanel.mainFrame.graph, true, false, chainNum, null, this.removedChains);
+            outputTextArea.setText("Removed " + this.removedChains.componentStack.size() + " chains.");
         }
         initSidePanel.addDefaultListeners();
     }
@@ -431,6 +441,7 @@ public class SidePanelTab {
             //TODO reinsert chains (currently regular reinsert 1 chain)
             this.removedChains = Chains.reinsertChain(initSidePanel.mainFrame.graph, this.removedChains);
             //
+            outputTextArea.setText(this.removedChains.componentStack.size() + " Chains Left in the Stack.");
 
             double scaleValue = 1 / initSidePanel.mainFrame.view.getZoom();  //scale reinserted nodes
             for (INode u : initSidePanel.mainFrame.graph.getNodes()) {
@@ -523,8 +534,12 @@ public class SidePanelTab {
         IGraphSelection selection = initSidePanel.mainFrame.graphEditorInputMode.getGraphSelection();
         ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
 
+        String layoutName = layout.getClass().getSimpleName().substring(0, layout.getClass().getSimpleName().length() - 6);
+        outputTextArea.setText("Performing " + layoutName + " Layout...");
+        IEventListener<LayoutEventArgs> doneHandler = ((o, layoutEventArgs) -> outputTextArea.setText(layoutName + " Layout Finished."));
+
         if (selectedNodes.size() == 0) {
-            LayoutUtilities.morphLayout(initSidePanel.mainFrame.view, layout, Duration.ofSeconds(1));
+            LayoutUtilities.morphLayout(initSidePanel.mainFrame.view, layout, Duration.ofSeconds(1), doneHandler);
             return;
         }
 
@@ -539,7 +554,7 @@ public class SidePanelTab {
         executor.setViewportAnimationEnabled(true);
         executor.setEasedAnimationEnabled(true);
         executor.setContentRectUpdatingEnabled(true);
-
+        executor.addLayoutFinishedListener(doneHandler);
         executor.start();
     }
 
