@@ -1,16 +1,12 @@
 package algorithms.fpp;
 
-import algorithms.canonicalOrder.Utilities;
-
 import com.yworks.yfiles.algorithms.*;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
 
 import algorithms.graphs.Connectivity;
 import algorithms.canonicalOrder.*;
 import com.yworks.yfiles.layout.YGraphAdapter;
-import com.yworks.yfiles.utils.IListEnumerable;
 
 
 import java.util.*;
@@ -114,7 +110,7 @@ public class FraysseixPachPollack {
 
 
         //CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random);
-        CanonicalOrderTwo corder = new CanonicalOrderTwo(graph, planarEmbedding, settings.random);
+        CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random);
         ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
         ArrayList<Node> canonicalOrder = new ArrayList<Node>();
         orderdpl.forEach(l -> canonicalOrder.add(l.get(0)));
