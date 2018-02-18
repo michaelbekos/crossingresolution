@@ -172,7 +172,7 @@ public class SidePanelTab {
         cDefaultPanel.gridy = cDefaultPanelY;
         cDefaultPanel.insets = new Insets(5,0,0,0);
         defaultPanel.add(scaleToBox, cDefaultPanel);
-        scaleToBox.addActionListener(e -> scalingToBox());
+        scaleToBox.addActionListener(this::scalingToBox);
         scaleToBox.setSelected(false);
 
         JButton removeChains = new JButton("Remove All Chains");
@@ -394,19 +394,19 @@ public class SidePanelTab {
         initSidePanel.masterAllowClickCreateNodeEdge.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
-    private void scalingToBox(){
+    private void scalingToBox(ActionEvent evt){
         initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(initSidePanel.mainFrame.graph);
-        double maxX=0, maxY=0;
+        double maxX = 0, maxY = 0;
         for(INode u : initSidePanel.mainFrame.graph.getNodes()){
-            if(u.getLayout().getCenter().getX()>maxX){
-                maxX=u.getLayout().getCenter().getX();
+            if(u.getLayout().getCenter().getX() > maxX){
+                maxX = u.getLayout().getCenter().getX();
             }
-            if(u.getLayout().getCenter().getY()>maxY){
-                maxY=u.getLayout().getCenter().getY();
+            if(u.getLayout().getCenter().getY() > maxY){
+                maxY = u.getLayout().getCenter().getY();
             }
         }
-        GraphOperations.scaleUpProcess(nodePositions, Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)));
+        GraphOperations.scaleUpProcess(nodePositions, Math.min(MainFrame.BOX_SIZE/maxX, MainFrame.BOX_SIZE/maxY));
         initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
         initSidePanel.addDefaultListeners();
