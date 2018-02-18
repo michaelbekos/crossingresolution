@@ -106,7 +106,7 @@ public class CommandLineInterface {
 
   private static void writeGraph(FileData fileData) {
     try {
-      ContestIOHandler.write(fileData.graph, fileData.fileName.substring(0, fileData.fileName.length() - ".txt".length()) + "-cli.txt");
+      ContestIOHandler.write(fileData.graph, fileData.fileName.substring(0, fileData.fileName.length() - ".txt".length()) + "-cli.txt", null);
     } catch (IOException e) {
       e.printStackTrace();
     }

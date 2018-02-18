@@ -181,6 +181,14 @@ public class InitSidePanel {
         }
     }
 
+    public void setOutputTextArea(String outputText) {
+        sidePanelTabs.get(tabbedSidePane.getSelectedIndex()).setOutputTextArea(outputText);
+    }
+
+    public JTextArea getOutputTextArea() {
+        return sidePanelTabs.get(tabbedSidePane.getSelectedIndex()).getOutputTextArea();
+    }
+
     /*********************************************************************
      * Implementation of actions
      ********************************************************************/

@@ -315,6 +315,13 @@ public class SidePanelTab {
         this.allowClickCreateNodeEdge.setSelected(value);
     }
 
+    public void setOutputTextArea(String outputText) {
+        outputTextArea.setText(outputText);
+    }
+
+    public JTextArea getOutputTextArea() {
+        return  outputTextArea;
+    }
 
 
     /*********************************************************************

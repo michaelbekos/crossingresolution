@@ -1,11 +1,17 @@
 package io;
 
-import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.graph.IEdge;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.INode;
 
-import java.util.*;
-import java.io.*;
-import java.nio.file.*;
+import javax.swing.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Handles the contest format files
@@ -71,7 +77,7 @@ public class ContestIOHandler extends GraphIOHandler {
   /**
    * Writing graph in file with contest format
    */
-  public static void write(IGraph graph, String outputFileName) throws IOException {
+  public static void write(IGraph graph, String outputFileName, JTextArea outputTextArea) throws IOException {
     boolean isFromContestFile = true;
 
     if(lines == null){
@@ -104,17 +110,25 @@ public class ContestIOHandler extends GraphIOHandler {
       // phase 1 contains nodes contained in graph
       out.write("# Next N numbers describe the node locations");
       out.newLine();
+      StringBuilder errorText = new StringBuilder();
       for(int i = 0; i < graph.getNodes().size(); i++){
         for(INode n: graph.getNodes()){
           if(i == n.getTag().hashCode()) {
             long x, y;
             PointD pos = n.getLayout().getCenter();
+            if (pos.getY() % 1 != 0 || pos.getX() % 1 != 0) {
+              System.err.println("Graph not Gridded! Rounding Non-Integer Values: x " + pos.getX() + " y " + pos.getY());
+              errorText.append("Graph not Gridded! Rounding Non-Integer Values:\nx ").append(pos.getX()).append("\ny ").append(pos.getY()).append("\n");
+            }
             x = Math.round(pos.getX());
             y = Math.round(pos.getY());
             out.write(x + " " + y);
             out.newLine();
           }
         }
+      }
+      if (outputTextArea != null) {
+        outputTextArea.setText(errorText.toString());
       }
       // phase 2 contains edges contained in graph
       boolean reachedEdgeLine = false;

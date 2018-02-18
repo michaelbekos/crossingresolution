@@ -829,7 +829,7 @@ public class InitMenuBar {
             this.fileNamePathFolder = chooser.getSelectedFile().getParent();
 
             try {
-                ContestIOHandler.write(this.graph, this.fileNamePath);
+                ContestIOHandler.write(this.graph, this.fileNamePath, mainFrame.initSidePanel.getOutputTextArea());
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while exporting the graph.");
             }
