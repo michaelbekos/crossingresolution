@@ -48,6 +48,7 @@ public class SidePanelTab {
     private JCheckBox enableMinimumAngleDisplay;
     private JCheckBox allowClickCreateNodeEdge;
     private JTextArea outputTextArea;
+    private boolean verbose;
 
     public SidePanelTab(InitSidePanel initSidePanel) {
         //default empty
@@ -388,10 +389,12 @@ public class SidePanelTab {
 
     private void finishedPropertyChanged(PropertyChangeEvent evt) {
         if ("finished".equals(evt.getPropertyName()) && (boolean)evt.getNewValue()) {
-            if (executor.getMaxIterations() >= 0) {
-                outputTextArea.setText("Finished After " + executor.getMaxIterations() + " Iterations.");
-            } else {
-                outputTextArea.setText(algorithmName + " has been Stopped.");
+            if (verbose) {
+                if (executor.getMaxIterations() >= 0) {
+                    outputTextArea.setText("Finished After " + executor.getMaxIterations() + " Iterations.");
+                } else {
+                    outputTextArea.setText(algorithmName + " has been Stopped.");
+                }
             }
             stopExecution();
         }
@@ -564,5 +567,9 @@ public class SidePanelTab {
 
     public BasicIGraphLayoutExecutor getExecutor() {
         return executor;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 }

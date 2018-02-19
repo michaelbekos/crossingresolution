@@ -77,7 +77,8 @@ public class InitSidePanel {
     private void addGriddingAlgorithm(IGraph graph) {
         GridderConfigurator configurator = new GridderConfigurator();
         IGridder gridder = new CombinedGridder(graph, configurator);
-        addAlgorithm("Gridding", configurator, gridder);
+        SidePanelTab sidePanelTab = addAlgorithm("Gridding", configurator, gridder);
+        sidePanelTab.setVerbose(false);
     }
 
     private void initDefault() {
@@ -145,11 +146,12 @@ public class InitSidePanel {
      * @param configurator - which and what parameters
      * @param layout - interface to algorithm for start/pause/stop buttons and controls for above parameters
      */
-    private void addAlgorithm(String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
+    private SidePanelTab addAlgorithm(String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
         SidePanelTab sidePanel = new SidePanelTab(this, algorithmName, configurator, layout);
         sidePanelTabs.add(sidePanel);
 //        tabbedSidePane.addTab(sidePanel.algorithmName, sidePanel.sidePanelTab);
         tabbedSidePane.addTab(sidePanel.algorithmName, new JScrollPane(sidePanel.sidePanelTab));
+        return sidePanel;
     }
 
     /**
