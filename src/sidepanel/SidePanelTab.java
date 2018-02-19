@@ -460,10 +460,7 @@ public class SidePanelTab {
             removedChains.reinsertOne();
             outputTextArea.setText(removedChains.number() + " Chains Left in the Stack.");
 
-            double scaleValue = 1 / initSidePanel.mainFrame.view.getZoom();  //scale reinserted nodes
-            for (INode u : initSidePanel.mainFrame.graph.getNodes()) {
-                initSidePanel.mainFrame.graph.setNodeLayout(u, new RectD(u.getLayout().getX(), u.getLayout().getY(), initSidePanel.mainFrame.graph.getNodeDefaults().getSize().width * scaleValue, initSidePanel.mainFrame.graph.getNodeDefaults().getSize().height * scaleValue));
-            }
+            Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
 
             initSidePanel.addDefaultListeners();
         });

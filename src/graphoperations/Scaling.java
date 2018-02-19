@@ -1,8 +1,11 @@
 package graphoperations;
 
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.geometry.RectD;
+import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.view.GraphComponent;
 
 import java.util.Map;
 
@@ -33,5 +36,18 @@ public final class Scaling {
           (center.getY() - minY) * factor)
       );
     }
+  }
+
+  public static void scaleNodeSizes(GraphComponent view) {
+      IGraph graph = view.getGraph();
+      double scaleValue = 1 / view.getZoom(); // scale reinserted nodes
+      for (INode u : graph.getNodes()) {
+          graph.setNodeLayout(u, new RectD(
+              u.getLayout().getX(),
+              u.getLayout().getY(),
+              graph.getNodeDefaults().getSize().width * scaleValue,
+              graph.getNodeDefaults().getSize().height * scaleValue
+          ));
+      }
   }
 }

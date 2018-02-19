@@ -1,7 +1,6 @@
 package main;
 
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
@@ -622,7 +621,7 @@ public class InitMenuBar {
                         removedNodes.reinsertSingleNodes(numVertices);
                     }
 
-                    scaleNodes();
+                    Scaling.scaleNodeSizes(view);
                 } catch (NumberFormatException exc) {
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 }
@@ -631,24 +630,12 @@ public class InitMenuBar {
         mainFrame.initSidePanel.addDefaultListeners();
     }
 
-    private void scaleNodes() {
-        double scaleValue = 1 / this.view.getZoom(); // scale reinserted nodes
-        for (INode u : this.graph.getNodes()) {
-            this.graph.setNodeLayout(u, new RectD(
-                u.getLayout().getX(),
-                u.getLayout().getY(),
-                this.graph.getNodeDefaults().getSize().width * scaleValue,
-                this.graph.getNodeDefaults().getSize().height * scaleValue
-            ));
-        }
-    }
-
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
 
         if (removedChains != null && removedChains.number() > 0) {
             removedChains.reinsertAll();
-            scaleNodes();
+            Scaling.scaleNodeSizes(view);
             removedChains = null;
         }
 
