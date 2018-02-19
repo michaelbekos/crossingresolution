@@ -331,6 +331,7 @@ public class SidePanelTab {
     private void showBestSolution(@SuppressWarnings("unused") ActionEvent evt) {
         int nodes= initSidePanel.mainFrame.graph.getNodes().size();
         if (initSidePanel.mainFrame.bestSolution.getBestSolutionMapping(nodes) == null) {
+            outputTextArea.setText("No Graph Loaded.");
             return;
         }
 

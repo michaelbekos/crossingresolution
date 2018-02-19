@@ -761,6 +761,8 @@ public class InitMenuBar {
                 this.view.fitGraphBounds();
                 this.view.updateUI();
                 this.removedVertices = null;
+                this.mainFrame.bestSolution.reset();
+                this.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {

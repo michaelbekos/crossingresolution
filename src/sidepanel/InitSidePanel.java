@@ -211,16 +211,4 @@ public class InitSidePanel {
         mainFrame.graphEditorInputMode.setDeletableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
         mainFrame.graphEditorInputMode.setSelectableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
     }
-
-    private ICanvasObject scale = null;
-    private void masterShowScaleEnabled(@SuppressWarnings("unused") ItemEvent evt) {
-        removeDefaultListeners();
-        if (evt.getStateChange() == ItemEvent.SELECTED){
-            scale = (mainFrame.view.getBackgroundGroup().addChild(new DrawScale(mainFrame.view), ICanvasObjectDescriptor.VISUAL));
-        } else {
-            scale.remove();
-        }
-        addDefaultListeners();
-    }
-
 }
