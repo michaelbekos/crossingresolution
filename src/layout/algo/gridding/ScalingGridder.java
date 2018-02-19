@@ -4,6 +4,7 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import graphoperations.Scaling;
+import main.MainFrame;
 
 import java.util.Set;
 
@@ -40,7 +41,8 @@ public class ScalingGridder implements IGridder {
     }
 
     if (iteration % iterationsPerScale == 0 && iteration > 0) {
-      Scaling.scaleBy(configurator.scaleBy.getValue(), gridder.getNodePositions());
+      Scaling.scaleBy(configurator.scaleBy.getValue(), gridder.getNodePositions(), MainFrame.BOX_SIZE);
+      configurator.statusMessage.setValue("Scaled up!");
     }
 
     return false;
