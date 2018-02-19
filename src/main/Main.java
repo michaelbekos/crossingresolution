@@ -102,7 +102,9 @@ public class Main {
   }
 
   private static void runAlgorithms(MainFrame mainFrame) {
+    mainFrame.initSidePanel.removeDefaultListeners();
     LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
+    mainFrame.initSidePanel.addDefaultListeners();
 
     Optional<BasicIGraphLayoutExecutor> executor = mainFrame.getExecutorForAlgorithm(RandomMovementLayout.class);
     if (!executor.isPresent()) {
