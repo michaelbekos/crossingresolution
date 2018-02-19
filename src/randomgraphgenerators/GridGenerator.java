@@ -1,10 +1,9 @@
-package util;
+package randomgraphgenerators;
 
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
 
 import java.util.*;
-import java.util.stream.*;
 
 public class GridGenerator {
   public static Random rand = new Random();

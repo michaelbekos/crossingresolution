@@ -1,4 +1,4 @@
-package util;
+package randomgraphgenerators;
 
 import com.yworks.yfiles.geometry.Matrix2D;
 import com.yworks.yfiles.geometry.PointD;

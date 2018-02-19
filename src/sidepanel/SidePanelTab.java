@@ -8,6 +8,7 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.ILayoutAlgorithm;
+import com.yworks.yfiles.layout.LayoutEventArgs;
 import com.yworks.yfiles.layout.LayoutExecutor;
 import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
@@ -15,6 +16,7 @@ import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.partial.PartialLayout;
 import com.yworks.yfiles.layout.partial.SubgraphPlacement;
 import com.yworks.yfiles.layout.tree.TreeLayout;
+import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
 import graphoperations.*;
@@ -171,7 +173,7 @@ public class SidePanelTab {
         cDefaultPanel.gridy = cDefaultPanelY;
         cDefaultPanel.insets = new Insets(5,0,0,0);
         defaultPanel.add(scaleToBox, cDefaultPanel);
-        scaleToBox.addActionListener(e -> scalingToBox());
+        scaleToBox.addActionListener(this::scalingToBox);
         scaleToBox.setSelected(false);
 
         JButton removeChains = new JButton("Remove All Chains");
@@ -312,6 +314,13 @@ public class SidePanelTab {
         this.allowClickCreateNodeEdge.setSelected(value);
     }
 
+    public void setOutputTextArea(String outputText) {
+        outputTextArea.setText(outputText);
+    }
+
+    public JTextArea getOutputTextArea() {
+        return  outputTextArea;
+    }
 
 
     /*********************************************************************
@@ -322,6 +331,7 @@ public class SidePanelTab {
         int nodes= initSidePanel.mainFrame.graph.getNodes().size();
         Optional<Mapper<INode, PointD>> bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionPositions(nodes);
         if (!bestPositions.isPresent()) {
+            outputTextArea.setText("No Graph Loaded.");
             return;
         }
 
@@ -376,6 +386,11 @@ public class SidePanelTab {
 
     private void finishedPropertyChanged(PropertyChangeEvent evt) {
         if ("finished".equals(evt.getPropertyName()) && (boolean)evt.getNewValue()) {
+            if (executor.getMaxIterations() >= 0) {
+                outputTextArea.setText("Finished After " + executor.getMaxIterations() + " Iterations.");
+            } else {
+                outputTextArea.setText(algorithmName + " has been Stopped.");
+            }
             stopExecution();
         }
     }
@@ -388,22 +403,23 @@ public class SidePanelTab {
         initSidePanel.masterAllowClickCreateNodeEdge.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
-    private void scalingToBox(){
+    private void scalingToBox(ActionEvent evt){
         initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(initSidePanel.mainFrame.graph);
-        double maxX=0, maxY=0;
+        double maxX = 0, maxY = 0;
         for(INode u : initSidePanel.mainFrame.graph.getNodes()){
-            if(u.getLayout().getCenter().getX()>maxX){
-                maxX=u.getLayout().getCenter().getX();
+            if(u.getLayout().getCenter().getX() > maxX){
+                maxX = u.getLayout().getCenter().getX();
             }
-            if(u.getLayout().getCenter().getY()>maxY){
-                maxY=u.getLayout().getCenter().getY();
+            if(u.getLayout().getCenter().getY() > maxY){
+                maxY = u.getLayout().getCenter().getY();
             }
         }
         Scaling.scaleBy(Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)), nodePositions);
         initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
         initSidePanel.addDefaultListeners();
+        outputTextArea.setText("Scaled to Box with Size: " + MainFrame.BOX_SIZE);
     }
 
     //!!Separate vertex stack for chains (will not mesh with regular remove/reinsert vertexes e.g. chains removed here *have* to be reinserted using the button)!!
@@ -413,6 +429,7 @@ public class SidePanelTab {
         //lean chain-only version from InitMenuBar::removeVerticesItemActionPerformed
         if (initSidePanel.mainFrame.graph.getNodes().size() > 0){
             removedChains = Chains.analyze(initSidePanel.mainFrame.graph).remove();
+            outputTextArea.setText("Removed " + removedChains.number() + " chains.");
         }
         initSidePanel.addDefaultListeners();
     }
@@ -423,7 +440,7 @@ public class SidePanelTab {
 
             //TODO reinsert chains (currently regular reinsert 1 chain)
             removedChains.reinsertOne();
-
+            outputTextArea.setText(removedChains.number() + " Chains Left in the Stack.");
             double scaleValue = 1 / initSidePanel.mainFrame.view.getZoom();  //scale reinserted nodes
             for (INode u : initSidePanel.mainFrame.graph.getNodes()) {
                 initSidePanel.mainFrame.graph.setNodeLayout(u, new RectD(u.getLayout().getX(), u.getLayout().getY(), initSidePanel.mainFrame.graph.getNodeDefaults().getSize().width * scaleValue, initSidePanel.mainFrame.graph.getNodeDefaults().getSize().height * scaleValue));
@@ -515,8 +532,12 @@ public class SidePanelTab {
         IGraphSelection selection = initSidePanel.mainFrame.graphEditorInputMode.getGraphSelection();
         ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
 
+        String layoutName = layout.getClass().getSimpleName().substring(0, layout.getClass().getSimpleName().length() - 6);
+        outputTextArea.setText("Performing " + layoutName + " Layout...");
+        IEventListener<LayoutEventArgs> doneHandler = ((o, layoutEventArgs) -> outputTextArea.setText(layoutName + " Layout Finished."));
+
         if (selectedNodes.size() == 0) {
-            LayoutUtilities.morphLayout(initSidePanel.mainFrame.view, layout, Duration.ofSeconds(1));
+            LayoutUtilities.morphLayout(initSidePanel.mainFrame.view, layout, Duration.ofSeconds(1), doneHandler);
             return;
         }
 
@@ -531,7 +552,7 @@ public class SidePanelTab {
         executor.setViewportAnimationEnabled(true);
         executor.setEasedAnimationEnabled(true);
         executor.setContentRectUpdatingEnabled(true);
-
+        executor.addLayoutFinishedListener(doneHandler);
         executor.start();
     }
 
