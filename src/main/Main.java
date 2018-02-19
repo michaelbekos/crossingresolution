@@ -30,18 +30,20 @@ public class Main {
     }
 
     int startIndex = 1;
-    int endIndex = 1;
+    int endIndex = startIndex;
     String folderPath = "contest-2017";
     String pattern = "automatic-$$$.txt";
 
-    if (args.length >= 2) {
-      try {
-        startIndex = Integer.parseInt(args[0]);
+    try {
+      startIndex = Integer.parseInt(args[0]);
+      if (args.length >= 2) {
         endIndex = Integer.parseInt(args[1]);
-      } catch (NumberFormatException e) {
-        System.out.println("Could not parse indices");
-        printUsage();
+      } else {
+        endIndex = startIndex;
       }
+    } catch (NumberFormatException e) {
+      System.out.println("Could not parse indices");
+      printUsage();
     }
 
     if (args.length >= 3) {
