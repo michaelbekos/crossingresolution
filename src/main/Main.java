@@ -81,10 +81,14 @@ public class Main {
   }
 
   private static void addClosingListener(MainFrame mainFrame) {
-    openFrames++;
+    synchronized (Main.class) {
+      openFrames++;
+    }
     mainFrame.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent evt) {
-        openFrames--;
+        synchronized (Main.class) {
+          openFrames--;
+        }
         if (openFrames == 0) {
           System.exit(0);
         }
