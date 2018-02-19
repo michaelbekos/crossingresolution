@@ -3,10 +3,7 @@ package sidepanel;
 import algorithms.fpp.FraysseixPachPollack;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
-import com.yworks.yfiles.graph.FilteredGraphWrapper;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.graph.LayoutUtilities;
-import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.layout.ILayoutAlgorithm;
 import com.yworks.yfiles.layout.LayoutEventArgs;
 import com.yworks.yfiles.layout.LayoutExecutor;
@@ -336,9 +333,13 @@ public class SidePanelTab {
         }
 
         Mapper<INode, PointD> nodePositions = bestPositions.get();
-        initSidePanel.removeDefaultListeners();
-        PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
-        initSidePanel.addDefaultListeners();
+
+        executor.modifyGraph(() -> {
+            initSidePanel.removeDefaultListeners();
+            PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
+            initSidePanel.addDefaultListeners();
+        });
+
         initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
     }
 
@@ -403,53 +404,69 @@ public class SidePanelTab {
         initSidePanel.masterAllowClickCreateNodeEdge.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
-    private void scalingToBox(ActionEvent evt){
-        initSidePanel.removeDefaultListeners();
-        Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(initSidePanel.mainFrame.graph);
-        double maxX = 0, maxY = 0;
-        for(INode u : initSidePanel.mainFrame.graph.getNodes()){
-            if(u.getLayout().getCenter().getX() > maxX){
-                maxX = u.getLayout().getCenter().getX();
+    private void scalingToBox(@SuppressWarnings("unused") ActionEvent evt){
+        executor.modifyGraph(() -> {
+            initSidePanel.removeDefaultListeners();
+
+            IGraph graph = initSidePanel.mainFrame.graph;
+            Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
+
+            double maxX = 0, maxY = 0;
+            for (INode u : graph.getNodes()) {
+                if (u.getLayout().getCenter().getX() > maxX) {
+                    maxX = u.getLayout().getCenter().getX();
+                }
+                if (u.getLayout().getCenter().getY() > maxY) {
+                    maxY = u.getLayout().getCenter().getY();
+                }
             }
-            if(u.getLayout().getCenter().getY() > maxY){
-                maxY = u.getLayout().getCenter().getY();
-            }
-        }
-        Scaling.scaleBy(Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)), nodePositions);
-        PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
-        initSidePanel.mainFrame.view.fitGraphBounds();
-        initSidePanel.addDefaultListeners();
-        outputTextArea.setText("Scaled to Box with Size: " + MainFrame.BOX_SIZE);
+
+            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE / maxX), (int) (MainFrame.BOX_SIZE / maxY)), nodePositions);
+            PositionMap.applyToGraph(graph, nodePositions);
+            initSidePanel.mainFrame.view.fitGraphBounds();
+
+            outputTextArea.setText("Scaled to Box with Size: " + MainFrame.BOX_SIZE);
+
+            initSidePanel.addDefaultListeners();
+        });
     }
 
-    //!!Separate vertex stack for chains (will not mesh with regular remove/reinsert vertexes e.g. chains removed here *have* to be reinserted using the button)!!
     private RemovedChains removedChains;
     private void removeChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        initSidePanel.removeDefaultListeners();
-        //lean chain-only version from InitMenuBar::removeVerticesItemActionPerformed
-        if (initSidePanel.mainFrame.graph.getNodes().size() > 0){
+        if (initSidePanel.mainFrame.graph.getNodes().size() == 0) {
+            return;
+        }
+
+        executor.modifyGraph(() -> {
+            initSidePanel.removeDefaultListeners();
+
             removedChains = Chains.analyze(initSidePanel.mainFrame.graph).remove();
             outputTextArea.setText("Removed " + removedChains.number() + " chains.");
-        }
-        initSidePanel.addDefaultListeners();
+
+            initSidePanel.addDefaultListeners();
+        });
     }
 
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        initSidePanel.removeDefaultListeners();
-        if (this.removedChains != null && this.removedChains.number() > 0) {
+        if (removedChains == null || removedChains.number() == 0) {
+            removedChains = null;
+            return;
+        }
+
+        executor.modifyGraph(() -> {
+            initSidePanel.removeDefaultListeners();
 
             //TODO reinsert chains (currently regular reinsert 1 chain)
             removedChains.reinsertOne();
             outputTextArea.setText(removedChains.number() + " Chains Left in the Stack.");
+
             double scaleValue = 1 / initSidePanel.mainFrame.view.getZoom();  //scale reinserted nodes
             for (INode u : initSidePanel.mainFrame.graph.getNodes()) {
                 initSidePanel.mainFrame.graph.setNodeLayout(u, new RectD(u.getLayout().getX(), u.getLayout().getY(), initSidePanel.mainFrame.graph.getNodeDefaults().getSize().width * scaleValue, initSidePanel.mainFrame.graph.getNodeDefaults().getSize().height * scaleValue));
             }
 
-
-        }
-
-        initSidePanel.addDefaultListeners();
+            initSidePanel.addDefaultListeners();
+        });
     }
 
     private void showGraphInfoActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
