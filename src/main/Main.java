@@ -2,8 +2,8 @@ package main;
 
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.RandomMovementLayout;
+import sidepanel.SidePanelTab;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -106,12 +106,12 @@ public class Main {
     LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
     mainFrame.initSidePanel.addDefaultListeners();
 
-    Optional<BasicIGraphLayoutExecutor> executor = mainFrame.getExecutorForAlgorithm(RandomMovementLayout.class);
-    if (!executor.isPresent()) {
+    Optional<SidePanelTab> tab = mainFrame.getTabForAlgorithm(RandomMovementLayout.class);
+    if (!tab.isPresent()) {
       return;
     }
 
-    executor.get().start();
+    tab.get().startPauseExecution();
   }
 
   private static void printUsage() {

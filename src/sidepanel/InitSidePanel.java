@@ -3,7 +3,6 @@ package sidepanel;
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.graph.GraphItemTypes;
 import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.view.ICanvasObject;
 import com.yworks.yfiles.view.ICanvasObjectDescriptor;
 import layout.algo.*;
 import layout.algo.forces.*;
@@ -69,10 +68,9 @@ public class InitSidePanel {
     }
 
 
-    public Optional<BasicIGraphLayoutExecutor> getExecutorForAlgorithm(Class<? extends ILayout> layoutClass) {
+    public Optional<SidePanelTab> getTabForAlgorithm(Class<? extends ILayout> layoutClass) {
         return sidePanelTabs.stream()
-            .map(SidePanelTab::getExecutor)
-            .filter(executor -> layoutClass.isInstance(executor.getLayout()))
+            .filter(executor -> layoutClass.isInstance(executor.getExecutor().getLayout()))
             .findFirst();
     }
 

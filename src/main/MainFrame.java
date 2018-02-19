@@ -14,10 +14,10 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import io.ContestIOHandler;
-import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.ILayout;
 import layout.algo.utils.BestSolution;
 import sidepanel.InitSidePanel;
+import sidepanel.SidePanelTab;
 
 import javax.swing.*;
 import java.awt.*;
@@ -308,8 +308,8 @@ public class MainFrame extends JFrame {
         });
     }
 
-    public Optional<BasicIGraphLayoutExecutor> getExecutorForAlgorithm(Class<? extends ILayout> layoutClass) {
-        return initSidePanel.getExecutorForAlgorithm(layoutClass);
+    public Optional<SidePanelTab> getTabForAlgorithm(Class<? extends ILayout> layoutClass) {
+        return initSidePanel.getTabForAlgorithm(layoutClass);
     }
 
     public void openContestFile(String fileNamePath) {
