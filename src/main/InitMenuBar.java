@@ -455,7 +455,7 @@ public class InitMenuBar {
         mainFrame.initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
         Scaling.scaleBy(2.0, nodePositions);
-        this.graph =  PositionMap.applyToGraph(graph, nodePositions);
+        PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
         mainFrame.initSidePanel.addDefaultListeners();
     }
@@ -464,7 +464,7 @@ public class InitMenuBar {
         mainFrame.initSidePanel.removeDefaultListeners();
         Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
         Scaling.scaleBy(0.5, nodePositions);
-        this.graph =  PositionMap.applyToGraph(graph, nodePositions);
+        PositionMap.applyToGraph(graph, nodePositions);
         this.view.fitGraphBounds();
         mainFrame.initSidePanel.addDefaultListeners();
     }
@@ -562,7 +562,7 @@ public class InitMenuBar {
             for(INode u : graph.getNodes()){
                 if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE){
                     Scaling.scaleBy(0.9, nodePositions);
-                    this.graph =  PositionMap.applyToGraph(graph, nodePositions);
+                    PositionMap.applyToGraph(graph, nodePositions);
                     this.view.fitGraphBounds();
                     change=true;
                 }

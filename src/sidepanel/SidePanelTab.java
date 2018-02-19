@@ -416,7 +416,7 @@ public class SidePanelTab {
             }
         }
         Scaling.scaleBy(Math.min((int)(MainFrame.BOX_SIZE/maxX), (int)(MainFrame.BOX_SIZE/maxY)), nodePositions);
-        initSidePanel.mainFrame.graph =  PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
+        PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
         initSidePanel.mainFrame.view.fitGraphBounds();
         initSidePanel.addDefaultListeners();
         outputTextArea.setText("Scaled to Box with Size: " + MainFrame.BOX_SIZE);
