@@ -23,6 +23,7 @@ import layout.algo.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
+import util.BoundingBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -410,22 +411,13 @@ public class SidePanelTab {
 
             IGraph graph = initSidePanel.mainFrame.graph;
             Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
-
-            double maxX = 0, maxY = 0;
-            for (INode u : graph.getNodes()) {
-                if (u.getLayout().getCenter().getX() > maxX) {
-                    maxX = u.getLayout().getCenter().getX();
-                }
-                if (u.getLayout().getCenter().getY() > maxY) {
-                    maxY = u.getLayout().getCenter().getY();
-                }
-            }
-
-            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE / maxX), (int) (MainFrame.BOX_SIZE / maxY)), nodePositions);
+            RectD bounds = BoundingBox.from(nodePositions);
+            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE / bounds.getWidth()), (int) (MainFrame.BOX_SIZE / bounds.getHeight())), nodePositions);
             PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
 
-            outputTextArea.setText("Scaled to Box with Size: " + MainFrame.BOX_SIZE);
+            bounds = BoundingBox.from(nodePositions);
+            outputTextArea.setText("Scaled to Box with Size: " + bounds.getWidth() + "x" + bounds.getHeight());
 
             initSidePanel.addDefaultListeners();
         });
