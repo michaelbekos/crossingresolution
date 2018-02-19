@@ -76,6 +76,8 @@ public class QuickGridder implements IGridder {
       configurator.statusMessage.setValue("Success! (" + (iteration + 1) + " iterations)");
     } else if (iteration == maxIterations - 1) {
       configurator.statusMessage.setValue("Gridding failed after " + (iteration + 1) + " iterations");
+    } else {
+      configurator.statusMessage.setValue("Gridded " + griddedNodes.size() + "/" + graph.getNodes().size() + " nodes");
     }
 
     if (configurator.respectMinimumAngle.getValue()) {

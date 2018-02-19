@@ -369,6 +369,7 @@ public class SidePanelTab {
                     startPauseButton.setText("Pause");
                     startPauseButton.setBackground(Color.yellow);
                     stopButton.setBackground(Color.red);
+                    outputTextArea.setText("");
                     executor.start();
                 }
             }
