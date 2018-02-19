@@ -11,9 +11,8 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class BasicIGraphLayoutExecutor {
   private final IGraph graph;
@@ -26,8 +25,7 @@ public class BasicIGraphLayoutExecutor {
   private ICompoundEdit compoundEdit;
   private PropertyChangeSupport propertyChange;
 
-  private final ExecutorService executorService;
-
+  private final ExecutorCompletionService<Void> completionService;
 
   public BasicIGraphLayoutExecutor(ILayout layout,
                                    IGraph graph,
@@ -45,7 +43,7 @@ public class BasicIGraphLayoutExecutor {
     this.maxIterations = itemFactory.intParameter("Maximum number of iterations", -1, 10000);
     this.maxIterations.setValue(maxIterations);
 
-    this.executorService = Executors.newSingleThreadExecutor();
+    this.completionService = new ExecutorCompletionService<>(Executors.newSingleThreadExecutor());
   }
 
   public void start() {
@@ -100,7 +98,7 @@ public class BasicIGraphLayoutExecutor {
   private void run() {
     //iterations < 0 infinite loop
     //iterations > 0 runs for # of iterations
-    executorService.submit(() -> {
+    completionService.submit(() -> {
       if (currentIteration == 0) {
         layout.init();
       }
@@ -127,12 +125,12 @@ public class BasicIGraphLayoutExecutor {
       if (finished) {
         stop();
       }
-    });
+    }, null);
   }
 
   private void updateGraph(Mapper<INode, PointD> nodePositions) {
-    synchronized (graph) {
-      for (Map.Entry<INode, PointD> entry : nodePositions.getEntries()) {
+    for (Map.Entry<INode, PointD> entry : nodePositions.getEntries()) {
+      synchronized (graph) {
         graph.setNodeCenter(entry.getKey(), entry.getValue());
       }
     }
@@ -155,8 +153,7 @@ public class BasicIGraphLayoutExecutor {
   }
 
   public void waitUntilFinished() throws InterruptedException {
-    executorService.shutdown();
-    executorService.awaitTermination(7, TimeUnit.DAYS);
+    completionService.take();
   }
 
   public void setMaxIterations(int maxIterations) {
@@ -173,5 +170,34 @@ public class BasicIGraphLayoutExecutor {
 
   public ILayout getLayout() {
     return layout;
+  }
+
+  private final ReentrantLock lock = new ReentrantLock();
+  public void modifyGraph(GraphModifier modifier) {
+    lock.lock();
+    boolean wasRunning = running && !finished;
+
+    if (wasRunning) {
+      running = false;
+      try {
+        waitUntilFinished();
+      } catch (InterruptedException e) {
+        throw new RuntimeException("Interrupted while waiting for executor to stop", e);
+      }
+      reset();
+    }
+
+    modifier.modify();
+
+    if (wasRunning) {
+      running = true;
+      run();
+    }
+
+    lock.unlock();
+  }
+
+  public interface GraphModifier {
+    void modify();
   }
 }

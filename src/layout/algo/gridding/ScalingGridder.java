@@ -3,7 +3,7 @@ package layout.algo.gridding;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import util.GraphOperations;
+import graphoperations.Scaling;
 
 import java.util.Set;
 
@@ -40,7 +40,7 @@ public class ScalingGridder implements IGridder {
     }
 
     if (iteration % iterationsPerScale == 0 && iteration > 0) {
-      GraphOperations.scaleUpProcess(gridder.getNodePositions(), configurator.scaleBy.getValue());
+      Scaling.scaleBy(configurator.scaleBy.getValue(), gridder.getNodePositions());
     }
 
     return false;

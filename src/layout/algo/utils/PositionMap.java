@@ -37,12 +37,11 @@ public final class PositionMap {
     return positions;
   }
 
-  public static IGraph applyToGraph(IGraph g, Mapper<INode, PointD> nodePositions) {
+  public static void applyToGraph(IGraph graph, Mapper<INode, PointD> nodePositions) {
     for (Map.Entry<INode, PointD> e : nodePositions.getEntries()) {
       INode node = e.getKey();
       PointD position = e.getValue();
-      g.setNodeCenter(node, position);
+      graph.setNodeCenter(node, position);
     }
-    return g;
   }
 }

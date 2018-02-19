@@ -13,9 +13,10 @@ import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
+import graphoperations.Scaling;
 import io.ContestIOHandler;
 import layout.algo.ILayout;
-import layout.algo.utils.BestSolution;
+import layout.algo.utils.BestSolutionMonitor;
 import sidepanel.InitSidePanel;
 import sidepanel.SidePanelTab;
 
@@ -53,7 +54,7 @@ public class MainFrame extends JFrame {
     public JProgressBar progressBar;
 
     public MinimumAngleMonitor minimumAngleMonitor;
-    public BestSolution bestSolution;
+    public BestSolutionMonitor bestSolution;
 
     @Nullable
     public JTabbedPane sidePanel;
@@ -154,10 +155,7 @@ public class MainFrame extends JFrame {
 
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
             this.initSidePanel.removeDefaultListeners();
-            double scaleValue = 1/this.view.getZoom();
-            for(INode u : this.graph.getNodes()){
-                this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
-            }
+            Scaling.scaleNodeSizes(view);
             this.initSidePanel.addDefaultListeners();
         });
 
@@ -203,7 +201,7 @@ public class MainFrame extends JFrame {
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
 
-        bestSolution = new BestSolution();
+        bestSolution = new BestSolutionMonitor();
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel, bestSolution);
 
         this.initSidePanel = new InitSidePanel(this);
