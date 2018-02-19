@@ -11,17 +11,23 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class BasicIGraphLayoutExecutor {
   private final IGraph graph;
   private final ILayout layout;
-  AbstractLayoutInterfaceItem<Integer> maxIterations;
+  final AbstractLayoutInterfaceItem<Integer> maxIterations;
   private final int numberOfCyclesBetweenViewUpdates;
-  private boolean running;
-  private boolean finished;
-  private int currentIteration;
+  private volatile boolean running;
+  private volatile boolean finished;
+  private volatile int currentIteration;
   private ICompoundEdit compoundEdit;
   private PropertyChangeSupport propertyChange;
+
+  private final ExecutorService executorService;
+
 
   public BasicIGraphLayoutExecutor(ILayout layout,
                                    IGraph graph,
@@ -38,9 +44,15 @@ public class BasicIGraphLayoutExecutor {
 
     this.maxIterations = itemFactory.intParameter("Maximum number of iterations", -1, 10000);
     this.maxIterations.setValue(maxIterations);
+
+    this.executorService = Executors.newSingleThreadExecutor();
   }
 
   public void start() {
+    if (graph.getNodes().size() == 0) {
+      return;
+    }
+
     if (!running) {
       running = true;
       synchronized (this.graph) {
@@ -76,9 +88,7 @@ public class BasicIGraphLayoutExecutor {
 
   public void unpause() {
     running = true;
-    synchronized (BasicIGraphLayoutExecutor.this) {
-      notify();
-    }
+    run();
   }
 
   private void reset() {
@@ -90,43 +100,34 @@ public class BasicIGraphLayoutExecutor {
   private void run() {
     //iterations < 0 infinite loop
     //iterations > 0 runs for # of iterations
-    new Thread(() -> {
-      layout.init();
+    executorService.submit(() -> {
+      if (currentIteration == 0) {
+        layout.init();
+      }
 
-      mainLoop:
-      while (!finished) {
-        while (running) {
-          if (!(graph.getNodes().size() > 0)) {
-            continue;
-          }
+      while (running && !finished) {
+        finished = layout.executeStep(currentIteration, maxIterations.getValue());
 
-          finished = layout.executeStep(currentIteration++, maxIterations.getValue());
-
-          if (finished || maxIterations.getValue() > 0 && currentIteration == maxIterations.getValue()) {
-            stop();
-            break mainLoop;
-          }
-
-          if (currentIteration % numberOfCyclesBetweenViewUpdates == 0) {
-            updateGraph(layout.getNodePositions());
-          }
-
-          updateProgress(currentIteration);
+        synchronized (this) {
+          currentIteration++;
         }
 
-        synchronized (BasicIGraphLayoutExecutor.this) {
-          try {
-            BasicIGraphLayoutExecutor.this.wait();
-          } catch (InterruptedException e) {
-            stop();
-          }
+        if (finished || maxIterations.getValue() > 0 && currentIteration == maxIterations.getValue()) {
+          stop();
+          return;
         }
+
+        if (currentIteration % numberOfCyclesBetweenViewUpdates == 0) {
+          updateGraph(layout.getNodePositions());
+        }
+
+        updateProgress(currentIteration);
       }
-      reset();
-      synchronized (BasicIGraphLayoutExecutor.this) {
-        BasicIGraphLayoutExecutor.this.notifyAll();
+
+      if (finished) {
+        stop();
       }
-    }).start();
+    });
   }
 
   private void updateGraph(Mapper<INode, PointD> nodePositions) {
@@ -153,12 +154,9 @@ public class BasicIGraphLayoutExecutor {
     return finished;
   }
 
-  public synchronized void waitUntilFinished() {
-    try {
-      wait();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+  public void waitUntilFinished() throws InterruptedException {
+    executorService.shutdown();
+    executorService.awaitTermination(7, TimeUnit.DAYS);
   }
 
   public void setMaxIterations(int maxIterations) {
