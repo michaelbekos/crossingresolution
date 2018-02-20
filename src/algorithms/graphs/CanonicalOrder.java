@@ -1,134 +1,139 @@
-package algorithms.canonicalOrder;
+package algorithms.graphs;
 
-import algorithms.fpp.EdgeComparator;
 import com.yworks.yfiles.algorithms.*;
-import com.yworks.yfiles.graph.IEdge;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.layout.YGraphAdapter;
 
 import java.util.*;
 
+/**
+ * Created by Ama on 04.02.2018.
+ */
+public class CanonicalOrder {
 
-/**
- * Created by Ama on 16.12.2017.
- */
-/**
- * Calculates a canoncial order of a given graph.
- *
- * @author Original: Findan Eisenhut, Updated + Cleaned up: Philemon Schucker
- *
- */
-public class CanonicalLinear {
     public Graph graph;
+    //private PlanarInformation planarInformation;
     private PlanarEmbedding planarEmbedding;
     private Node v1;
     private Node v2;
+    //private Face v1v2Face;
     private List<Dart> v1v2Face;
     private ArrayList<ArrayList<Node>> canonicalOrder;
 
     // sets
     private HashSet<Node> outerFace; // set of nodes in the current outerface
     private HashSet<Node> possibleNextNodes;
+    //private HashSet<Face> possibleNextFaces;
     private HashSet<List<Dart>> possibleNextFaces;
+
+    // saves the order of added elements in possibleNextNodes and possibleNextFaces to obtain determinism
+    private LinkedList<Node> possibleNextNodes2;
+    //private LinkedList<Face> possibleNextFaces2;
+    private LinkedList<List<Dart>> possibleNextFaces2;
 
     // maps
     private INodeMap isInsertedNode;
+    //private FaceMap isInsertedFace;
     private Map<List<Dart>, Boolean> isInsertedFace;
 
-
-    private Map<List<Dart>, Integer> outD; // number of Dart in the current outerFace
+    //private FaceMap outE; // number of Edges in the current outerFace
+    private Map<List<Dart>, Integer> outD; // number of Edges in the current outerFace
+    //private FaceMap outV; // number of Nodes in the current outerFace
     private Map<List<Dart>, Integer> outV; // number of Nodes in the current outerFace
+    //private FaceMap isSeparating;
     private Map<List<Dart>, Boolean> isSeparating;
     private INodeMap separated;
     private INodeMap visited;
 
-    public CanonicalLinear(Graph g) {
-        this.graph = g;
+    private boolean random = false;
+
+    /**
+     * Instantiating this class calculates a Canonical Order for graph g with corresponding planar information p in
+     * linear time. Note that graph g have to be already embedded. Embedding is stored in planar information p.
+     *
+     * @param graph
+     *            graph to get the Canonical Order for
+     * @param planarEmbedding
+     *            corresponding planar embedding
+     */
+    public CanonicalOrder(Graph graph, PlanarEmbedding planarEmbedding, boolean random) {
+        this.graph = graph;
+        this.random = random;
+        this.planarEmbedding = planarEmbedding;
         init();
         calcOrder();
-
     }
 
     /**
-     * the main part of the algorithm
+     * Calculates the canonical order.
      */
     private void calcOrder() {
         preparations();
-        // removeNode(v2);
-
         while (!possibleNextFaces.isEmpty() | !possibleNextNodes.isEmpty()) {
 
             if (!possibleNextNodes.isEmpty()) {
-                Node n = possibleNextNodes.iterator().next();
+                Node n;
+                if (!random) { // if not random, take the next node out of the list
+                    n = possibleNextNodes2.poll();
+                    while (!possibleNextNodes.contains(n))
+                        n = possibleNextNodes2.poll();
+                } else
+                    // if random, take the node from the hashset iterator, which behaves randomly
+                    n = possibleNextNodes.iterator().next();
                 removeNode(n);
-
             }
             if (!possibleNextFaces.isEmpty()) {
-                List<Dart> f = possibleNextFaces.iterator().next();
-                removeFace(f);
+                List<Dart> face;
+                if (!random) {
+                    face = possibleNextFaces2.poll();
+                    while (!possibleNextFaces.contains(face))
+                        face = possibleNextFaces2.poll();
+                } else
+                    face = possibleNextFaces.iterator().next();
+                removeFace(face);
             }
         }
 
         // only v1v2 face remains
         addv1v2FaceToCanonicalOrder();
-
-       // removeReversedEdges();
-        System.out.println(canonicalOrder.toString());
-
     }
 
     /**
      * determine v1, v2, vn and the v1v2-face
      */
     private void preparations() {
+        //EdgeCursor ec = planarInformation.getOuterFace().edges();
         List<Dart> outerFace = planarEmbedding.getOuterFace();
-        if(outerFace.get(0).isReversed()){
-            v1 = outerFace.get(0).getAssociatedEdge().source();
-        }else{
-            v1 = outerFace.get(0).getAssociatedEdge().target();
+        v1 = getSourceNode(outerFace.get(0));
+        Node vn = getSourceNode(outerFace.get(1));
+        v2 = getSourceNode(outerFace.get(outerFace.size()-1));
+        if (v2.degree() > v1.degree()) {
+            if (v2.degree() > vn.degree()) {
+                Node tmp;
+                tmp = v1;
+                v1 = vn;
+                vn = v2;
+                v2 = tmp;
+            }
+        } else if (v1.degree() > vn.degree()) {
+            Node tmp;
+            tmp = v2;
+            v2 = vn;
+            vn = v1;
+            v1 = tmp;
+
         }
-        Node vn;
-        if(outerFace.get(1).isReversed()){
-            vn = outerFace.get(1).getAssociatedEdge().source();
-        }else{
-            vn = outerFace.get(1).getAssociatedEdge().target();
-        }
-        if(outerFace.get(outerFace.size()-1).isReversed()){
-            v2 = outerFace.get(outerFace.size()-1).getAssociatedEdge().source();
-        }else{
-            v2 = outerFace.get(outerFace.size()-1).getAssociatedEdge().target();
-        }
-        //        EdgeCursor ec = planarInformation.getOuterFace().edges();
-        //ec.next();
-        //Node vn = ec.edge().source();
-        //ec.toLast();
-        //v2 = ec.edge().source();
 
         possibleNextNodes.add(vn);
+        possibleNextNodes2.add(vn);
 
         Dart d = getDart(v1, v2);
         v1v2Face = d.getFace();
-        //Edge e = v1.getEdgeTo(v2);
-       // v1v2Face = planarInformation.faceOf(e);
-
-        // System.out.println("v1:" + v1.toString() + " v2:" + v2.toString()
-        // + " vn:" + vn.toString() + " v1v2Face:" + v1v2Face.toString());
-
     }
 
     /**
      * init planarInformation, sets and maps and update their entries
      */
     private void init() {
-        this.planarEmbedding = new PlanarEmbedding(graph);
-       // addReversedEdges();
-        // sortEdges();
-       // planarInformation.calcFaces();
-       // Utilities.setOuterFace(planarInformation, graph);
-
         canonicalOrder = new ArrayList<>();
-
         initMaps();
         initSets();
     }
@@ -137,10 +142,12 @@ public class CanonicalLinear {
         outerFace = new HashSet<>();
         possibleNextNodes = new HashSet<>();
         possibleNextFaces = new HashSet<>();
+        possibleNextNodes2 = new LinkedList<>();
+        possibleNextFaces2 = new LinkedList<>();
 
-        for (Dart outerDart : planarEmbedding.getOuterFace()) {
-            Dart reverseDart = outerDart.getOppositeDart();
-            Node node = getSourceNode(reverseDart);
+        for (Dart dart : planarEmbedding.getOuterFace()) {
+            Dart dartReverse = dart.getOppositeDart();
+            Node node = getSourceNode(dartReverse);
             outerFace.add(node);
         }
     }
@@ -148,16 +155,16 @@ public class CanonicalLinear {
     private void initMaps() {
         separated = graph.createNodeMap();
         visited = graph.createNodeMap();
-        outD = new HashMap<>();
-        outV = new HashMap<>();
+        outD = new HashMap<List<Dart>, Integer>();
+        outV = new HashMap<List<Dart>, Integer>();
         isInsertedNode = graph.createNodeMap();
-        isInsertedFace = new HashMap<>();
-        isSeparating = new HashMap<>();
+        isInsertedFace = new HashMap<List<Dart>, Boolean>();
+        isSeparating = new HashMap<List<Dart>, Boolean>();
 
-        for (Node node : graph.getNodes()) {
-            separated.setInt(node, 0);
-            visited.setInt(node, 0);
-            isInsertedNode.setBool(node, false);
+        for (INodeCursor nc = graph.getNodeCursor(); nc.ok(); nc.next()) {
+            separated.setInt(nc.node(), 0);
+            visited.setInt(nc.node(), 0);
+            isInsertedNode.setBool(nc.node(), false);
         }
 
         for (List<Dart> face : planarEmbedding.getFaces()) {
@@ -173,44 +180,32 @@ public class CanonicalLinear {
         for (Dart dart : planarEmbedding.getOuterFace()) {
             Dart innerDart = dart.getOppositeDart();
             Node node = getSourceNode(innerDart);
-            increaseOutE(innerDart);
+            increaseOutD(innerDart);
             increaseOutV(node);
         }
     }
 
     /**
-     * outV +1 for every Face adjacent to the given node.
+     * outE +1 for every Face adjacent to the given node.
      *
      * @param node
      */
     private void increaseOutV(Node node) {
-        for (Dart outDart : planarEmbedding.getOutgoingDarts(node)) {
-            List<Dart> face =  outDart.getFace();
+        for(Dart dart : planarEmbedding.getOutgoingDarts(node)){
+            List<Dart> face = dart.getFace();
             outV.put(face, outV.get(face) + 1);
         }
     }
 
     /**
-     * outE +1 for the Face adjacent to the given edge.
+     * outV +1 for the Face adjacent to the given edge.
      *
      * @param dart
      */
-    private void increaseOutE(Dart dart) {
+    private void increaseOutD(Dart dart) {
         List<Dart> face = dart.getFace();
         outD.put(face, outD.get(face) + 1);
     }
-
-    /**
-     * sort edges, necessary to calculate faces in planarInformation
-     */
-/*  // creat auto. in 3.1
-    private void sortEdges() {
-        for (NodeCursor nc = graph.nodes(); nc.ok(); nc.next()) {
-            nc.node().sortOutEdges(
-                    new EdgeComparator(nc.node().firstOutEdge(), graph));
-        }
-    }
-*/
 
     /**
      * delete Node an his adjacent faces. Update new outer nodes and their faces
@@ -225,8 +220,9 @@ public class CanonicalLinear {
         outerFace.remove(deletedNode);
         possibleNextNodes.remove(deletedNode);
         isInsertedNode.setBool(deletedNode, true);
-        for (Dart outDart : planarEmbedding.getOutgoingDarts(deletedNode)) {
-            List<Dart> face = outDart.getFace();
+
+        for (Dart dart : planarEmbedding.getOutgoingDarts(deletedNode)) {
+            List<Dart> face = dart.getFace();
             isInsertedFace.put(face, true);
             possibleNextFaces.remove(face);
         }
@@ -246,12 +242,10 @@ public class CanonicalLinear {
         updateSets(newOuterChain);
 
         addNodeToCanonicalOrder(deletedNode);
-
     }
 
     /**
-     * delete Face and add chain to canonical order. Updates outerFace. Updates
-     * node-/ and facevars.
+     * delete Face and add chain to canonical order. Updates outerFace. Updates node-/ and facevars.
      *
      * @param deleteFace
      */
@@ -275,7 +269,6 @@ public class CanonicalLinear {
             updateVisited(n);
         }
 
-        // System.out.println("deleteChain: " + deleteChain);
         // now deleteChain in counter clockwise order
         Collections.reverse(faceNodes);
         newOuterChain = faceNodes;
@@ -293,20 +286,18 @@ public class CanonicalLinear {
         updateSets(newOuterChain);
 
         addChainToCanonicalOrder(deleteChain);
-
     }
 
     private void updateVisited(Node node) {
         // visitet+=1 for all neighboues of node
-        for (Dart outDart : planarEmbedding.getOutgoingDarts(node)) {
-            Node n = getTargetNode(outDart);
+        for (Dart dart : planarEmbedding.getOutgoingDarts(node)) {
+            Node n = getTargetNode(dart);
             visited.setInt(n, visited.getInt(n) + 1);
         }
     }
 
     /**
-     * computes list of nodes, beginning with the first of the delete-chain. in
-     * clockwise Order!
+     * computes list of nodes, beginning with the first of the delete-chain. in clockwise Order!
      *
      * @param f
      * @return ArrayList of nodes
@@ -330,7 +321,6 @@ public class CanonicalLinear {
         for (int i = 0; i < index; i++) {
             sortNodes.add(faceNodes.get(i));
         }
-
         return sortNodes; // clockwise order
     }
 
@@ -339,26 +329,19 @@ public class CanonicalLinear {
         ArrayList<Node> nodes = new ArrayList<>();
 
         for (Dart dart : f) {
-            Node node;
-            if(dart.isReversed()){
-                node = dart.getAssociatedEdge().target();
-            }else{
-                node = dart.getAssociatedEdge().source();
-            }
+            Node node = getTargetNode(dart);
             nodes.add(node);
         }
-
         return nodes; // counter-clockwise
     }
 
     private int DegreeOf(Node node) {
         int counter = 0;
-        for (Dart dart : planarEmbedding.getOutgoingDarts(node)) {
+        for(Dart dart : planarEmbedding.getOutgoingDarts(node)){
             Node n = getTargetNode(dart);
             if (!isInsertedNode.getBool(n))
                 counter++;
         }
-
         return counter;
     }
 
@@ -369,31 +352,29 @@ public class CanonicalLinear {
             Node n = newOuterChain.get(k);
             for (List<Dart> f : facesOfNode(n)) {
                 for (Node n2 : nodesFromFace(f)) {
-                    if (separated.getInt(n2) == 0 && visited.getInt(n2) > 0
-                            && n2 != v1 && n2 != v2)
+                    if (separated.getInt(n2) == 0 && visited.getInt(n2) > 0 && n2 != v1 && n2 != v2) {
                         possibleNextNodes.add(n2);
-                    else
+                        possibleNextNodes2.add(n2);
+                    } else
                         possibleNextNodes.remove(n2);
                 }
             }
-
         }
 
         // update possible next faces
-
         Node prevNode = newOuterChain.get(0);
         for (int j = 1; j < newOuterChain.size(); j++) {
+            //Edge e = newOuterChain.get(j).getEdgeTo(prevNode);
             Dart d = getDart(newOuterChain.get(j), prevNode);
             List<Dart> f = d.getFace();
-            if (outV.get(f) == outD.get(f) + 1 && outD.get(f) >= 2 && f != v1v2Face)
+            if (outV.get(f) == outD.get(f) + 1 && outD.get(f) >= 2 && f != v1v2Face) {
                 possibleNextFaces.add(f);
-            else {
+                possibleNextFaces2.add(f);
+            } else {
                 possibleNextFaces.remove(f);
             }
-
             prevNode = newOuterChain.get(j);
         }
-
     }
 
     /**
@@ -407,6 +388,7 @@ public class CanonicalLinear {
         Node prevNode = newOuterChain.get(0);
         for (int i = 1; i < newOuterChain.size(); i++) {
             Dart d = getDart(newOuterChain.get(i), prevNode);
+
             List<Dart> f = d.getFace();
 
             outD.put(f, outD.get(f) + 1);// outE++
@@ -417,14 +399,11 @@ public class CanonicalLinear {
             for (List<Dart> f : facesOfNode(newOuterChain.get(i))) {
                 outV.put(f, outV.get(f) + 1);// outV++
             }
-
         }
-
     }
 
     /**
-     * update separated for every node of every face adjacent to the new outer
-     * Chain
+     * update separated for every node of every face adjacent to the new outer Chain
      *
      * @param newOuterChain
      */
@@ -437,11 +416,9 @@ public class CanonicalLinear {
                     for (List<Dart> innerFace : facesOfNode(n)) {
                         if (outV.get(innerFace) >= 3)
                             separated.setInt(n, 1);
-                        if (outV.get(innerFace) == 2
-                                && outD.get(innerFace) == 0)
+                        if (outV.get(innerFace) == 2 && outD.get(innerFace) == 0)
                             separated.setInt(n, 1);
                     }
-
                 }
         }
     }
@@ -449,19 +426,16 @@ public class CanonicalLinear {
     private ArrayList<List<Dart>> facesOfNode(Node node) {
         ArrayList<List<Dart>> faces = new ArrayList<>();
 
-        for (Dart outDart : planarEmbedding.getOutgoingDarts(node)) {
-            List<Dart> f = outDart.getFace();
+        for (Dart dart : planarEmbedding.getOutgoingDarts(node)) {
+            List<Dart> f = dart.getFace();
             if (!isInsertedFace.get(f))
                 faces.add(f);
         }
-
         return faces;
-
     }
 
     /**
-     * computes the chain which is new in the outer face after deleting the
-     * given node.
+     * computes the chain which is new in the outer face after deleting the given node.
      *
      * @param parentNode
      * @return
@@ -480,16 +454,12 @@ public class CanonicalLinear {
             for (int i = 2; i < nodes.size(); i++) {
                 outerChain.add(nodes.get(i));
             }
-
         }
-
-        // System.out.println(outerChain.toString());
         return outerChain;
     }
 
     /**
-     * adjacent faces of a given node in counter clockwise order, beginning with
-     * the given first face
+     * adjacent faces of a given node in counter clockwise order, beginning with the given first face
      *
      * @param node
      * @param firstFace
@@ -499,8 +469,8 @@ public class CanonicalLinear {
         Boolean startAddingToList = false;
         ArrayList<List<Dart>> faces = new ArrayList<>();
 
-        for (Dart outDart : planarEmbedding.getOutgoingDarts(node)) {
-            List<Dart> f = outDart.getFace();
+        for(Dart dart : planarEmbedding.getOutgoingDarts(node)) {
+            List<Dart> f = dart.getFace();
 
             if (!isInsertedFace.get(f) && startAddingToList) {
                 faces.add(f);
@@ -510,15 +480,14 @@ public class CanonicalLinear {
                 startAddingToList = true;
         }
 
-        for (Dart outDart : planarEmbedding.getOutgoingDarts(node)) {
-            List<Dart> f = outDart.getFace();
+        for (Dart dart :planarEmbedding.getOutgoingDarts(node)) {
+            List<Dart> f = dart.getFace();
 
             if (!isInsertedFace.get(f)) {
                 faces.add(f);
             }
             if (f == firstFace) // found first face
                 break;
-
         }
 
         Collections.reverse(faces); // counter-clockwise order
@@ -532,24 +501,25 @@ public class CanonicalLinear {
      * @return
      */
     private Node leftOuterNode(Node node) {
+
         Node retNode = null;
         Node last = null;
         List<Dart> outDarts = planarEmbedding.getOutgoingDarts(node);
 
         int dartIterator = 0;
         int numOfDarts = outDarts.size();
-
         while (dartIterator < numOfDarts) {// ignore inserted nodes
             retNode = getTargetNode(outDarts.get(dartIterator));
-            if (!isInsertedNode.getBool(retNode))
+            if(!isInsertedNode.getBool(retNode)){
                 break;
+            }
             dartIterator++;
         }
 
         if (outerFace.contains(retNode)) {
             last = retNode;
             while (dartIterator < numOfDarts) {// ignore inserted nodes
-                dartIterator++;
+                dartIterator++ ;                                    //TODO: wiso als erstes incre: ?
                 retNode = getTargetNode(outDarts.get(dartIterator));
                 if (!isInsertedNode.getBool(retNode))
                     break;
@@ -560,8 +530,7 @@ public class CanonicalLinear {
                 while (dartIterator < numOfDarts) {// search next outer node
                     dartIterator++;
                     retNode = getTargetNode(outDarts.get(dartIterator));
-                    if (!isInsertedNode.getBool(retNode)
-                            && outerFace.contains(retNode)) {
+                    if (!isInsertedNode.getBool(retNode) && outerFace.contains(retNode)) {
                         break;
                     }
                 }
@@ -571,16 +540,13 @@ public class CanonicalLinear {
             while (dartIterator < numOfDarts) {// search next outer node
                 dartIterator++;
                 retNode = getTargetNode(outDarts.get(dartIterator));
-                if (!isInsertedNode.getBool(retNode)
-                        && outerFace.contains(retNode)) {
+                if (!isInsertedNode.getBool(retNode) && outerFace.contains(retNode)) {
                     break;
                 }
             }
         }
-
         return retNode;
     }
-
     /**
      * list of face nodes. counter-clockwise order with parentNode as the first;
      *
@@ -593,6 +559,7 @@ public class CanonicalLinear {
         ArrayList<Node> nodes = new ArrayList<>();
         for (Dart dart : f) {
 
+            //Edge edge = ec.edge();
             Node node = getTargetNode(dart);
 
             if (node == parentNode)
@@ -602,6 +569,7 @@ public class CanonicalLinear {
         }
         for (Dart dart : f) {
 
+            //Edge edge = ec.edge();
             Node node = getTargetNode(dart);
             if (node == parentNode)
                 break;
@@ -612,23 +580,7 @@ public class CanonicalLinear {
         return nodes;
     }
 
-    /**
-     * add reversed edges, necessary to calculate faces in planarInformation
-     */
-  /*  useless in 3.1
-    private void addReversedEdges() {
-        for (Edge ed : graph.getEdgeArray()) {
-            this.planarInformation.createReverse(ed);
-        }
-    }
 
-    private void removeReversedEdges() {
-        for (Edge ed : graph.getEdgeArray()) {
-            if (planarInformation.isInsertedEdge(ed))
-                graph.removeEdge(ed);
-        }
-    }
-*/
     private void addNodeToCanonicalOrder(Node n) {
         ArrayList<Node> nodeAsList = new ArrayList<>();
         nodeAsList.add(n);
@@ -656,35 +608,19 @@ public class CanonicalLinear {
         return canonicalOrder;
     }
 
-    private  Dart getDart(Node source, Node target){
-        for(Dart dart : planarEmbedding.getOutgoingDarts(source)){
-            Node n;
-            if(dart.isReversed()){
-                n = dart.getAssociatedEdge().target();
-            }else{
-                n = dart.getAssociatedEdge().source();
-            }
-            if(target.equals(n)){
-                return dart;
-            }
+    private Node getSourceNode(Dart dart){
+        Node sourceNode;
+        if(dart.isReversed()){
+            sourceNode = dart.getAssociatedEdge().target();
+        }else{
+            sourceNode = dart.getAssociatedEdge().source();
         }
-        System.out.println("There not existes a dart for this two nodes.");
-        return null;
+        return sourceNode;
     }
 
     private Node getTargetNode(Dart dart){
         Node targetNode;
         if(dart.isReversed()){
-            targetNode = dart.getAssociatedEdge().target();
-        }else{
-            targetNode = dart.getAssociatedEdge().source();
-        }
-        return targetNode;
-    }
-
-    private Node getSourceNode(Dart dart){
-        Node targetNode;
-        if(dart.isReversed()){
             targetNode = dart.getAssociatedEdge().source();
         }else{
             targetNode = dart.getAssociatedEdge().target();
@@ -692,8 +628,16 @@ public class CanonicalLinear {
         return targetNode;
     }
 
+    private  Dart getDart(Node source, Node target){
 
-
+        for(Dart dart : planarEmbedding.getOutgoingDarts(source)){
+            Node n;
+            n  = getTargetNode(dart);
+            if(target.equals(n)){
+                return dart;
+            }
+        }
+        System.out.println("There not existes a dart for this pair.");
+        return null;
+    }
 }
-
-

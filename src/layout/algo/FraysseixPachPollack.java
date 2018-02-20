@@ -1,18 +1,12 @@
-package algorithms.fpp;
+package layout.algo;
 
-import algorithms.canonicalOrder.Utilities;
 
+import algorithms.graphs.CanonicalOrder;
 import com.yworks.yfiles.algorithms.*;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
-
 import algorithms.graphs.Connectivity;
-import algorithms.canonicalOrder.*;
 import com.yworks.yfiles.layout.YGraphAdapter;
-import com.yworks.yfiles.utils.IListEnumerable;
-
-
 import java.util.*;
 
 
@@ -101,29 +95,13 @@ public class FraysseixPachPollack {
 
         // triangulate the graph if necessary
         insertedEdges = Connectivity.triangulatePlanarGraph(graph);
-        for(Edge edge : insertedEdges){
-            System.out.println("InsertedEdge:   SourceNode: " + edge.source().index() + " TargetNode: " + edge.target());
-        }
         // calculate canonical order
         PlanarEmbedding planarEmbedding = new PlanarEmbedding(graph);
 
-        //     CombinatorialEmbedder emb = new CombinatorialEmbedder();
-        //     emb.setPlanarInformation(plan);
-        //     emb.embed();
-
-
-
-        //CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random);
-        CanonicalOrderTwo corder = new CanonicalOrderTwo(graph, planarEmbedding, settings.random);
+        CanonicalOrder corder = new CanonicalOrder(graph, planarEmbedding, settings.random);
         ArrayList<ArrayList<Node>> orderdpl = corder.getCanonicalOrder();
         ArrayList<Node> canonicalOrder = new ArrayList<Node>();
         orderdpl.forEach(l -> canonicalOrder.add(l.get(0)));
-
-    /*    CanonicalOrderMy corder = new CanonicalOrderMy(graph, planarEmbedding, settings.random); // TODO: zum testen auskomment
-        ArrayList<Node> canonicalOrder  = corder.getCanonicalOrder();
-*/
-        // transform into one list
-
 
         checkForValidOrdering(canonicalOrder);
 
@@ -143,7 +121,6 @@ public class FraysseixPachPollack {
         // 1. Phase: Build a binary tree with relative distances for more Details:
         // "A Linear-time Algorithm for Drawing a Planar Graph on a Grid, M. Chrobak, T.H.Payne"
         for (int k = 3; k < canonicalOrder.size(); k++) {
-            System.out.println("Draw Node: " + k);
             // clear hashset for every new run
             neighbours.clear();
 
@@ -242,11 +219,9 @@ public class FraysseixPachPollack {
         boolean[] b = new boolean[graph.getNodeArray().length];
         for (Node n : canonicalOrder){
             b[n.index()] = true;
-            System.out.println("CanonicalOrder: " + n.index());
         }
 
         boolean test = true;
-        System.out.println("numONode:" + graph.getNodeArray().length + "   Num of b: " + b.length);
         for (int i = 0; i < b.length; i++) {
             test = test && b[i];
         }
@@ -262,8 +237,6 @@ public class FraysseixPachPollack {
     private void printCoords(TreeNode n) {
         if (n == null)
             return;
-        System.out.println("node index: " + n.node.index() + " | canonical index " + (n.index + 1) + " coords: x="
-                + n.dx + " y=" + n.y);
         printCoords(n.left);
         printCoords(n.right);
 

@@ -1,12 +1,10 @@
 package sidepanel;
 
-import algorithms.fpp.FraysseixPachPollack;
+import layout.algo.FraysseixPachPollack;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.layout.ILayoutAlgorithm;
-import com.yworks.yfiles.layout.LayoutEventArgs;
-import com.yworks.yfiles.layout.LayoutExecutor;
+import com.yworks.yfiles.layout.*;
 import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
@@ -532,9 +530,15 @@ public class SidePanelTab {
     }
 
     private void fppItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        initSidePanel.removeDefaultListeners();
-        FraysseixPachPollack fpp = new FraysseixPachPollack(initSidePanel.mainFrame.graph, new FraysseixPachPollack.FPPSettings());
-        initSidePanel.addDefaultListeners();
+        YGraphAdapter graphAdapter = new YGraphAdapter(initSidePanel.mainFrame.graph);
+        if( com.yworks.yfiles.algorithms.GraphChecker.isBiconnected(graphAdapter.getYGraph())) {
+            outputTextArea.setText("Graph is biconnected.");
+            initSidePanel.removeDefaultListeners();
+            FraysseixPachPollack fpp = new FraysseixPachPollack(initSidePanel.mainFrame.graph, new FraysseixPachPollack.FPPSettings());
+            initSidePanel.addDefaultListeners();
+        }else{
+            outputTextArea.setText("Graph is not biconnected!");
+        }
 
     }
 
