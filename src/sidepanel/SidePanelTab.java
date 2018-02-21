@@ -1,5 +1,6 @@
 package sidepanel;
 
+import algorithms.graphs.GridGraph;
 import layout.algo.*;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
@@ -476,12 +477,15 @@ public class SidePanelTab {
                 graphInfo.append("  ").append(i).append("   :   ").append(verticesDegree.get(i).toString()).append("\n");
             }
         }
-        graphInfo.append("\nTotal Vertices: " + graph.getNodes().size() + "\nTotal Edges:    " + graph.getEdges().size() + "\n");
+        graphInfo.append("\nTotal Vertices: ").append(graph.getNodes().size())
+            .append("\nTotal Edges:    ").append(graph.getEdges().size()).append("\n");
 
         RectD bounds = BoundingBox.from(PositionMap.FromIGraph(graph));
         double width = bounds.getWidth() < 1 ? 0 : bounds.getWidth();   //smaller than 1 is not a graph
         double height = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
-        graphInfo.append("\nCurrent Graph Size: \nX: " + width + "\nY: " + height + "\n");
+        graphInfo.append("\nCurrent Graph Size: \nX: ").append(width).append("\nY: ").append(height).append("\n");
+
+        graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph));
 
         outputTextArea.setText(graphInfo.toString());
     }
