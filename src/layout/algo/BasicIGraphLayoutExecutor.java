@@ -7,6 +7,7 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
+import util.GraphModifier;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -197,7 +198,4 @@ public class BasicIGraphLayoutExecutor {
     lock.unlock();
   }
 
-  public interface GraphModifier {
-    void modify();
-  }
 }

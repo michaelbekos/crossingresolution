@@ -1,6 +1,6 @@
 package sidepanel;
 
-import layout.algo.FraysseixPachPollack;
+import layout.algo.*;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
@@ -15,13 +15,11 @@ import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
 import graphoperations.*;
-import layout.algo.BasicIGraphLayoutExecutor;
-import layout.algo.IGraphLayoutExecutor;
-import layout.algo.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
 import util.BoundingBox;
+import util.GraphModifier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -334,7 +332,7 @@ public class SidePanelTab {
 
         Mapper<INode, PointD> nodePositions = bestPositions.get();
 
-        executor.modifyGraph(() -> {
+        modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
             PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
             initSidePanel.addDefaultListeners();
@@ -408,7 +406,7 @@ public class SidePanelTab {
     }
 
     private void scalingToBox(@SuppressWarnings("unused") ActionEvent evt){
-        executor.modifyGraph(() -> {
+        modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
 
             IGraph graph = initSidePanel.mainFrame.graph;
@@ -431,7 +429,7 @@ public class SidePanelTab {
             return;
         }
 
-        executor.modifyGraph(() -> {
+        modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
 
             removedChains = Chains.analyze(initSidePanel.mainFrame.graph).remove();
@@ -447,7 +445,7 @@ public class SidePanelTab {
             return;
         }
 
-        executor.modifyGraph(() -> {
+        modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
 
             //TODO reinsert chains (currently regular reinsert 1 chain)
@@ -557,6 +555,14 @@ public class SidePanelTab {
         executor.setContentRectUpdatingEnabled(true);
         executor.addLayoutFinishedListener(doneHandler);
         executor.start();
+    }
+
+    private void modifyGraph(GraphModifier graphModifier) {
+        if (executor == null) {
+            graphModifier.modify();
+        } else {
+            executor.modifyGraph(graphModifier);
+        }
     }
 
     public BasicIGraphLayoutExecutor getExecutor() {
