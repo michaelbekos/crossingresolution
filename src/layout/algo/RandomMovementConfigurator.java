@@ -32,13 +32,13 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     jumpOnLocalMaximum.setValue(false);
 
     onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates", false);
-    onlyGridPositions.setValue(false);
+    onlyGridPositions.setValue(true);
 
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes", false);
     useGaussianDistribution.setValue(true);
 
     toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes", false);
-    toggleNodeDistributions.setValue(false);
+    toggleNodeDistributions.setValue(true);
   }
 
 }
