@@ -11,7 +11,6 @@ public final class GridGraph {
     return graph.getNodes().stream()
         .allMatch(node -> {
           PointD center = node.getLayout().getCenter();
-          System.out.println(center);
           return Util.isInteger(center.getX()) && Util.isInteger(center.getY());
         });
   }
