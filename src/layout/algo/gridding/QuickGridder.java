@@ -46,6 +46,7 @@ public class QuickGridder implements IGridder {
 
       PointD oldPosition = positions.getValue(node);
       double oldAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
+      double allowedAngle = oldAngle - configurator.allowDecreasingBy.getValue();
 
       Stream<PointD> samplePositions = getNeighborGridPositions(oldPosition, iteration).stream()
           .filter(position -> !reservedPositions.contains(position));
@@ -53,7 +54,7 @@ public class QuickGridder implements IGridder {
       if (configurator.respectMinimumAngle.getValue()) {
         samplePositions = samplePositions.filter(position -> {
           positions.setValue(node, position);
-          return MinimumAngle.getMinimumAngleForNode(positions, node, graph) >= oldAngle;
+          return MinimumAngle.getMinimumAngleForNode(positions, node, graph) >= allowedAngle;
         });
       }
 
