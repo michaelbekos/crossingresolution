@@ -462,28 +462,14 @@ public class SidePanelTab {
 
     private void showGraphInfoActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         ArrayList<Integer> verticesDegree = new ArrayList<>();
-        double min_x = Double.MAX_VALUE;
-        double min_y = Double.MAX_VALUE;
-        double max_x = Double.MIN_VALUE;
-        double max_y = Double.MIN_VALUE;
-        for (INode u : initSidePanel.mainFrame.graph.getNodes()) {
-            if (u.getLayout().getCenter().getX() < min_x) {
-                min_x = u.getLayout().getCenter().getX();
-            } else if (u.getLayout().getCenter().getX() > max_x) {
-                max_x = u.getLayout().getCenter().getX();
-            }
-            if (u.getLayout().getCenter().getY() < min_y) {
-                min_y = u.getLayout().getCenter().getY();
-            } else if (u.getLayout().getCenter().getY() > max_y) {
-                max_y = u.getLayout().getCenter().getY();
-            }
 
-            int deg = u.getPorts().size();
+        IGraph graph = initSidePanel.mainFrame.graph;
+        for (INode u : graph.getNodes()) {
+            int deg = graph.degree(u);
             while(deg >= verticesDegree.size()) {
                 verticesDegree.add(0);
             }
             verticesDegree.set(deg, verticesDegree.get(deg) + 1);
-
         }
         StringBuilder graphInfo = new StringBuilder();
         graphInfo.append("Deg. Num.\n");
@@ -492,10 +478,13 @@ public class SidePanelTab {
                 graphInfo.append("  ").append(i).append("   :   ").append(verticesDegree.get(i).toString()).append("\n");
             }
         }
-        graphInfo.append("\nTotal Vertices: " + initSidePanel.mainFrame.graph.getNodes().size() + "\nTotal Edges:    " + initSidePanel.mainFrame.graph.getEdges().size() + "\n");
-        double width = (max_x - min_x) < 1 ? 0 : (max_x - min_x);   //smaller than 1 is not a graph
-        double height = (max_y - min_y) < 1 ? 0 : (max_y - min_y);
+        graphInfo.append("\nTotal Vertices: " + graph.getNodes().size() + "\nTotal Edges:    " + graph.getEdges().size() + "\n");
+
+        RectD bounds = BoundingBox.from(PositionMap.FromIGraph(graph));
+        double width = bounds.getWidth() < 1 ? 0 : bounds.getWidth();   //smaller than 1 is not a graph
+        double height = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
         graphInfo.append("\nCurrent Graph Size: \nX: " + width + "\nY: " + height + "\n");
+
         outputTextArea.setText(graphInfo.toString());
     }
 
