@@ -105,31 +105,10 @@ public class InitMenuBar {
         mainMenuBar.add(createEditMenu());
         mainMenuBar.add(createViewMenu());
         mainMenuBar.add(createGraphOpsMenu());
-        mainMenuBar.add(createLayoutMenu());
 
         return mainMenuBar;
     }
-
-    private JMenu createLayoutMenu() {
-        JMenu layoutMenu = new JMenu();
-        layoutMenu.setText("Layout");
-
-        JMenuItem jitterItem = new JMenuItem();
-        jitterItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        jitterItem.setText("Jitter");
-        jitterItem.addActionListener(this::jitterItemActionPerformed);
-        layoutMenu.add(jitterItem);
-
-        JMenuItem swapperItem = new JMenuItem();
-        swapperItem.setIcon(new ImageIcon(getClass().getResource("/resources/layout-16.png")));
-        swapperItem.setText("Nodes Swapper");
-        swapperItem.addActionListener(this::swapperItemActionPerformed);
-        layoutMenu.add(swapperItem);
-
-        return layoutMenu;
-    }
-
-
+    
     private JMenu createGraphOpsMenu() {
         /* Graph operation Menu */
         JMenu graphOpsMenu = new JMenu();
@@ -167,20 +146,12 @@ public class InitMenuBar {
         reinsertVerticesItem.setText("Reinsert Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
         graphOpsMenu.add(reinsertVerticesItem);
-        
-        
-        JMenuItem reinsertChain = new JMenuItem();
-        reinsertChain.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
-        reinsertChain.setIcon(new ImageIcon(getClass().getResource("/resources/reinsertNode.png"))); // test Image
-        reinsertChain.setText("Chain");
-        reinsertChain.addActionListener(this::reinsertChainItemActionPerformed);
-        graphOpsMenu.add(reinsertChain);
 
         /*
          * Check legality
          */
         JMenuItem enforcelegal = new JMenuItem();
-        enforcelegal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        enforcelegal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
         enforcelegal.setIcon(new ImageIcon(getClass().getResource("/resources/exclamation.png"))); // test Image
         enforcelegal.setText("Enforce legality");
         enforcelegal.addActionListener(this::enforcelegal);
@@ -629,18 +600,6 @@ public class InitMenuBar {
         }
         mainFrame.initSidePanel.addDefaultListeners();
     }
-
-    private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        mainFrame.initSidePanel.removeDefaultListeners();
-
-        if (removedChains != null && removedChains.number() > 0) {
-            removedChains.reinsertAll();
-            Scaling.scaleNodeSizes(view);
-            removedChains = null;
-        }
-
-        mainFrame.initSidePanel.addDefaultListeners();
-    }
     
     private void fitContentItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
@@ -903,47 +862,6 @@ public class InitMenuBar {
             this.graphEditorInputMode.undo();
             mainFrame.initSidePanel.addDefaultListeners();
         }
-    }
-
-    private void jitterItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        mainFrame.initSidePanel.removeDefaultListeners();
-        RemoveOverlapsStage removal = new RemoveOverlapsStage((double) 5);
-        LayoutGraphAdapter adap = new LayoutGraphAdapter(this.graph);
-        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
-        removal.applyLayout(g2);
-        LayoutUtilities.applyLayout(this.graph, removal);
-        this.view.updateUI();
-        mainFrame.initSidePanel.addDefaultListeners();
-    }
-
-    private void swapperItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        mainFrame.initSidePanel.removeDefaultListeners();
-        JTextField nodesTextField = new JTextField("2");
-        int nodes = 2;
-
-        JCheckBox checkbox = new JCheckBox("Nodes from Minimum Crossing");
-        boolean crossing;
-
-        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes to swap: ", nodesTextField, checkbox}, "Swapping Algorithm", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-        crossing = checkbox.isSelected();
-
-        if (result != JOptionPane.OK_OPTION) {
-            return;
-        }
-
-        try {
-            nodes = Integer.parseInt(nodesTextField.getText());
-            if (nodes > 4 && crossing) {
-                JOptionPane.showMessageDialog(null, "No more than four nodes contained in Crossing.\nThe number of nodes to swap will be set to 2. ", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-                nodes = 2;
-            }
-        } catch (NumberFormatException exc) {
-            JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of nodes to swap will be set to 2.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
-        }
-
-        NodeSwapper.swapNodes(this.graph, nodes, crossing);
-        this.view.updateUI();
-        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void gridItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

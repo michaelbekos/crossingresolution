@@ -8,6 +8,7 @@ import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.layout.*;
 import com.yworks.yfiles.layout.circular.CircularLayout;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import com.yworks.yfiles.layout.partial.PartialLayout;
 import com.yworks.yfiles.layout.partial.SubgraphPlacement;
@@ -29,6 +30,7 @@ import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Optional;
 
 public class SidePanelTab {
@@ -46,6 +48,8 @@ public class SidePanelTab {
     private JCheckBox allowClickCreateNodeEdge;
     private JTextArea outputTextArea;
     private boolean verbose;
+    
+    private int depth;
 
     public SidePanelTab(InitSidePanel initSidePanel) {
         //default empty
@@ -62,6 +66,7 @@ public class SidePanelTab {
     }
 
     private void init() {
+    	depth=0;
         sidePanelTab = new JPanel();
         sidePanelTab.setLayout(new GridBagLayout());
         GridBagConstraints cSidePanel = new GridBagConstraints();
@@ -194,6 +199,13 @@ public class SidePanelTab {
         cDefaultPanel.insets = new Insets(0,0,0,0);
         defaultPanel.add(showGraphInfo, cDefaultPanel);
         showGraphInfo.addActionListener(this::showGraphInfoActionPerformed);
+        
+        JButton reinsertAllChains = new JButton("Reinsert All Chains");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        defaultPanel.add(reinsertAllChains, cDefaultPanel);
+        reinsertAllChains.addActionListener(this::reinsertAllChainsItemActionPerformed);
 
         enableMinimumAngleDisplay = new JCheckBox("Show Minimum Angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -276,6 +288,20 @@ public class SidePanelTab {
         cCustomPanel.gridy = ++cCustomPanelY;
         fppItem.addActionListener(this::fppItemActionPerformed);
         custom.add(fppItem, cCustomPanel);
+        
+        JButton jitterItem = new JButton("Jitter");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 1;
+        cCustomPanel.gridy = cCustomPanelY;
+        jitterItem.addActionListener(this::jitterItemActionPerformed);
+        custom.add(jitterItem, cCustomPanel);
+        
+        JButton swapperItem = new JButton("Node Swapper");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 0;
+        cCustomPanel.gridy = ++cCustomPanelY;
+        swapperItem.addActionListener(this::swapperItemActionPerformed);
+        custom.add(swapperItem, cCustomPanel);
 
         cSidePanel.fill = GridBagConstraints.HORIZONTAL;
         cSidePanel.gridx = 0;
@@ -424,7 +450,7 @@ public class SidePanelTab {
         });
     }
 
-    private RemovedChains removedChains;
+    private LinkedList<RemovedChains>  removedChains= new LinkedList<RemovedChains>();
     private void removeChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (initSidePanel.mainFrame.graph.getNodes().size() == 0) {
             return;
@@ -433,15 +459,18 @@ public class SidePanelTab {
         modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
 
-            removedChains = Chains.analyze(initSidePanel.mainFrame.graph).remove();
-            outputTextArea.setText("Removed " + removedChains.number() + " chains.");
+            removedChains.add(depth, Chains.analyze(initSidePanel.mainFrame.graph).remove());
+            outputTextArea.setText("Removed " + removedChains.get(depth).number() + " chains.");
+            if (removedChains.get(depth).number()!=0) {
+            	depth++;
+            }
 
             initSidePanel.addDefaultListeners();
         });
     }
 
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        if (removedChains == null || removedChains.number() == 0) {
+        if (removedChains == null || removedChains.get(depth-1).number() == 0||depth==0) {
             removedChains = null;
             return;
         }
@@ -450,8 +479,18 @@ public class SidePanelTab {
             initSidePanel.removeDefaultListeners();
 
             //TODO reinsert chains (currently regular reinsert 1 chain)
-            removedChains.reinsertOne();
-            outputTextArea.setText(removedChains.number() + " Chains Left in the Stack.");
+            removedChains.get(depth-1).reinsertOne();
+            if (removedChains.get(depth-1).number()!=0) {
+            	outputTextArea.setText(removedChains.get(depth-1).number() + " Chains Left in the Stack on level: "+ (depth-1));
+            }
+            else { if (depth-1==0){
+            	outputTextArea.setText("All chains were reinserted.");
+            	}
+	            else {
+	            depth--;
+	            outputTextArea.setText(removedChains.get(depth-1).number() + " Chains Left in the Stack on level: "+ (depth-1));
+	            }
+            }
 
             Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
 
@@ -459,6 +498,27 @@ public class SidePanelTab {
         });
     }
 
+    private void reinsertAllChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        if (removedChains == null || removedChains.get(depth-1).number() == 0|| depth==0) {
+            removedChains = null;
+            return;
+        }
+
+        modifyGraph(() -> {
+            initSidePanel.removeDefaultListeners();
+
+            while(depth>0) {
+                depth--;
+                removedChains.get(depth).reinsertAll();
+                outputTextArea.setText(removedChains.get(depth).number() + " Chains Left in the Stack.");
+            }
+
+            Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
+
+            initSidePanel.addDefaultListeners();
+        });
+    }
+    
     private void showGraphInfoActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         ArrayList<Integer> verticesDegree = new ArrayList<>();
 
@@ -531,6 +591,47 @@ public class SidePanelTab {
             outputTextArea.setText("Graph is not biconnected!");
         }
 
+    }
+    
+    private void jitterItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        initSidePanel.removeDefaultListeners();
+        RemoveOverlapsStage removal = new RemoveOverlapsStage((double) 5);
+        LayoutGraphAdapter adap = new LayoutGraphAdapter(initSidePanel.mainFrame.graph);
+        CopiedLayoutGraph g2 = adap.createCopiedLayoutGraph();
+        removal.applyLayout(g2);
+        LayoutUtilities.applyLayout(initSidePanel.mainFrame.graph, removal);
+        initSidePanel.mainFrame.view.updateUI();
+        initSidePanel.addDefaultListeners();
+    }
+
+    private void swapperItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        initSidePanel.removeDefaultListeners();
+        JTextField nodesTextField = new JTextField("2");
+        int nodes = 2;
+
+        JCheckBox checkbox = new JCheckBox("Nodes from Minimum Crossing");
+        boolean crossing;
+
+        int result = JOptionPane.showOptionDialog(null, new Object[]{"Number of Nodes to swap: ", nodesTextField, checkbox}, "Swapping Algorithm", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+        crossing = checkbox.isSelected();
+
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        try {
+            nodes = Integer.parseInt(nodesTextField.getText());
+            if (nodes > 4 && crossing) {
+                JOptionPane.showMessageDialog(null, "No more than four nodes contained in Crossing.\nThe number of nodes to swap will be set to 2. ", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                nodes = 2;
+            }
+        } catch (NumberFormatException exc) {
+            JOptionPane.showMessageDialog(null, "Incorrect input.\nThe number of nodes to swap will be set to 2.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+        }
+
+        NodeSwapper.swapNodes(initSidePanel.mainFrame.graph, nodes, crossing);
+        initSidePanel.mainFrame.view.updateUI();
+        initSidePanel.addDefaultListeners();
     }
 
     private void applyLayoutToSelection(ILayoutAlgorithm layout) {
