@@ -12,6 +12,7 @@ public class GridderConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Boolean> scaleUpIfNecessary;
   AbstractLayoutInterfaceItem<Integer> iterationsUntilScaleUp;
   AbstractLayoutInterfaceItem<Double> scaleBy;
+  AbstractLayoutInterfaceItem<Boolean> forceGridAfterStop;
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
@@ -35,5 +36,8 @@ public class GridderConfigurator implements ILayoutConfigurator {
 
     statusMessage = itemFactory.statusMessage("Status message");
     statusMessage.setValue("");
+
+    forceGridAfterStop = itemFactory.booleanParameter("Force grid after stop was pressed", false);
+    forceGridAfterStop.setValue(true);
   }
 }

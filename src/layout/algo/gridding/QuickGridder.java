@@ -5,7 +5,9 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
+import util.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,8 +90,20 @@ public class QuickGridder implements IGridder {
     boolean success = griddedNodes.size() == graph.getNodes().size();
     if (success) {
       configurator.statusMessage.setValue("Success! (" + (lastIteration + 1) + " iterations)");
-    } else {
+    } else if (!configurator.forceGridAfterStop.getValue()) {
       configurator.statusMessage.setValue("Gridding failed after " + (lastIteration + 1) + " iterations");
+    } else {
+      configurator.statusMessage.setValue("Forced grid positions\n(may result in suboptimal solutions)");
+      graph.getNodes().stream()
+          .filter(node -> !griddedNodes.contains(node))
+          .forEach(node -> positions.setValue(node, getNeighborGridPositions(positions.getValue(node), 1).stream()
+              .filter(position -> !reservedPositions.contains(position))
+              .findFirst()
+              .orElseGet(() -> {
+                configurator.statusMessage.setValue("Force gridding failed!\n(node overlaps with another node)");
+                return LayoutUtils.round(positions.getValue(node));
+              })
+          ));
     }
   }
 
