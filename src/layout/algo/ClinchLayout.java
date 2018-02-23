@@ -74,12 +74,6 @@ public class ClinchLayout implements ILayout {
     return positions;
   }
 
-  @Override
-  public void showDebug() {}
-
-  @Override
-  public void clearDebug() {}
-
   private void initLine() {
     IGraphSelection selection = configurator.selection.getValue();
     if (selection != null) {
