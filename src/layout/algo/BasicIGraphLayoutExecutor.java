@@ -27,6 +27,7 @@ public class BasicIGraphLayoutExecutor {
   private PropertyChangeSupport propertyChange;
 
   private final ReentrantLock activeLock = new ReentrantLock();
+  private final ReentrantLock stoppingLock = new ReentrantLock();
   private final ExecutorService executorService;
 
   public BasicIGraphLayoutExecutor(ILayout layout,
@@ -63,18 +64,37 @@ public class BasicIGraphLayoutExecutor {
   }
 
   public void stop() {
+    if (!stoppingLock.tryLock()) {
+      return;
+    }
     if (running) {
-      synchronized (graph) {
-        compoundEdit.commit();
-      }
-
-      updateProgress(0);
-      updateGraph(layout.getNodePositions());
-      running = false;
       finished = true;
-      propertyChange.firePropertyChange("finished", false, true);
+      stopAndWait();
+      finish();
     }
     reset();
+    stoppingLock.unlock();
+  }
+
+  private void stopAndWait() {
+    running = false;
+    try {
+      waitUntilFinished();
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Interrupted while waiting for executor to stop", e);
+    }
+  }
+
+  private void finish() {
+    updateGraph(layout.getNodePositions());
+
+    synchronized (graph) {
+      compoundEdit.commit();
+    }
+
+    updateProgress(0);
+    finished = true;
+    propertyChange.firePropertyChange("finished", false, true);
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -109,15 +129,16 @@ public class BasicIGraphLayoutExecutor {
         }
 
         while (running && !finished) {
-          finished = layout.executeStep(currentIteration, maxIterations.getValue());
+          boolean finished = layout.executeStep(currentIteration, maxIterations.getValue());
+
+          if (finished || maxIterations.getValue() > 0 && currentIteration == maxIterations.getValue()) {
+            layout.finish(currentIteration);
+            finish();
+            return;
+          }
 
           synchronized (this) {
             currentIteration++;
-          }
-
-          if (finished || maxIterations.getValue() > 0 && currentIteration == maxIterations.getValue()) {
-            stop();
-            return;
           }
 
           if (currentIteration % numberOfCyclesBetweenViewUpdates == 0) {
@@ -128,7 +149,8 @@ public class BasicIGraphLayoutExecutor {
         }
 
         if (finished) {
-          stop();
+          layout.finish(currentIteration - 1);
+          finish();
         }
 
       } finally {
@@ -182,18 +204,14 @@ public class BasicIGraphLayoutExecutor {
     return layout;
   }
 
-  private final ReentrantLock lock = new ReentrantLock();
   public void modifyGraph(GraphModifier modifier) {
-    lock.lock();
+    if (!stoppingLock.tryLock()) {
+      return;
+    }
     boolean wasRunning = running && !finished;
 
     if (wasRunning) {
-      running = false;
-      try {
-        waitUntilFinished();
-      } catch (InterruptedException e) {
-        throw new RuntimeException("Interrupted while waiting for executor to stop", e);
-      }
+      stopAndWait();
       reset();
     }
 
@@ -204,7 +222,7 @@ public class BasicIGraphLayoutExecutor {
       run();
     }
 
-    lock.unlock();
+    stoppingLock.unlock();
   }
 
 }

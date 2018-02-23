@@ -46,6 +46,11 @@ public class EnsembleGridder implements IGridder {
   }
 
   @Override
+  public void finish(int lastIteration) {
+    gridders.forEach(gridder -> gridder.finish(lastIteration));
+  }
+
+  @Override
   public Mapper<INode, PointD> getNodePositions() {
     return gridders.stream()
         .map(IGridder::getNodePositions)

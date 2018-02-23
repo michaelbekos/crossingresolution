@@ -72,20 +72,24 @@ public class QuickGridder implements IGridder {
       griddedNodes.add(node);
     }
 
-    boolean success = griddedNodes.size() == graph.getNodes().size();
-    if (success) {
-      configurator.statusMessage.setValue("Success! (" + (iteration + 1) + " iterations)");
-    } else if (iteration == maxIterations - 1) {
-      configurator.statusMessage.setValue("Gridding failed after " + (iteration + 1) + " iterations");
-    } else {
-      configurator.statusMessage.setValue("Gridded " + griddedNodes.size() + "/" + graph.getNodes().size() + " nodes");
-    }
+    configurator.statusMessage.setValue("Gridded " + griddedNodes.size() + "/" + graph.getNodes().size() + " nodes");
 
+    boolean success = griddedNodes.size() == graph.getNodes().size();
     if (configurator.respectMinimumAngle.getValue()) {
       return success;
     } else {
       // max two iterations
       return iteration >= 1 || success;
+    }
+  }
+
+  @Override
+  public void finish(int lastIteration) {
+    boolean success = griddedNodes.size() == graph.getNodes().size();
+    if (success) {
+      configurator.statusMessage.setValue("Success! (" + (lastIteration + 1) + " iterations)");
+    } else {
+      configurator.statusMessage.setValue("Gridding failed after " + (lastIteration + 1) + " iterations");
     }
   }
 

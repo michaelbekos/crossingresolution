@@ -11,6 +11,7 @@ public interface ILayout {
   void setFixNodes(Set<INode> fixNodes);
   boolean executeStep(int iteration, int maxIterations);
   Mapper<INode, PointD> getNodePositions();
+  default void finish(int lastIteration) {}
   default void showDebug() {}
   default void clearDebug() {}
 }

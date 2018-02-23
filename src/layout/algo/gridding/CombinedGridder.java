@@ -38,6 +38,11 @@ public class CombinedGridder implements IGridder {
   }
 
   @Override
+  public void finish(int lastIteration) {
+    gridder.finish(lastIteration);
+  }
+
+  @Override
   public Mapper<INode, PointD> getNodePositions() {
     return gridder.getNodePositions();
   }
