@@ -74,13 +74,6 @@ public class InitSidePanel {
             .findFirst();
     }
 
-    private void addGriddingAlgorithm(IGraph graph) {
-        GridderConfigurator configurator = new GridderConfigurator();
-        IGridder gridder = new CombinedGridder(graph, configurator);
-        SidePanelTab sidePanelTab = addAlgorithm("Gridding", configurator, gridder);
-        sidePanelTab.setVerbose(false);
-    }
-
     private void initDefault() {
         //show scale
         mainFrame.view.getBackgroundGroup().addChild(new DrawScale(mainFrame.view), ICanvasObjectDescriptor.VISUAL);
@@ -100,8 +93,8 @@ public class InitSidePanel {
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
-                if (i != selectedTab) {
-                    sidePanelTabs.get(i).stopExecution();
+                if (sidePanelTabs.get(i).getExecutor().isRunning()) {
+                    sidePanelTabs.get(selectedTab).setOutputTextArea(sidePanelTabs.get(i).algorithmName + " is Still Running!");
                 }
             }
         });
@@ -140,6 +133,14 @@ public class InitSidePanel {
         addAlgorithm("Random Movement", config, layout);
     }
 
+
+    private void addGriddingAlgorithm(IGraph graph) {
+        GridderConfigurator configurator = new GridderConfigurator();
+        IGridder gridder = new CombinedGridder(graph, configurator);
+        SidePanelTab sidePanelTab = addAlgorithm("Gridding", configurator, gridder);
+        sidePanelTab.setVerbose(false);
+    }
+
     /**
      * Adds an algorithm in a new tab, top panel is defined by the configurator, bottom is the default panel
      * @param algorithmName - name of tab
@@ -149,7 +150,6 @@ public class InitSidePanel {
     private SidePanelTab addAlgorithm(String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
         SidePanelTab sidePanel = new SidePanelTab(this, algorithmName, configurator, layout);
         sidePanelTabs.add(sidePanel);
-//        tabbedSidePane.addTab(sidePanel.algorithmName, sidePanel.sidePanelTab);
         tabbedSidePane.addTab(sidePanel.algorithmName, new JScrollPane(sidePanel.sidePanelTab));
         return sidePanel;
     }

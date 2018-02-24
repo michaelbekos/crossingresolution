@@ -62,6 +62,7 @@ public class SidePanelTab {
         this.algorithmName = algorithmName;
         this.configurator = configurator;
         this.layout = layout;
+        this.verbose = true;
         init();
     }
 
