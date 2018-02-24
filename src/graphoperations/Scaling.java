@@ -41,12 +41,14 @@ public final class Scaling {
   public static void scaleNodeSizes(GraphComponent view) {
       IGraph graph = view.getGraph();
       double scaleValue = 1 / view.getZoom(); // scale reinserted nodes
+      double width = graph.getNodeDefaults().getSize().width * scaleValue;
+      double height = graph.getNodeDefaults().getSize().height * scaleValue;
       for (INode u : graph.getNodes()) {
           graph.setNodeLayout(u, new RectD(
               u.getLayout().getX(),
               u.getLayout().getY(),
-              graph.getNodeDefaults().getSize().width * scaleValue,
-              graph.getNodeDefaults().getSize().height * scaleValue
+              width,
+              height
           ));
       }
   }

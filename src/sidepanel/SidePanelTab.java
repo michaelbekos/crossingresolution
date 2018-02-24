@@ -229,7 +229,7 @@ public class SidePanelTab {
         allowClickCreateNodeEdge.setSelected(false);
 
         outputTextArea.setLineWrap(true);
-        outputTextArea.setRows(5);
+        outputTextArea.setRows(10);
         JScrollPane scrollPane = new JScrollPane(outputTextArea);
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;

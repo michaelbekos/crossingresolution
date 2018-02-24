@@ -1,7 +1,6 @@
 package main;
 
 import com.sun.istack.internal.Nullable;
-import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
@@ -153,7 +152,14 @@ public class MainFrame extends JFrame {
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
             boolean removedListeners = this.initSidePanel.removeDefaultListeners();
             Scaling.scaleNodeSizes(view);
+            if (this.graph.getNodes().size() > 100) {
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException x) {
+                }
+            }
             if (removedListeners) {
+
                 this.initSidePanel.addDefaultListeners();
             }
         });
