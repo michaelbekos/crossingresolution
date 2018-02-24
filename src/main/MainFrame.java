@@ -14,7 +14,7 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import graphoperations.Scaling;
 import io.ContestIOHandler;
-import layout.algo.ILayout;
+import layout.algo.execution.ILayout;
 import layout.algo.utils.BestSolutionMonitor;
 import sidepanel.InitSidePanel;
 import sidepanel.SidePanelTab;

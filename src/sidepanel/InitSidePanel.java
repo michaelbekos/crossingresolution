@@ -5,6 +5,7 @@ import com.yworks.yfiles.graph.GraphItemTypes;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.view.ICanvasObjectDescriptor;
 import layout.algo.*;
+import layout.algo.execution.ILayout;
 import layout.algo.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
@@ -16,7 +17,6 @@ import main.MainFrame;
 import view.visual.DrawScale;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Optional;

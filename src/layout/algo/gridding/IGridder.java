@@ -1,6 +1,6 @@
 package layout.algo.gridding;
 
-import layout.algo.ILayout;
+import layout.algo.execution.ILayout;
 
 public interface IGridder extends ILayout {
 }

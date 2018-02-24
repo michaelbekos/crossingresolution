@@ -5,7 +5,7 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.ILayout;
+import layout.algo.execution.ILayout;
 
 import java.util.Comparator;
 import java.util.Set;

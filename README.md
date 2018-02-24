@@ -61,8 +61,8 @@ should NOT directly move nodes of the `IGraph` as this will update the view imme
 loss. Instead, work on an instance of `Mapper<INode, PointD>`, which can be obtained from `layout.algo.utils.PositionMap.fromIGraph`.
 
 Adding a new algorithm requires three things: 
-* A class that implements the `layout.algo.ILayout` interface. This should contain the logic of the algorithm. Implementing
-this interface allows it to be run by a `layout.algo.(Basic)IGraphLayoutExecutor`.
+* A class that implements the `layout.algo.execution.ILayout` interface. This should contain the logic of the algorithm. Implementing
+this interface allows it to be run by a `layout.algo.execution.(Basic)IGraphLayoutExecutor`.
 * A class that implements `layout.algo.layoutinterface.IConfigurator`. This should contain a set of parameters that configure
 the algorithm. The parameters are represented by so-called `LayoutInterfaceItems` (if you know a better name, feel free
 to change it), which enable abstract communication with an arbitrary view. They are constructed by a
