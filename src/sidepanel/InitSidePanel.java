@@ -38,17 +38,9 @@ public class InitSidePanel {
         this.mainFrame = mainFrame;
     }
 
-    public JTabbedPane initSidePanel(JPanel mainPanel) {
+    public JTabbedPane initSidePanel() {
         tabbedSidePane = new JTabbedPane();
         initDefault();
-        GridBagConstraints cc = new GridBagConstraints();
-        cc.gridx = 1;
-        cc.gridy = 1;
-        cc.weighty = 1;
-        cc.weightx = 0.2;
-        cc.insets = new Insets(0, 0, 0, 0);
-        cc.fill = GridBagConstraints.BOTH;
-        mainPanel.add(tabbedSidePane, cc);
 
         IGraph graph = mainFrame.view.getGraph();
 
