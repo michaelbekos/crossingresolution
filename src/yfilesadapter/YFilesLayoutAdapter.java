@@ -6,7 +6,7 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.ILayoutAlgorithm;
-import layout.algo.ILayout;
+import layout.algo.execution.ILayout;
 import layout.algo.utils.PositionMap;
 
 import java.util.Set;

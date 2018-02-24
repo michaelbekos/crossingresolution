@@ -8,7 +8,7 @@ import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
 import layout.algo.ForceAlgorithm;
-import layout.algo.ILayout;
+import layout.algo.execution.ILayout;
 import layout.algo.InitForceAlgorithm;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.utils.PositionMap;

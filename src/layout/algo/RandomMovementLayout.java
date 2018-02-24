@@ -10,6 +10,7 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.YGraphAdapter;
+import layout.algo.execution.ILayout;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import util.BoundingBox;

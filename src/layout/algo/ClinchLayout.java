@@ -10,6 +10,7 @@ import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.utils.IListEnumerable;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
+import layout.algo.execution.ILayout;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import util.BoundingBox;
