@@ -1,5 +1,5 @@
 # Crossing Resolution
-This repository provides algorithms that allow to draw 2D graphs in a fashion that maximizes the minimum crossing angle of
+This repository provides algorithms that allow drawing of 2D graphs in a fashion that maximizes the minimum crossing angle of their
 edges. It is developed in the scope of the [Graph Drawing Contest](http://www.graphdrawing.de/contest2017/contest.html)
 2017 and 2018.
 
@@ -16,24 +16,24 @@ latter opens graphs in the contest file format.
 
 ### Algorithms
 On the sidepanel there are a number of algorithms available, each configurable by a number of parameters:
-* Random Movement: A pretty simple algorithm that randomly moves nodes to new locations that don't hurt the minimum angle.
-* Force Algorithm: An implementation of a force-directed algorithm supplying a number of forces destined to increase the 
-minimum angle. Each can be enabled and disabled by the respective check-boxes.
-* Genetic Algorithm: An algorithm that uses a genetic approach to try and optimize parameters of the Force Algorithm. It's
-very rarely used as it's quite slow and does not produce good results.
+* Random Movement: A pretty simple algorithm that randomly moves nodes to new locations that do not hurt the minimum angle.
+* Force Algorithm: An implementation of a force-directed algorithm supplying a number of forces designed to increase the
+minimum angle. Each can be enabled and disabled by their respective check-boxes.
+* Genetic Algorithm: An algorithm that uses a genetic approach to try and optimize parameters of the Force Algorithm. It is
+used very rarely as it is quite slow and does not produce good results.
 * Clinch Nodes: An algorithm that tries to move nodes closer to a imaginary line calculated by the two most distant nodes.
-Originally meant as post-processing step for an algorithm that was not implemented yet.
-* Gridding: An algorithm that tries to move nodes with arbitrary locations to close integer positions and thus making the
+Originally meant as a post-processing step for an algorithm that is not yet implemented.
+* Gridding: An algorithm that tries to move nodes with arbitrary locations to nearby integer positions, thus making the
 graph valid for the contest.
 * Misc.: A tab that mainly provides a collection of yFiles algorithms plus an FPP implementation that draws planar graphs.
 
-In practice, a yFiles Organic Layout followed by Random Movement has proved to produce the best results.
+In practice, a yFiles Organic Layout followed by Random Movement has proven to produce the best results.
 
-In addition to the algorithms each tab provides some buttons which allow to modify the graph:
+In addition to the algorithms, each tab provides some buttons which allow modifications of the graph:
 * Show Best: Resets the graph to the best result achieved since loading.
 * Scale Me to the Box: Scales the graph to the maximum box size allowed by the contest.
 * Remove All Chains/Reinsert One/All Chains: Allows removing and reinserting all nodes of degree two.
-* Graph Info: Shows detailed information about the graph like dimensions and degrees of the nodes.
+* Graph Info: Shows detailed information about the graph such as dimensions and degrees of the nodes.
 
 ### CLI Usage
 It is also possible to open multiple frames at the same time by supplying some CLI parameters to the `main/Main` program.
@@ -47,7 +47,7 @@ Here is a quick overview over the packages:
 * `io`: Contains classes for loading and saving the graphs
 * `layout.algo`: Contains all algorithms and necessary utility classes
 * `main`: Contains the main parts of the view.
-* `randomgraphgenerators`: Contains classes that are able to create new random graphs with some properties.
+* `randomgraphgenerators`: Contains classes that are able to create new random graphs with certain properties.
 * `sidepanel`: Contains all sidepanel related code, especially all the sidepanel `LayoutInterfaceItems`.
 * `util`: Contains some utility classes.
 * `view.visual`: Contains classes for displaying some visuals like debug vectors
