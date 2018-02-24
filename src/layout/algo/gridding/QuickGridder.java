@@ -5,7 +5,9 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
+import util.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,6 +48,7 @@ public class QuickGridder implements IGridder {
 
       PointD oldPosition = positions.getValue(node);
       double oldAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
+      double allowedAngle = oldAngle - configurator.allowDecreasingBy.getValue();
 
       Stream<PointD> samplePositions = getNeighborGridPositions(oldPosition, iteration).stream()
           .filter(position -> !reservedPositions.contains(position));
@@ -53,7 +56,7 @@ public class QuickGridder implements IGridder {
       if (configurator.respectMinimumAngle.getValue()) {
         samplePositions = samplePositions.filter(position -> {
           positions.setValue(node, position);
-          return MinimumAngle.getMinimumAngleForNode(positions, node, graph) >= oldAngle;
+          return MinimumAngle.getMinimumAngleForNode(positions, node, graph) >= allowedAngle;
         });
       }
 
@@ -71,18 +74,36 @@ public class QuickGridder implements IGridder {
       griddedNodes.add(node);
     }
 
-    boolean success = griddedNodes.size() == graph.getNodes().size();
-    if (success) {
-      configurator.statusMessage.setValue("Success! (" + (iteration + 1) + " iterations)");
-    } else if (iteration == maxIterations - 1) {
-      configurator.statusMessage.setValue("Gridding failed after " + (iteration + 1) + " iterations");
-    }
+    configurator.statusMessage.setValue("Gridded " + griddedNodes.size() + "/" + graph.getNodes().size() + " nodes");
 
+    boolean success = griddedNodes.size() == graph.getNodes().size();
     if (configurator.respectMinimumAngle.getValue()) {
       return success;
     } else {
       // max two iterations
       return iteration >= 1 || success;
+    }
+  }
+
+  @Override
+  public void finish(int lastIteration) {
+    boolean success = griddedNodes.size() == graph.getNodes().size();
+    if (success) {
+      configurator.statusMessage.setValue("Success! (" + (lastIteration + 1) + " iterations)");
+    } else if (!configurator.forceGridAfterStop.getValue()) {
+      configurator.statusMessage.setValue("Gridding failed after " + (lastIteration + 1) + " iterations");
+    } else {
+      configurator.statusMessage.setValue("Forced grid positions\n(may result in suboptimal solutions)");
+      graph.getNodes().stream()
+          .filter(node -> !griddedNodes.contains(node))
+          .forEach(node -> positions.setValue(node, getNeighborGridPositions(positions.getValue(node), 1).stream()
+              .filter(position -> !reservedPositions.contains(position))
+              .findFirst()
+              .orElseGet(() -> {
+                configurator.statusMessage.setValue("Force gridding failed!\n(node overlaps with another node)");
+                return LayoutUtils.round(positions.getValue(node));
+              })
+          ));
     }
   }
 
@@ -105,10 +126,4 @@ public class QuickGridder implements IGridder {
   public Mapper<INode, PointD> getNodePositions() {
     return positions;
   }
-
-  @Override
-  public void showDebug() {}
-
-  @Override
-  public void clearDebug() {}
 }

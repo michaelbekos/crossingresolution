@@ -13,11 +13,12 @@ import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
+import graphoperations.Scaling;
 import io.ContestIOHandler;
-import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.ILayout;
-import layout.algo.utils.BestSolution;
+import layout.algo.utils.BestSolutionMonitor;
 import sidepanel.InitSidePanel;
+import sidepanel.SidePanelTab;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,7 +54,7 @@ public class MainFrame extends JFrame {
     public JProgressBar progressBar;
 
     public MinimumAngleMonitor minimumAngleMonitor;
-    public BestSolution bestSolution;
+    public BestSolutionMonitor bestSolution;
 
     @Nullable
     public JTabbedPane sidePanel;
@@ -85,32 +86,29 @@ public class MainFrame extends JFrame {
 
         this.infoLabel = new JLabel();
         this.infoLabel.setText("Number of Vertices: 0     Number of Edges: 0");
-        this.infoLabel.setPreferredSize(new Dimension(250,20));
         progressBarPanel.add(infoLabel);
 
         this.progressBar = new JProgressBar();
-        this.progressBar.setPreferredSize(new Dimension(250, 20));
         this.progressBar.setStringPainted(true);
         progressBarPanel.add(this.progressBar);
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        mainPanel.setPreferredSize(new Dimension(300, 300));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
         mainPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridy = 2;
+        c.gridy = 1;
         c.insets = new Insets(5, 0, 5, 0);
         mainPanel.add(progressBarPanel, c);
 
         this.view = new GraphComponent();
-        this.view.setSize(330, 330);
         this.view.requestFocus();
         this.view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         this.view.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         c.fill = GridBagConstraints.BOTH;
-        c.gridy = 1;
-        c.weightx = 0.8;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
         mainPanel.add(this.view, c);
 
         this.graph = this.view.getGraph();
@@ -134,7 +132,7 @@ public class MainFrame extends JFrame {
 
         /* Add four listeners two the graph */
         this.graph.addNodeCreatedListener((o, iNodeItemEventArgs) -> {
-            graph.addLabel(iNodeItemEventArgs.getItem(), Integer.toString(graph.getNodes().size() - 1));
+            this.graph.addLabel(iNodeItemEventArgs.getItem(), Integer.toString(graph.getNodes().size() - 1));
             this.graph.setStyle(iNodeItemEventArgs.getItem(), this.defaultNodeStyle.clone());
             this.graph.setStyle(iNodeItemEventArgs.getItem().getLabels().first(), this.defaultLabelStyle.clone());
             infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size());
@@ -153,12 +151,11 @@ public class MainFrame extends JFrame {
                 ));
 
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
-            this.initSidePanel.removeDefaultListeners();
-            double scaleValue = 1/this.view.getZoom();
-            for(INode u : this.graph.getNodes()){
-                this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
+            boolean removedListeners = this.initSidePanel.removeDefaultListeners();
+            Scaling.scaleNodeSizes(view);
+            if (removedListeners) {
+                this.initSidePanel.addDefaultListeners();
             }
-            this.initSidePanel.addDefaultListeners();
         });
 
 
@@ -192,22 +189,38 @@ public class MainFrame extends JFrame {
         this.graph.getNodeDefaults().getLabelDefaults().setStyle(this.defaultLabelStyle);
         this.graph.getEdgeDefaults().getLabelDefaults().setStyle(this.defaultLabelStyle);
 
-        super.getContentPane().setLayout(new java.awt.BorderLayout(20, 20));
-        super.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
-
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c. insets = new Insets(5, 0, 10, 0);
-
         this.defaultLayouter = new OrganicLayout();
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
 
-        bestSolution = new BestSolution();
+        bestSolution = new BestSolutionMonitor();
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel, bestSolution);
 
         this.initSidePanel = new InitSidePanel(this);
-        this.sidePanel = this.initSidePanel.initSidePanel(mainPanel);
+        this.sidePanel = this.initSidePanel.initSidePanel();
+
+        GridBagConstraints cc = new GridBagConstraints();
+        cc.gridx = 1;
+        cc.gridy = 0;
+        cc.weighty = 1;
+        cc.weightx = 1;
+        cc.insets = new Insets(0, 0, 0, 0);
+        cc.fill = GridBagConstraints.BOTH;
+        JPanel sidePanelPane = new JPanel();
+        sidePanelPane.setBorder(BorderFactory.createEmptyBorder(0, 5, 10, 10));
+        sidePanelPane.setLayout(new GridBagLayout());
+        sidePanelPane.add(this.sidePanel, cc);
+
+        JSplitPane mainSplit = new JSplitPane();
+        mainSplit.setRightComponent(sidePanelPane);
+        mainSplit.setLeftComponent(mainPanel);
+        mainSplit.setContinuousLayout(true);
+        mainSplit.setOneTouchExpandable(true);
+        mainSplit.setResizeWeight(0.67);
+
+
+        super.getContentPane().setLayout(new java.awt.BorderLayout(20, 20));
+        super.getContentPane().add(mainSplit, java.awt.BorderLayout.CENTER);
     }
 
 
@@ -308,8 +321,8 @@ public class MainFrame extends JFrame {
         });
     }
 
-    public Optional<BasicIGraphLayoutExecutor> getExecutorForAlgorithm(Class<? extends ILayout> layoutClass) {
-        return initSidePanel.getExecutorForAlgorithm(layoutClass);
+    public Optional<SidePanelTab> getTabForAlgorithm(Class<? extends ILayout> layoutClass) {
+        return initSidePanel.getTabForAlgorithm(layoutClass);
     }
 
     public void openContestFile(String fileNamePath) {

@@ -33,7 +33,11 @@ class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
     int iterations = configurator.iterationsPerGeneration.getValue();
     final BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, iterations, iterations, new VoidItemFactory());
     executor.start();
-    executor.waitUntilFinished();
+    try {
+      executor.waitUntilFinished();
+    } catch (InterruptedException e) {
+      throw new RuntimeException("ForceAlgorithmObjective was interrupted while waiting for an executor to finish", e);
+    }
     return forceAlgorithm;
   }
 

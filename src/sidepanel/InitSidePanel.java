@@ -3,7 +3,6 @@ package sidepanel;
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.graph.GraphItemTypes;
 import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.view.ICanvasObject;
 import com.yworks.yfiles.view.ICanvasObjectDescriptor;
 import layout.algo.*;
 import layout.algo.forces.*;
@@ -39,17 +38,9 @@ public class InitSidePanel {
         this.mainFrame = mainFrame;
     }
 
-    public JTabbedPane initSidePanel(JPanel mainPanel) {
+    public JTabbedPane initSidePanel() {
         tabbedSidePane = new JTabbedPane();
         initDefault();
-        GridBagConstraints cc = new GridBagConstraints();
-        cc.gridx = 1;
-        cc.gridy = 1;
-        cc.weighty = 1;
-        cc.weightx = 0.2;
-        cc.insets = new Insets(0, 0, 0, 0);
-        cc.fill = GridBagConstraints.BOTH;
-        mainPanel.add(tabbedSidePane, cc);
 
         IGraph graph = mainFrame.view.getGraph();
 
@@ -69,17 +60,10 @@ public class InitSidePanel {
     }
 
 
-    public Optional<BasicIGraphLayoutExecutor> getExecutorForAlgorithm(Class<? extends ILayout> layoutClass) {
+    public Optional<SidePanelTab> getTabForAlgorithm(Class<? extends ILayout> layoutClass) {
         return sidePanelTabs.stream()
-            .map(SidePanelTab::getExecutor)
-            .filter(executor -> layoutClass.isInstance(executor.getLayout()))
+            .filter(executor -> layoutClass.isInstance(executor.getExecutor().getLayout()))
             .findFirst();
-    }
-
-    private void addGriddingAlgorithm(IGraph graph) {
-        GridderConfigurator configurator = new GridderConfigurator();
-        IGridder gridder = new CombinedGridder(graph, configurator);
-        addAlgorithm("Gridding", configurator, gridder);
     }
 
     private void initDefault() {
@@ -101,8 +85,8 @@ public class InitSidePanel {
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
-                if (i != selectedTab) {
-                    sidePanelTabs.get(i).stopExecution();
+                if (sidePanelTabs.get(i).getExecutor().isRunning()) {
+                    sidePanelTabs.get(selectedTab).setOutputTextArea(sidePanelTabs.get(i).algorithmName + " is Still Running!");
                 }
             }
         });
@@ -121,7 +105,6 @@ public class InitSidePanel {
     }
 
     private void addForceAlgorithm(IGraph graph) {
-        mainFrame.bestSolution.getBestMinimumAngle();
         CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
         ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
                 .addForce(new NodeNeighbourForce(graph))
@@ -142,17 +125,25 @@ public class InitSidePanel {
         addAlgorithm("Random Movement", config, layout);
     }
 
+
+    private void addGriddingAlgorithm(IGraph graph) {
+        GridderConfigurator configurator = new GridderConfigurator();
+        IGridder gridder = new CombinedGridder(graph, configurator);
+        SidePanelTab sidePanelTab = addAlgorithm("Gridding", configurator, gridder);
+        sidePanelTab.setVerbose(false);
+    }
+
     /**
      * Adds an algorithm in a new tab, top panel is defined by the configurator, bottom is the default panel
      * @param algorithmName - name of tab
      * @param configurator - which and what parameters
      * @param layout - interface to algorithm for start/pause/stop buttons and controls for above parameters
      */
-    private void addAlgorithm(String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
+    private SidePanelTab addAlgorithm(String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
         SidePanelTab sidePanel = new SidePanelTab(this, algorithmName, configurator, layout);
         sidePanelTabs.add(sidePanel);
-//        tabbedSidePane.addTab(sidePanel.algorithmName, sidePanel.sidePanelTab);
         tabbedSidePane.addTab(sidePanel.algorithmName, new JScrollPane(sidePanel.sidePanelTab));
+        return sidePanel;
     }
 
     /**
@@ -166,11 +157,13 @@ public class InitSidePanel {
 
 
     private boolean removedListeners = false;
-    public void removeDefaultListeners() {
+    public boolean removeDefaultListeners() {
         if (stateEnableMinimumAngle && !removedListeners) {
             removedListeners = true;
             mainFrame.minimumAngleMonitor.removeGraphChangedListeners();
+            return true;
         }
+        return false;
     }
 
     public void addDefaultListeners() {
@@ -211,16 +204,4 @@ public class InitSidePanel {
         mainFrame.graphEditorInputMode.setDeletableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
         mainFrame.graphEditorInputMode.setSelectableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
     }
-
-    private ICanvasObject scale = null;
-    private void masterShowScaleEnabled(@SuppressWarnings("unused") ItemEvent evt) {
-        removeDefaultListeners();
-        if (evt.getStateChange() == ItemEvent.SELECTED){
-            scale = (mainFrame.view.getBackgroundGroup().addChild(new DrawScale(mainFrame.view), ICanvasObjectDescriptor.VISUAL));
-        } else {
-            scale.remove();
-        }
-        addDefaultListeners();
-    }
-
 }

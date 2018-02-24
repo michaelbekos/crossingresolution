@@ -100,7 +100,11 @@ public class CommandLineInterface {
           BasicIGraphLayoutExecutor executor =
               new BasicIGraphLayoutExecutor(algorithm, fileData.graph, iterations, iterations, new VoidItemFactory());
           executor.start();
-          executor.waitUntilFinished();
+          try {
+            executor.waitUntilFinished();
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
         });
   }
 

@@ -67,4 +67,8 @@ public abstract class Util {
   public static PointD rotate90DegreesClockwise(PointD p) {
     return new PointD(p.getY(), -p.getX());
   }
+
+  public static boolean isInteger(double d) {
+    return d % 1 == 0;
+  }
 }

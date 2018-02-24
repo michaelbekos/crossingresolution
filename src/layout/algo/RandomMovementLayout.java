@@ -249,10 +249,4 @@ public class RandomMovementLayout implements ILayout {
   public Mapper<INode, PointD> getNodePositions() {
     return positions;
   }
-
-  @Override
-  public void showDebug() {}
-
-  @Override
-  public void clearDebug() {}
 }

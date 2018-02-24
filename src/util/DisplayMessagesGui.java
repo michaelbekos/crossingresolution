@@ -2,7 +2,7 @@ package util;
 
 import com.yworks.yfiles.graph.IGraph;
 
-import layout.algo.utils.BestSolution;
+import layout.algo.utils.BestSolutionMonitor;
 import util.graph2d.Intersection;
 
 /**
@@ -13,10 +13,10 @@ public class DisplayMessagesGui {
     public static String createNumberEdgesVertices(IGraph graph){
         return "Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size();
     }
-    public static String createMinimumAngleMsg(Intersection currCross, int nodes) {
+    public static String createMinimumAngleMsg(Intersection currCross, int nodes, BestSolutionMonitor bestSolution) {
 
         String text = "Minimum Angle: " + currCross.angle.toString();
-        text += " | Stored Best: " + BestSolution.getBestMinimumAngleNodes(nodes);
+        text += " | Stored Best: " + bestSolution.getBestMinimumAngleForNodes(nodes).orElse(Double.POSITIVE_INFINITY);
         text += " | Nodes: " + currCross.segment1.n1.getLabels().first().getText();
         text += " , " +  currCross.segment1.n2.getLabels().first().getText();
         text += " | " +  currCross.segment2.n1.getLabels().first().getText();

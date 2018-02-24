@@ -6,11 +6,13 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 public class GridderConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Boolean> respectMinimumAngle;
+  AbstractLayoutInterfaceItem<Double> allowDecreasingBy;
   AbstractLayoutInterfaceItem<String> statusMessage;
   AbstractLayoutInterfaceItem<Integer> numberOfParallelExecutions;
   AbstractLayoutInterfaceItem<Boolean> scaleUpIfNecessary;
   AbstractLayoutInterfaceItem<Integer> iterationsUntilScaleUp;
   AbstractLayoutInterfaceItem<Double> scaleBy;
+  AbstractLayoutInterfaceItem<Boolean> forceGridAfterStop;
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
@@ -19,6 +21,9 @@ public class GridderConfigurator implements ILayoutConfigurator {
 
     respectMinimumAngle = itemFactory.booleanParameter("Respect Minimum Angle", false);
     respectMinimumAngle.setValue(true);
+
+    allowDecreasingBy = itemFactory.doubleParameter("Allow decreasing angle by", 0, 90, false);
+    allowDecreasingBy.setValue(0.0);
 
     scaleUpIfNecessary = itemFactory.booleanParameter("Scale up if necessary", false);
     scaleUpIfNecessary.setValue(false);
@@ -31,5 +36,8 @@ public class GridderConfigurator implements ILayoutConfigurator {
 
     statusMessage = itemFactory.statusMessage("Status message");
     statusMessage.setValue("");
+
+    forceGridAfterStop = itemFactory.booleanParameter("Force grid after stop was pressed", false);
+    forceGridAfterStop.setValue(true);
   }
 }

@@ -2,8 +2,8 @@ package main;
 
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import layout.algo.BasicIGraphLayoutExecutor;
 import layout.algo.RandomMovementLayout;
+import sidepanel.SidePanelTab;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -30,18 +30,20 @@ public class Main {
     }
 
     int startIndex = 1;
-    int endIndex = 1;
+    int endIndex = startIndex;
     String folderPath = "contest-2017";
     String pattern = "automatic-$$$.txt";
 
-    if (args.length >= 2) {
-      try {
-        startIndex = Integer.parseInt(args[0]);
+    try {
+      startIndex = Integer.parseInt(args[0]);
+      if (args.length >= 2) {
         endIndex = Integer.parseInt(args[1]);
-      } catch (NumberFormatException e) {
-        System.out.println("Could not parse indices");
-        printUsage();
+      } else {
+        endIndex = startIndex;
       }
+    } catch (NumberFormatException e) {
+      System.out.println("Could not parse indices");
+      printUsage();
     }
 
     if (args.length >= 3) {
@@ -79,10 +81,14 @@ public class Main {
   }
 
   private static void addClosingListener(MainFrame mainFrame) {
-    openFrames++;
+    synchronized (Main.class) {
+      openFrames++;
+    }
     mainFrame.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent evt) {
-        openFrames--;
+        synchronized (Main.class) {
+          openFrames--;
+        }
         if (openFrames == 0) {
           System.exit(0);
         }
@@ -96,14 +102,16 @@ public class Main {
   }
 
   private static void runAlgorithms(MainFrame mainFrame) {
+    mainFrame.initSidePanel.removeDefaultListeners();
     LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
+    mainFrame.initSidePanel.addDefaultListeners();
 
-    Optional<BasicIGraphLayoutExecutor> executor = mainFrame.getExecutorForAlgorithm(RandomMovementLayout.class);
-    if (!executor.isPresent()) {
+    Optional<SidePanelTab> tab = mainFrame.getTabForAlgorithm(RandomMovementLayout.class);
+    if (!tab.isPresent()) {
       return;
     }
 
-    executor.get().start();
+    tab.get().startPauseExecution();
   }
 
   private static void printUsage() {

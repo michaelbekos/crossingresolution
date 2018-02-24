@@ -68,10 +68,4 @@ public class GeneticForceAlgorithmLayout implements ILayout {
         .map(ForceAlgorithm::getNodePositions)
         .orElse(PositionMap.FromIGraph(graph)); // just in case...
   }
-
-  @Override
-  public void showDebug() {}
-
-  @Override
-  public void clearDebug() {}
 }

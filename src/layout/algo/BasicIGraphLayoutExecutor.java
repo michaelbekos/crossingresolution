@@ -7,21 +7,28 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
+import util.GraphModifier;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class BasicIGraphLayoutExecutor {
   private final IGraph graph;
   private final ILayout layout;
-  AbstractLayoutInterfaceItem<Integer> maxIterations;
+  final AbstractLayoutInterfaceItem<Integer> maxIterations;
   private final int numberOfCyclesBetweenViewUpdates;
-  private boolean running;
-  private boolean finished;
-  private int currentIteration;
+  private volatile boolean running;
+  private volatile boolean finished;
+  private volatile int currentIteration;
   private ICompoundEdit compoundEdit;
   private PropertyChangeSupport propertyChange;
+
+  private final ReentrantLock activeLock = new ReentrantLock();
+  private final ReentrantLock stoppingLock = new ReentrantLock();
+  private final ExecutorService executorService;
 
   public BasicIGraphLayoutExecutor(ILayout layout,
                                    IGraph graph,
@@ -38,9 +45,15 @@ public class BasicIGraphLayoutExecutor {
 
     this.maxIterations = itemFactory.intParameter("Maximum number of iterations", -1, 10000);
     this.maxIterations.setValue(maxIterations);
+
+    executorService = Executors.newSingleThreadExecutor();
   }
 
   public void start() {
+    if (graph.getNodes().size() == 0) {
+      return;
+    }
+
     if (!running) {
       running = true;
       synchronized (this.graph) {
@@ -51,18 +64,37 @@ public class BasicIGraphLayoutExecutor {
   }
 
   public void stop() {
+    if (!stoppingLock.tryLock()) {
+      return;
+    }
     if (running) {
-      synchronized (graph) {
-        compoundEdit.commit();
-      }
-
-      updateProgress(0);
-      updateGraph(layout.getNodePositions());
-      running = false;
       finished = true;
-      propertyChange.firePropertyChange("finished", false, true);
+      stopAndWait();
+      finish();
     }
     reset();
+    stoppingLock.unlock();
+  }
+
+  private void stopAndWait() {
+    running = false;
+    try {
+      waitUntilFinished();
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Interrupted while waiting for executor to stop", e);
+    }
+  }
+
+  private void finish() {
+    updateGraph(layout.getNodePositions());
+
+    synchronized (graph) {
+      compoundEdit.commit();
+    }
+
+    updateProgress(0);
+    finished = true;
+    propertyChange.firePropertyChange("finished", false, true);
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -76,9 +108,7 @@ public class BasicIGraphLayoutExecutor {
 
   public void unpause() {
     running = true;
-    synchronized (BasicIGraphLayoutExecutor.this) {
-      notify();
-    }
+    run();
   }
 
   private void reset() {
@@ -90,21 +120,25 @@ public class BasicIGraphLayoutExecutor {
   private void run() {
     //iterations < 0 infinite loop
     //iterations > 0 runs for # of iterations
-    new Thread(() -> {
-      layout.init();
+    executorService.submit(() -> {
+      try {
+        activeLock.lock();
 
-      mainLoop:
-      while (!finished) {
-        while (running) {
-          if (!(graph.getNodes().size() > 0)) {
-            continue;
-          }
+        if (currentIteration == 0) {
+          layout.init();
+        }
 
-          finished = layout.executeStep(currentIteration++, maxIterations.getValue());
+        while (running && !finished) {
+          boolean finished = layout.executeStep(currentIteration, maxIterations.getValue());
 
           if (finished || maxIterations.getValue() > 0 && currentIteration == maxIterations.getValue()) {
-            stop();
-            break mainLoop;
+            layout.finish(currentIteration);
+            finish();
+            return;
+          }
+
+          synchronized (this) {
+            currentIteration++;
           }
 
           if (currentIteration % numberOfCyclesBetweenViewUpdates == 0) {
@@ -114,19 +148,15 @@ public class BasicIGraphLayoutExecutor {
           updateProgress(currentIteration);
         }
 
-        synchronized (BasicIGraphLayoutExecutor.this) {
-          try {
-            BasicIGraphLayoutExecutor.this.wait();
-          } catch (InterruptedException e) {
-            stop();
-          }
+        if (finished) {
+          layout.finish(currentIteration - 1);
+          finish();
         }
+
+      } finally {
+        activeLock.unlock();
       }
-      reset();
-      synchronized (BasicIGraphLayoutExecutor.this) {
-        BasicIGraphLayoutExecutor.this.notifyAll();
-      }
-    }).start();
+    });
   }
 
   private void updateGraph(Mapper<INode, PointD> nodePositions) {
@@ -153,12 +183,9 @@ public class BasicIGraphLayoutExecutor {
     return finished;
   }
 
-  public synchronized void waitUntilFinished() {
-    try {
-      wait();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+  public void waitUntilFinished() throws InterruptedException {
+    activeLock.lockInterruptibly();
+    activeLock.unlock();
   }
 
   public void setMaxIterations(int maxIterations) {
@@ -176,4 +203,26 @@ public class BasicIGraphLayoutExecutor {
   public ILayout getLayout() {
     return layout;
   }
+
+  public void modifyGraph(GraphModifier modifier) {
+    if (!stoppingLock.tryLock()) {
+      return;
+    }
+    boolean wasRunning = running && !finished;
+
+    if (wasRunning) {
+      stopAndWait();
+      reset();
+    }
+
+    modifier.modify();
+
+    if (wasRunning) {
+      running = true;
+      run();
+    }
+
+    stoppingLock.unlock();
+  }
+
 }

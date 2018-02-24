@@ -42,7 +42,12 @@ public class EnsembleGridder implements IGridder {
   @Override
   public boolean executeStep(int iteration, int maxIterations) {
     return gridders.stream()
-        .allMatch(quickGridder -> quickGridder.executeStep(iteration, maxIterations));
+        .anyMatch(quickGridder -> quickGridder.executeStep(iteration, maxIterations));
+  }
+
+  @Override
+  public void finish(int lastIteration) {
+    gridders.forEach(gridder -> gridder.finish(lastIteration));
   }
 
   @Override

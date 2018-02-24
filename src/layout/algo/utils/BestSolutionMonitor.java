@@ -1,21 +1,23 @@
 package layout.algo.utils;
 
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Optional;
 
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 
 
-public class BestSolution {
-    private Hashtable<Integer, Mapper<INode, PointD>> bestSolutionMapping = new Hashtable<>();
-    private static Hashtable<Integer, Double> bestSolutionMinimumAngle = new Hashtable<>();
+public class BestSolutionMonitor {
+    private Map<Integer, Mapper<INode, PointD>> bestSolutionMapping = new Hashtable<>();
+    private Map<Integer, Double> bestSolutionMinimumAngle = new Hashtable<>();
 
-    public BestSolution() {
+    public BestSolutionMonitor() {
         reset();
     }
 
-    //call to reset the BestSolution (e.g. loading new graph)
+    //call to reset the BestSolutionMonitor (e.g. loading new graph)
     public void reset() {
         if (bestSolutionMapping.size() != 0){
             bestSolutionMapping.clear();
@@ -33,16 +35,11 @@ public class BestSolution {
         bestSolutionMapping.put(nodes,bestSolution);
     }
 
-    //overall main graph best
-    public Double getBestMinimumAngle() {
-        return bestSolutionMinimumAngle.get(bestSolutionMinimumAngle.size());
+    public Optional<Double> getBestMinimumAngleForNodes(int nodes) {
+        return Optional.ofNullable(bestSolutionMinimumAngle.get(nodes));
     }
 
-    public static Double getBestMinimumAngleNodes(int nodes) {
-        return bestSolutionMinimumAngle.get(nodes);
-    }
-
-    public Mapper<INode, PointD> getBestSolutionMapping(int nodes) {
-        return bestSolutionMapping.get(nodes);
+    public Optional<Mapper<INode, PointD>> getBestSolutionPositions(int nodes) {
+        return Optional.ofNullable(bestSolutionMapping.get(nodes));
     }
 }
