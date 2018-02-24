@@ -808,9 +808,7 @@ public class InitMenuBar {
 
     //edit menu actions
     private void deselectAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        mainFrame.initSidePanel.removeDefaultListeners();
         this.graphEditorInputMode.clearSelection();
-        mainFrame.initSidePanel.addDefaultListeners();
     }
 
     private void selectAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {

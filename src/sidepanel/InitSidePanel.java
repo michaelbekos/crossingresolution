@@ -165,11 +165,13 @@ public class InitSidePanel {
 
 
     private boolean removedListeners = false;
-    public void removeDefaultListeners() {
+    public boolean removeDefaultListeners() {
         if (stateEnableMinimumAngle && !removedListeners) {
             removedListeners = true;
             mainFrame.minimumAngleMonitor.removeGraphChangedListeners();
+            return true;
         }
+        return false;
     }
 
     public void addDefaultListeners() {

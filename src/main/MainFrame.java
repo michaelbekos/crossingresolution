@@ -154,9 +154,11 @@ public class MainFrame extends JFrame {
                 ));
 
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
-            this.initSidePanel.removeDefaultListeners();
+            boolean removedListeners = this.initSidePanel.removeDefaultListeners();
             Scaling.scaleNodeSizes(view);
-            this.initSidePanel.addDefaultListeners();
+            if (removedListeners) {
+                this.initSidePanel.addDefaultListeners();
+            }
         });
 
 

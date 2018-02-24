@@ -552,32 +552,23 @@ public class SidePanelTab {
     }
 
     private void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        initSidePanel.removeDefaultListeners();
         applyLayoutToSelection(new OrganicLayout());
-        initSidePanel.addDefaultListeners();
     }
 
     private void circularItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        initSidePanel.removeDefaultListeners();
         applyLayoutToSelection(new CircularLayout());
-        initSidePanel.addDefaultListeners();
     }
 
     private void orthogonalItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        initSidePanel.removeDefaultListeners();
         applyLayoutToSelection(new OrthogonalLayout());
-        initSidePanel.addDefaultListeners();
 
     }
 
     private void treeItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        initSidePanel.removeDefaultListeners();
         try {
             applyLayoutToSelection(new TreeLayout());
         } catch (Exception exc) {
             initSidePanel.mainFrame.infoLabel.setText("The input graph is not a tree or a forest.");
-        } finally {
-            initSidePanel.addDefaultListeners();
         }
     }
 
@@ -636,12 +627,17 @@ public class SidePanelTab {
     }
 
     private void applyLayoutToSelection(ILayoutAlgorithm layout) {
+        initSidePanel.removeDefaultListeners();
+
         IGraphSelection selection = initSidePanel.mainFrame.graphEditorInputMode.getGraphSelection();
         ISelectionModel<INode> selectedNodes = selection.getSelectedNodes();
 
         String layoutName = layout.getClass().getSimpleName().substring(0, layout.getClass().getSimpleName().length() - 6);
         outputTextArea.setText("Performing " + layoutName + " Layout...");
-        IEventListener<LayoutEventArgs> doneHandler = ((o, layoutEventArgs) -> outputTextArea.setText(layoutName + " Layout Finished."));
+        IEventListener<LayoutEventArgs> doneHandler = ((o, layoutEventArgs) -> {
+            outputTextArea.setText(layoutName + " Layout Finished.");
+            initSidePanel.addDefaultListeners();
+        });
 
         if (selectedNodes.size() == 0) {
             LayoutUtilities.morphLayout(initSidePanel.mainFrame.view, layout, Duration.ofSeconds(1), doneHandler);
