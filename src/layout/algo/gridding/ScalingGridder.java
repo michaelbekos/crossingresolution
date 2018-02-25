@@ -28,14 +28,14 @@ public class ScalingGridder implements IGridder {
   }
 
   @Override
-  public boolean executeStep(int iteration, int maxIterations) {
+  public boolean executeStep(int iteration) {
     if (!configurator.scaleUpIfNecessary.getValue()) {
-      return gridder.executeStep(iteration, maxIterations);
+      return gridder.executeStep(iteration);
     }
 
     int iterationsPerScale = configurator.iterationsUntilScaleUp.getValue();
 
-    boolean success = gridder.executeStep(iteration % iterationsPerScale, iterationsPerScale);
+    boolean success = gridder.executeStep(iteration % iterationsPerScale);
     if (success) {
       return true;
     }

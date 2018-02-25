@@ -40,9 +40,9 @@ public class EnsembleGridder implements IGridder {
   }
 
   @Override
-  public boolean executeStep(int iteration, int maxIterations) {
+  public boolean executeStep(int iteration) {
     return gridders.stream()
-        .anyMatch(quickGridder -> quickGridder.executeStep(iteration, maxIterations));
+        .anyMatch(quickGridder -> quickGridder.executeStep(iteration));
   }
 
   @Override

@@ -33,8 +33,8 @@ public class CombinedGridder implements IGridder {
   }
 
   @Override
-  public boolean executeStep(int iteration, int maxIterations) {
-    return gridder.executeStep(iteration, maxIterations);
+  public boolean executeStep(int iteration) {
+    return gridder.executeStep(iteration);
   }
 
   @Override

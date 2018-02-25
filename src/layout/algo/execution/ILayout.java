@@ -33,10 +33,9 @@ public interface ILayout {
   /**
    * Performs one iteration of the algorithm. Make sure you keep the operation as short as possible.
    * @param iteration The current iteration
-   * @param maxIterations
    * @return true iff the algorithm is finished
    */
-  boolean executeStep(int iteration, int maxIterations);
+  boolean executeStep(int iteration);
 
   /**
    * Returns a map of the current positions of the nodes.
@@ -46,9 +45,9 @@ public interface ILayout {
 
   /**
    * Performs some cleanup actions or final computations. Will be called once after the last call to
-   * {@link #executeStep(int, int)}. The default implementation is empty.
+   * {@link #executeStep(int)}. The default implementation is empty.
    * @param lastIteration the number of the last iteration (the same that was passed to the last call of
-   *                      {@link #executeStep(int, int)})
+   *                      {@link #executeStep(int)})
    */
   default void finish(int lastIteration) {}
 

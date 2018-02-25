@@ -66,7 +66,7 @@ public class ClinchLayout implements ILayout {
   }
 
   @Override
-  public boolean executeStep(int iteration, int maxIterations) {
+  public boolean executeStep(int iteration) {
     return !tryMoveNodesCloserToLine();
   }
 

@@ -29,7 +29,7 @@ public class YFilesLayoutAdapter implements ILayout {
   }
 
   @Override
-  public boolean executeStep(int iteration, int maxIterations) {
+  public boolean executeStep(int iteration) {
     LayoutUtilities.applyLayout(graph, layout);
     return true;
   }

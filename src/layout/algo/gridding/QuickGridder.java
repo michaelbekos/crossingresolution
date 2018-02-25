@@ -7,7 +7,6 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
-import util.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,7 +39,7 @@ public class QuickGridder implements IGridder {
   }
 
   @Override
-  public boolean executeStep(int iteration, int maxIterations) {
+  public boolean executeStep(int iteration) {
     for (INode node : graph.getNodes()) {
       if (griddedNodes.contains(node)) {
         continue;
