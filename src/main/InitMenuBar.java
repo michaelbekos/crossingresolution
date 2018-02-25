@@ -7,10 +7,7 @@ import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.graph.styles.INodeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
-import com.yworks.yfiles.layout.CopiedLayoutGraph;
-import com.yworks.yfiles.layout.LayoutGraphAdapter;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import com.yworks.yfiles.layout.organic.RemoveOverlapsStage;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.GridVisualCreator;
 import com.yworks.yfiles.view.Pen;
@@ -22,7 +19,6 @@ import graphoperations.RemovedChains;
 import graphoperations.RemovedNodes;
 import graphoperations.Scaling;
 import io.ContestIOHandler;
-import layout.algo.NodeSwapper;
 import layout.algo.utils.PositionMap;
 import randomgraphgenerators.GridGenerator;
 import randomgraphgenerators.HypercubeGenerator;
@@ -739,7 +735,11 @@ public class InitMenuBar {
     private void saveItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.fileNamePath != null) {
             try {
-                this.view.exportToGraphML(this.fileNamePath);
+                if (this.fileNamePath.endsWith(".graphml")) {
+                    this.view.exportToGraphML(this.fileNamePath);
+                } else if (this.fileNamePath.endsWith(".txt")) {
+                    ContestIOHandler.write(this.graph, this.fileNamePath, mainFrame.initSidePanel.getOutputTextArea());
+                }
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while exporting the graph.");
             }
