@@ -15,6 +15,13 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * This class executes algorithms that implement the {@link ILayout} interface.
+ *
+ * The algorithm itself will run in it's own thread. However, all calls to methods of {@link ILayout} are guaranteed to
+ * run only in this thread and this class itself takes care of all necessary synchronization. Thus, neither the algorithm
+ * nor the caller-side of this class need to care about synchronization.
+ */
 public class BasicIGraphLayoutExecutor {
   private final IGraph graph;
   private final ILayout layout;
@@ -204,6 +211,14 @@ public class BasicIGraphLayoutExecutor {
     return layout;
   }
 
+  /**
+   * This method allows for modification of the graph while the algorithm is running.
+   *
+   * Internally, the algorithm will be stopped (if it's actually running), then the callback will be called and
+   * afterwards the algorithm will be started again (if it was running). Currently, this will result in resetting the
+   * iterations count and calling {@link ILayout#init()} method again. Some algorithms may have problems with this.
+   * @param modifier the function that modifies the graph
+   */
   public void modifyGraph(GraphModifier modifier) {
     if (!stoppingLock.tryLock()) {
       return;

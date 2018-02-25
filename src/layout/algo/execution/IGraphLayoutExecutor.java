@@ -5,6 +5,9 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import javax.swing.*;
 
+/**
+ * Same as {@link BasicIGraphLayoutExecutor} with the addition of a progress bar.
+ */
 public class IGraphLayoutExecutor extends BasicIGraphLayoutExecutor {
   protected final JProgressBar progressBar;
 
