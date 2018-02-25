@@ -5,6 +5,8 @@ import com.yworks.yfiles.graph.GraphItemTypes;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.view.ICanvasObjectDescriptor;
 import layout.algo.*;
+import layout.algo.clinchlayout.ClinchLayout;
+import layout.algo.clinchlayout.ClinchLayoutConfigurator;
 import layout.algo.execution.ILayout;
 import layout.algo.forcealgorithm.ForceAlgorithm;
 import layout.algo.forcealgorithm.ForceAlgorithmConfigurator;

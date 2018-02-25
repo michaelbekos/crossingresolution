@@ -1,4 +1,4 @@
-package layout.algo;
+package layout.algo.clinchlayout;
 
 import com.yworks.yfiles.view.IGraphSelection;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;

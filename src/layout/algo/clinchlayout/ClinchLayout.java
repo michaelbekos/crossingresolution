@@ -1,4 +1,4 @@
-package layout.algo;
+package layout.algo.clinchlayout;
 
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.Matrix2D;
