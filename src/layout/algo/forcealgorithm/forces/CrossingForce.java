@@ -1,4 +1,4 @@
-package layout.algo.forces;
+package layout.algo.forcealgorithm.forces;
 
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;

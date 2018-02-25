@@ -6,7 +6,7 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import layout.algo.execution.BasicIGraphLayoutExecutor;
-import layout.algo.ForceAlgorithm;
+import layout.algo.forcealgorithm.ForceAlgorithm;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.VoidItem;
 import layout.algo.layoutinterface.VoidItemFactory;

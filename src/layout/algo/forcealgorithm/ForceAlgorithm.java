@@ -1,4 +1,4 @@
-package layout.algo;
+package layout.algo.forcealgorithm;
 
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
@@ -6,7 +6,7 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import layout.algo.execution.ILayout;
-import layout.algo.forces.IForce;
+import layout.algo.forcealgorithm.forces.IForce;
 import layout.algo.utils.PositionMap;
 
 import java.util.HashSet;

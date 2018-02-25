@@ -1,4 +1,4 @@
-package layout.algo.forces;
+package layout.algo.forcealgorithm.forces;
 
 import com.yworks.yfiles.algorithms.GraphConnectivity;
 import com.yworks.yfiles.geometry.PointD;

@@ -1,17 +1,19 @@
-package layout.algo;
+package layout.algo.forcealgorithm;
 
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.graph.IGraph;
-import layout.algo.forces.CrossingForce;
-import layout.algo.forces.IncidentEdgesForce;
-import layout.algo.forces.NodeNeighbourForce;
-import layout.algo.forces.NodePairForce;
+import layout.algo.forcealgorithm.ForceAlgorithm;
+import layout.algo.forcealgorithm.ForceAlgorithmConfigurator;
+import layout.algo.forcealgorithm.forces.CrossingForce;
+import layout.algo.forcealgorithm.forces.IncidentEdgesForce;
+import layout.algo.forcealgorithm.forces.NodeNeighbourForce;
+import layout.algo.forcealgorithm.forces.NodePairForce;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 /**
  * Created by Jessica Wolz on 10.12.16.
  */
-public abstract class InitForceAlgorithm {
+public abstract class DefaultForceAlgorithm {
   public static ForceAlgorithm defaultForceAlgorithm(IGraph graph, ILayoutInterfaceItemFactory itemFactory) {
     CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
 

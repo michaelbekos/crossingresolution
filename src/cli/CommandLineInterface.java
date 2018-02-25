@@ -10,6 +10,7 @@ import io.ContestIOHandler;
 import layout.algo.*;
 import layout.algo.execution.BasicIGraphLayoutExecutor;
 import layout.algo.execution.ILayout;
+import layout.algo.forcealgorithm.DefaultForceAlgorithm;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.layoutinterface.VoidItemFactory;
@@ -135,7 +136,7 @@ public class CommandLineInterface {
         configurator.init(itemFactory);
         return new RandomMovementLayout(graph, configurator);
       case "force":
-        return InitForceAlgorithm.defaultForceAlgorithm(graph, itemFactory);
+        return DefaultForceAlgorithm.defaultForceAlgorithm(graph, itemFactory);
       case "genetic":
         GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
         geneticConfigurator.init(itemFactory);
