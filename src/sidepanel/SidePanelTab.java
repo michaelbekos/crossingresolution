@@ -473,7 +473,7 @@ public class SidePanelTab {
     }
 
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        if (removedChains == null || removedChains.get(depth-1).number() == 0||depth==0) {
+        if (removedChains == null || depth==0 || removedChains.get(depth-1).number() == 0) {
             removedChains = null;
             return;
         }
@@ -502,7 +502,7 @@ public class SidePanelTab {
     }
 
     private void reinsertAllChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        if (removedChains == null || removedChains.get(depth-1).number() == 0|| depth==0) {
+        if (removedChains == null || depth==0 || removedChains.get(depth-1).number() == 0) {
             removedChains = null;
             return;
         }
