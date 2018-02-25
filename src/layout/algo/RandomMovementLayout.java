@@ -13,6 +13,7 @@ import com.yworks.yfiles.layout.YGraphAdapter;
 import layout.algo.execution.ILayout;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
+import layout.algo.utils.Sample;
 import util.BoundingBox;
 import util.graph2d.Intersection;
 

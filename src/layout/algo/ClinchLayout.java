@@ -13,6 +13,7 @@ import com.yworks.yfiles.view.ISelectionModel;
 import layout.algo.execution.ILayout;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
+import layout.algo.utils.Sample;
 import util.BoundingBox;
 import util.Tuple2;
 import util.Util;
