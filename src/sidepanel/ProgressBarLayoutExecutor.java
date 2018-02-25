@@ -1,6 +1,8 @@
-package layout.algo.execution;
+package sidepanel;
 
 import com.yworks.yfiles.graph.IGraph;
+import layout.algo.execution.BasicIGraphLayoutExecutor;
+import layout.algo.execution.ILayout;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import javax.swing.*;
@@ -8,15 +10,15 @@ import javax.swing.*;
 /**
  * Same as {@link BasicIGraphLayoutExecutor} with the addition of a progress bar.
  */
-public class IGraphLayoutExecutor extends BasicIGraphLayoutExecutor {
+public class ProgressBarLayoutExecutor extends BasicIGraphLayoutExecutor {
   private final JProgressBar progressBar;
 
-  public IGraphLayoutExecutor(ILayout layout,
-                              IGraph graph,
-                              JProgressBar progressBar,
-                              int maxIterations,
-                              int numberOfCyclesBetweenViewUpdates,
-                              ILayoutInterfaceItemFactory itemFactory) {
+  public ProgressBarLayoutExecutor(ILayout layout,
+                                   IGraph graph,
+                                   JProgressBar progressBar,
+                                   int maxIterations,
+                                   int numberOfCyclesBetweenViewUpdates,
+                                   ILayoutInterfaceItemFactory itemFactory) {
     super(layout, graph, maxIterations, numberOfCyclesBetweenViewUpdates, itemFactory);
     this.progressBar = progressBar;
   }

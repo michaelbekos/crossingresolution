@@ -18,7 +18,6 @@ import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
 import graphoperations.*;
 import layout.algo.execution.BasicIGraphLayoutExecutor;
-import layout.algo.execution.IGraphLayoutExecutor;
 import layout.algo.execution.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.utils.PositionMap;
@@ -44,7 +43,7 @@ public class SidePanelTab {
 
     private InitSidePanel initSidePanel;
 
-    private IGraphLayoutExecutor executor;
+    private ProgressBarLayoutExecutor executor;
     private JButton startPauseButton;
     private JButton stopButton;
     private JCheckBox enableMinimumAngleDisplay;
@@ -87,7 +86,7 @@ public class SidePanelTab {
 
         outputTextArea = new JTextArea("Output");
         SidePanelItemFactory itemFactory = new SidePanelItemFactory(custom, initSidePanel.mainFrame.view, initSidePanel.mainFrame.graphEditorInputMode, outputTextArea, gridBagState);
-        executor = new IGraphLayoutExecutor(layout, initSidePanel.mainFrame.graph, initSidePanel.mainFrame.progressBar, -1, 20, itemFactory);
+        executor = new ProgressBarLayoutExecutor(layout, initSidePanel.mainFrame.graph, initSidePanel.mainFrame.progressBar, -1, 20, itemFactory);
         if (configurator != null) {
             configurator.init(itemFactory);
         }
