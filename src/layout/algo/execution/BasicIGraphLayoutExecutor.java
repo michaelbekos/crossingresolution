@@ -25,13 +25,13 @@ import java.util.concurrent.locks.ReentrantLock;
 public class BasicIGraphLayoutExecutor {
   private final IGraph graph;
   private final ILayout layout;
-  final AbstractLayoutInterfaceItem<Integer> maxIterations;
+  private final AbstractLayoutInterfaceItem<Integer> maxIterations;
   private final int numberOfCyclesBetweenViewUpdates;
   private volatile boolean running;
   private volatile boolean finished;
   private volatile int currentIteration;
   private ICompoundEdit compoundEdit;
-  private PropertyChangeSupport propertyChange;
+  private final PropertyChangeSupport propertyChange;
 
   private final ReentrantLock activeLock = new ReentrantLock();
   private final ReentrantLock stoppingLock = new ReentrantLock();
@@ -53,7 +53,7 @@ public class BasicIGraphLayoutExecutor {
     this.maxIterations = itemFactory.intParameter("Maximum number of iterations", -1, 10000);
     this.maxIterations.setValue(maxIterations);
 
-    executorService = Executors.newSingleThreadExecutor();
+    this.executorService = Executors.newSingleThreadExecutor();
   }
 
   public void start() {

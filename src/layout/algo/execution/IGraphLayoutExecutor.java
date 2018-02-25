@@ -9,7 +9,7 @@ import javax.swing.*;
  * Same as {@link BasicIGraphLayoutExecutor} with the addition of a progress bar.
  */
 public class IGraphLayoutExecutor extends BasicIGraphLayoutExecutor {
-  protected final JProgressBar progressBar;
+  private final JProgressBar progressBar;
 
   public IGraphLayoutExecutor(ILayout layout,
                               IGraph graph,
@@ -23,7 +23,7 @@ public class IGraphLayoutExecutor extends BasicIGraphLayoutExecutor {
 
   protected void updateProgress(int iteration) {
     synchronized (progressBar) {
-      progressBar.setValue((int) (100 * iteration / (float) maxIterations.getValue()));
+      progressBar.setValue((int) (100 * iteration / (float) getMaxIterations()));
     }
   }
 }
