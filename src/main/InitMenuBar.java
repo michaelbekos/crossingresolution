@@ -735,7 +735,11 @@ public class InitMenuBar {
     private void saveItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.fileNamePath != null) {
             try {
-                this.view.exportToGraphML(this.fileNamePath);
+                if (this.fileNamePath.endsWith(".graphml")) {
+                    this.view.exportToGraphML(this.fileNamePath);
+                } else if (this.fileNamePath.endsWith(".txt")) {
+                    ContestIOHandler.write(this.graph, this.fileNamePath, mainFrame.initSidePanel.getOutputTextArea());
+                }
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while exporting the graph.");
             }
