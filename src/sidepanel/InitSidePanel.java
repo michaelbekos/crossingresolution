@@ -4,7 +4,6 @@ import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.graph.GraphItemTypes;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.view.ICanvasObjectDescriptor;
-import layout.algo.*;
 import layout.algo.clinchlayout.ClinchLayout;
 import layout.algo.clinchlayout.ClinchLayoutConfigurator;
 import layout.algo.execution.ILayout;
@@ -17,6 +16,8 @@ import layout.algo.gridding.CombinedGridder;
 import layout.algo.gridding.GridderConfigurator;
 import layout.algo.gridding.IGridder;
 import layout.algo.layoutinterface.ILayoutConfigurator;
+import layout.algo.randommovement.RandomMovementConfigurator;
+import layout.algo.randommovement.RandomMovementLayout;
 import main.MainFrame;
 import view.visual.DrawScale;
 

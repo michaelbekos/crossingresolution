@@ -1,4 +1,4 @@
-package layout.algo;
+package layout.algo.randommovement;
 
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;

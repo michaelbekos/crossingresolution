@@ -2,7 +2,7 @@ package main;
 
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
-import layout.algo.RandomMovementLayout;
+import layout.algo.randommovement.RandomMovementLayout;
 import sidepanel.SidePanelTab;
 
 import javax.swing.*;

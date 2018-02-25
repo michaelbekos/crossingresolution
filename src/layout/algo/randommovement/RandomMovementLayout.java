@@ -1,4 +1,4 @@
-package layout.algo;
+package layout.algo.randommovement;
 
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.algorithms.Bfs;
