@@ -5,6 +5,10 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.IGraphSelection;
 
+/**
+ * A void implementation of {@link ILayoutInterfaceItemFactory} that returns {@link VoidItem}s. These provide only
+ * limited functionality.
+ */
 public class VoidItemFactory implements ILayoutInterfaceItemFactory {
 
   @Override
