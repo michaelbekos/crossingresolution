@@ -6,6 +6,7 @@ import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.IGraphSelection;
 
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -78,4 +79,11 @@ public interface ILayoutInterfaceItemFactory {
    * @return an output parameter for status messages.
    */
   AbstractLayoutInterfaceItem<String> statusMessage(String name);
+
+  /**
+   * Creates a parameter that represents a list of uniformly distributed slopes/angles in radians.
+   * @param name the name of the parameter
+   * @return a parameter for slopes
+   */
+  AbstractLayoutInterfaceItem<List<Double>> slopesParameter(String name);
 }

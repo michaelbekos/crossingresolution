@@ -11,6 +11,7 @@ import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.List;
 
 public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   private JPanel sidePanel;
@@ -65,5 +66,10 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   @Override
   public AbstractLayoutInterfaceItem<String> statusMessage(String name) {
     return new SidePanelStatusMessageItem(name, outputTextArea);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<List<Double>> slopesParameter(String name) {
+    return new SidePanelSlopesParameter(name, sidePanel, gridBagState, view);
   }
 }

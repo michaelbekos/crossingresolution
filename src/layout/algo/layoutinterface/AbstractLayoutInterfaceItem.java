@@ -24,6 +24,4 @@ public abstract class AbstractLayoutInterfaceItem<T> {
   public String getName() {
     return name;
   }
-
-  public void addListener(Object listener){}
 }

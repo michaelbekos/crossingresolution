@@ -6,6 +6,7 @@ import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.IGraphSelection;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A void implementation of {@link ILayoutInterfaceItemFactory} that returns {@link VoidItem}s. These provide only
@@ -50,6 +51,11 @@ public class VoidItemFactory implements ILayoutInterfaceItemFactory {
 
   @Override
   public AbstractLayoutInterfaceItem<String> statusMessage(String name) {
+    return new VoidItem<>(name);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<List<Double>> slopesParameter(String name) {
     return new VoidItem<>(name);
   }
 }
