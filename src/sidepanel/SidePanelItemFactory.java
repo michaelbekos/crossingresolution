@@ -10,6 +10,7 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import javax.swing.*;
+import java.util.Collection;
 
 public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   private JPanel sidePanel;
@@ -27,8 +28,8 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, boolean enableCheckbox) {
-    return new DoubleSidePanelItem(name, minValue, maxValue, sidePanel, gridBagState, enableCheckbox);
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue) {
+    return new DoubleSidePanelItem(name, minValue, maxValue, sidePanel, gridBagState);
   }
 
   @Override
@@ -37,8 +38,18 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, boolean enableMasterCheckbox) {
-    return new BoolSidePanelItem(name, sidePanel, gridBagState, enableMasterCheckbox);
+  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
+    return new BoolSidePanelItem(name, sidePanel, gridBagState);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Boolean> toggleableParameter(AbstractLayoutInterfaceItem<?> parameter) {
+    return new SidePanelToggleableItem(parameter, sidePanel, gridBagState);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Boolean> masterToggle(String name, Collection<AbstractLayoutInterfaceItem<Boolean>> parameters) {
+    return new MasterToggleSidePanelItem(name, parameters, sidePanel, gridBagState);
   }
 
   @Override

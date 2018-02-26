@@ -8,9 +8,12 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import util.G;
 
+import java.util.Collection;
+
 public class NodeNeighbourForce implements IForce {
   private IGraph graph;
   private AbstractLayoutInterfaceItem<Double> weight;
+  private AbstractLayoutInterfaceItem<Boolean> activated;
 
   public NodeNeighbourForce(IGraph graph) {
     this.graph = graph;
@@ -18,14 +21,18 @@ public class NodeNeighbourForce implements IForce {
 
 
   @Override
-  public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Node Neighbor Force", 0.0, 300, true);
+  public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    weight = itemFactory.doubleParameter("Node Neighbor Force", 0.0, 300);
     weight.setValue(170.0);
+
+    activated = itemFactory.toggleableParameter(weight);
+    activated.setValue(true);
+    toggleableParameters.add(activated);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
-    if (weight.getValue() == 0) {
+    if (!activated.getValue()) {
       return forces;
     }
     //for(INode n1: graph.getNodes()){
@@ -68,7 +75,4 @@ public class NodeNeighbourForce implements IForce {
     return t;
   }
 
-  public void toggleCheckbox(boolean value) {
-    weight.toggleCheckbox(value);
-  }
 }

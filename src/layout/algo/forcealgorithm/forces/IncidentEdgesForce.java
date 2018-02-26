@@ -16,21 +16,26 @@ import java.util.stream.Collectors;
 
 public class IncidentEdgesForce implements IForce {
   private IGraph graph;
-  public AbstractLayoutInterfaceItem<Double> weight;
+  private AbstractLayoutInterfaceItem<Double> weight;
+  private AbstractLayoutInterfaceItem<Boolean> activated;
 
   public IncidentEdgesForce(IGraph graph) {
     this.graph = graph;
   }
 
   @Override
-  public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Incident Edges Force", 0.0, 1, true);
+  public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    weight = itemFactory.doubleParameter("Incident Edges Force", 0.0, 1);
     weight.setValue(0.1);
+
+    activated = itemFactory.toggleableParameter(weight);
+    activated.setValue(true);
+    toggleableParameters.add(activated);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
-    if (weight.getValue() == 0) {
+    if (!activated.getValue()) {
       return forces;
     }
 //http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/
@@ -123,7 +128,4 @@ public class IncidentEdgesForce implements IForce {
   }
 
 
-  public void toggleCheckbox(boolean value) {
-    weight.toggleCheckbox(value);
-  }
 }

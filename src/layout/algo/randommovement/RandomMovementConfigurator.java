@@ -16,10 +16,10 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    minStepSize = itemFactory.doubleParameter("Minimum step size", 0.1, 500, false);
+    minStepSize = itemFactory.doubleParameter("Minimum step size", 0.1, 500);
     minStepSize.setValue(10.);
 
-    maxStepSize = itemFactory.doubleParameter("Maximum step size", 0.1, 5_000_000, false);
+    maxStepSize = itemFactory.doubleParameter("Maximum step size", 0.1, 5_000_000);
     maxStepSize.setValue(150.);
 
     iterationsForLocalMaximum = itemFactory.intParameter("Failed iterations necessary to detect a local maximum", 1, 500);
@@ -28,16 +28,16 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     numSamplesForJumping = itemFactory.intParameter("Number of test samples for local maximum resolving", 1, 500);
     numSamplesForJumping.setValue(50);
 
-    jumpOnLocalMaximum = itemFactory.booleanParameter("Allow decreasing minimum angle at local maximum", false);
+    jumpOnLocalMaximum = itemFactory.booleanParameter("Allow decreasing minimum angle at local maximum");
     jumpOnLocalMaximum.setValue(false);
 
-    onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates", false);
+    onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates");
     onlyGridPositions.setValue(true);
 
-    useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes", false);
+    useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
     useGaussianDistribution.setValue(true);
 
-    toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes", false);
+    toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes");
     toggleNodeDistributions.setValue(true);
   }
 

@@ -7,11 +7,9 @@ import java.awt.event.ItemListener;
 
 class BoolSidePanelItem extends SidePanelItem<Boolean> {
   private JCheckBox checkBox;
-  private final boolean useAsMasterCheckbox;
 
-  BoolSidePanelItem(String name, JPanel sidePanel, GridBagState gridBagState, boolean useAsMasterCheckbox) {
+  BoolSidePanelItem(String name, JPanel sidePanel, GridBagState gridBagState) {
     super(name, sidePanel, gridBagState);
-    this.useAsMasterCheckbox = useAsMasterCheckbox;
     init();
   }
 
@@ -19,11 +17,7 @@ class BoolSidePanelItem extends SidePanelItem<Boolean> {
   void createComponents(JPanel sidePanel, GridBagState gridBagState) {
     //add checkbox
     GridBagConstraints cCustomPanel = new GridBagConstraints();
-    if (useAsMasterCheckbox) {
-      cCustomPanel.gridx = 0;
-    } else {
-      cCustomPanel.gridx = gridBagState.getX();
-    }
+    cCustomPanel.gridx = gridBagState.getX();
     cCustomPanel.gridy = gridBagState.increaseY();
     cCustomPanel.gridwidth = 3;
     cCustomPanel.anchor = GridBagConstraints.LINE_START;

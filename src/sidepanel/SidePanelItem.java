@@ -7,6 +7,7 @@ import javax.swing.*;
 abstract class SidePanelItem<T> extends AbstractLayoutInterfaceItem<T> {
   private final JPanel sidePanel;
   private final GridBagState gridBagState;
+  private int gridY;
 
   SidePanelItem(String name, JPanel sidePanel, GridBagState gridBagState) {
     super(name);
@@ -15,11 +16,16 @@ abstract class SidePanelItem<T> extends AbstractLayoutInterfaceItem<T> {
   }
 
   /**
-   * All child classes must call this method after they're fully initialized!
+   * All child classes must call this method from the constructor after they're fully initialized!
    */
   final void init() {
     createComponents(sidePanel, gridBagState);
+    gridY = gridBagState.getY();
   }
 
   abstract void createComponents(JPanel sidePanel, GridBagState gridBagState);
+
+  int getGridY() {
+    return gridY;
+  }
 }

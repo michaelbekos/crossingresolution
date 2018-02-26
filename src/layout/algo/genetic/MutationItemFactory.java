@@ -10,8 +10,8 @@ public class MutationItemFactory extends VoidItemFactory {
   List<AbstractLayoutInterfaceItem> weights = new LinkedList<>();
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, boolean enableCheckbox) {
-    AbstractLayoutInterfaceItem<Double> item = super.doubleParameter(name, minValue, maxValue, enableCheckbox);
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue) {
+    AbstractLayoutInterfaceItem<Double> item = super.doubleParameter(name, minValue, maxValue);
     weights.add(item);
     return item;
   }
@@ -22,8 +22,8 @@ public class MutationItemFactory extends VoidItemFactory {
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, boolean enableMasterCheckbox) {
-    AbstractLayoutInterfaceItem<Boolean> item = super.booleanParameter(name, enableMasterCheckbox);
+  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
+    AbstractLayoutInterfaceItem<Boolean> item = super.booleanParameter(name);
     weights.add(item);
     return item;
   }

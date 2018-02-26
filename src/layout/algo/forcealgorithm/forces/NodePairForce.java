@@ -8,23 +8,30 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 import util.G;
 
+import java.util.Collection;
+
 public class NodePairForce implements IForce {
   private IGraph graph;
   private AbstractLayoutInterfaceItem<Double> weight;
+  private AbstractLayoutInterfaceItem<Boolean> activated;
 
   public NodePairForce(IGraph graph) {
     this.graph = graph;
   }
 
   @Override
-  public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Node Pair Force", 0.0, 1, true);
+  public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    weight = itemFactory.doubleParameter("Node Pair Force", 0.0, 1);
     weight.setValue(0.01);
+
+    activated = itemFactory.toggleableParameter(weight);
+    activated.setValue(true);
+    toggleableParameters.add(activated);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
-    if (weight.getValue() == 0) {
+    if (!activated.getValue()) {
       return forces;
     }
     graph.getNodes().parallelStream().forEach(n1 -> {
@@ -59,7 +66,4 @@ public class NodePairForce implements IForce {
   }
 
 
-  public void toggleCheckbox(boolean value) {
-    weight.toggleCheckbox(value);
-  }
 }

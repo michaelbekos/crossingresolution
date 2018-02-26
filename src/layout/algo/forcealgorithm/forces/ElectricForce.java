@@ -9,10 +9,13 @@ import com.yworks.yfiles.layout.YGraphAdapter;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.util.Collection;
+
 public class ElectricForce implements IForce {
   private final IGraph graph;
   private final double threshold;
   private AbstractLayoutInterfaceItem<Double> electricalRepulsion;
+  private AbstractLayoutInterfaceItem<Boolean> activated;
 
   public ElectricForce(IGraph graph, double threshold) {
     this.graph = graph;
@@ -20,14 +23,18 @@ public class ElectricForce implements IForce {
   }
 
   @Override
-  public void init(ILayoutInterfaceItemFactory itemFactory) {
-    electricalRepulsion = itemFactory.doubleParameter("Electric Repulsion Force", 0.0, 100000, true);
+  public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    electricalRepulsion = itemFactory.doubleParameter("Electric Repulsion Force", 0.0, 100000);
     electricalRepulsion.setValue(50000.0);
+
+    activated = itemFactory.toggleableParameter(electricalRepulsion);
+    activated.setValue(true);
+    toggleableParameters.add(activated);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
-    if (electricalRepulsion.getValue() == 0) {
+    if (!activated.getValue()) {
       return forces;
     }
 
@@ -54,7 +61,4 @@ public class ElectricForce implements IForce {
     return forces;
   }
 
-  public void toggleCheckbox(boolean value) {
-    electricalRepulsion.toggleCheckbox(value);
-  }
 }

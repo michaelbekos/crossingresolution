@@ -12,11 +12,14 @@ import util.Tuple2;
 import util.Util;
 import util.graph2d.LineSegment;
 
+import java.util.Collection;
+
 public class CrossingForce implements IForce {
   private CachedMinimumAngle cMinimumAngle;
   private IGraph graph;
   private AbstractLayoutInterfaceItem<Double> weight;
   private AbstractLayoutInterfaceItem<Boolean> isPerpendicular;
+  private AbstractLayoutInterfaceItem<Boolean> activated;
 
   public CrossingForce(IGraph graph, CachedMinimumAngle cMinimumAngle) {
     this.cMinimumAngle = cMinimumAngle;
@@ -24,16 +27,20 @@ public class CrossingForce implements IForce {
   }
 
   @Override
-  public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Crossings Force", 0.0, 1, true);
+  public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    weight = itemFactory.doubleParameter("Crossings Force", 0.0, 1);
     weight.setValue(0.01);
-    isPerpendicular = itemFactory.booleanParameter("Perpendicular", false);
+    activated = itemFactory.toggleableParameter(weight);
+    activated.setValue(true);
+    toggleableParameters.add(activated);
+
+    isPerpendicular = itemFactory.booleanParameter("Perpendicular");
     isPerpendicular.setValue(false);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
-    if (weight.getValue() == 0) {
+    if (!activated.getValue()) {
       return forces;
     }
 
@@ -110,7 +117,4 @@ public class CrossingForce implements IForce {
         */
   }
 
-  public void toggleCheckbox(boolean value) {
-    weight.toggleCheckbox(value);
-  }
 }

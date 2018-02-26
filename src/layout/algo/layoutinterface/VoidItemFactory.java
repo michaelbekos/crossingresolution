@@ -5,6 +5,8 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.view.IGraphSelection;
 
+import java.util.Collection;
+
 /**
  * A void implementation of {@link ILayoutInterfaceItemFactory} that returns {@link VoidItem}s. These provide only
  * limited functionality.
@@ -12,7 +14,7 @@ import com.yworks.yfiles.view.IGraphSelection;
 public class VoidItemFactory implements ILayoutInterfaceItemFactory {
 
   @Override
-  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue, boolean enableCheckbox) {
+  public AbstractLayoutInterfaceItem<Double> doubleParameter(String name, double minValue, double maxValue) {
     return new VoidItem<>(name);
   }
 
@@ -22,7 +24,17 @@ public class VoidItemFactory implements ILayoutInterfaceItemFactory {
   }
 
   @Override
-  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, boolean enableMasterCheckbox) {
+  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
+    return new VoidItem<>(name);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Boolean> toggleableParameter(AbstractLayoutInterfaceItem<?> parameter) {
+    return new VoidItem<>(parameter.getName());
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Boolean> masterToggle(String name, Collection<AbstractLayoutInterfaceItem<Boolean>> parameters) {
     return new VoidItem<>(name);
   }
 

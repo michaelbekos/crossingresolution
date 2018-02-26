@@ -18,10 +18,12 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class SlopedForce implements IForce {
   private AbstractLayoutInterfaceItem<Double> weight;
+  private AbstractLayoutInterfaceItem<Boolean> activated;
   private AbstractLayoutInterfaceItem<Integer> numberOfSlopes;
   private AbstractLayoutInterfaceItem<Double> initialAngleDeg;
   private AbstractLayoutInterfaceItem<Boolean> showSlopesEnabled;
@@ -34,9 +36,14 @@ public class SlopedForce implements IForce {
   }
 
   @Override
-  public void init(ILayoutInterfaceItemFactory itemFactory) {
-    weight = itemFactory.doubleParameter("Slope Force", 0.0, 0.5, true);
+  public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    weight = itemFactory.doubleParameter("Slope Force", 0.0, 0.5);
     weight.setValue(0.05);
+
+    activated = itemFactory.toggleableParameter(weight);
+    activated.setValue(true);
+    toggleableParameters.add(activated);
+
     numberOfSlopes = itemFactory.intParameter("Slope Force: Num. Slopes",0,360);
     numberOfSlopes.setValue(1);
     numberOfSlopes.addListener(new ChangeListener() {
@@ -47,7 +54,7 @@ public class SlopedForce implements IForce {
         }
       }
     });
-    initialAngleDeg = itemFactory.doubleParameter("Slope Force: Initial Angle", 0, 360, false);
+    initialAngleDeg = itemFactory.doubleParameter("Slope Force: Initial Angle", 0, 360);
     initialAngleDeg.setValue(0.0);
     initialAngleDeg.addListener(new ChangeListener() {
       @Override
@@ -57,7 +64,7 @@ public class SlopedForce implements IForce {
         }
       }
     });
-    showSlopesEnabled = itemFactory.booleanParameter("Slope Force: Show Slopes", false);
+    showSlopesEnabled = itemFactory.booleanParameter("Slope Force: Show Slopes");
     showSlopesEnabled.setValue(false);
     showSlopesEnabled.addListener(new ItemListener() {
       @Override
@@ -75,7 +82,7 @@ public class SlopedForce implements IForce {
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
-    if (weight.getValue() == 0) {
+    if (!activated.getValue()) {
       return forces;
     }
     List<Double> slopeAngles = new ArrayList<>();
@@ -207,7 +214,4 @@ public class SlopedForce implements IForce {
   }
 
 
-  public void toggleCheckbox(boolean value) {
-    weight.toggleCheckbox(value);
-  }
 }

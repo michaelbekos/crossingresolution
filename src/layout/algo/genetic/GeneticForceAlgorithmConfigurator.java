@@ -17,7 +17,7 @@ public class GeneticForceAlgorithmConfigurator implements ILayoutConfigurator {
     iterationsPerGeneration = itemFactory.intParameter("Iterations per generation", 1, 500);
     abstractLayoutInterfaceItems.add(iterationsPerGeneration);
 
-    stepSize = itemFactory.doubleParameter("Mutation step size", 0.1, 1, false);
+    stepSize = itemFactory.doubleParameter("Mutation step size", 0.1, 1);
     abstractLayoutInterfaceItems.add(stepSize);
 
     iterationsPerGeneration.setValue(100);

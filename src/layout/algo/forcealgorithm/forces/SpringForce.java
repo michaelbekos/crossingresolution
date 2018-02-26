@@ -7,11 +7,14 @@ import com.yworks.yfiles.graph.Mapper;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.util.Collection;
+
 public class SpringForce implements IForce {
   private IGraph graph;
   private double springNaturalLength;
   private double threshold;
   private AbstractLayoutInterfaceItem<Double> springStiffness;
+  private AbstractLayoutInterfaceItem<Boolean> activated;
 
   public SpringForce(IGraph graph, double springNaturalLength, double threshold) {
     this.graph = graph;
@@ -20,14 +23,18 @@ public class SpringForce implements IForce {
   }
 
   @Override
-  public void init(ILayoutInterfaceItemFactory itemFactory) {
-    springStiffness = itemFactory.doubleParameter("Spring Stiffness Force", 0.0, 150, true);
+  public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    springStiffness = itemFactory.doubleParameter("Spring Stiffness Force", 0.0, 150);
     springStiffness.setValue(150.0);
+
+    activated = itemFactory.toggleableParameter(springStiffness);
+    activated.setValue(true);
+    toggleableParameters.add(activated);
   }
 
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
-    if (springStiffness.getValue() == 0) {
+    if (!activated.getValue()) {
       return forces;
     }
     for (INode u : graph.getNodes()) {
@@ -47,7 +54,4 @@ public class SpringForce implements IForce {
   }
 
 
-  public void toggleCheckbox(boolean value) {
-    springStiffness.toggleCheckbox(value);
-  }
 }
