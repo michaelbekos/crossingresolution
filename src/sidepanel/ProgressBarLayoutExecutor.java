@@ -13,12 +13,12 @@ import javax.swing.*;
 public class ProgressBarLayoutExecutor extends BasicIGraphLayoutExecutor {
   private final JProgressBar progressBar;
 
-  public ProgressBarLayoutExecutor(ILayout layout,
-                                   IGraph graph,
-                                   JProgressBar progressBar,
-                                   int maxIterations,
-                                   int numberOfCyclesBetweenViewUpdates,
-                                   ILayoutInterfaceItemFactory itemFactory) {
+  ProgressBarLayoutExecutor(ILayout layout,
+                            IGraph graph,
+                            JProgressBar progressBar,
+                            int maxIterations,
+                            int numberOfCyclesBetweenViewUpdates,
+                            ILayoutInterfaceItemFactory itemFactory) {
     super(layout, graph, maxIterations, numberOfCyclesBetweenViewUpdates, itemFactory);
     this.progressBar = progressBar;
   }
