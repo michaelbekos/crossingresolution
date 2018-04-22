@@ -13,6 +13,7 @@ import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import graphoperations.Scaling;
+import io.Contest2018IOHandler;
 import io.ContestIOHandler;
 import layout.algo.execution.ILayout;
 import layout.algo.utils.BestSolutionMonitor;
@@ -54,6 +55,7 @@ public class MainFrame extends JFrame {
 
     public MinimumAngleMonitor minimumAngleMonitor;
     public BestSolutionMonitor bestSolution;
+    public Contest2018IOHandler contest2018IOHandler;
 
     @Nullable
     public JTabbedPane sidePanel;
@@ -79,6 +81,7 @@ public class MainFrame extends JFrame {
      * This method is called within the constructor to initialize the form.
      */
     private void initComponents() {
+        contest2018IOHandler = new Contest2018IOHandler();
 
         JPanel progressBarPanel = new JPanel();
         progressBarPanel.setLayout(new GridLayout(1, 2, 10, 10));
@@ -335,6 +338,21 @@ public class MainFrame extends JFrame {
         initSidePanel.removeDefaultListeners();
         try {
             ContestIOHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+
+    public void openContest2018File(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            contest2018IOHandler.read(graph, fileNamePath);
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();

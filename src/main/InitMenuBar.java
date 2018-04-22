@@ -88,7 +88,7 @@ public class InitMenuBar {
         this.graphSnapContext = graphSnapContext;
         this.gridVisualCreator = gridVisualCreator;
         this.minimumAngleMonitor = minimumAngleMonitor;
-        this.fileNamePathFolder = "contest-2017";
+        this.fileNamePathFolder = "contest-2018";
 
         this.removedNodes = new RemovedNodes(graph);
     }
@@ -373,11 +373,18 @@ public class InitMenuBar {
         fileMenu.add(openItem);
 
         JMenuItem openContestItem = new JMenuItem();
-        openContestItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
+//        openContestItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
         openContestItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
         openContestItem.setText("Open Contest File");
         openContestItem.addActionListener(this::openContestItemActionPerformed);
         fileMenu.add(openContestItem);
+
+        JMenuItem openContest2018Item = new JMenuItem();
+        openContest2018Item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
+        openContest2018Item.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
+        openContest2018Item.setText("Open JSON (Contest 2018) File");
+        openContest2018Item.addActionListener(this::openContest2018ItemActionPerformed);
+        fileMenu.add(openContest2018Item);
 
         JMenuItem reloadItem = new JMenuItem();
         reloadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
@@ -402,11 +409,18 @@ public class InitMenuBar {
         fileMenu.add(saveAsItem);
 
         JMenuItem exportItem = new JMenuItem();
-        exportItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+//        exportItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
         exportItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
         exportItem.setText("Export");
         exportItem.addActionListener(this::exportItemActionPerformed);
         fileMenu.add(exportItem);
+
+        JMenuItem exportContest2018Item = new JMenuItem();
+        exportContest2018Item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+        exportContest2018Item.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
+        exportContest2018Item.setText("Export as JSON (Contest 2018)");
+        exportContest2018Item.addActionListener(this::exportContest2018ItemActionPerformed);
+        fileMenu.add(exportContest2018Item);
 
         JMenuItem quitItem = new JMenuItem();
         quitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
@@ -707,6 +721,27 @@ public class InitMenuBar {
         }
     }
 
+    private void openContest2018ItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
+        chooser.setFileFilter(new FileFilter() {
+            public boolean accept(File file) {
+                return (file.isDirectory() || file.toString().toLowerCase().endsWith("json"));
+            }
+
+            public String getDescription() {
+                return "JSON Files [.json]";
+            }
+
+        });
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            this.fileNamePath = chooser.getSelectedFile().toString();
+            mainFrame.openContest2018File(fileNamePath);
+            removedNodes.clear();
+            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
+        }
+    }
+
     private void reloadItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (this.fileNamePath != null) {
             mainFrame.initSidePanel.removeDefaultListeners();
@@ -716,6 +751,8 @@ public class InitMenuBar {
                     this.view.importFromGraphML(this.fileNamePath);
                 } else if (this.fileNamePath.endsWith(".txt")) {
                     ContestIOHandler.read(this.graph, this.fileNamePath);
+                } else if (this.fileNamePath.endsWith(".json")) {
+                    mainFrame.contest2018IOHandler.read(this.graph, this.fileNamePath);
                 }
                 this.view.fitGraphBounds();
                 this.view.updateUI();
@@ -795,6 +832,33 @@ public class InitMenuBar {
 
             try {
                 ContestIOHandler.write(this.graph, this.fileNamePath, mainFrame.initSidePanel.getOutputTextArea());
+            } catch (IOException ioe) {
+                this.infoLabel.setText("An error occured while exporting the graph.");
+            }
+        }
+    }
+
+    private void exportContest2018ItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
+        chooser.setFileFilter(new FileFilter() {
+            public boolean accept(File file) {
+                return (file.isDirectory() || file.toString().toLowerCase().endsWith(".json"));
+
+            }
+            public String getDescription() {
+                return "JSON Files [.json]";
+            }
+        });
+
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            this.fileNamePath = chooser.getSelectedFile().toString();
+            if (!this.fileNamePath.toLowerCase().endsWith(".json")) {
+                this.fileNamePath = this.fileNamePath + ".json";
+            }
+            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
+
+            try {
+                mainFrame.contest2018IOHandler.write(this.graph, this.fileNamePath, mainFrame.initSidePanel.getOutputTextArea());
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while exporting the graph.");
             }
