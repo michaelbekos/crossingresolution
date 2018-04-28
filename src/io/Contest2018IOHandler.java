@@ -21,6 +21,10 @@ import java.util.ArrayList;
  * Handles the contest format files
  */
 public class Contest2018IOHandler {
+
+    private static final int MAX_X_DIMENSION = 1000000;
+    private static final int MAX_Y_DIMENSION = 1000000;
+
     private JSONFile openFile = null;
 
     public class Node {
@@ -99,10 +103,10 @@ public class Contest2018IOHandler {
         openFile = inFile;
 
         if (openFile.xdimension == null) {
-            openFile.xdimension = 1000000;
+            openFile.xdimension = MAX_X_DIMENSION;
         }
         if (openFile.ydimension == null) {
-            openFile.ydimension = 1000000;
+            openFile.ydimension = MAX_Y_DIMENSION;
         }
 
         //Create Nodes
@@ -147,17 +151,19 @@ public class Contest2018IOHandler {
             }
         }
 
+        int max_x_dim, max_y_dim;
         //Get Graph Size
         RectD bounds = BoundingBox.from(PositionMap.FromIGraph(graph));
-        int width = (int)Math.ceil(bounds.getWidth() < 1 ? 0 : bounds.getWidth());   //smaller than 1 is not a graph
-        int height = (int)Math.ceil(bounds.getHeight() < 1 ? 0 : bounds.getHeight());
-
+        int graph_width = (int)Math.ceil(bounds.getWidth() < 1 ? 0 : bounds.getWidth());   //smaller than 1 is not a graph
+        int graph_height = (int)Math.ceil(bounds.getHeight() < 1 ? 0 : bounds.getHeight());
         //Get Edges
         ArrayList<Contest2018IOHandler.Edge> edges = new ArrayList<>(graph.getEdges().size());
         if (fileOpen()) {
             //from input file
             edges = openFile.edges;
-            if (width > openFile.xdimension || height > openFile.ydimension) {
+            max_x_dim = openFile.xdimension;
+            max_y_dim = openFile.ydimension;
+            if (graph_width > openFile.xdimension || graph_height > openFile.ydimension) {
                 System.err.println("=====================================================");
                 System.err.println("Graph is larger than the maximum allowed dimensions!");
                 System.err.println("=====================================================");
@@ -166,14 +172,16 @@ public class Contest2018IOHandler {
                 errorText.append("=====================================================\n");
                 //TODO Scale Graph to fit bounds
             }
+
         } else {
             //from graph
             for (IEdge e : graph.getEdges()) {
                 edges.add(new Contest2018IOHandler.Edge(
                         Integer.parseInt(e.getSourceNode().getTag().toString()),
                         Integer.parseInt(e.getTargetNode().getTag().toString())));
-
             }
+            max_x_dim = MAX_X_DIMENSION;
+            max_y_dim = MAX_Y_DIMENSION;
         }
 
         if (outputTextArea != null) {
@@ -183,7 +191,7 @@ public class Contest2018IOHandler {
 
         try(Writer writer = new FileWriter(outputFileName)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(new JSONFile(nodes, edges, width, height),writer);
+            gson.toJson(new JSONFile(nodes, edges, max_x_dim, max_y_dim),writer);
         }
 
         openFile = null;

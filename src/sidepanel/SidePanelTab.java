@@ -552,6 +552,7 @@ public class SidePanelTab {
         double edgeThreshold = 0.999;
         boolean nodeOverlap = false;
         boolean nodeEdgeOverlap = false;
+        boolean negativeNodes = false;
         for (INode u : this.initSidePanel.mainFrame.graph.getNodes()) {
 
             if (u.getPorts().size() == 1) {
@@ -590,9 +591,13 @@ public class SidePanelTab {
                 }
 
             }
+            if (u.getLayout().getCenter().getX() < 0 || u.getLayout().getCenter().getY() < 0) {
+                negativeNodes = true;
+            }
         }
         graphInfo.append("Node Node Overlap: ").append(nodeOverlap).append("\n");
         graphInfo.append("Node Edge Overlap: ").append(nodeEdgeOverlap).append("\n");
+        graphInfo.append("Negative Nodes: ").append(negativeNodes).append("\n");
 
         graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph)).append("\n");
 
