@@ -505,9 +505,6 @@ public class InitMenuBar {
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     int numVertices = Integer.parseInt(vertexCount.getText());
-                    if (mainFrame.removedChains.number() == 0) {
-                        mainFrame.removedChains = new RemovedChains(graph);
-                    }
                     if(numVertices > graph.getNodes().size() || (useChains.isSelected()  && numVertices > chainNum)){
                         numVertices = graph.getNodes().size();
                         if( 0 != JOptionPane.showConfirmDialog(null, "Input is greater than the number of all nodes.\n Remove all nodes?")){

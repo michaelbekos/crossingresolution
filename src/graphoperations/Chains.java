@@ -31,7 +31,7 @@ public final class Chains {
   }
 
   public RemovedChains remove(int numChains, RemovedChains removedChains) {
-    if (removedChains == null) {
+    if (removedChains == null || removedChains.number() == 0) {
       removedChains = new RemovedChains(graph);
     }
     removedChains.remove(chains, numChains);
