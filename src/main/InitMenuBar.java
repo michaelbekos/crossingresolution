@@ -16,7 +16,6 @@ import com.yworks.yfiles.view.input.GraphSnapContext;
 import com.yworks.yfiles.view.input.GridSnapTypes;
 import graphoperations.Chains;
 import graphoperations.RemovedChains;
-import graphoperations.RemovedNodes;
 import graphoperations.Scaling;
 import io.ContestIOHandler;
 import layout.algo.utils.PositionMap;
@@ -58,9 +57,6 @@ public class InitMenuBar {
     private String fileNamePath;
     private String fileNamePathFolder;
 
-    private RemovedNodes removedNodes;
-    private RemovedChains removedChains;
-
     private boolean isGridVisible = true;
     private GraphSnapContext graphSnapContext;
     private GridVisualCreator gridVisualCreator;
@@ -89,8 +85,6 @@ public class InitMenuBar {
         this.gridVisualCreator = gridVisualCreator;
         this.minimumAngleMonitor = minimumAngleMonitor;
         this.fileNamePathFolder = "contest-2018";
-
-        this.removedNodes = new RemovedNodes(graph);
     }
 
 
@@ -452,7 +446,7 @@ public class InitMenuBar {
     private void removeVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         if (this.view.getSelection().getSelectedNodes().size() > 0) {
-            removedNodes.removeSelected(view.getSelection().getSelectedNodes());
+            mainFrame.removedNodes.removeSelected(view.getSelection().getSelectedNodes());
         } else if (this.graph.getNodes().size() > 0){
             JTextField vertexCount = new JTextField();
             vertexCount.setText(Integer.toString(1));
@@ -511,7 +505,10 @@ public class InitMenuBar {
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     int numVertices = Integer.parseInt(vertexCount.getText());
-                    if(numVertices > graph.getNodes().size() || (useChains.isSelected() && removedChains!= null && numVertices > chainNum)){
+                    if (mainFrame.removedChains.number() == 0) {
+                        mainFrame.removedChains = new RemovedChains(graph);
+                    }
+                    if(numVertices > graph.getNodes().size() || (useChains.isSelected()  && numVertices > chainNum)){
                         numVertices = graph.getNodes().size();
                         if( 0 != JOptionPane.showConfirmDialog(null, "Input is greater than the number of all nodes.\n Remove all nodes?")){
                             numVertices = 0;
@@ -519,11 +516,11 @@ public class InitMenuBar {
                     }
 
                     if (useChains.isSelected()) {
-                        removedChains = chains.remove(numVertices, removedChains);
+                        mainFrame.removedChains = chains.remove(numVertices, mainFrame.removedChains);
                     } else if (useHighest.isSelected()) {
-                        removedNodes.removeHighestDegree(numVertices);
+                        mainFrame.removedNodes.removeHighestDegree(numVertices);
                     } else {
-                        removedNodes.removeLowestDegree(numVertices);
+                        mainFrame.removedNodes.removeLowestDegree(numVertices);
                     }
                 } catch (NumberFormatException exc) {
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be removed.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
@@ -553,9 +550,9 @@ public class InitMenuBar {
 
     private void reinsertVerticesItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
-        if (!removedNodes.isEmpty()){
+        if (!mainFrame.removedNodes.isEmpty()){
             JTextField vertexComponentCount = new JTextField();
-            vertexComponentCount.setText(Integer.toString(removedNodes.size()));
+            vertexComponentCount.setText(Integer.toString(mainFrame.removedNodes.size()));
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             JRadioButton useVertices = new JRadioButton("Use Vertices"),
@@ -577,7 +574,7 @@ public class InitMenuBar {
                     vertexComponentCount.setText(Integer.toString(1));
                 } else if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
                     label.setText(component);
-                    vertexComponentCount.setText(Integer.toString(removedNodes.size()));
+                    vertexComponentCount.setText(Integer.toString(mainFrame.removedNodes.size()));
                 }
             });
             useVertices.setSelected(false);
@@ -587,7 +584,7 @@ public class InitMenuBar {
                 vertexComponentCount.setText(Integer.toString(1));
             } else if (useComponents.isSelected()) {
                 label.setText(component);
-                vertexComponentCount.setText(Integer.toString(removedNodes.size()));
+                vertexComponentCount.setText(Integer.toString(mainFrame.removedNodes.size()));
             }
 
             int result = JOptionPane.showOptionDialog(null, panel, "Reinsert Vertices or Components", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
@@ -597,9 +594,9 @@ public class InitMenuBar {
                     numVertices = Integer.parseInt(vertexComponentCount.getText());
 
                     if (!useVertices.isSelected()) {
-                        removedNodes.reinsert(numVertices);
+                        mainFrame.removedNodes.reinsert(numVertices);
                     } else {
-                        removedNodes.reinsertSingleNodes(numVertices);
+                        mainFrame.removedNodes.reinsertSingleNodes(numVertices);
                     }
 
                     Scaling.scaleNodeSizes(view);
@@ -607,9 +604,9 @@ public class InitMenuBar {
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } else if (!removedChains.isEmpty()) {
+        } else if (!mainFrame.removedChains.isEmpty()) {
             JTextField chainCount = new JTextField();
-            chainCount.setText(Integer.toString(removedChains.number()));
+            chainCount.setText(Integer.toString(mainFrame.removedChains.number()));
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             JLabel label = new JLabel();
@@ -623,11 +620,11 @@ public class InitMenuBar {
                 int numChains;
                 try {
                     numChains = Integer.parseInt(chainCount.getText());
-                    if (numChains > removedChains.number()) {
+                    if (numChains > mainFrame.removedChains.number()) {
                         throw new NumberFormatException("Too many chains");
                     }
 
-                    removedChains.reinsert(numChains);
+                    mainFrame.removedChains.reinsert(numChains);
 
                     Scaling.scaleNodeSizes(view);
                 } catch (NumberFormatException exc) {
@@ -657,7 +654,8 @@ public class InitMenuBar {
     private void blankGraphItemGraphItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         this.graph.clear();
-        this.removedNodes.clear();
+        this.mainFrame.removedNodes.clear();
+        this.mainFrame.removedChains.clear();
         this.view.updateUI();
         mainFrame.bestSolution.reset();
         mainFrame.initSidePanel.addDefaultListeners();
@@ -689,7 +687,8 @@ public class InitMenuBar {
                 LayoutUtilities.applyLayout(this.graph, this.defaultLayouter);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
-                removedNodes.clear();
+                mainFrame.removedNodes.clear();
+                this.mainFrame.removedChains.clear();
                 mainFrame.initSidePanel.addDefaultListeners();
             }
         }
@@ -715,7 +714,8 @@ public class InitMenuBar {
                 this.view.importFromGraphML(fileNamePath);
                 this.view.fitGraphBounds();
                 this.view.updateUI();
-                this.removedNodes.clear();
+                this.mainFrame.removedNodes.clear();
+                this.mainFrame.removedChains.clear();
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
                 mainFrame.bestSolution.reset();
                 mainFrame.setTitle(Paths.get(fileNamePath).getFileName().toString());
@@ -743,7 +743,8 @@ public class InitMenuBar {
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             this.fileNamePath = chooser.getSelectedFile().toString();
             mainFrame.openContestFile(fileNamePath);
-            removedNodes.clear();
+            mainFrame.removedNodes.clear();
+            this.mainFrame.removedChains.clear();
             this.fileNamePathFolder = chooser.getSelectedFile().getParent();
         }
     }
@@ -764,7 +765,8 @@ public class InitMenuBar {
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             this.fileNamePath = chooser.getSelectedFile().toString();
             mainFrame.openContest2018File(fileNamePath);
-            removedNodes.clear();
+            mainFrame.removedNodes.clear();
+            this.mainFrame.removedChains.clear();
             this.fileNamePathFolder = chooser.getSelectedFile().getParent();
         }
     }
@@ -783,7 +785,8 @@ public class InitMenuBar {
                 }
                 this.view.fitGraphBounds();
                 this.view.updateUI();
-                this.removedNodes.clear();
+                this.mainFrame.removedNodes.clear();
+                this.mainFrame.removedChains.clear();
                 this.mainFrame.bestSolution.reset();
                 this.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
             } catch (IOException ioe) {
@@ -909,7 +912,8 @@ public class InitMenuBar {
     private void clearAllItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         mainFrame.initSidePanel.removeDefaultListeners();
         this.graph.clear();
-        removedNodes.clear();
+        mainFrame.removedNodes.clear();
+        this.mainFrame.removedChains.clear();
         mainFrame.initSidePanel.addDefaultListeners();
     }
 

@@ -92,4 +92,8 @@ public class MinimumAngleMonitor {
 
     MinimumAngle.resetHighlighting(graph);
   }
+
+  public double getMinimumAngle() {
+    return oldAngle;
+  }
 }

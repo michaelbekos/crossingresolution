@@ -11,7 +11,7 @@ public final class RemovedChains {
   private final IGraph graph;
   private final Deque<RemovedNodesSet> removedChains = new LinkedList<>();
 
-  RemovedChains(IGraph graph) {
+  public RemovedChains(IGraph graph) {
     this.graph = graph;
   }
 
@@ -58,5 +58,9 @@ public final class RemovedChains {
 
   public boolean isEmpty() {
     return removedChains.isEmpty();
+  }
+
+  public void clear() {
+    removedChains.clear();
   }
 }

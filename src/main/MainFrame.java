@@ -12,6 +12,8 @@ import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
+import graphoperations.RemovedChains;
+import graphoperations.RemovedNodes;
 import graphoperations.Scaling;
 import io.Contest2018IOHandler;
 import io.ContestIOHandler;
@@ -62,6 +64,9 @@ public class MainFrame extends JFrame {
     public InitSidePanel initSidePanel;
     public InitMenuBar menuBar;
 
+    public RemovedNodes removedNodes;
+    public RemovedChains removedChains;
+
     /**
      * Creates new form MainFrame
      */
@@ -82,6 +87,8 @@ public class MainFrame extends JFrame {
      */
     private void initComponents() {
         contest2018IOHandler = new Contest2018IOHandler();
+        this.removedNodes = new RemovedNodes(graph);
+        this.removedChains = new RemovedChains(graph);
 
         JPanel progressBarPanel = new JPanel();
         progressBarPanel.setLayout(new GridLayout(1, 2, 10, 10));
