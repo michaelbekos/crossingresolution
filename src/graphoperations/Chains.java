@@ -1,14 +1,10 @@
 package graphoperations;
 
-import java.util.*;
+import com.yworks.yfiles.graph.IGraph;
+import com.yworks.yfiles.graph.INode;
 
-import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.utils.IListEnumerable;
-
-import algorithms.graphs.MinimumAngle;
-import layout.algo.utils.PositionMap;
-import util.graph2d.Intersection;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public final class Chains {
@@ -31,6 +27,14 @@ public final class Chains {
   public RemovedChains remove() {
     RemovedChains removedChains = new RemovedChains(graph);
     removedChains.remove(chains);
+    return removedChains;
+  }
+
+  public RemovedChains remove(int numChains, RemovedChains removedChains) {
+    if (removedChains == null) {
+      removedChains = new RemovedChains(graph);
+    }
+    removedChains.remove(chains, numChains);
     return removedChains;
   }
 

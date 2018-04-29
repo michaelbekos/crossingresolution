@@ -511,7 +511,7 @@ public class InitMenuBar {
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     int numVertices = Integer.parseInt(vertexCount.getText());
-                    if(numVertices > graph.getNodes().size()){
+                    if(numVertices > graph.getNodes().size() || (useChains.isSelected() && removedChains!= null && numVertices > chainNum)){
                         numVertices = graph.getNodes().size();
                         if( 0 != JOptionPane.showConfirmDialog(null, "Input is greater than the number of all nodes.\n Remove all nodes?")){
                             numVertices = 0;
@@ -519,7 +519,7 @@ public class InitMenuBar {
                     }
 
                     if (useChains.isSelected()) {
-                        removedChains = chains.remove();
+                        removedChains = chains.remove(numVertices, removedChains);
                     } else if (useHighest.isSelected()) {
                         removedNodes.removeHighestDegree(numVertices);
                     } else {
@@ -605,6 +605,33 @@ public class InitMenuBar {
                     Scaling.scaleNodeSizes(view);
                 } catch (NumberFormatException exc) {
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } else if (!removedChains.isEmpty()) {
+            JTextField chainCount = new JTextField();
+            chainCount.setText(Integer.toString(removedChains.number()));
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            JLabel label = new JLabel();
+            String chain = "Number of chains to reinsert:        ";
+            label.setText(chain);
+            panel.add(label);
+            panel.add(chainCount);
+
+            int result = JOptionPane.showOptionDialog(null, panel, "Reinsert Chains", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (result == JOptionPane.OK_OPTION) {
+                int numChains;
+                try {
+                    numChains = Integer.parseInt(chainCount.getText());
+                    if (numChains > removedChains.number()) {
+                        throw new NumberFormatException("Too many chains");
+                    }
+
+                    removedChains.reinsert(numChains);
+
+                    Scaling.scaleNodeSizes(view);
+                } catch (NumberFormatException exc) {
+                    JOptionPane.showMessageDialog(null, "Incorrect input.\nNo chain will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

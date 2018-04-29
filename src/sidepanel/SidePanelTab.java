@@ -453,7 +453,7 @@ public class SidePanelTab {
         });
     }
 
-    private LinkedList<RemovedChains>  removedChains= new LinkedList<RemovedChains>();
+    private LinkedList<RemovedChains>  removedChains = new LinkedList<RemovedChains>();
     private void removeChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (initSidePanel.mainFrame.graph.getNodes().size() == 0) {
             return;
@@ -473,8 +473,8 @@ public class SidePanelTab {
     }
 
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        if (removedChains == null || depth==0 || removedChains.get(depth-1).number() == 0) {
-            removedChains = null;
+        if (depth==0 || removedChains.get(depth-1).number() == 0) {
+            removedChains.clear();
             return;
         }
 
@@ -502,8 +502,8 @@ public class SidePanelTab {
     }
 
     private void reinsertAllChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        if (removedChains == null || depth==0 || removedChains.get(depth-1).number() == 0) {
-            removedChains = null;
+        if (depth==0 || removedChains.get(depth-1).number() == 0) {
+            removedChains.clear();
             return;
         }
 

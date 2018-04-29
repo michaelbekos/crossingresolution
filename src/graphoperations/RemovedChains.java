@@ -3,7 +3,6 @@ package graphoperations;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 
-import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Set;
@@ -24,6 +23,25 @@ public final class RemovedChains {
     }
   }
 
+  public void remove(Set<Set<INode>> chains, int chainNum) {
+    int counter = 0;
+    for (Set<INode> chain : chains) {
+      if (counter == chainNum) {
+        break;
+      }
+      RemovedNodesSet removedNodesSet = new RemovedNodesSet(graph);
+      removedNodesSet.removeNodes(chain);
+      removedChains.push(removedNodesSet);
+      counter++;
+    }
+  }
+
+  public void reinsert(int chainNum) {
+    for (int i = 0; i < chainNum; i++) {
+        removedChains.pop().reinsertNodes();
+    }
+  }
+
   public void reinsertOne() {
     removedChains.pop().reinsertNodes();
   }
@@ -36,5 +54,9 @@ public final class RemovedChains {
 
   public int number() {
     return removedChains.size();
+  }
+
+  public boolean isEmpty() {
+    return removedChains.isEmpty();
   }
 }
