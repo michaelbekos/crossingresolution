@@ -1,0 +1,100 @@
+In this section, we consider relationships between the classes of graphs that admit smooth orthogonal $k$-drawings and octilinear $k$-drawings, $k \geq 1$, denoted as $SC_k$ and $8C_k$, respectively. Our findings are also summarized in Fig.~\ref{fig:graphClasses}.
+
+By definition, $SC_1 \subseteq SC_2$ and $8C_1 \subseteq 8C_2 \subseteq 8C_3$ hold. Since each planar graph of max-degree~$8$ admits an octilinear $3$-drawing~\cite{slopes}, class $8C_3$ coincides with the class of planar graphs of max-degree~$8$. Similarly, class $SC_2$ coincides with the class of planar graph of max-degree~$4$, as these graphs admit smooth~orthogonal $2$-drawings~\cite{smog2}. This also implies that $SC_2 \subseteq 8C_2$, since each planar graph of max-degree~$4$ admits an octilinear $2$-drawing~\cite{octi}. The relationship $8C_2 \neq 8C_3$ follows from~\cite{octi}, where it was proven that there exist planar graphs of max-degree~$6$ that do not admit octilinear $2$-drawings. The relationship $SC_2 \neq 8C_2$ follows from~\cite{octi-2}, where it was shown that there exist planar graphs of max-degree~$5$ that admit octilinear $2$-drawings and no octilinear $1$-drawings, and the fact that planar graphs of max-degree~$5$ cannot be drawn in the smooth orthogonal model. The octahedron graph admits neither a bendless smooth orthogonal drawing~\cite{smog1} nor a bendless octilinear drawing~\cite{octi-2}. However, since it is of max-degree~$4$, it admits $2$-drawings in both models~\cite{smog2,octi}. Hence, it belongs to $8C_2 \cap SC_2 \setminus (8C_1 \cup SC_1)$. To prove that $8C_1 \setminus SC_2 \neq \emptyset$, observe that a caterpillar whose spine vertices are of degree 8 clearly admits an octilinear $1$-drawing, however, due to its degree it cannot be drawn in the smooth orthogonal model.
+
+To complete the discussion of the relationships of Fig.~\ref{fig:graphClasses}, we have to show~that $SC_1$ and $8C_1$ are incomparable. This is the most interesting part of our proof, as usually one can ``easily'' convert a bendless octilinear drawing of a planar graph of max-degree~$4$ to a corresponding bendless smooth orthogonal one (e.g., by replacing diagonal segments with quarter circular arcs), and vice versa; see, e.g., Figs.~\ref{fig:octilinear}-\ref{fig:smooth}. Since the endpoints of each edge of a bendless smooth orthogonal or octilinear drawing are along a line with slope $0$, $1$, $-1$ or~$\infty$, such conversions are in principle possible. Two difficulties that might arise are to preserve planarity and to guarantee that no two edges enter a vertex using the same port. Clearly, however, there exist infinitely many (even $4$-regular) planar graphs that admit both drawings in both models; Fig.~\ref{fig:trains} shows how one can construct them; see also Appendix~\ref{app:relationships}. We summarize this observation in the~following theorem.
+
+\begin{figure}[t!]
+	\centering
+	\begin{minipage}[b]{0.45\textwidth}
+		\centering
+		\subfloat[\label{fig:trainsSC1} {A smooth orthogonal $1$-drawing}]{
+		\includegraphics[scale=0.65,page=3]{relationships}}
+	\end{minipage}
+	\hfil
+	\begin{minipage}[b]{0.45\textwidth}
+		\subfloat[\label{fig:trains8C1} {An octilinear $1$-drawing}]{
+		\includegraphics[scale=0.65,page=2]{relationships}}
+	\end{minipage}
+	\caption{Illustrations for the proof of Theorem~\ref{theo:union}.}
+\label{fig:trains}
+\end{figure}
+
+\newcommand{\union}{There is an infinitely large family of $4$-regular planar graphs that admit both bendless smooth orthogonal and bendless octilinear drawings.}
+\begin{theorem}
+\union
+\label{theo:union}
+\end{theorem}
+
+\noindent In the next two theorems we show that $SC_1$ and $8C_1$ are incomparable.
+
+\begin{theorem}
+There is an infinitely large family of $4$-regular planar graphs that admit bendless smooth orthogonal drawings but no bendless octilinear drawings.
+\label{theo:smoothAndNotOcti}
+\end{theorem}
+\begin{proof}
+Consider the planar graph $C$ of Fig.~\ref{fig:4gonOctahedronComponentSC1}, which is drawn bendless smooth orthogonal. We claim that $C$ admits no bendless octilinear drawing. If one substitutes its degree-$2$ vertex (denoted by~$c$ in Fig.~\ref{fig:4gonOctahedronComponentSC1}) by an edge connecting its two neighbors, then the resulting graph is triconnected, which admits an unique embedding (up to the choice of its outerface). Hence, in the presence of the~degree-$2$ vertex, graph $C$ has exactly two embeddings; see Figs.~\ref{fig:4gonOctahedronComponentSC1}-\ref{fig:4gonOctahedronComponentEmbedding2}. Now, observe that the outerface of any octilinear drawing of graph $C$ (if any) has length at most $5$ (Constraint~$1$). In addition, each vertex of this outerface (except for $c$, which is of degree~$2$) must have two ports pointing in the interior of this drawing, because every vertex of $C$ is of degree~$4$ except for $c$. This implies that the angle formed by any two consecutive edges of this outerface is at most $225^\circ$, except for the pair of edges incident to $c$ (Constraint~$2$). But if we want to satisfy both constraints, then at least an edge of this outerface must be drawn with a bend; see Fig.~\ref{fig:4gonOctahedronComponentNotOcC1}. Hence, graph $C$ does not admit a bendless octilinear drawing.
+
+\begin{figure}[t!]
+	\centering
+	\begin{minipage}[b]{0.18\textwidth}
+		\centering
+		\subfloat[\label{fig:4gonOctahedronComponentSC1} {}]{
+		\includegraphics[scale=0.5,page=5]{relationships}}
+	\end{minipage}
+	\hfil
+	\begin{minipage}[b]{0.18\textwidth}
+		\centering
+		\subfloat[\label{fig:4gonOctahedronComponentEmbedding2} {}]{
+		\includegraphics[scale=0.5,page=6]{relationships}}
+	\end{minipage}
+	\hfil
+	\begin{minipage}[b]{0.18\textwidth}
+		\centering
+		\subfloat[\label{fig:4gonOctahedronComponentNotOcC1} {}]{
+		\includegraphics[scale=0.5,page=7]{relationships}}
+	\end{minipage}
+	\hfil
+	\begin{minipage}[b]{0.36\textwidth}
+		\centering
+		\subfloat[\label{fig:4gonOctahedronChain} {}]{
+		\includegraphics[scale=0.5,page=4]{relationships}}
+	\end{minipage}
+	\caption{%
+	Illustrations for the proof of Theorem~\ref{theo:smoothAndNotOcti}.}
+\label{fig:4gonOctahedron}
+\end{figure}
+
+Based on graph $C$, for each $k \in \mathbb{N}_0$ we construct a $4$-regular planar graph $G_k$ consisting of $k + 2$ biconnected components $C_1,\ldots,C_{k+2}$ arranged in a chain; see Fig.~\ref{fig:4gonOctahedronChain} for the case $k=1$. Clearly, $G_k$ admits a bendless smooth orthogonal drawing for any $k$. Since the end-components of the chain (i.e., $C_1$ and $C_{k+2}$)~are isomorphic to $C$, $G_k$ does not admit a bendless octilinear drawing for any $k$.
+\end{proof}
+
+\begin{theorem}
+There is an infinitely large family of $4$-regular planar graphs that admit bendless octilinear drawings but no bendless smooth orthogonal drawings.
+\label{theo:octiAndNotSmooth}
+\end{theorem}
+\begin{proof}[sketch]
+Consider the planar graph $B$ of Fig.~\ref{fig:necklaceGem}, which is drawn bendless octilinear. Graph $B$ has two separation pairs (i.e., $\{t_1,t_2\}$ and $\{p_1,p_2\}$ in Fig.~\ref{fig:necklaceGem}). If we require the outerface of $B$ to be the one of Fig.~\ref{fig:necklaceGem}, then all possible planar embeddings of $B$ are isomorphic to the one of Fig.~\ref{fig:necklaceGem}. We exploit this property in Lemma~\ref{lem:necklaceGemNotOcti} of Appendix~\ref{app:relationships} to show that $B$ does not admit a bendless smooth~orthogonal drawing with this outerface. The detailed proof is based on an exhaustive consideration of all bendless smooth orthogonal drawings of subgraphs of $B$, which we incrementally augment by adding more vertices~to~them.
+
+
+\begin{figure}[h]
+	\centering
+	\subfloat[\label{fig:necklaceGem} {}]{
+	\includegraphics[scale=0.38,page=8]{relationships}}
+	\hfil
+	\subfloat[\label{fig:necklaceConstruction} {}]{
+	\includegraphics[scale=0.38,page=9]{relationships}}
+	\caption{Illustrations for the proof of Theorem~\ref{theo:octiAndNotSmooth}.}
+	\label{fig:necklace}
+\end{figure}
+
+Based on graph $B$, for each $k \in \mathbb{N}_0$ we construct a $4$-regular planar graph $G_k$ consisting of $2k + 2$ copies of $B$ arranged in a cycle; see Fig.~\ref{fig:necklaceConstruction} where each copy of $B$ is drawn as a gray-shaded parallelogram. By construction, $G_k$ admits a bendless octilinear drawing for any $k$. Since by planarity at least one copy of graph $B$ must be embedded with the outerface of Fig.~\ref{fig:necklaceGem}, for any~$k$, graph $G_k$ does not admit a bendless smooth orthogonal drawing, as well.
+\end{proof}
+
+% This completes our comparison of graph classes which shows that density does not
+% divide $SC_1$ and $OC_1$ and that while there is an infinitely large
+% intersection, the two classes are incomparable.
+
+
+
+
+
