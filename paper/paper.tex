@@ -8,7 +8,7 @@
 \graphicspath{{figures/}}
 
 \author{Michael~A.~Bekos, Henry~F\"orster, Christian-Marius~Geckeler, Michael~Kaufmann, Amad\"aus~Spallek, Jan~Splett}
-\title{A Heuristic Approach towards Drawings of Graph with High Crossing Resolution}
+\title{A Heuristic Approach towards Drawings of Graphs with High Crossing Resolution}
 
 \institute{
 Wilhelm-Schickhard-Institut f\"ur Informatik, Universit\"at T\"ubingen, Germany\\
@@ -22,16 +22,24 @@ Wilhelm-Schickhard-Institut f\"ur Informatik, Universit\"at T\"ubingen, Germany\
 % ==================================================================
 
 \begin{abstract}
-
+The \emph{crossing resolution} of a non-planar drawing of a graph is the minimum angle formed at the crossing points of the edges. Recent experiments have shown that the larger the crossing resolution, the easier it is to read and interpret a drawing. However, maximizing the crossing resolution of a graph turns out to be a difficult problem and only heuristic algorithms are known. 
+ 
+In this paper, we propose a new heuristic algorithm for the crossing resolution maximization problem. The core of our algorithm is based on a randomized procedure, which starting from an arbitrary input drawing, yields one with better crossing resolution by moving ...
 \end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
 
-In Graph Drawing, there exist a really reach literature and a wide range of techniques for drawing planar graphs; see, e.g.,~\cite{DBLP:books/ph/BattistaETT99,DBLP:conf/dagstuhl/1999dg}. However, the task of drawing a non-planar graph, and in particular when it does not have some special structure (e.g., degree restricted), is difficult and challenging, and as a result the proposed techniques are significantly fewer. 
+In Graph Drawing, there exist a really reach literature and a wide range of techniques for drawing planar graphs; see, e.g.,~\cite{DBLP:journals/combinatorica/FraysseixPP90,DBLP:conf/gd/GutwengerM98,DBLP:journals/algorithmica/Kant96}. However, drawing a non-planar graph, and in particular when it does not have some special structure (e.g., degree restricted), is a difficult and challenging task, mainly due to the edge crossings which negatively affect the drawing's quality~\cite{DBLP:journals/iwc/Purchase00}. As a result, the proposed techniques are significantly fewer (e.g., crossing minimization heuristics~\cite{DBLP:journals/algorithmica/EadesW94,DBLP:journals/tsmc/SugiyamaTT81}, energy-based layout algorithms~\cite{DBLP:journals/congnum/Eades84,DBLP:journals/spe/FruchtermanR91}); for an overview refer to~\cite{DBLP:books/ph/BattistaETT99,DBLP:conf/dagstuhl/1999dg,DBLP:reference/crc/2013gd}.
+
+In this context, Huang et al.~\cite{DBLP:conf/apvis/Huang07,DBLP:journals/vlc/HuangEH14} a decade ago introduced some important statistical evidence (through a series of eye-tracking experiments), that edge crossings may not negatively affect the drawing's quality too much (and therefore the human's ability to read and interpret it), when the angles formed by the crossing edges are large. In other words, while prior to these experiments it was commonly accepted that mainly the number of crossings is the most important parameter for judging the quality and readability of a non-planar graph drawing, it turned out that the types of edge crossings also matter. As a result, a new and prominent research direction was initiated, which is unofficially recognized under the term ``beyond planarity''~\cite{Shonan2016,Dagstuhl2016,SoCG2017} and mainly focuses on graphs and their properties, when different constraints on the types of edges crossings are imposed; refer to~\cite{DBLP:journals/jgaa/BekosKM18,DBLP:journals/corr/abs-1804-07257} for recent surveys. 
+
+
 
 \section{Related Work}
 \label{sec:relatedwork}
+
+%Spring embedders, energy based methods, which changed our viewpoint towards edge crossings
 
 \section{Description of our Heuristic Approach}
 \label{sec:algorithm}
