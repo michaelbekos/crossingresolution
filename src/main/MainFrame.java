@@ -48,6 +48,8 @@ public class MainFrame extends JFrame {
     private PolylineEdgeStyle defaultEdgeStyle;
     private DefaultLabelStyle defaultLabelStyle;
 
+    /* Visibility from the view */
+
     /* Central gui elements */
     public JLabel infoLabel;
     public JProgressBar progressBar;
@@ -74,6 +76,7 @@ public class MainFrame extends JFrame {
         super.setExtendedState(MAXIMIZED_BOTH);
         super.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
+
 
     /**
      * This method is called within the constructor to initialize the form.
@@ -327,6 +330,28 @@ public class MainFrame extends JFrame {
         });
     }
 
+    public static void start(int closeOperation, boolean isVisible, @Nullable Consumer<MainFrame> onReady) {
+        try {
+            // check for 'os.name == Windows 7' does not work, since JDK 1.4 uses the compatibility mode
+            if (!"com.sun.java.swing.plaf.motif.MotifLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !"com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !UIManager.getSystemLookAndFeelClassName().equals(UIManager.getLookAndFeel().getClass().getName()) && !(System.getProperty("java.version").startsWith("1.4") && System.getProperty("os.name").startsWith("Windows") && "6.1".equals(System.getProperty("os.version")))) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.init();
+            frame.setVisible(isVisible);
+            frame.setDefaultCloseOperation(closeOperation);
+            if (onReady != null) {
+                onReady.accept(frame);
+            }
+        });
+    }
+
     public Optional<SidePanelTab> getTabForAlgorithm(Class<? extends ILayout> layoutClass) {
         return initSidePanel.getTabForAlgorithm(layoutClass);
     }
@@ -335,6 +360,20 @@ public class MainFrame extends JFrame {
         initSidePanel.removeDefaultListeners();
         try {
             ContestIOHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+    public void openFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            view.importFromGraphML(fileNamePath);
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();

@@ -117,11 +117,11 @@ public class ContestIOHandler extends GraphIOHandler {
             long x, y;
             PointD pos = n.getLayout().getCenter();
             if (pos.getY() % 1 != 0 || pos.getX() % 1 != 0) {
-              System.err.println("Graph not Gridded! Rounding Non-Integer Values: x " + pos.getX() + " y " + pos.getY());
+             // System.err.println("Graph not Gridded! Rounding Non-Integer Values: x " + pos.getX() + " y " + pos.getY());
               errorText.append("Graph not Gridded! Rounding Non-Integer Values:\nx ").append(pos.getX()).append("\ny ").append(pos.getY()).append("\n");
             }
             if (pos.getY() < 0 || pos.getX() < 0) {
-              System.err.println("Graph has Negative Values! x: " + pos.getX() + " y: " + pos.getY());
+             // System.err.println("Graph has Negative Values! x: " + pos.getX() + " y: " + pos.getY());
               errorText.append("Graph has negative Values!");
             }
             x = Math.round(pos.getX());

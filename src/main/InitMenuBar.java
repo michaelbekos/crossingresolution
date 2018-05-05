@@ -904,4 +904,5 @@ public class InitMenuBar {
         }
         view.updateUI();
     }
+
 }
