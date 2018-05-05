@@ -14,6 +14,7 @@ import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
 import graphoperations.Scaling;
 import io.ContestIOHandler;
+import io.SimpleGraphmlIOHandler;
 import layout.algo.execution.ILayout;
 import layout.algo.utils.BestSolutionMonitor;
 import sidepanel.InitSidePanel;
@@ -373,7 +374,8 @@ public class MainFrame extends JFrame {
     public void openFile(String fileNamePath) {
         initSidePanel.removeDefaultListeners();
         try {
-            view.importFromGraphML(fileNamePath);
+          //  view.importFromGraphML(fileNamePath);
+            SimpleGraphmlIOHandler.read(graph, fileNamePath);
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();

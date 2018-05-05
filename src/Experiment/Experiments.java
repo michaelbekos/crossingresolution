@@ -100,7 +100,8 @@ public class Experiments {
             else {
 
                     childernP = children;
-                    for(int i = 0; i<children.length; i++){
+                    for(int i = 0; i<1; i++){
+                    //for(int i = 0; i<children.length; i++){
                     //    openFrames(i, children.length, inputDirectory, "pattern");
                         openFrames(i, i, inputDirectory, children[i]);
                         //System.out.println("Iteration:   "+ i);
@@ -134,7 +135,7 @@ public class Experiments {
     private void openFrames(int startIndex, int endIndex, String folderPath, String pattern) {
         IntStream.range(startIndex, endIndex + 1)
                 .parallel()
-                .forEach(index -> MainFrame.start(WindowConstants.DISPOSE_ON_CLOSE, false, mainFrame -> {
+                .forEach(index -> MainFrame.start(WindowConstants.DISPOSE_ON_CLOSE, true, mainFrame -> {
 
                     //String fileName = index +"";
                     String fileName = pattern;
@@ -142,7 +143,7 @@ public class Experiments {
 
                     Experiment experiment = new Experiment(mainFrame, fileName, inputDirectory, outputDirectory);
                     experiment.loadGraph();
-                    System.out.println("Was da los    1");
+                   System.out.println("Was da los    1");
                     boolean isNotFinished = true;
                     int iterationFactor = 1;
                     boolean reached90Deg = false;
@@ -177,8 +178,9 @@ public class Experiments {
                     experiment.writeGraph();
                     mainFrame.dispose();
 
+                }
 
-                }}));
+    }));
     }
 
     private String getPrefixString(String str){
