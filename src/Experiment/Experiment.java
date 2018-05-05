@@ -72,9 +72,8 @@ public class Experiment {
         catch(FileNotFoundException ex){
             System.out.println(ex);
         }
-
-
     }
+
     public void run(){
 
         loadGraph();
@@ -100,6 +99,7 @@ public class Experiment {
         }
 
     }
+
     public void writeGraphInformations(){
         sb = new StringBuilder();
         sb.append(this.filePrefix);
@@ -155,6 +155,8 @@ public class Experiment {
     }
 
     public void loadGraph() {
+        this.reached90Degree = false;
+
         if (this.fileName.endsWith(".txt")){
             this.mainFrame.openContestFile(this.inputDirectory + this.fileName);
             System.out.println("Try to open .txt");
@@ -165,7 +167,7 @@ public class Experiment {
 
         mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
         this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getMinAngle()) / 1000.0;
-        System.out.println("laod Graph " + this.minimumAngle);
+        System.out.println("load Graph " + this.minimumAngle);
     }
 
     public void writeGraph() {
@@ -177,28 +179,39 @@ public class Experiment {
     }
 
     public  void runAlgorithms() {
+        //System.out.println("++ 1");
         this.mainFrame.initSidePanel.removeDefaultListeners();
+        // System.out.println("++ 2");
         LayoutUtilities.applyLayout(this.mainFrame.graph, new OrganicLayout());
+        //System.out.println("++ 3");
         this.mainFrame.initSidePanel.addDefaultListeners();
-
+        //System.out.println("++ 4");
         Optional<SidePanelTab> tab = this.mainFrame.getTabForAlgorithm(RandomMovementLayout.class);
+        // System.out.println("++ 5");
         if (!tab.isPresent()) {
             return;
         }
+        //System.out.println("++ 6");
         tab.get().getExecutor().setMaxIterations(maxIterations);
+        //System.out.println("++ 7");
         long tmpTime = System.currentTimeMillis();
+        // System.out.println("++ 8");
         tab.get().startPauseExecution();
         boolean value = true;
-        while(!tab.get().getExecutor().isFinished())
-        {
 
+       // System.out.println("++ 8.5");
+        //while(!tab.get().getExecutor().isFinished()){
+        while(!tab.get().getExecutor().isFinished() && tab.get().getExecutor().isRunning()){
+           // System.out.println("++ while");
         }
+        //System.out.println("++ 9");
         this.endTime = endTime + (System.currentTimeMillis() - tmpTime);
+        // System.out.println("++ 10");
     }
 
 
 
-    public  boolean calcGraphInformations(){ //in Prog
+    public  boolean calcGraphInformations(){
 
         ArrayList<Integer> verticesDegree = new ArrayList<>();
 
@@ -218,8 +231,7 @@ public class Experiment {
         this.currentGraphSizeY = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
 
 
-
-        if(this.minimumAngle>=87.0){
+        if(this.minimumAngle>=90.0){
             reached90Degree = true;
         }
 
@@ -339,8 +351,6 @@ public class Experiment {
         }
 
         graphInfo.append("\nCalc Time: ").append(this.endTime - this.sartTime).append("\n");
-
-
 
 
         System.out.println(graphInfo);
