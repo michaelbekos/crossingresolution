@@ -348,6 +348,7 @@ public class MainFrame extends JFrame {
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
             setTitle(Paths.get(fileNamePath).getFileName().toString());
         } catch (IOException e) {
             infoLabel.setText("An error occured while reading the input file.");
@@ -363,6 +364,7 @@ public class MainFrame extends JFrame {
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
             setTitle(Paths.get(fileNamePath).getFileName().toString());
         } catch (IOException e) {
             infoLabel.setText("An error occured while reading the input file.");

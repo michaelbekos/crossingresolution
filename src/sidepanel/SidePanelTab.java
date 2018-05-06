@@ -484,8 +484,7 @@ public class SidePanelTab {
     }
 
     private void reinsertChain() {
-        if (depth==0 || removedChains.get(depth-1).number() == 0) {
-            removedChains.clear();
+        if (initSidePanel.mainFrame.removedChains.number() == 0) {
             return;
         }
 

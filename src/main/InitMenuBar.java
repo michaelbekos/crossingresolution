@@ -15,7 +15,7 @@ import com.yworks.yfiles.view.input.GraphEditorInputMode;
 import com.yworks.yfiles.view.input.GraphSnapContext;
 import com.yworks.yfiles.view.input.GridSnapTypes;
 import graphoperations.Chains;
-import graphoperations.RemovedChains;
+import graphoperations.RemovedNodes;
 import graphoperations.Scaling;
 import io.ContestIOHandler;
 import layout.algo.utils.PositionMap;
@@ -313,6 +313,7 @@ public class InitMenuBar {
                 int dimensions = Integer.parseInt(dim.getText());
                 mainFrame.bestSolution.reset();
                 HypercubeGenerator.generate(graph, dimensions);
+                mainFrame.removedNodes = new RemovedNodes(graph);
                 view.updateUI();
             }
         });
@@ -332,6 +333,7 @@ public class InitMenuBar {
                 int rC = Integer.parseInt(rCount.getText());
                 mainFrame.bestSolution.reset();
                 GridGenerator.generate(graph, xC, yC, rC);
+                mainFrame.removedNodes = new RemovedNodes(graph);
                 view.updateUI();
             }
         });
@@ -351,6 +353,7 @@ public class InitMenuBar {
                 int lC = Integer.parseInt(layers.getText());
                 mainFrame.bestSolution.reset();
                 LayeredGridGenerator.generate(graph, xC, yC, lC);
+                mainFrame.removedNodes = new RemovedNodes(graph);
                 view.updateUI();
             }
         });
@@ -675,6 +678,7 @@ public class InitMenuBar {
                 rgg.setNodeCount(Integer.parseInt(nodeCount.getText()));
                 rgg.setEdgeCount(Integer.parseInt(edgeCount.getText()));
                 mainFrame.bestSolution.reset();
+                mainFrame.removedNodes = new RemovedNodes(graph);
             } catch (NumberFormatException exc) {
                 JOptionPane.showMessageDialog(null, "Incorrect input.\nThe graph will be created with 10 nodes and 10 edges.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 rgg.setNodeCount(10);
@@ -715,6 +719,7 @@ public class InitMenuBar {
                 this.mainFrame.removedChains.clear();
                 this.fileNamePathFolder = chooser.getSelectedFile().getParent();
                 mainFrame.bestSolution.reset();
+                mainFrame.removedNodes = new RemovedNodes(graph);
                 mainFrame.setTitle(Paths.get(fileNamePath).getFileName().toString());
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
