@@ -18,6 +18,7 @@ import util.BoundingBox;
 import util.graph2d.Intersection;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -35,6 +36,7 @@ public class RandomMovementLayout implements ILayout {
   private RectD boundingBox;
   private int successfulSteps, failedSteps;
   private Set<INode> fixNodes;
+  private Set<INode> reinsertedChain;
 
   public RandomMovementLayout(IGraph graph, RandomMovementConfigurator configurator) {
     this.graph = graph;
@@ -64,6 +66,11 @@ public class RandomMovementLayout implements ILayout {
     this.fixNodes = fixNodes;
   }
 
+  @Override
+  public void setVarNodes(Set<INode> variableNodes) {
+    this.reinsertedChain = variableNodes;
+  }
+
   private ArrayList<Sample> initSampleDirections() {
     ArrayList<Sample> samples = new ArrayList<>(NUM_SAMPLES);
 
@@ -79,10 +86,13 @@ public class RandomMovementLayout implements ILayout {
 
   @Override
   public boolean executeStep(int iteration) {
-    Optional<INode> randomNode;
-    if (configurator.useGaussianDistribution.getValue()) {
+      Optional<INode> randomNode;
+      if (configurator.useGaussianDistribution.getValue()) {
       randomNode = gaussianNodeSelection();
-    } else {
+
+      } else if (configurator.useReinsertChainNodes.getValue()) {
+          randomNode = chainNodeSelection();
+      } else {
       randomNode = selectRandomNode(graph.getNodes(), graph.getNodes().size());
     }
 
@@ -125,6 +135,7 @@ public class RandomMovementLayout implements ILayout {
       if (configurator.toggleNodeDistributions.getValue()
           && successfulSteps >= configurator.iterationsForLocalMaximum.getValue()) {
         configurator.useGaussianDistribution.setValue(true);
+        configurator.useReinsertChainNodes.setValue(false);
       }
     } else {
       failedSteps++;
@@ -238,6 +249,11 @@ public class RandomMovementLayout implements ILayout {
 
           return selectRandomNode(nodesOfLayer, nodesOfLayer.size());
         });
+  }
+
+  private Optional<INode> chainNodeSelection() {
+      Object[] arr = reinsertedChain.toArray();
+      return Optional.of((INode)arr[ThreadLocalRandom.current().nextInt(0,arr.length)]);
   }
 
   private Optional<INode> selectRandomNode(Iterable<INode> nodes, int size) {

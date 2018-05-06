@@ -207,6 +207,10 @@ public class BasicIGraphLayoutExecutor {
     return maxIterations.getValue();
   }
 
+  public int getCurrentIteration() {
+    return currentIteration;
+  }
+
   public ILayout getLayout() {
     return layout;
   }

@@ -34,9 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Optional;
+import java.util.*;
 
 public class SidePanelTab {
     public JPanel sidePanelTab;
@@ -473,10 +471,10 @@ public class SidePanelTab {
 //====================================================================
             Chains chains = Chains.analyze(initSidePanel.mainFrame.graph);
             initSidePanel.mainFrame.removedChains = chains.remove(chains.number(), initSidePanel.mainFrame.removedChains);
+            initSidePanel.mainFrame.removedChains.setStartEnd(chains.getStartEnd());
 //--------------------------------------------------------------------
             initSidePanel.addDefaultListeners();
         });
-        System.out.println("rmeoved "+removedChains.size());
     }
 
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
@@ -545,6 +543,7 @@ public class SidePanelTab {
         Thread automaticInsertion = new Thread(() -> {
                 double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
                 double epsilon = startingAngle/100;
+                int last_iteration = executor.getCurrentIteration();
                 if (!algorithmName.equals("Random Movement")) {
                     setOutputTextArea("Recommended to use Random Movement!");
                     System.out.println("Recommended to use Random Movement!");
@@ -562,19 +561,21 @@ public class SidePanelTab {
                         return;
                     }
                     double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
-                    if (minAngle >= (startingAngle - epsilon)) {
+//                    if (minAngle >= (startingAngle - epsilon)) {
+                    if (executor.getCurrentIteration() >= last_iteration + 5000) {
                         //remove chain
                         reinsertVerticesItem();
                         Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
                         setOutputTextArea("Reinserting Chains... Chains left: "+initSidePanel.mainFrame.removedChains.number());
-                        System.out.println("Reinserting Chains... "+initSidePanel.mainFrame.removedChains.number()+" angle: "+minAngle);
+//                        System.out.println("Reinserting Chains... "+initSidePanel.mainFrame.removedChains.number()+" angle: "+minAngle);
                         iterations = 0;
                         epsilon = startingAngle/100;
                     }
-                    if (iterations == Math.pow(10,7)) {
-                        epsilon +=0.1;
-                        iterations = 0;
-                    }
+////                    if (iterations == Math.pow(10,7)) {
+//                    if (executor.getCurrentIteration() >= last_iteration + 1000) {
+//                        epsilon +=0.01;
+//                        iterations = 0;
+//                    }
 
                     iterations++;
                 }
@@ -786,7 +787,12 @@ public class SidePanelTab {
     private void reinsertVerticesItem() {
         modifyGraph(() -> {
             initSidePanel.mainFrame.initSidePanel.removeDefaultListeners();
-            initSidePanel.mainFrame.removedChains.reinsert(1);
+            ArrayList<Set<INode>> setChain = initSidePanel.mainFrame.removedChains.reinsert(1);
+            Set<INode> allNodes = new HashSet<>();
+            for (Set<INode> x : setChain) {
+                allNodes.addAll(x);
+            }
+            layout.setVarNodes(allNodes);
             initSidePanel.mainFrame.initSidePanel.addDefaultListeners();
         });
     }

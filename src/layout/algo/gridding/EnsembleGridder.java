@@ -40,6 +40,11 @@ public class EnsembleGridder implements IGridder {
   }
 
   @Override
+  public void setVarNodes(Set<INode> variableNodes) {
+    throw new UnsupportedOperationException("setVarNodes is not yet supported");
+  }
+
+  @Override
   public boolean executeStep(int iteration) {
     return gridders.stream()
         .anyMatch(quickGridder -> quickGridder.executeStep(iteration));

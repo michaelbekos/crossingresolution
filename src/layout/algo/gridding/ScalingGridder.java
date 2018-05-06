@@ -28,6 +28,11 @@ public class ScalingGridder implements IGridder {
   }
 
   @Override
+  public void setVarNodes(Set<INode> variableNodes) {
+    throw new UnsupportedOperationException("setVarNodes is not yet supported");
+  }
+
+  @Override
   public boolean executeStep(int iteration) {
     if (!configurator.scaleUpIfNecessary.getValue()) {
       return gridder.executeStep(iteration);

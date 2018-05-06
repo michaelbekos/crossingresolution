@@ -9,6 +9,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Double> maxStepSize;
   AbstractLayoutInterfaceItem<Boolean> jumpOnLocalMaximum;
   AbstractLayoutInterfaceItem<Boolean> useGaussianDistribution;
+  AbstractLayoutInterfaceItem<Boolean> useReinsertChainNodes;
   AbstractLayoutInterfaceItem<Integer> iterationsForLocalMaximum;
   AbstractLayoutInterfaceItem<Integer> numSamplesForJumping;
   AbstractLayoutInterfaceItem<Boolean> toggleNodeDistributions;
@@ -35,10 +36,13 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     onlyGridPositions.setValue(true);
 
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
-    useGaussianDistribution.setValue(true);
+    useGaussianDistribution.setValue(false);
+
+    useReinsertChainNodes = itemFactory.booleanParameter("Focus on nodes from reinserted chains");
+    useReinsertChainNodes.setValue(true);
 
     toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes");
-    toggleNodeDistributions.setValue(true);
+    toggleNodeDistributions.setValue(false);
   }
 
 }

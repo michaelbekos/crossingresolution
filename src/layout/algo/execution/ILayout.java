@@ -31,6 +31,12 @@ public interface ILayout {
   void setFixNodes(Set<INode> fixNodes);
 
   /**
+   * Sets a set of nodes that will be moved, all others remain stationary.
+   * @param variableNodes a set of {@link INode}s that shall be moved by the algorithm
+   */
+  void setVarNodes(Set<INode> variableNodes);
+
+  /**
    * Performs one iteration of the algorithm. Make sure you keep the operation as short as possible.
    * @param iteration The current iteration
    * @return true iff the algorithm is finished

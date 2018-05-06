@@ -39,6 +39,11 @@ public class QuickGridder implements IGridder {
   }
 
   @Override
+  public void setVarNodes(Set<INode> variableNodes) {
+    throw new UnsupportedOperationException("setVarNodes is not yet supported");
+  }
+
+  @Override
   public boolean executeStep(int iteration) {
     for (INode node : graph.getNodes()) {
       if (griddedNodes.contains(node)) {

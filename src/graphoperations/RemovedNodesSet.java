@@ -4,10 +4,7 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -16,7 +13,7 @@ import java.util.stream.Collectors;
 final class RemovedNodesSet {
   private final IGraph graph;
   private final Map<String, Set<String>> edges = new HashMap<>();
-  private final Set<String> nodes = new HashSet<>();
+  private final LinkedHashSet<String> nodes = new LinkedHashSet<>();
   private final Map<String, PointD> positions = new HashMap<>();
 
   RemovedNodesSet(IGraph graph) {
@@ -67,5 +64,44 @@ final class RemovedNodesSet {
     }
 
     return insertedNodes;
+  }
+
+  public Set<INode> reinsertNodesLine(ArrayList<INode> startEnd) {
+    Set<INode> insertedNodes = new HashSet<>();
+    Map<String, INode> allNodes = new HashMap<>();
+
+    graph.getNodes().forEach(node -> allNodes.put(node.getTag().toString(), node));
+
+    int i = 0;
+    INode first = startEnd.get(1);
+    INode end = startEnd.get(2);
+
+    for (String tag : nodes) {
+      double diff_x = first.getLayout().getCenter().getX() - end.getLayout().getCenter().getX();
+      double diff_y = first.getLayout().getCenter().getY() - end.getLayout().getCenter().getY();
+      INode node = graph.createNode();
+      node.setTag(tag);
+      graph.setNodeCenter(node, new PointD(end.getLayout().getCenter().getX()+(diff_x / (nodes.size() + 1)) * i, end.getLayout().getCenter().getY()+(diff_y / (nodes.size() + 1)) * i));
+      insertedNodes.add(node);
+      allNodes.put(tag, node);
+      i++;
+    }
+
+    for (String tag : nodes) {
+      INode node = allNodes.get(tag);
+      for (String neighborTag : edges.get(tag)) {
+        INode neighbor = allNodes.get(neighborTag);
+
+        if (graph.getEdge(node, neighbor) == null) {
+          graph.createEdge(node, neighbor);
+        }
+      }
+    }
+
+    return insertedNodes;
+  }
+
+  int getSize() {
+    return nodes.size();
   }
 }

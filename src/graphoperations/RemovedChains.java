@@ -3,19 +3,18 @@ package graphoperations;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 public final class RemovedChains {
   private final IGraph graph;
   private final Deque<RemovedNodesSet> removedChains = new LinkedList<>();
+  private ArrayList<ArrayList<INode>> startEnd;
 
   public RemovedChains(IGraph graph) {
     this.graph = graph;
   }
 
-  void remove(Set<Set<INode>> chains) {
+  void remove(ArrayList<LinkedHashSet<INode>> chains) {
     for (Set<INode> chain : chains) {
       RemovedNodesSet removedNodesSet = new RemovedNodesSet(graph);
       removedNodesSet.removeNodes(chain);
@@ -23,9 +22,9 @@ public final class RemovedChains {
     }
   }
 
-  public void remove(Set<Set<INode>> chains, int chainNum) {
+  public void remove(ArrayList<LinkedHashSet<INode>> chains, int chainNum) {
     int counter = 0;
-    for (Set<INode> chain : chains) {
+    for (LinkedHashSet<INode> chain : chains) {
       if (counter == chainNum) {
         break;
       }
@@ -36,10 +35,13 @@ public final class RemovedChains {
     }
   }
 
-  public void reinsert(int chainNum) {
+  public ArrayList<Set<INode>> reinsert(int chainNum) {
+    ArrayList<Set<INode>> chains = new ArrayList<>();
     for (int i = 0; i < chainNum; i++) {
-        removedChains.pop().reinsertNodes();
+//        removedChains.pop().reinsertNodes();
+      chains.add(removedChains.pop().reinsertNodesLine(startEnd.get(i)));
     }
+    return chains;
   }
 
   public void reinsertOne() {
@@ -63,4 +65,9 @@ public final class RemovedChains {
   public void clear() {
     removedChains.clear();
   }
+
+  public void setStartEnd(ArrayList<ArrayList<INode>> startEnd) {
+    this.startEnd = startEnd;
+  }
+
 }
