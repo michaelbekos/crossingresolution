@@ -3,17 +3,17 @@
 \usepackage{graphicx,rotating}
 \usepackage[font=small]{subfig,caption}
 \usepackage{algorithm2e}
-\usepackage{todonotes,lineno,paralist}
+\usepackage{todonotes,lineno,paralist,soul}
 \usepackage{placeins,rotating,hyperref}
 \graphicspath{{figures/}}
 
-\author{Michael~A.~Bekos, Henry~F\"orster, Christian-Marius~Geckeler, Michael~Kaufmann, Amad\"aus~Spallek, Jan~Splett}
+\author{Michael~A.~Bekos, Henry~F\"orster, Christian-Marius~Geckeler, Lukas Holl\"ander, Michael~Kaufmann, Amad\"aus~Spallek, Jan~Splett}
 \title{A Heuristic Approach towards Drawings of Graphs with High Crossing Resolution}
 
 \institute{
 Wilhelm-Schickhard-Institut f\"ur Informatik, Universit\"at T\"ubingen, Germany\\
 \texttt{\{bekos,foersth,mk\}@informatik.uni-tuebingen.de}\\
-\texttt{\{christian-marius.geckeler,amadaeus.spallek,jan.splett\}@student.uni-tuebingen.de}
+\texttt{\{christian-marius.geckeler,jan-lukas.hollaender,amadaeus.spallek,jan.splett\} @student.uni-tuebingen.de}
 }
 
 % ============================================================
@@ -59,7 +59,7 @@ An immediate observation emerging from the above literature overview is that the
 
 Unless otherwise specified, in this paper we consider simple undirected graphs. Let $G=(V,E)$ be such a graph. The degree of vertex $u\in V$ of $G$ is denoted by $d(u)$. The degree $d(G)$ of  graph $G$ is defined as the maximum degree of its vertices, i.e., $d(G)=\max_{u\in V}d(u)$.
 
-Given a drawing $\Gamma(G)$ of $G$ on the plane, we denote by $p_u=(x_u,y_u)$ the position of vertex $u \in V$ of $G$ in $\Gamma(G)$. For a pair of vertices $u,v\in V$ of $G$, the unit-length vector from $p_u$ to $p_v$ is denoted as $\overrightarrow{p_up_v}$, while the line segment delimited by $p_u$ and $p_v$ as $\overline{p_up_v}$.
+Given a drawing $\Gamma(G)$ of $G$ on the plane, we denote by $p(u)=(x_u,y_u)$ the position of vertex $u \in V$ of $G$ in $\Gamma(G)$. For a pair of vertices $u,v\in V$ of $G$, the unit-length vector from $p(u)$ to $p(v)$ is denoted as $\overrightarrow{p(u)p(v)}$, while the line segment delimited by $p(u)$ and $p(v)$ as $\overline{p(u)p(v)}$.
 
 
 \section{Description of our Heuristic Approach}
@@ -78,18 +78,27 @@ To formally define the critical vertices, we first need to introduced the notion
 
 Intuitively, the critical vertices are the endpoints of the edges that define the crossing resolution of drawing $\Gamma_{i-1}$. As a result, their role in our algorithm is crucial. The reason is that by slightly changing the location of a critical vertex appropriately, one naturally expects to improve the crossing resolution of the current drawing. In fact, what quickly we realized from our experimental evaluation, is that by appropriately changing the location of a critical vertex at each iteration of our algorithm, the crossing resolution of the initial drawing improves rapidly during the first iterations of the algorithm. However, by focusing only at the critical vertices of the drawing, it is highly possible that the algorithm will get trapped to some local minima after a number of iterations. Hence, special care is needed in order to avoid these bottlenecks, especially when the graph to be drawn is large. More precisely, in such a case an algorithm that is based on randomly selecting a vertex to move, so to improve the crossing resolution, will need a large number of iterations in order to converge to a good solution, because it is simply very unlike to select one of the critical vertices to move. We discuss heuristics to avoid such bottlenecks in  Section~\ref{ssec:minima}.
 
-So far, we have described the main idea of our iterative algorithm, which at each iteration step chooses uniformly at random a vertex from the vertex-pool of the current drawing to move, so to improve the crossing resolution. We have not described, however, how the chosen vertex is moved, i.e., how to compute its new position. To this end, let $v_i$ be the vertex that has been chosen from the vertex-pool of the drawing $\Gamma_{i-1}$ at the $i$-th iteration of our algorithm. 
+So far, we have described the main idea of our iterative algorithm, which at each iteration step chooses uniformly at random a vertex from the vertex-pool of the current drawing to move, so to improve the crossing resolution. We have not described, however, how the chosen vertex is moved, i.e., how we compute its new position in the next drawing.  
+
+Let $v_i$ be the vertex that has been chosen from the vertex-pool of the drawing $\Gamma_{i-1}$ at the $i$-th iteration of our algorithm. Recall that the crossing resolution $c(\Gamma_{i})$ of drawing $\Gamma_{i}$ that is obtained after the $i$-th iteration of the algorithm must be at least as large as the crossing resolution $c(\Gamma_{i-1})$ of drawing $\Gamma_{i-1}$ (by the invariant of our algorithm), that is, $c(\Gamma_i) \ge c(\Gamma_{i-1})$. To compute the position of vertex $v_i$ in drawing $\Gamma_i$, we consider a set of $\rho$ rays $r_0,r_1,\ldots,r_{\rho-1}$ that all emanate from the point $p(v_i)$ of vertex $v_i$ in drawing $\Gamma_{i-1}$, such that the angle formed by ray $r_j$, with $j=0,1,\ldots,\rho-1$, and the horizontal axis equals to $2j\pi/\rho$, where $\rho>0$ is an integer parameter of the algorithm. These rays are then rotated by an angle that is chosen uniformly at random in the interval $[0,2\pi]$. The position of vertex $v_i$ in drawing $\Gamma_i$ will eventually be along one of the rays $r_0,r_1,\ldots,r_{\rho-1}$. More precisely, for each ray $r_i$ we chose a distance value $\delta_i$ uniformly at random from the interval $[0,\delta]$, where $\delta$ is also a parameter of the algorithm. For each $j=0,1,\ldots,\rho-1$, a new point $\pi_j$ on the plane is obtained translating $p(u)$ along ray $r_j$ at a distance $\delta_j$; we say that point $\pi_j$ is \emph{feasible}, if the crossing resolution of the drawing obtained by placing vertex $v_i$ at point $\pi_j$ and by keeping all other vertices of $G$ in the same positions as in drawing $\Gamma_{i-1}$ is at least as large as the crossing resolution of drawing $\Gamma_{i-1}$\todo{Add a figure illustrating the approach.}. 
+
+If none of the points $\pi_j$, with $j=0,1,\ldots,\rho-1$ is feasible, then the new position of vertex $v_i$ in drawing $\Gamma_i$ is $p(v_i)$, that is, the same as in drawing $\Gamma_{i-1}$, since the crossing resolution of drawing $\Gamma_i$ must be at least as large as the one of $\Gamma_{i-1}$. On the other hand, if there is one or more feasible points (among $\pi_0,\pi_1,\ldots,\pi_{\rho-1}$), then one may consider two different approaches to determine the new position of vertex $v_i$ in drawing $\Gamma_i$. The most natural is to chose this feasible point that maximizes the crossing resolution of the obtained drawing. As an alternative, one may rely again on randomization and chose uniformly at random one the feasible points as the new position of vertex $v_i$ in drawing $\Gamma_i$. In our implementation, we did not observe any significant difference in these two approaches (in terms of the crossing resolution of the obtained drawings), so we simply adopted the first one. In Section~\ref{ssec:termination}, we describe conditions  The iteration steps
+ 
 
 \begin{itemize}
-\item Description of the randomized algorithm.
-\item Big graphs $\rightarrow$ focus on critical edges.
-\item Mimics the human. 
+\item \st{Description of the randomized algorithm}.
+\item \st{Big graphs $\rightarrow$ focus on critical edges}.
 \item Avoiding local minima.
 \item Crossing calculation. 
 \end{itemize}
 
 \subsection{Avoiding local minima.}
 \label{ssec:minima}
+
+From the above description, it is not difficult to see that our algorithm in a sense mimics the way a human would try to increase the crossing resolution of a drawing; first, one would try to identify...
+
+\subsection{Conditions for termination.}
+\label{ssec:termination}
 
 \subsection{Grid drawings: an interesting variant.}
 \label{ssec:grid}
