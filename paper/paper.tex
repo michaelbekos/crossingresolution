@@ -24,7 +24,7 @@ Wilhelm-Schickhard-Institut f\"ur Informatik, Universit\"at T\"ubingen, Germany\
 \begin{abstract}
 The \emph{crossing resolution} of a non-planar drawing of a graph is the minimum angle formed at the crossing points of the edges. Recent experiments have shown that the larger the crossing resolution is, the easier it is to read and interpret a drawing of a graph. However, maximizing the crossing resolution turns out to be an NP-hard problem in general and only heuristic algorithms are known that are mainly based on appropriately adjusting spring embedding algorithms. 
  
-In this paper, we propose a new --randomization-based-- heuristic algorithm for the crossing resolution maximization problem and we experimentally compare it again the known ones from the literature. Our experimental evaluation indicates that the new heuristic significantly outperforms the known ones in terms of the quality of the produced layouts (in terms of the actual crossing resolution), but this comes at the cost of slightly higher running time, especially for large and dense graphs. 
+In this paper, we propose a new --randomization-based-- heuristic algorithm for the crossing resolution maximization problem and we experimentally compare it against the known ones from the literature. Our experimental evaluation indicates that the new heuristic produces drawings with significantly better crossing resolution, but this comes at the cost of slightly higher running time, especially when the input graph is large and dense. 
 \end{abstract}
 
 \section{Introduction}
@@ -52,7 +52,7 @@ Angelini et al.~\cite{DBLP:journals/jgaa/AngeliniCDFBKS11} presented results for
 
 To the best of our knowledge, there is only one work, by Dujmovic et al.~\cite{DBLP:journals/cjtcs/DujmovicGMW11}, which studies the crossing resolution maximization problem by relaxing the right-angle constraint on the crossing angles of the computed drawings. More precisely, in their work, Dujmovic et al.~\cite{DBLP:journals/cjtcs/DujmovicGMW11} proved that an $n$-vertex graph, whose crossing resolution is at least $\alpha$ has at most $(3n-6)\pi/\alpha$ edges. Corresponding density results for the case, in which few bends are allowed along each edge, are known by Ackerman et al.~\cite{DBLP:journals/siamdm/AckermanFT12} and Di Giacomo et al.~\cite{DBLP:journals/mst/GiacomoDLM11}.  
 
-An immediate observation emerging from the above literature overview is that the focus of the study of the crossing resolution maximization problem has been primarily on theoretical aspects of the problem (as naturally expected, of course). The absence of approaches for computing drawings with high crossing resolution in practice is rather obvious and it can be justified, up to a certain point, by fact that the problem turns to be NP-hard, when asking for drawings with optimal crossing resolution. Notable exceptions are of courses the works of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou at al.~\cite{DBLP:journals/cj/ArgyriouBS13}, which are both based on the spring-embedding technique~\cite{DBLP:journals/congnum/Eades84}. According to this technique, a graph is modelled as a physical system with forces acting on it, and a (good) drawing is obtained by an equilibrium state of the system; for an introduction and a detailed discussion of several different variants refer to~\cite{DBLP:books/ph/BattistaETT99}. 
+An immediate observation emerging from the above literature overview is that the focus of the study of the crossing resolution maximization problem has been primarily on theoretical aspects of the problem (as naturally expected, of course). The absence of approaches for computing drawings with high crossing resolution in practice is rather obvious and it can be justified, up to a certain point, by fact that the problem turns to be NP-hard, when asking for drawings with optimal crossing resolution. Exceptions are the works of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou at al.~\cite{DBLP:journals/cj/ArgyriouBS13}, which are both based on the spring-embedding technique~\cite{DBLP:journals/congnum/Eades84}. According to this technique, a graph is modelled as a physical system with forces acting on it, and a (good) drawing is obtained by an equilibrium state of the system; for an introduction and a detailed discussion of several different variants refer to~\cite{DBLP:books/ph/BattistaETT99}. 
 
 \section{Preliminaries}
 \label{sec:preliminaries}
@@ -65,10 +65,54 @@ Given a drawing $\Gamma(G)$ of $G$ on the plane, we denote by $p_u=(x_u,y_u)$ th
 \section{Description of our Heuristic Approach}
 \label{sec:algorithm}
 
+In this section, we describe our heuristic algorithm for obtaining drawings with high crossing resolution. Without loss of generality, we assume that the input of our algorithm consists of a graph $G$ and an initial drawing $\Gamma_0$ of $G$ that is of some crossing resolution $c(\Gamma_0)$. We may assume that no two edges of $G$ overlap in $\Gamma_0$, that is, $c(\Gamma_0)>0$. Note that a drawing $\Gamma_0$ of $G$ meeting these preconditions can be, e.g., a circular drawing of $G$ or a drawing obtained by applying a standard spring embedding algorithm on $G$. 
+
+Our algorithm is iterative and at each iteration step performs some operations that are mainly based on randomization. More precisely, at the $i$-th iteration step, we assume that we have computed a drawing $\Gamma_{i-1}$ of some crossing resolution $c(\Gamma_{i-1}) \geq c(\Gamma_0)$, where $\Gamma_0$ is our initial drawing. In other words, we assume, as an invariant property of our algorithm, that the crossing resolution cannot be decreased at some iteration step. Then, a vertex of $\Gamma_{i-1}$ is chosen arbitrary at random from a so-called \emph{vertex-pool}, which may contain:
+
+\begin{itemize}
+\item either all the vertices of drawing $\Gamma_{i-1}$, or
+\item a prespecified subset of the vertices of drawing $\Gamma_{i-1}$, which we call \emph{critical}.
+\end{itemize}
+
+To formally define the critical vertices, we first need to introduced the notion of critical edge-pairs. A pair of edges, say $e$ and $e'$, is called \emph{critical} in drawing $\Gamma_{i-1}$, if $e$ and $e'$ cross in $\Gamma_{i-1}$ and the minimum angle that is formed at their crossing point is either equal (or very close, in some cases) to the crossing resolution $c(\Gamma_{i-1})$ of drawing $\Gamma_{i-1}$. The set of critical vertices of drawing $\Gamma_{i-1}$ is then defined by the four endvertices of each critical edge-pair.  
+
+Intuitively, the critical vertices are the endpoints of the edges that define the crossing resolution of drawing $\Gamma_{i-1}$. As a result, their role in our algorithm is crucial. The reason is that by slightly changing the location of a critical vertex appropriately, one naturally expects to improve the crossing resolution of the current drawing. In fact, what quickly we realized from our experimental evaluation, is that by appropriately changing the location of a critical vertex at each iteration of our algorithm, the crossing resolution of the initial drawing improves rapidly during the first iterations of the algorithm. However, by focusing only at the critical vertices of the drawing, it is highly possible that the algorithm will get trapped to some local minima after a number of iterations. Hence, special care is needed in order to avoid these bottlenecks, especially when the graph to be drawn is large. More precisely, in such a case an algorithm that is based on randomly selecting a vertex to move, so to improve the crossing resolution, will need a large number of iterations in order to converge to a good solution, because it is simply very unlike to select one of the critical vertices to move. We discuss heuristics to avoid such bottlenecks in  Section~\ref{ssec:minima}.
+
+So far, we have described the main idea of our iterative algorithm, which at each iteration step chooses uniformly at random a vertex from the vertex-pool of the current drawing to move, so to improve the crossing resolution. We have not described, however, how the chosen vertex is moved, i.e., how to compute its new position. To this end, let $v_i$ be the vertex that has been chosen from the vertex-pool of the drawing $\Gamma_{i-1}$ at the $i$-th iteration of our algorithm. 
+
+\begin{itemize}
+\item Description of the randomized algorithm.
+\item Big graphs $\rightarrow$ focus on critical edges.
+\item Mimics the human. 
+\item Avoiding local minima.
+\item Crossing calculation. 
+\end{itemize}
+
+\subsection{Avoiding local minima.}
+\label{ssec:minima}
+
+\subsection{Grid drawings: an interesting variant.}
+\label{ssec:grid}
+
 
 \section{Experimental Evaluation}
 \label{sec:experiments}
 
+\begin{itemize}
+\item Experimental setup.
+\item Benchmarks + degree-3.
+\item Aesthetics:
+
+\begin{itemize}
+\item Number of crossings (\# of crossings).
+\item Average size of crossing angles (angle size).
+\item Average of edge lengths (edge length).
+\item Angular resolution (angular res.).
+\end{itemize}
+
+\item Results.
+\item Discussion.
+\end{itemize}
 
 \section{Conclusions}
 \label{sec:conclusions}
