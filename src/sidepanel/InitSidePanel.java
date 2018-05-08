@@ -19,6 +19,7 @@ import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.randommovement.RandomMovementConfigurator;
 import layout.algo.randommovement.RandomMovementLayout;
 import main.MainFrame;
+import view.visual.DrawBoundingBox;
 import view.visual.DrawScale;
 
 import javax.swing.*;
@@ -74,6 +75,7 @@ public class InitSidePanel {
     private void initDefault() {
         //show scale
         mainFrame.view.getBackgroundGroup().addChild(new DrawScale(mainFrame.view), ICanvasObjectDescriptor.VISUAL);
+        mainFrame.view.getBackgroundGroup().addChild(new DrawBoundingBox(mainFrame.view), ICanvasObjectDescriptor.VISUAL);
 
         masterEnableMinimumAngle = new JCheckBox("Show minimum angle");
         masterEnableMinimumAngle.addItemListener(this::masterMinAngleDisplayEnabled);
