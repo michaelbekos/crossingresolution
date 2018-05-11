@@ -19,6 +19,7 @@ import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.randommovement.RandomMovementConfigurator;
 import layout.algo.randommovement.RandomMovementLayout;
 import main.MainFrame;
+import view.visual.DrawBoundingBox;
 import view.visual.DrawScale;
 
 import javax.swing.*;
