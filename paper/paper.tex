@@ -30,11 +30,24 @@ In this paper, we propose a new --randomization-based-- heuristic algorithm for 
 \section{Introduction}
 \label{sec:introduction}
 
-In Graph Drawing, there exist a really reach literature and a wide range of techniques for drawing planar graphs; see, e.g.,~\cite{DBLP:journals/combinatorica/FraysseixPP90,DBLP:conf/gd/GutwengerM98,DBLP:journals/algorithmica/Kant96}. However, drawing a non-planar graph, and in particular when it does not have some special structure (e.g., degree restricted), is a difficult and challenging task, mainly due to the edge crossings which negatively affect the drawing's quality~\cite{DBLP:journals/iwc/Purchase00}. As a result, the proposed techniques are significantly fewer (e.g., crossing minimization heuristics~\cite{DBLP:journals/algorithmica/EadesW94,DBLP:journals/tsmc/SugiyamaTT81}, energy-based layout algorithms~\cite{DBLP:journals/congnum/Eades84,DBLP:journals/spe/FruchtermanR91}); for an overview refer to~\cite{DBLP:books/ph/BattistaETT99,DBLP:conf/dagstuhl/1999dg,DBLP:reference/crc/2013gd}.
+In Graph Drawing, there exist a really rich literature and a wide range of techniques for drawing planar graphs; see, e.g.,~\cite{DBLP:journals/combinatorica/FraysseixPP90,DBLP:conf/gd/GutwengerM98,DBLP:journals/algorithmica/Kant96}. However, drawing a non-planar graph, and in particular when it does not have some special structure (e.g., degree restricted), is a difficult and challenging task, mainly due to the edge crossings which negatively affect the drawing's quality~\cite{DBLP:journals/iwc/Purchase00}. As a result, the proposed techniques are significantly fewer (e.g., crossing minimization heuristics~\cite{DBLP:journals/algorithmica/EadesW94,DBLP:journals/tsmc/SugiyamaTT81}, energy-based layout algorithms~\cite{DBLP:journals/congnum/Eades84,DBLP:journals/spe/FruchtermanR91}); for an overview refer to~\cite{DBLP:books/ph/BattistaETT99,DBLP:conf/dagstuhl/1999dg,DBLP:reference/crc/2013gd}.
 
 In this context, Huang et al.~\cite{DBLP:conf/apvis/Huang07,DBLP:journals/vlc/HuangEH14} a decade ago introduced some important statistical evidence (through a series of eye-tracking experiments), that edge crossings may not negatively affect the drawing's quality too much (and therefore the human's ability to read and interpret it), when the angles formed by the crossing edges are large. In other words, while prior to these experiments it was commonly accepted that mainly the number of crossings is the most important parameter for judging the quality and readability of a non-planar graph drawing, it turned out that the types of edge crossings also matter. As a result, a new and prominent research direction was initiated, which is unofficially recognized under the term ``beyond planarity''~\cite{Shonan2016,Dagstuhl2016,SoCG2017} and mainly focuses on graphs and their properties, when different constraints on the types of edges crossings are imposed; refer to~\cite{DBLP:journals/corr/abs-1804-07257} for a recent survey. 
 
-Formally, the minimum angle formed by any two crossed edges in a drawing is refer to as its \emph{crossing resolution}. Analogously, the crossing resolution of a graph is defined as the maximum crossing resolution over all its drawings. Clearly, the crossing resolution of a non-planar graph is at most $90^\circ$, while a graph that admits a drawing with crossing resolution $90^\circ$ is refer to as \emph{right-angle-crossing} graph or \emph{RAC} graph, for short. For these graphs, several results, mostly of theoretical nature, are known (refer to Section~\ref{sec:relatedwork} for a short overview). Notably, RAC graph are sparse (they contain at most $4n-10$ edges~\cite{DBLP:journals/tcs/DidimoEL11}, where $n$ denotes the number of  vertices), while deciding whether a graph is RAC is NP-hard~\cite{DBLP:journals/jgaa/ArgyriouBS12}. 
+Formally, the minimum angle formed by any two crossed edges in a drawing is refer to as its \emph{crossing resolution}. Analogously, the crossing resolution of a graph is defined as the maximum crossing resolution over all its drawings. Clearly, the crossing resolution of a non-planar graph is at most $90^\circ$, while a graph that admits a drawing with crossing resolution $90^\circ$ is refer to as \emph{right-angle-crossing} graph or \emph{RAC} graph, for short; refer to Figure~\ref{fig:examples} for an illustration. For these graphs, several results, mostly of theoretical nature, are known (refer to Section~\ref{sec:relatedwork} for a short overview). Notably, RAC graph are sparse (they contain at most $4n-10$ edges~\cite{DBLP:journals/tcs/DidimoEL11}, where $n$ denotes the number of  vertices), while deciding whether a graph is RAC is NP-hard~\cite{DBLP:journals/jgaa/ArgyriouBS12}.
+
+\begin{figure}[t!]
+	\centering
+	\subfloat[\label{fig:k5} {}]{
+	\includegraphics[page=1]{figures/examples}}
+	\hfil
+	\subfloat[\label{fig:k6} {}]{
+	\includegraphics[page=2]{figures/examples}}
+	\caption{%
+	(a)~A RAC drawing of the complete graph $K_5$, and
+	(b)~a drawing of the complete graph $K_6$, whose crossing resolution is arbitrarily close to $90^\circ$.}
+	\label{fig:examples}
+\end{figure} 
 
 The latter result is already an indication that the crossing resolution maximization problem might also be difficult, even though, formally, its complexity has not been settled yet for values of the crossing resolution smaller than $90^\circ$. Also, the literature is significantly more limited, when restricting the crossing resolution to be smaller than $90^\circ$, as also evidenced by Section~\ref{sec:relatedwork}. 
 
@@ -80,10 +93,22 @@ Intuitively, the critical vertices are the endpoints of the edges that define th
 
 So far, we have described the main idea of our iterative algorithm, which at each iteration step chooses uniformly at random a vertex from the vertex-pool of the current drawing to move, so to improve the crossing resolution. We have not described, however, how the chosen vertex is moved, i.e., how we compute its new position in the next drawing.  
 
-Let $v_i$ be the vertex that has been chosen from the vertex-pool of the drawing $\Gamma_{i-1}$ at the $i$-th iteration of our algorithm. Recall that the crossing resolution $c(\Gamma_{i})$ of drawing $\Gamma_{i}$ that is obtained after the $i$-th iteration of the algorithm must be at least as large as the crossing resolution $c(\Gamma_{i-1})$ of drawing $\Gamma_{i-1}$ (by the invariant of our algorithm), that is, $c(\Gamma_i) \ge c(\Gamma_{i-1})$. To compute the position of vertex $v_i$ in drawing $\Gamma_i$, we consider a set of $\rho$ rays $r_0,r_1,\ldots,r_{\rho-1}$ that all emanate from the point $p(v_i)$ of vertex $v_i$ in drawing $\Gamma_{i-1}$, such that the angle formed by ray $r_j$, with $j=0,1,\ldots,\rho-1$, and the horizontal axis equals to $2j\pi/\rho$, where $\rho>0$ is an integer parameter of the algorithm. These rays are then rotated by an angle that is chosen uniformly at random in the interval $[0,2\pi]$. The position of vertex $v_i$ in drawing $\Gamma_i$ will eventually be along one of the rays $r_0,r_1,\ldots,r_{\rho-1}$. More precisely, for each ray $r_i$ we chose a distance value $\delta_i$ uniformly at random from the interval $[0,\delta]$, where $\delta$ is also a parameter of the algorithm. For each $j=0,1,\ldots,\rho-1$, a new point $\pi_j$ on the plane is obtained translating $p(u)$ along ray $r_j$ at a distance $\delta_j$; we say that point $\pi_j$ is \emph{feasible}, if the crossing resolution of the drawing obtained by placing vertex $v_i$ at point $\pi_j$ and by keeping all other vertices of $G$ in the same positions as in drawing $\Gamma_{i-1}$ is at least as large as the crossing resolution of drawing $\Gamma_{i-1}$\todo{Add a figure illustrating the approach.}. 
+Let $v_i$ be the vertex that has been chosen from the vertex-pool of the drawing $\Gamma_{i-1}$ at the $i$-th iteration of our algorithm. Recall that the crossing resolution $c(\Gamma_{i})$ of drawing $\Gamma_{i}$ that is obtained after the $i$-th iteration of the algorithm must be at least as large as the crossing resolution $c(\Gamma_{i-1})$ of drawing $\Gamma_{i-1}$ (by the invariant of our algorithm), that is, $c(\Gamma_i) \ge c(\Gamma_{i-1})$. To compute the position of vertex $v_i$ in drawing $\Gamma_i$, we consider a set of $\rho$ rays $r_0,r_1,\ldots,r_{\rho-1}$ that all emanate from the point $p(v_i)$ of vertex $v_i$ in drawing $\Gamma_{i-1}$, such that the angle formed by ray $r_j$, with $j=0,1,\ldots,\rho-1$, and the horizontal axis equals to $2j\pi/\rho$, where $\rho>0$ is an integer parameter of the algorithm. These rays are then rotated by an angle that is chosen uniformly at random in the interval $[0,2\pi]$. The position of vertex $v_i$ in drawing $\Gamma_i$ will eventually be along one of the rays $r_0,r_1,\ldots,r_{\rho-1}$. More precisely, for each ray $r_i$ we chose a distance value $\delta_i$ uniformly at random from the interval $[\delta_{min},\delta_{max}]$, where $\delta_{min}$ and $\delta_{max}$ are two positive parameters of the algorithm. For each $j=0,1,\ldots,\rho-1$, a new point $\pi_j$ on the plane is obtained translating $p(u)$ along ray $r_j$ at a distance $\delta_j$; we say that point $\pi_j$ is \emph{feasible}, if the crossing resolution of the drawing obtained by placing vertex $v_i$ at point $\pi_j$ and by keeping all other vertices of $G$ in the same positions as in drawing $\Gamma_{i-1}$ is at least as large as the crossing resolution of drawing $\Gamma_{i-1}$. 
+
+\begin{figure}[t!]
+	\centering
+	\includegraphics[page=1]{figures/algorithm}
+	\caption{%
+	Illustration of an iteration step of our algorithm: 
+	The chosen vertex is the white one; 
+	the computed rays $r_1,\ldots,r_8$ have been rotated by $8^\circ$; 
+	the black-colored points along these rays are points $\pi_1,\ldots,\pi_8$; 
+	among them, $\pi_4$ yields the best solution.}
+	\label{fig:algo}
+\end{figure} 
 
 If none of the points $\pi_j$, with $j=0,1,\ldots,\rho-1$ is feasible, then the new position of vertex $v_i$ in drawing $\Gamma_i$ is $p(v_i)$, that is, the same as in drawing $\Gamma_{i-1}$, since the crossing resolution of drawing $\Gamma_i$ must be at least as large as the one of $\Gamma_{i-1}$. On the other hand, if there is one or more feasible points (among $\pi_0,\pi_1,\ldots,\pi_{\rho-1}$), then one may consider two different approaches to determine the new position of vertex $v_i$ in drawing $\Gamma_i$. The most natural is to chose this feasible point that maximizes the crossing resolution of the obtained drawing. As an alternative, one may rely again on randomization and chose uniformly at random one the feasible points as the new position of vertex $v_i$ in drawing $\Gamma_i$. In our implementation, we did not observe any significant difference in these two approaches (in terms of the crossing resolution of the obtained drawings), so we simply adopted the first one. In Section~\ref{ssec:termination}, we describe conditions  The iteration steps
- 
+ s
 
 \begin{itemize}
 \item \st{Description of the randomized algorithm}.
@@ -95,7 +120,9 @@ If none of the points $\pi_j$, with $j=0,1,\ldots,\rho-1$ is feasible, then the 
 \subsection{Avoiding local minima.}
 \label{ssec:minima}
 
-From the above description, it is not difficult to see that our algorithm in a sense mimics the way a human would try to increase the crossing resolution of a drawing; first, one would try to identify...
+From the above description, it is not difficult to see that our algorithm in a sense mimics the way a human would try to increase the crossing resolution of a drawing; first, one would try to identify the pair of edges that define the crossing resolution of the drawing (we call them critical edges); then, one would try to move an endvertex of this pair (which we choose at random), hoping that by this move the crossing resolution will increase. Of course, we cannot investigate all possible positions. Therefore, we discretized them by considering a number of rays around the chosen vertex and by randomly choosing a single point at each of them. 
+
+While the aforementioned procedure 
 
 \subsection{Conditions for termination.}
 \label{ssec:termination}
