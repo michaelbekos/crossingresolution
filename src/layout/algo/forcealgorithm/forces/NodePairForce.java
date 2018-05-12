@@ -29,6 +29,9 @@ public class NodePairForce implements IForce {
     toggleableParameters.add(activated);
   }
 
+  /**
+   * Calculate repulsive forces with Fruchterman & Reingold algorithm. i.e. calculateRepulsiveForcesFR
+   */
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
     if (!activated.getValue()) {
