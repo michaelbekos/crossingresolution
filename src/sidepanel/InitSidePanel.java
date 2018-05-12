@@ -119,7 +119,8 @@ public class InitSidePanel {
                 .addForce(new SpringForce(graph, 100, 0.01))
                 .addForce(new ElectricForce(graph, 0.01))
                 .addForce(new CrossingForce(graph, cMinimumAngle))
-                .addForce(new SlopedForce(graph));
+                .addForce(new SlopedForce(graph))
+                .addForce(new TotalResolutionForce(graph));
 
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
         addAlgorithm("Force Algorithm", configurator, forceAlgorithm);
