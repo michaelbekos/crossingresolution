@@ -25,13 +25,16 @@ public class SpringForce implements IForce {
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
     springStiffness = itemFactory.doubleParameter("Spring Stiffness Force", 0.0, 150);
-    springStiffness.setValue(150.0);
+    springStiffness.setValue(50.0);
 
     activated = itemFactory.toggleableParameter(springStiffness);
     activated.setValue(true);
     toggleableParameters.add(activated);
   }
 
+  /**
+   * Calculate spring forces with classical spring embedder algorithm. i.e. calculateSpringForcesEades
+   */
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
     if (!activated.getValue()) {
