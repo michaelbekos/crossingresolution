@@ -61,7 +61,7 @@ public class SimpleGraphmlIOHandler extends GraphIOHandler{
                 INode node = g.createNode(new PointD(nodesCount, nodesCount));
                 node.setTag(objString);
               //  System.out.println("nodeCount  " +nodesCount);
-                System.out.println(objString + "  node");
+               // System.out.println(objString + "  node");
                 nodes[nodesCount] = node;
                 nodesId[nodesCount] = objString;
 
@@ -85,7 +85,7 @@ public class SimpleGraphmlIOHandler extends GraphIOHandler{
                 line = line.substring(index+1);
                 index = line.indexOf("\"");
                 String objString  = line.substring(1,index);
-                System.out.println(objString + "  source");
+             //   System.out.println(objString + "  source");
                 int indexN1 = searchIndex(nodesId, objString);
                 if(indexN1 == -1){System.out.println("Maping Node1 failed");}
 
@@ -95,7 +95,7 @@ public class SimpleGraphmlIOHandler extends GraphIOHandler{
                 line = line.substring(index+1);
                 index = line.indexOf("\"");
                 objString = line.substring(1,index);
-                System.out.println(objString + "  target");
+              //  System.out.println(objString + "  target");
                 int indexN2 = searchIndex(nodesId, objString);
                 if(indexN1 == -1){System.out.println("Maping Node2 failed");}
 

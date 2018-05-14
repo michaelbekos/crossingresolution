@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 public class MainFrame extends JFrame {
 
     /* Box related issue*/
-    public static final double BOX_SIZE = 10000;
+    public static double BOX_SIZE = 10000;
 
     /* Graph Drawing related objects */
     public GraphComponent view;
@@ -66,9 +66,9 @@ public class MainFrame extends JFrame {
     /**
      * Creates new form MainFrame
      */
-    private MainFrame() {}
+    public MainFrame() {}
 
-    private void init() {
+    public void init() {
         this.initComponents();
         this.initMenuBar();
 
@@ -386,4 +386,5 @@ public class MainFrame extends JFrame {
             initSidePanel.addDefaultListeners();
         }
     }
+
 }
