@@ -1,4 +1,4 @@
-\documentclass{llncs}
+\documentclass[runningheads]{llncs}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx,rotating}
 \usepackage[font=small]{subfig,caption}
@@ -8,7 +8,9 @@
 \graphicspath{{figures/}}
 
 \author{Michael~A.~Bekos, Henry~F\"orster, Christian-Marius~Geckeler, Lukas Holl\"ander, Michael~Kaufmann, Amad\"aus~Spallek, Jan~Splett}
+\authorrunning{M.~A.~Bekos et al.}
 \title{A Heuristic Approach towards Drawings of Graphs with High Crossing Resolution}
+\titlerunning{Drawings of Graphs with High Crossing Resolution}
 
 \institute{
 Wilhelm-Schickhard-Institut f\"ur Informatik, Universit\"at T\"ubingen, Germany\\
@@ -89,43 +91,67 @@ Our algorithm is iterative and at each iteration step performs some operations t
 
 To formally define the critical vertices, we first need to introduced the notion of critical edge-pairs. A pair of edges, say $e$ and $e'$, is called \emph{critical} in drawing $\Gamma_{i-1}$, if $e$ and $e'$ cross in $\Gamma_{i-1}$ and the minimum angle that is formed at their crossing point is either equal (or very close, in some cases) to the crossing resolution $c(\Gamma_{i-1})$ of drawing $\Gamma_{i-1}$. The set of critical vertices of drawing $\Gamma_{i-1}$ is then defined by the four endvertices of each critical edge-pair.  
 
-Intuitively, the critical vertices are the endpoints of the edges that define the crossing resolution of drawing $\Gamma_{i-1}$. As a result, their role in our algorithm is crucial. The reason is that by slightly changing the location of a critical vertex appropriately, one naturally expects to improve the crossing resolution of the current drawing. In fact, what quickly we realized from our experimental evaluation, is that by appropriately changing the location of a critical vertex at each iteration of our algorithm, the crossing resolution of the initial drawing improves rapidly during the first iterations of the algorithm. However, by focusing only at the critical vertices of the drawing, it is highly possible that the algorithm will get trapped to some local minima after a number of iterations. Hence, special care is needed in order to avoid these bottlenecks, especially when the graph to be drawn is large. More precisely, in such a case an algorithm that is based on randomly selecting a vertex to move, so to improve the crossing resolution, will need a large number of iterations in order to converge to a good solution, because it is simply very unlike to select one of the critical vertices to move. We discuss heuristics to avoid such bottlenecks in  Section~\ref{ssec:minima}.
+Intuitively, the critical vertices are the endpoints of the edges that define the crossing resolution of drawing $\Gamma_{i-1}$. As a result, their role in our algorithm is crucial\footnote{If the focus is not on the critical vertices for a large graph, then an algorithm that is based on randomly selecting a vertex to move, so to improve the crossing resolution, will need a large number of iterations in order to converge to a good solution, because it is simply very unlike to select one of them to move.}. The reason is that by slightly changing the location of a critical vertex appropriately, one naturally expects to improve the crossing resolution of the current drawing. In fact, what we quickly realized from our experimental evaluation, is that by appropriately changing the location of a critical vertex at each iteration of our algorithm, the crossing resolution of the initial drawing improves rapidly during the first iterations of the algorithm. However, by focusing only at the critical vertices of the drawing, it is highly possible that the algorithm will get trapped to some local minima after a number of iterations. Hence, special care is needed in order to avoid these bottlenecks, especially when the graph to be drawn is large. We discuss heuristics to avoid such bottlenecks in  Section~\ref{ssec:minima}.
 
 So far, we have described the main idea of our iterative algorithm, which at each iteration step chooses uniformly at random a vertex from the vertex-pool of the current drawing to move, so to improve the crossing resolution. We have not described, however, how the chosen vertex is moved, i.e., how we compute its new position in the next drawing.  
 
-Let $v_i$ be the vertex that has been chosen from the vertex-pool of the drawing $\Gamma_{i-1}$ at the $i$-th iteration of our algorithm. Recall that the crossing resolution $c(\Gamma_{i})$ of drawing $\Gamma_{i}$ that is obtained after the $i$-th iteration of the algorithm must be at least as large as the crossing resolution $c(\Gamma_{i-1})$ of drawing $\Gamma_{i-1}$ (by the invariant of our algorithm), that is, $c(\Gamma_i) \ge c(\Gamma_{i-1})$. To compute the position of vertex $v_i$ in drawing $\Gamma_i$, we consider a set of $\rho$ rays $r_0,r_1,\ldots,r_{\rho-1}$ that all emanate from the point $p(v_i)$ of vertex $v_i$ in drawing $\Gamma_{i-1}$, such that the angle formed by ray $r_j$, with $j=0,1,\ldots,\rho-1$, and the horizontal axis equals to $2j\pi/\rho$, where $\rho>0$ is an integer parameter of the algorithm. These rays are then rotated by an angle that is chosen uniformly at random in the interval $[0,2\pi]$. The position of vertex $v_i$ in drawing $\Gamma_i$ will eventually be along one of the rays $r_0,r_1,\ldots,r_{\rho-1}$. More precisely, for each ray $r_i$ we chose a distance value $\delta_i$ uniformly at random from the interval $[\delta_{min},\delta_{max}]$, where $\delta_{min}$ and $\delta_{max}$ are two positive parameters of the algorithm. For each $j=0,1,\ldots,\rho-1$, a new point $\pi_j$ on the plane is obtained translating $p(u)$ along ray $r_j$ at a distance $\delta_j$; we say that point $\pi_j$ is \emph{feasible}, if the crossing resolution of the drawing obtained by placing vertex $v_i$ at point $\pi_j$ and by keeping all other vertices of $G$ in the same positions as in drawing $\Gamma_{i-1}$ is at least as large as the crossing resolution of drawing $\Gamma_{i-1}$. 
+Let $v_i$ be the vertex that has been chosen from the vertex-pool of the drawing $\Gamma_{i-1}$ at the $i$-th iteration of our algorithm. Recall that the crossing resolution $c(\Gamma_{i})$ of drawing $\Gamma_{i}$ that is obtained after the $i$-th iteration of the algorithm must be at least as large as the crossing resolution $c(\Gamma_{i-1})$ of drawing $\Gamma_{i-1}$ (by the invariant of our algorithm), that is, $c(\Gamma_i) \ge c(\Gamma_{i-1})$. To compute the position of vertex $v_i$ in drawing $\Gamma_i$, we consider a set of $\rho$ rays $r_0,r_1,\ldots,r_{\rho-1}$ that all emanate from the point $p(v_i)$ of vertex $v_i$ in drawing $\Gamma_{i-1}$, such that the angle formed by ray $r_j$, with $j=0,1,\ldots,\rho-1$, and the horizontal axis equals to $2j\pi/\rho$, where $\rho>0$ is an integer parameter of the algorithm. These rays are then rotated by an angle that is chosen uniformly at random in the interval $[0,2\pi]$; refer to Fig.~\ref{fig:algo} for an illustration. The position of vertex $v_i$ in drawing $\Gamma_i$ will eventually be along one of the rays $r_0,r_1,\ldots,r_{\rho-1}$. More precisely, for each ray $r_i$ we chose a distance value $\delta_i$ uniformly at random from the interval $[\delta_{min},\delta_{max}]$, where $\delta_{min}$ and $\delta_{max}$ are two positive parameters of the algorithm. For each $j=0,1,\ldots,\rho-1$, a new point $\pi_j$ on the plane is obtained translating $p(u)$ along ray $r_j$ at a distance $\delta_j$; we say that point $\pi_j$ is \emph{feasible}, if the crossing resolution of the drawing obtained by placing vertex $v_i$ at point $\pi_j$ and by keeping all other vertices of $G$ in the same positions as in drawing $\Gamma_{i-1}$ is at least as large as the crossing resolution of drawing $\Gamma_{i-1}$, and there is no vertex of drawing $\Gamma_{i-1}$ at point $\pi_j$. 
 
 \begin{figure}[t!]
 	\centering
-	\includegraphics[page=1]{figures/algorithm}
+	\subfloat[\label{fig:algo-rays} {}]{	
+	\includegraphics[page=1]{figures/algorithm}}
+	\hfil
+	\subfloat[\label{fig:algo-move} {}]{
+	\includegraphics[page=2]{figures/algorithm}}
 	\caption{%
 	Illustration of an iteration step of our algorithm: 
-	The chosen vertex is the white one; 
+	(a)~The chosen vertex is the white one; 
 	the computed rays $r_1,\ldots,r_8$ have been rotated by $8^\circ$; 
 	the black-colored points along these rays are points $\pi_1,\ldots,\pi_8$; 
-	among them, $\pi_4$ yields the best solution.}
+	among them, $\pi_4$ yields the best solution.
+	(b)~The resulting drawing after moving the vertex at position $\pi_3$.}
 	\label{fig:algo}
 \end{figure} 
 
-If none of the points $\pi_j$, with $j=0,1,\ldots,\rho-1$ is feasible, then the new position of vertex $v_i$ in drawing $\Gamma_i$ is $p(v_i)$, that is, the same as in drawing $\Gamma_{i-1}$, since the crossing resolution of drawing $\Gamma_i$ must be at least as large as the one of $\Gamma_{i-1}$. On the other hand, if there is one or more feasible points (among $\pi_0,\pi_1,\ldots,\pi_{\rho-1}$), then one may consider two different approaches to determine the new position of vertex $v_i$ in drawing $\Gamma_i$. The most natural is to chose this feasible point that maximizes the crossing resolution of the obtained drawing. As an alternative, one may rely again on randomization and chose uniformly at random one the feasible points as the new position of vertex $v_i$ in drawing $\Gamma_i$. In our implementation, we did not observe any significant difference in these two approaches (in terms of the crossing resolution of the obtained drawings), so we simply adopted the first one. In Section~\ref{ssec:termination}, we describe conditions  The iteration steps
- s
-
-\begin{itemize}
-\item \st{Description of the randomized algorithm}.
-\item \st{Big graphs $\rightarrow$ focus on critical edges}.
-\item Avoiding local minima.
-\item Crossing calculation. 
-\end{itemize}
+If none of the points $\pi_j$, with $j=0,1,\ldots,\rho-1$ is feasible, then the new position of vertex $v_i$ in drawing $\Gamma_i$ is $p(v_i)$, that is, the same as in drawing $\Gamma_{i-1}$, since the crossing resolution of drawing $\Gamma_i$ must be at least as large as the one of $\Gamma_{i-1}$. On the other hand, if there is one or more feasible points (among $\pi_0,\pi_1,\ldots,\pi_{\rho-1}$), then one may consider two different approaches to determine the new position of vertex $v_i$ in drawing $\Gamma_i$. The most natural is to chose this feasible point that maximizes the crossing resolution of the obtained drawing. As an alternative, one may rely again on randomization and chose uniformly at random one the feasible points as the new position of vertex $v_i$ in drawing $\Gamma_i$. In our implementation, we did not observe any significant difference in these two approaches (in terms of the crossing resolution of the obtained drawings), so we simply adopted the first one. In Section~\ref{ssec:termination}, we describe conditions under which we determine that our algorithm has converged.
 
 \subsection{Avoiding local minima.}
 \label{ssec:minima}
 
-From the above description, it is not difficult to see that our algorithm in a sense mimics the way a human would try to increase the crossing resolution of a drawing; first, one would try to identify the pair of edges that define the crossing resolution of the drawing (we call them critical edges); then, one would try to move an endvertex of this pair (which we choose at random), hoping that by this move the crossing resolution will increase. Of course, we cannot investigate all possible positions. Therefore, we discretized them by considering a number of rays around the chosen vertex and by randomly choosing a single point at each of them. 
+From the above description, it is not difficult to see that our algorithm, in a sense, mimics the way a human would try to increase the crossing resolution of a drawing; first, one would try to identify the pair of edges that define the crossing resolution of the drawing (we call them critical edges); then, one would try to move an endvertex of this pair (which we choose at random), hoping that by this move the crossing resolution will increase. Of course, we cannot consider all possible positions for the vertex to be moved. Therefore, we discretized them by considering a number of rays around the chosen vertex and by randomly choosing a single point at each of them. 
 
-While the aforementioned procedure 
+To avoid getting trapped to locally optimal solutions with the aforementioned procedure, we mainly investigated two different approaches. Both of them are parametrizable by two input parameters $\zeta$ and $\zeta'$. The first one mimics again the human behaviour. What would one do to get away from a locally optimal solution? First, she would stop trying to move the endvertices of the edges defining the crossing resolution; she would start moving ``irrelevant'' vertices hoping that by changing the embedding of the graph or its crossing structure, a better solution would be easier to be computed again. Our algorithm is mimicking this idea by allowing the vertex-pool to also contain all the vertices of the graph, as follows: 
+
+\begin{itemize}
+%\item As long as the algorithm detects that within the last $\zeta$ iterations the crossing resolution of the graph has being improved, the vertex-pool contains only critical vertices. 
+\item If during the last $\zeta$ iterations the crossing resolution has not been improved, then the vertex-pool becomes \emph{wider} containing all the vertices of the graph, and the algorithm is executed with this vertex-pool for $\zeta'$ iterations. 
+\item After these $\zeta'$ iterations, the vertex-pool switches back to the critical vertices.
+\end{itemize}
+%
+From our experimental evaluation, we observed that, while this approach turned to be quite effective for medium-size graphs, for larger and denser graph, unfortunately, it was not so efficient. What we observed is that in larger graphs it was unlike to change the embedding of the graph in a beneficial way for the algorithm to proceed, mainly because of the random choice of the vertices to be moved; in most iterations with the wider vertex-pool, the vertices chosen to be moved were not at the part of the drawing where the critical vertices resided.
+
+The second approach that we investigated to avoid locally optimal solutions was based on the parameters $\rho$, $\delta_{min}$ and $\delta_{max}$ of the algorithm. Our idea was that if the algorithm gets trapped to a locally optimal solution, then a ``drastical'' or ``sharp'' move may help to get untrapped. We turned this idea into an algorithmic step as follows: 
+
+\begin{itemize}
+\item If during the last $\zeta$ iterations the crossing resolution has not been improved, we double the values of the parameters $\rho$, $\delta_{min}$ and $\delta_{max}$, and the algorithm is executed with these parameters for $\zeta'$ iterations.
+\item After these $\zeta'$ iterations, the parameters $\rho$, $\delta_{min}$ and $\delta_{max}$ switch back to their initial (input) values.
+\end{itemize}
+%
+Of course, this approach may lead to drawings with larger area, but this is somehow expected, as it turns out that drawings with high crossing resolution may require large drawing area; see, e.g.,~\cite{DBLP:journals/jgaa/AngeliniCDFBKS11,DBLP:journals/tcs/BrandenburgDEKL16}. 
 
 \subsection{Conditions for termination.}
 \label{ssec:termination}
+
+The termination condition of our algorithm is simple and depends also on a input parameter $\tau$, such that $\tau \geq \zeta + \zeta'$. More precisely, if the crossing resolution during the last $\tau$ iterations has not been improved, then we assume that the algorithm has converged and we do not proceed any more.
+
+\subsection{Complexity Related Issues.}
+\label{ssec:complexity}
+
+A critical factor that highly affects the efficiency of our algorithm is the computation of the crossing points among the edges (and the corresponding angles at these points, which determine the crossing resolution of the drawing). Given  a drawing, a naive approach to compute its crossing points requires $O(m^2)$ time, which can be slightly improved using a standard plane-sweep technique to $O(m \log m + c)$ time, where $m$ and $c$ are the number of edges and crossings of the drawing, respectively. 
+
+However, if the algorithm had to compute all crossing points and the corresponding angles at these points at each iteration step, then our algorithm would be not be useful in practice. Instead, the algorithm is computing all the crossing points only once, at the beginning of the algorithm, and stores them. Then, at each iteration step, it is enough to compute the crossing angles only for the edges that are affected by a move of the chosen vertex. By adopting this simple approach, the computation of the crossing points can be improved drastically.  
+\todo{More details should be given.}
 
 \subsection{Grid drawings: an interesting variant.}
 \label{ssec:grid}
