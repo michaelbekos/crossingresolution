@@ -89,9 +89,9 @@ public class Experiment {
             sb.append(';');
             sb.append("number_crossing");
             sb.append(';');
-            sb.append("angular_ratio");
+            sb.append("angular_resolution");
             sb.append(';');
-            sb.append("aspect-ratio");
+            sb.append("aspect_ratio");
             sb.append(';');
             sb.append("no. iterations");
             sb.append(';');
@@ -163,9 +163,9 @@ public class Experiment {
         sb.append(';');
         sb.append(this.numOfCrossings);
         sb.append(';');
-        sb.append("angular_ratio");
+        sb.append("angular_resolution");
         sb.append(';');
-        sb.append("aspect-ratio");
+        sb.append("aspect_ratio");
         sb.append(';');
         sb.append(this.minimumAngleIterations);
         sb.append(';');
@@ -289,7 +289,6 @@ public class Experiment {
             this.mainFrame.openContestFile(this.inputDirectory + this.fileName);
         } else if(this.fileName.endsWith(".graphml")){
             this.mainFrame.openFile(this.inputDirectory + this.fileName);
-
         }
 
         mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();

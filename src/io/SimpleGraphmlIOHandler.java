@@ -27,6 +27,7 @@ public class SimpleGraphmlIOHandler extends GraphIOHandler{
 
         g.clear();
 
+
         int phase = 0;
         int nodesCount = -1;
         int maxNodes = 0;

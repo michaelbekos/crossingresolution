@@ -37,11 +37,13 @@ public class Experiments {
     /* Config. for the type of experiment */
     private int numThread = 6;
     private int numOfIteration = 100;
+    int iterationFactor = 1;
     private int numOfIterationFactor = 1000;
     private long maxCalcTime = 6000; //in mili. sec
     private int boxSize = 10000;
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
+    boolean reached90Deg = false;
     private static boolean isFrameFinished = false;
     private String[] childernP;
 
@@ -101,17 +103,8 @@ public class Experiments {
                     childernP = children;
                     //for(int i = 0; i<1; i++){
                     for(int i = 0; i<children.length; i++){
-                    //    openFrames(i, children.length, inputDirectory, "pattern");
-                       // openFrames(i, i, inputDirectory, children[i]);
-                        //openFrame(children[i]);
                         openFrame(children[i]);
                         System.out.println("Iteration:   "+ i);
-                     /*   while(!this.isFrameFinished){
-                            System.out.println("Graph dsfadsfasdf");
-
-                        }
-                        this.isFrameFinished = false;
-                   */
                     }
             }
                 System.out.println("ENDE");
@@ -193,44 +186,35 @@ public class Experiments {
         String fileName = pattern;
         System.out.println("Graph " + fileName + " started.");
         Experiment experiment = new Experiment(frame, fileName, inputDirectory, outputDirectory, this.boxSize);
-        experiment.loadGraph();
+
+        setStartConfigurations(experiment);
+
         experiment.setAlgorithm(algorithmLayout);
-        boolean isNotFinished = true;
-        int iterationFactor = 1;
-        boolean reached90Deg = false;
-        experiment.setStartTime(System.currentTimeMillis());
-        experiment.setEndTime(System.currentTimeMillis());
+
         experiment.setMaxIterations(this.numOfIteration);
 
         YGraphAdapter graphAdapter = new YGraphAdapter(frame.graph);
 
 
         if(GraphChecker.isPlanar(graphAdapter.getYGraph()) && !planarGraphsAllowed){
-            //experiment.writeGraphInformationsWarning("is planar");
             experiment.deleteGraphInformationFile();
             System.out.println("Graph " + fileName + " is planar.");
         }else if (!GraphChecker.isConnected(graphAdapter.getYGraph()) && !unconnectedGraphsAllowed){
-            //experiment.writeGraphInformationsWarning("is not Connected");
             experiment.deleteGraphInformationFile();
             System.out.println("Graph " + fileName + " is not connected.");
         }else{
-            while(experiment.getCalcTime() < maxCalcTime  && iterationFactor <= numOfIterationFactor && !reached90Deg && (experiment.getNumOfUnchangedAngle() <= 100 )){
+            while(experiment.getCalcTime() < maxCalcTime  && this.iterationFactor <= numOfIterationFactor && !reached90Deg && (experiment.getNumOfUnchangedAngle() <= 100 )){
                 experiment.runAlgorithms();
 
                 if(experiment.getIsInInvLoop()){ // Restart the calc. for this graph.
-                    experiment.loadGraph();
-                    isNotFinished = true;
-                    iterationFactor = 1;
-                    reached90Deg = false;
-                    experiment.setStartTime(System.currentTimeMillis());
-                    experiment.setEndTime(System.currentTimeMillis());
+                    setStartConfigurations(experiment);
                 }
 
                 //reached90Deg = saveGraphInformations(mainFrame, pattern, suffix, endTime-startTime);
                 experiment.writeGraphInformations();
                 reached90Deg = experiment.calcGraphInformations();
                 //experiment.writeGraph(suffix);
-                iterationFactor++;
+                this.iterationFactor++;
             }
             experiment.writeGraphEndResults();
             System.out.println("Graph " + fileName + " finished.");
@@ -242,6 +226,8 @@ public class Experiments {
 
 
     }
+
+
 
     private void openFrame(String pattern) {
 
@@ -257,45 +243,32 @@ public class Experiments {
         System.out.println("Graph " + fileName + " started.");
         //  System.out.println("1");
         Experiment experiment = new Experiment(frame, fileName, inputDirectory, outputDirectory, this.boxSize);
-        experiment.loadGraph();
-        boolean isNotFinished = true;
-        int iterationFactor = 1;
-        boolean reached90Deg = false;
-        experiment.setStartTime(System.currentTimeMillis());
-        experiment.setEndTime(System.currentTimeMillis());
+        setStartConfigurations(experiment);
         experiment.setMaxIterations(this.numOfIteration);
 
         YGraphAdapter graphAdapter = new YGraphAdapter(frame.graph);
 
 
         if(GraphChecker.isPlanar(graphAdapter.getYGraph()) && !planarGraphsAllowed){
-            //experiment.writeGraphInformationsWarning("is planar");
             experiment.deleteGraphInformationFile();
             System.out.println("Graph " + fileName + " is planar.");
         }else if (!GraphChecker.isConnected(graphAdapter.getYGraph()) && !unconnectedGraphsAllowed){
-            //experiment.writeGraphInformationsWarning("is not Connected");
             experiment.deleteGraphInformationFile();
             System.out.println("Graph " + fileName + " is not connected.");
         }else{
-            while(experiment.getCalcTime() < maxCalcTime  && iterationFactor <= numOfIterationFactor && !reached90Deg && (experiment.getNumOfUnchangedAngle() <= 100 )){
-                experiment.runAlgorithms();
-
-                if(experiment.getIsInInvLoop()){ // Restart the calc. for this graph.
-                    experiment.loadGraph();
-                    isNotFinished = true;
-                    iterationFactor = 1;
-                    reached90Deg = false;
-                    experiment.setStartTime(System.currentTimeMillis());
-                    experiment.setEndTime(System.currentTimeMillis());
-                }
-
-                experiment.writeGraphInformations();
-                reached90Deg = experiment.calcGraphInformations();
-                iterationFactor++;
-            }
+            /* Run with Random Movement  */
+            experiment.setAlgorithm(RandomMovementLayout.class);
+            startExperiment(experiment);
             experiment.writeGraphEndResults();
-            System.out.println("Graph " + fileName + " finished.");
+            System.out.println("Graph " + fileName + " finished Random Movement.");
             experiment.writeGraph();
+
+            /* Run with Force Movement  */
+            setStartConfigurations(experiment);
+            experiment.setAlgorithm(ForceAlgorithm.class);
+            startExperiment(experiment, false);
+            experiment.writeGraphEndResults();
+            System.out.println("Graph " + fileName + " finished Force.");
 
         }
         frame.dispose();
@@ -304,6 +277,36 @@ public class Experiments {
 
     }
 
+    private void startExperiment(Experiment exp){
+        startExperiment(exp, true);
+    }
+
+        private void startExperiment(Experiment exp, boolean writeInormations){
+            while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() <= 100 )){
+                exp.runAlgorithms();
+
+                if(exp.getIsInInvLoop()){ // Restart the calc. for this graph.
+                    setStartConfigurations(exp);
+                }
+
+                if(writeInormations){
+                    exp.writeGraphInformations();
+                }
+
+                this.reached90Deg = exp.calcGraphInformations();
+                this.iterationFactor++;
+            }
+        }
+
+        private void setStartConfigurations(Experiment exp){
+            System.out.println("Load Prob1");
+            exp.loadGraph();
+            System.out.println("Load Prob2");
+            this.iterationFactor = 1;
+            this.reached90Deg = false;
+            exp.setStartTime(System.currentTimeMillis());
+            exp.setEndTime(System.currentTimeMillis());
+        }
 
         private String getPrefixString(String str){
         int position = str.indexOf(".");
