@@ -375,6 +375,13 @@ public class InitMenuBar {
         openContestItem.setText("Open Contest File");
         openContestItem.addActionListener(this::openContestItemActionPerformed);
         fileMenu.add(openContestItem);
+        
+        JMenuItem openAMItem = new JMenuItem();
+//      openContestItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
+        openAMItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
+        openAMItem.setText("Open AM");
+        openAMItem.addActionListener(this::openAMItemActionPerformed);
+        fileMenu.add(openAMItem);
 
         JMenuItem openContest2018Item = new JMenuItem();
         openContest2018Item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
@@ -745,6 +752,28 @@ public class InitMenuBar {
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             this.fileNamePath = chooser.getSelectedFile().toString();
             mainFrame.openContestFile(fileNamePath);
+            mainFrame.removedNodes.clear();
+            this.mainFrame.removedChains.clear();
+            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
+        }
+    }
+    
+    private void openAMItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        JFileChooser chooser = new JFileChooser(this.fileNamePathFolder);
+        chooser.setFileFilter(new FileFilter() {
+            public boolean accept(File file) {
+                return (file.isDirectory() || file.toString().toLowerCase().endsWith("txt"));
+            }
+
+            public String getDescription() {
+                return "ASCII Files [.txt]";
+            }
+
+        });
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            this.fileNamePath = chooser.getSelectedFile().toString();
+            mainFrame.openAMFile(fileNamePath);
             mainFrame.removedNodes.clear();
             this.mainFrame.removedChains.clear();
             this.fileNamePathFolder = chooser.getSelectedFile().getParent();
