@@ -8,6 +8,7 @@ import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.IRenderContext;
 import com.yworks.yfiles.view.IVisual;
 
+import main.MainFrame;
 import sidepanel.InitSidePanel;
 
 public class DrawBoundingBox implements IVisual{
@@ -31,8 +32,8 @@ public class DrawBoundingBox implements IVisual{
     @Override
     public void paint(IRenderContext iRenderContext, Graphics2D graphics2D) {
         double z = view.getZoom();
-        double c_x = 1000000;
-        double c_y = 1000000;
+        double c_x = MainFrame.BOX_SIZE[0];
+        double c_y = MainFrame.BOX_SIZE[1];
 
         if ((int) (100 / z) > 20) { //dont draw for < 20
             graphics2D.setStroke(new BasicStroke((float) (1 / z)));

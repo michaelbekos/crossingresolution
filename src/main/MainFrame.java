@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 public class MainFrame extends JFrame {
 
     /* Box related issue*/
-    public static final double BOX_SIZE = 10000;
+    public static final double BOX_SIZE[] = {1000000, 1000000};
 
     /* Graph Drawing related objects */
     public GraphComponent view;

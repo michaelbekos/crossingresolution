@@ -537,7 +537,7 @@ public class InitMenuBar {
         while(change){
             change=false;
             for(INode u : graph.getNodes()){
-                if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE){
+                if (u.getLayout().getCenter().getX()<0 || u.getLayout().getCenter().getX() > MainFrame.BOX_SIZE[0] || u.getLayout().getCenter().getY()<0 || u.getLayout().getCenter().getY() > MainFrame.BOX_SIZE[1]){
                     Scaling.scaleBy(0.9, nodePositions);
                     PositionMap.applyToGraph(graph, nodePositions);
                     this.view.fitGraphBounds();
