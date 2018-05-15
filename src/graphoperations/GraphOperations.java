@@ -15,6 +15,82 @@ import java.util.*;
 public class GraphOperations {
   private static Mapper<INode, PointD> positions;
 
+  public static double aspect_ratio(IGraph g){
+    IEdge sEdge = getSmallstEdge(g);
+    INode sSource = sEdge.getSourceNode();
+    INode sTarget = sEdge.getTargetNode();
+    double sLength  = euclidDist(sSource.getLayout().getX(), sSource.getLayout().getY(), sTarget.getLayout().getX(), sTarget.getLayout().getY());
+    IEdge lEdge = getLongestEdge(g);
+    INode lSource = lEdge.getSourceNode();
+    INode lTarget = lEdge.getTargetNode();
+    double lLength  = euclidDist(lSource.getLayout().getX(), lSource.getLayout().getY(), lTarget.getLayout().getX(), lTarget.getLayout().getY());
+    return lLength / sLength;
+  }
+
+  public static IEdge getSmallstEdge(IGraph g){
+    IListEnumerable<IEdge> edgeList = g.getEdges();
+
+    if(edgeList.size() >= 1) {
+      IEdge edge = edgeList.getItem(0);
+      INode source = edge.getSourceNode();
+      INode target = edge.getTargetNode();
+      double length  = euclidDist(source.getLayout().getX(), source.getLayout().getY(), target.getLayout().getX(), target.getLayout().getY());
+      double smallLength = length;
+      IEdge smallEdge = edge;
+
+      for (int i = 1; i < edgeList.size(); i++) {
+        edge = edgeList.getItem(i);
+        source = edge.getSourceNode();
+        target = edge.getTargetNode();
+        length = euclidDist(source.getLayout().getX(), source.getLayout().getY(), target.getLayout().getX(), target.getLayout().getY());
+        if(length < smallLength){
+          smallLength = length;
+          smallEdge = edge;
+        }
+      }
+
+      return smallEdge;
+    }
+    else{
+      System.out.println("The graph has zero edges");
+      return null;
+    }
+  }
+
+  public static IEdge getLongestEdge(IGraph g){
+    IListEnumerable<IEdge> edgeList = g.getEdges();
+
+    if(edgeList.size() >= 1) {
+      IEdge edge = edgeList.getItem(0);
+      INode source = edge.getSourceNode();
+      INode target = edge.getTargetNode();
+      double length  = euclidDist(source.getLayout().getX(), source.getLayout().getY(), target.getLayout().getX(), target.getLayout().getY());
+      double smallLength = length;
+      IEdge smallEdge = edge;
+
+      for (int i = 1; i < edgeList.size(); i++) {
+        edge = edgeList.getItem(i);
+        source = edge.getSourceNode();
+        target = edge.getTargetNode();
+        length = euclidDist(source.getLayout().getX(), source.getLayout().getY(), target.getLayout().getX(), target.getLayout().getY());
+        if(length > smallLength){
+          smallLength = length;
+          smallEdge = edge;
+        }
+      }
+
+      return smallEdge;
+    }
+    else{
+      System.out.println("The graph has zero edges");
+      return null;
+    }
+  }
+
+  public static double euclidDist(double x1, double y1, double x2, double y2){
+    return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 -y1), 2));
+  }
+
   public static VertexStack reinsertChain(IGraph g, VertexStack removedVertices) {
     positions = PositionMap.FromIGraph(g);
     int numVertices = 0;

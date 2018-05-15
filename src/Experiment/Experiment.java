@@ -7,6 +7,7 @@ import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graphml.GraphMLIOHandler;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
+import graphoperations.GraphOperations;
 import io.ContestIOHandler;
 import io.GraphIOHandler;
 import layout.algo.execution.ILayout;
@@ -165,7 +166,7 @@ public class Experiment {
         sb.append(';');
         sb.append("angular_resolution");
         sb.append(';');
-        sb.append("aspect_ratio");
+        sb.append(GraphOperations.aspect_ratio(this.graph));
         sb.append(';');
         sb.append(this.minimumAngleIterations);
         sb.append(';');
@@ -339,6 +340,7 @@ public class Experiment {
         ArrayList<Integer> verticesDegree = new ArrayList<>();
 
         graph = mainFrame.graph;
+
         for (INode u : graph.getNodes()) {
             int deg = graph.degree(u);
             while(deg >= verticesDegree.size()) {
