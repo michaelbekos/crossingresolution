@@ -153,9 +153,12 @@ A critical factor that highly affects the efficiency of our algorithm is the com
 However, if the algorithm had to compute all crossing points and the corresponding angles at these points at each iteration step, then our algorithm would be not be useful in practice. Instead, the algorithm is computing all the crossing points only once, at the beginning of the algorithm, and stores them. Then, at each iteration step, it is enough to compute the crossing angles only for the edges that are affected by a move of the chosen vertex. By adopting this simple approach, the computation of the crossing points can be improved drastically.  
 \todo{More details should be given.}
 
-\subsection{Grid drawings: an interesting variant.}
+\subsection{Grid drawings: An interesting variant.}
 \label{ssec:grid}
 
+The algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produced such drawings. Recall that, at the $i$-th iteration step, our algorithm chooses uniformly at random a vertex $v_i$ from the vertex-pool and determines a set of $\rho$ feasible points $\pi_1,\ldots,\pi_\rho$. If we round these points to their closest grid points, say $\overline{\pi}_1,\ldots,\overline{\pi}_\rho$, and use them as candidates for the next position of $v_i$, then the obtained drawing will be grid, assuming that the starting drawing is grid (the latter requirement is not difficult to be achieved, e.g., by slightly adjusting the positions of the vertices of a circular layout, whose underlying circle has large radius, so to be at grid points). 
+
+An alternative approach is to let our algorithm compute a (non-grid) drawing and then apply some technique to convert it to grid. Critical here is not to affect the crossing resolution too much during the conversion. To this end, we can use a technique that is also based on randomization. For each vertex in the computed drawing, we can chose uniformly at random one of the grid points that are neighboring the vertex, and move the vertex to this point, assuming of course that there is no other vertex at this point. 
 
 \section{Experimental Evaluation}
 \label{sec:experiments}
