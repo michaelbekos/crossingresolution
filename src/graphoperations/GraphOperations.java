@@ -19,11 +19,11 @@ public class GraphOperations {
     IEdge sEdge = getSmallstEdge(g);
     INode sSource = sEdge.getSourceNode();
     INode sTarget = sEdge.getTargetNode();
-    double sLength  = euclidDist(sSource.getLayout().getX(), sSource.getLayout().getY(), sTarget.getLayout().getX(), sTarget.getLayout().getY());
+    double sLength  = euclidDist(sSource.getLayout().getCenter().getX(), sSource.getLayout().getCenter().getY(), sTarget.getLayout().getCenter().getX(), sTarget.getLayout().getCenter().getY());
     IEdge lEdge = getLongestEdge(g);
     INode lSource = lEdge.getSourceNode();
     INode lTarget = lEdge.getTargetNode();
-    double lLength  = euclidDist(lSource.getLayout().getX(), lSource.getLayout().getY(), lTarget.getLayout().getX(), lTarget.getLayout().getY());
+    double lLength  = euclidDist(lSource.getLayout().getCenter().getX(), lSource.getLayout().getCenter().getY(), lTarget.getLayout().getCenter().getX(), lTarget.getLayout().getCenter().getY());
     return lLength / sLength;
   }
 
@@ -34,7 +34,7 @@ public class GraphOperations {
       IEdge edge = edgeList.getItem(0);
       INode source = edge.getSourceNode();
       INode target = edge.getTargetNode();
-      double length  = euclidDist(source.getLayout().getX(), source.getLayout().getY(), target.getLayout().getX(), target.getLayout().getY());
+      double length  = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
       double smallLength = length;
       IEdge smallEdge = edge;
 
@@ -42,7 +42,7 @@ public class GraphOperations {
         edge = edgeList.getItem(i);
         source = edge.getSourceNode();
         target = edge.getTargetNode();
-        length = euclidDist(source.getLayout().getX(), source.getLayout().getY(), target.getLayout().getX(), target.getLayout().getY());
+        length = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
         if(length < smallLength){
           smallLength = length;
           smallEdge = edge;
@@ -64,7 +64,7 @@ public class GraphOperations {
       IEdge edge = edgeList.getItem(0);
       INode source = edge.getSourceNode();
       INode target = edge.getTargetNode();
-      double length  = euclidDist(source.getLayout().getX(), source.getLayout().getY(), target.getLayout().getX(), target.getLayout().getY());
+      double length  = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
       double smallLength = length;
       IEdge smallEdge = edge;
 
@@ -72,7 +72,7 @@ public class GraphOperations {
         edge = edgeList.getItem(i);
         source = edge.getSourceNode();
         target = edge.getTargetNode();
-        length = euclidDist(source.getLayout().getX(), source.getLayout().getY(), target.getLayout().getX(), target.getLayout().getY());
+        length = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
         if(length > smallLength){
           smallLength = length;
           smallEdge = edge;
@@ -88,7 +88,7 @@ public class GraphOperations {
   }
 
   public static double euclidDist(double x1, double y1, double x2, double y2){
-    return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 -y1), 2));
+    return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
   }
 
   public static VertexStack reinsertChain(IGraph g, VertexStack removedVertices) {

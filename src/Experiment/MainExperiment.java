@@ -24,7 +24,7 @@ public class MainExperiment {
 
 */
             Experiments e = new Experiments(
-                    "E:\\graph\\rome\\smallSet\\", "E:\\graph\\afterRandom\\romeRF\\",
+                    "E:\\graph\\rome\\smallSet\\", "E:\\graph\\afterRandom\\romeRF2\\",
                     10000, 100, 1000, 10000,
                     false, false);
 
