@@ -45,8 +45,8 @@ public final class Scaling {
       double height = graph.getNodeDefaults().getSize().height * scaleValue;
       for (INode u : graph.getNodes()) {
           graph.setNodeLayout(u, new RectD(
-              u.getLayout().getX(),
-              u.getLayout().getY(),
+              u.getLayout().getCenter().getX() - 0.5*width,
+              u.getLayout().getCenter().getY() - 0.5*height,
               width,
               height
           ));
