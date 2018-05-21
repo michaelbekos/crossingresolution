@@ -20,6 +20,7 @@ public class MinimumAngleMonitor {
   private JLabel infoLabel;
   private GraphComponent view;
   private double oldAngle;
+  private double actAngle;
 
   private BestSolutionMonitor bestSolution;
 
@@ -35,6 +36,7 @@ public class MinimumAngleMonitor {
     this.view = view;
     this.bestSolution = bestSolution;
     this.oldAngle = 0;
+    this.actAngle = 0;
   }
 
   void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
@@ -46,6 +48,7 @@ public class MinimumAngleMonitor {
     Optional<Intersection> minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
     if (minAngleCr.isPresent()){
+      this.actAngle = minAngleCr.get().angle;
       if (oldAngle <= minAngleCr.get().angle){
         oldAngle = minAngleCr.get().angle;
 
@@ -56,7 +59,6 @@ public class MinimumAngleMonitor {
 
     Optional<String> labText = minAngleCr.map(cr -> {
       String text = DisplayMessagesGui.createMinimumAngleMsg(cr, graph.getNodes().size(), bestSolution);
-
       if (viewCenter) {
         view.setCenter(cr.intersectionPoint);
       }
@@ -94,6 +96,8 @@ public class MinimumAngleMonitor {
   }
 
   public double getMinAngle(){
-    return oldAngle;
+    return this.oldAngle;
   }
+
+  public double getActAngle(){return this.actAngle;}
 }

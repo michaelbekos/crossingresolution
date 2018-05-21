@@ -9,26 +9,26 @@ public class MainExperiment {
 
         // Experiments e = new Experiments(("E:\\graph\\graphml\\"), "E:\\graph\\afterRandom\\graphml2\\");
 
- /*       Experiments e = new Experiments(
-                "E:\\graph\\rome\\smallSet\\", "E:\\graph\\experiment\\rome\\smallSet\\random\\",
+      Experiments e = new Experiments(
+                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\romeTest10\\",
                 10000, 100, 1000, 10000,
                 false, false);
-        e.runOnlyRandom();
+       //e.runOnlyRandom();
 
-        e = new Experiments(
-                "E:\\graph\\rome\\smallSet\\", "E:\\graph\\experiment\\rome\\smallSet\\force\\",
+     e = new Experiments(
+                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\romeTest10\\",
                 10000, 100, 1000, 10000,
                 false, false);
         e.runOnlyForce();
 
 
-*/
-            Experiments e = new Experiments(
-                    "E:\\graph\\rome\\smallSet\\", "E:\\graph\\afterRandom\\romeRF2\\",
+
+     /*       Experiments e = new Experiments(
+                    "E:\\graph\\rome\\smallSet\\", "E:\\graph\\results\\rome\\",
                     10000, 100, 1000, 10000,
                     false, false);
 
             e.run();
 
-    }
+    */}
 }

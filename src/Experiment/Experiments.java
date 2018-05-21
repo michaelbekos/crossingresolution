@@ -7,6 +7,10 @@ import com.yworks.yfiles.graph.*;
  * Created by Ama on 24.04.2018.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Optional;
 
 import com.yworks.yfiles.layout.YGraphAdapter;
@@ -24,18 +28,12 @@ import javax.swing.*;
 public class Experiments {
 
     //private y.view.Graph2DView view;
-     private GraphComponent comp;
-    //private static String inputDirectory  = "E:\\graph\\origin\\";
-
-//    private static String inputDirectory  = "E:\\graph\\north\\north_graphml\\north\\";
-  //  private static String outputDirectory = "E:\\graph\\afterRandom\\north\\";
-
+    private GraphComponent comp;
     private String inputDirectory  = "E:\\graph\\graphml\\";
     private String outputDirectory = "E:\\graph\\afterRandom\\graphml2\\";
 
 
     /* Config. for the type of experiment */
-    private int numThread = 6;
     private int numOfIteration = 100;
     int iterationFactor = 1;
     private int numOfIterationFactor = 1000;
@@ -44,7 +42,7 @@ public class Experiments {
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
     boolean reached90Deg = false;
-    private static boolean isFrameFinished = false;
+    private String randomMovement, forceAlgo;
     private String[] childernP;
 
 
@@ -80,6 +78,8 @@ public class Experiments {
         this.boxSize = boxSize;
         this.planarGraphsAllowed = planarGraphsAllowed;
         this.unconnectedGraphsAllowed = unconnectedGraphsAllowed;
+        this.randomMovement = "randommovement_n_";
+        this.forceAlgo = "force_algo_n_";
     }
 
     public synchronized void run()
@@ -100,6 +100,10 @@ public class Experiments {
                 // Either dir does not exist or is not a directory
             }
             else {
+
+                    for(int  i = 20; i<=100; i+=20){
+                        createFiles(i-19,i);
+                    }
                     childernP = children;
                     //for(int i = 0; i<1; i++){
                     for(int i = 0; i<children.length; i++){
@@ -109,6 +113,10 @@ public class Experiments {
             }
                 System.out.println("ENDE");
     }
+
+    /**
+     * Run method for the force algorithm
+     */
     public synchronized void runOnlyForce()
     {
         java.io.File dir = new java.io.File(inputDirectory);
@@ -127,6 +135,9 @@ public class Experiments {
             // Either dir does not exist or is not a directory
         }
         else {
+            for(int  i = 20; i<=100; i+=20){
+                createFiles(i-19,i);
+            }
             childernP = children;
             for(int i = 0; i<children.length; i++){
                 openFrame(children[i], ForceAlgorithm.class);
@@ -135,6 +146,10 @@ public class Experiments {
         }
         System.out.println("ENDE");
     }
+
+    /**
+     * Run method with the random movement
+     */
     public synchronized void runOnlyRandom()
     {
         java.io.File dir = new java.io.File(inputDirectory);
@@ -153,6 +168,9 @@ public class Experiments {
             // Either dir does not exist or is not a directory
         }
         else {
+            for(int  i = 20; i<=100; i+=20){
+                createFiles(i-19,i);
+            }
             childernP = children;
             for(int i = 0; i<children.length; i++){
                 openFrame(children[i], RandomMovementLayout.class);
@@ -162,18 +180,11 @@ public class Experiments {
         System.out.println("ENDE");
     }
 
-    private static void runAlgorithms(MainFrame mainFrame) {
-        mainFrame.initSidePanel.removeDefaultListeners();
-        LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
-        mainFrame.initSidePanel.addDefaultListeners();
-        Optional<SidePanelTab> tab = mainFrame.getTabForAlgorithm(RandomMovementLayout.class);
-
-        if (!tab.isPresent()) {
-            return;
-        }
-        tab.get().startPauseExecution();
-    }
-
+    /**
+     * Starts a frame and create an experiment object, load the graph and start the given algorithm
+     * @param pattern
+     * @param algorithmLayout
+     */
     private void openFrame(String pattern, Class<? extends ILayout> algorithmLayout) {
         MainFrame frame = new MainFrame();
         frame.init();
@@ -197,28 +208,30 @@ public class Experiments {
 
 
         if(GraphChecker.isPlanar(graphAdapter.getYGraph()) && !planarGraphsAllowed){
-            experiment.deleteGraphInformationFile();
             System.out.println("Graph " + fileName + " is planar.");
         }else if (!GraphChecker.isConnected(graphAdapter.getYGraph()) && !unconnectedGraphsAllowed){
-            experiment.deleteGraphInformationFile();
             System.out.println("Graph " + fileName + " is not connected.");
         }else{
-            while(experiment.getCalcTime() < maxCalcTime  && this.iterationFactor <= numOfIterationFactor && !reached90Deg && (experiment.getNumOfUnchangedAngle() <= 100 )){
-                experiment.runAlgorithms();
 
-                if(experiment.getIsInInvLoop()){ // Restart the calc. for this graph.
-                    setStartConfigurations(experiment);
-                }
+            int maxNodeNum = calcMaxNodeNum(frame.graph);
+            experiment.setAlgorithm(algorithmLayout);
+            if(algorithmLayout.equals(RandomMovementLayout.class)){
 
-                //reached90Deg = saveGraphInformations(mainFrame, pattern, suffix, endTime-startTime);
-                experiment.writeGraphInformations();
-                reached90Deg = experiment.calcGraphInformations();
-                //experiment.writeGraph(suffix);
-                this.iterationFactor++;
+                startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                //experiment.writeGraphEndResults();
+                System.out.println("Graph " + fileName + " finished Random Movement.");
+            //    experiment.writeGraphEndResults();
+                experiment.writeGraph();
+
+            }else if(algorithmLayout.equals(ForceAlgorithm.class)){
+                startExperiment(experiment, this.forceAlgo + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                experiment.writeGraphBestResults(this.forceAlgo + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                // experiment.writeGraphEndResults();
+                System.out.println("Graph " + fileName + " finished Force.");
+            //    experiment.writeGraphEndResults();
             }
-            experiment.writeGraphEndResults();
-            System.out.println("Graph " + fileName + " finished.");
-            experiment.writeGraph();
+
 
         }
         frame.dispose();
@@ -227,7 +240,11 @@ public class Experiments {
 
     }
 
-
+    /**
+     * Starts a frame and generate an experiment object. The experiment loads the graph, then run the Random Movement,
+     * then loads the same graph again and start the force-algorithm
+     * @param pattern
+     */
 
     private void openFrame(String pattern) {
 
@@ -250,24 +267,25 @@ public class Experiments {
 
 
         if(GraphChecker.isPlanar(graphAdapter.getYGraph()) && !planarGraphsAllowed){
-            experiment.deleteGraphInformationFile();
             System.out.println("Graph " + fileName + " is planar.");
         }else if (!GraphChecker.isConnected(graphAdapter.getYGraph()) && !unconnectedGraphsAllowed){
-            experiment.deleteGraphInformationFile();
             System.out.println("Graph " + fileName + " is not connected.");
         }else{
             /* Run with Random Movement  */
+            int maxNodeNum = calcMaxNodeNum(frame.graph);
             experiment.setAlgorithm(RandomMovementLayout.class);
-            startExperiment(experiment);
-            experiment.writeGraphEndResults();
+            startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+            experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+            //experiment.writeGraphEndResults();
             System.out.println("Graph " + fileName + " finished Random Movement.");
             experiment.writeGraph();
 
             /* Run with Force Movement  */
             setStartConfigurations(experiment);
             experiment.setAlgorithm(ForceAlgorithm.class);
-            startExperiment(experiment, false);
-            experiment.writeGraphEndResults();
+            startExperiment(experiment, this.forceAlgo + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+           // experiment.writeGraphEndResults();
+            experiment.writeGraphBestResults(this.forceAlgo + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
             System.out.println("Graph " + fileName + " finished Force.");
 
         }
@@ -277,11 +295,17 @@ public class Experiments {
 
     }
 
-    private void startExperiment(Experiment exp){
-        startExperiment(exp, true);
+
+    /**
+     *
+     * @param exp
+     * @param fileName
+     */
+    private void startExperiment(Experiment exp, String fileName){
+        startExperiment(exp, true, fileName);
     }
 
-        private void startExperiment(Experiment exp, boolean writeInormations){
+        private void startExperiment(Experiment exp, boolean writeInormations, String fileName){
             while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() <= 100 )){
                 exp.runAlgorithms();
 
@@ -290,11 +314,18 @@ public class Experiments {
                 }
 
                 if(writeInormations){
-                    exp.writeGraphInformations();
+                    //exp.writeGraphInformations();
+                    exp.writeGraphResults(fileName);
                 }
 
                 this.reached90Deg = exp.calcGraphInformations();
                 this.iterationFactor++;
+            }
+
+            exp.writeGraphResults(fileName);
+
+            if(this.iterationFactor <= this.numOfIterationFactor ){
+                exp.writeGraphResultsMaxIterations(fileName, this.numOfIteration * this.numOfIterationFactor);
             }
         }
 
@@ -308,21 +339,80 @@ public class Experiments {
             exp.setEndTime(System.currentTimeMillis());
         }
 
-        private String getPrefixString(String str){
-        int position = str.indexOf(".");
-        //System.out.println(str.substring(0, position));
-        return str.substring(0, position);
+    private void createFiles(int minNodeNum, int maxNodeNum){
+        String filenameRandom = this.randomMovement + minNodeNum + "_to_" + maxNodeNum + ".csv";
+        String filenameRandomBest = this.randomMovement + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
+        String filenameForce = this.forceAlgo + minNodeNum + "_to_" + maxNodeNum + ".csv";
+        String filenameForceBest = this.forceAlgo + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
+
+        createFile(filenameForce);
+        createFile(filenameForceBest);
+        createFile(filenameRandom);
+        createFile(filenameRandomBest);
     }
 
-    private static void pause(int waitTime){
-        long Time0 = System.currentTimeMillis();
-        long Time1;
-        long runTime = 0;
-        while(runTime<waitTime){
-            Time1 = System.currentTimeMillis();
-            runTime = Time1 - Time0;
+    private void createFile(String filename){
+
+        try {
+
+            File dir = new File(outputDirectory);
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+
+            File file = new File(outputDirectory + "\\" + filename );
+            if(!file.exists()){
+                file.createNewFile();
+                PrintWriter pw = new PrintWriter(file);
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.append("graph name");
+                sb.append(';');
+                sb.append("iterations");
+                sb.append(';');
+                sb.append("time");
+                sb.append(';');
+                sb.append("crossing_res");
+                sb.append(';');
+                sb.append("n");
+                sb.append(';');
+                sb.append("m");
+                sb.append(';');
+                sb.append("ang.res");
+                sb.append(';');
+                sb.append("aspect. Ratio");
+                sb.append(';');
+                sb.append("#crossing");
+                sb.append(';');
+                sb.append('\n');
+
+                pw.write(sb.toString());
+                pw.close();
+            }
+
+
+        }
+        catch(FileNotFoundException ex){
+            System.out.println(ex);
+        }
+        catch (IOException ex){
+            System.out.println(ex);
+
         }
     }
+    private int calcMaxNodeNum(IGraph g){
+        int nodeNum = g.getNodes().size();
+        int maxNodeNum = 0;
+        for(maxNodeNum = 0; maxNodeNum <= 100; maxNodeNum+=20){
+            if(maxNodeNum > nodeNum){
+                break;
+            }
+        }
+        return maxNodeNum;
+
+    }
+
 }
 
 

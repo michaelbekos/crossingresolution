@@ -34,16 +34,20 @@ public class Experiment {
     private MainFrame mainFrame;
     private IGraph graph;
     private long sartTime, endTime, calcTime, minimumAngleTime, minimumAngleIterations;
-    private long maxTimeForAlgo = 100000;
+    private long maxTimeForAlgo = 100000; //default 100 sec
     private boolean reached90Degree = false;
     private boolean isInInvLoop = false;
+    private boolean firstOrganicLayout = true;
     private PrintWriter pw;
     private StringBuilder sb;
     private int maxIterations = 1000;
     private int iterations = 0;
     private int numOfUnchangedAngle = 0;
     private int numOfCrossings = -1;
-    private double bestAngle = 0;
+    private int  minimumAngleNumOfCrossings;
+    private double aspect_ratio, minimumAngleAspectratio;
+    private double angular_resolution, minimumAngleAngularResolution;
+    private double actAngle = 0;
     private int algorithmNum = 1; // 1: Random Algo. 2: Force Algo
     private Mapper<INode, PointD> positions;
     Optional<SidePanelTab> tab;
@@ -61,94 +65,11 @@ public class Experiment {
         this.calcTime = 0;
 
         this.tab = this.mainFrame.getTabForAlgorithm(RandomMovementLayout.class); // Random Movement is the default algorithm
-
-        //sb = new StringBuilder();
-
-        try {
-
-            File dir = new File(outputDirectory);
-            if(!dir.exists()){
-                dir.mkdirs();
-            }
-
-            File file = new File(outputDirectory + "\\" + filePrefix + ".csv");
-            if(!file.exists()){
-                file.createNewFile();
-            }
-
-            pw = new PrintWriter(file);
-
-            sb = new StringBuilder();
-
-            sb.append("graph name");
-            sb.append(';');
-            sb.append("n");
-            sb.append(';');
-            sb.append("m");
-            sb.append(';');
-            sb.append("crossing_res");
-            sb.append(';');
-            sb.append("number_crossing");
-            sb.append(';');
-            sb.append("angular_resolution");
-            sb.append(';');
-            sb.append("aspect_ratio");
-            sb.append(';');
-            sb.append("no. iterations");
-            sb.append(';');
-            sb.append("time");
-            sb.append(';');
-            sb.append("algorithm");
-            sb.append(';');
-            sb.append('\n');
-
-
-            sb.append("Time");
-            sb.append(';');
-            sb.append("Iterations");
-            sb.append(';');
-            sb.append("Angle");
-            sb.append(';');
-            sb.append('\n');
-
-            pw.write(sb.toString());
-            pw.close();
-        }
-        catch(FileNotFoundException ex){
-            System.out.println(ex);
-        }
-        catch (IOException ex){
-            System.out.println(ex);
-
-        }
     }
 
-    public void run(){
-
-        loadGraph();
-
-        boolean isNotFinished = true;
-        int iterationFactor = 0;
-        boolean reached90Deg = false;
-        setStartTime(System.currentTimeMillis());
-        setEndTime(System.currentTimeMillis());
-
-
-        while (!reached90Deg && iterationFactor != 100) {
-            runAlgorithms();
-            setEndTime(System.currentTimeMillis());
-            String suffix = this.filePrefix + "_" + (iterationFactor * 1000);
-            //reached90Deg = saveGraphInformations(mainFrame, pattern, suffix, endTime-startTime);
-            writeGraphInformations();
-            //reached90Deg = experiment.printGraphInformations();
-            reached90Deg = calcGraphInformations();
-            writeGraph();
-            iterationFactor++;
-
-        }
-
-    }
-
+    /**
+     * This method is for the last line of the results, if the  angel converge
+     */
     public void writeGraphEndResults(){
         File file = new File(outputDirectory + "\\" + filePrefix + ".csv");
         sb = new StringBuilder();
@@ -164,9 +85,9 @@ public class Experiment {
         sb.append(';');
         sb.append(this.numOfCrossings);
         sb.append(';');
-        sb.append("angular_resolution");
+        sb.append(this.angular_resolution);
         sb.append(';');
-        sb.append(GraphOperations.aspect_ratio(this.graph));
+        sb.append(this.aspect_ratio);
         sb.append(';');
         sb.append(this.minimumAngleIterations);
         sb.append(';');
@@ -186,6 +107,311 @@ public class Experiment {
             System.out.println(ex);
         }
 
+
+    }
+
+    /**
+     * write down the best results
+     * @param filename
+     */
+
+    public void writeGraphBestResults(String filename){
+        sb = new StringBuilder();
+
+
+        sb.append(this.fileName);
+        sb.append(';');
+        sb.append(this.minimumAngleIterations);
+        sb.append(';');
+        sb.append(this.minimumAngleTime);
+        sb.append(';');
+        sb.append(this.minimumAngle);
+        sb.append(';');
+        sb.append(this.graph.getNodes().size());
+        sb.append(';');
+        sb.append(this.graph.getEdges().size());
+        sb.append(';');
+        sb.append(this.minimumAngleAngularResolution);
+        sb.append(';');
+        sb.append(this.minimumAngleAspectratio);
+        sb.append(';');
+        sb.append(this.minimumAngleNumOfCrossings);
+        sb.append(';');
+        sb.append('\n');
+
+        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filename);
+        try {
+            Files.write(path, sb.toString().getBytes(), StandardOpenOption.APPEND);
+        }
+        catch(IOException ex){
+            System.out.println(ex);
+        }
+
+    }
+
+    /**
+     *  Standard method to write down the results each step
+     * @param filename
+     */
+
+    public void writeGraphResults(String filename){
+        sb = new StringBuilder();
+
+
+        sb.append(this.fileName);
+        sb.append(';');
+        sb.append(this.iterations);
+        sb.append(';');
+        sb.append(this.calcTime);
+        sb.append(';');
+        sb.append(this.actAngle);
+        sb.append(';');
+        sb.append(this.graph.getNodes().size());
+        sb.append(';');
+        sb.append(this.graph.getEdges().size());
+        sb.append(';');
+        sb.append(this.angular_resolution);
+        sb.append(';');
+        sb.append(this.aspect_ratio);
+        sb.append(';');
+        sb.append(this.numOfCrossings);
+        sb.append(';');
+        sb.append('\n');
+
+        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filename);
+        try {
+            Files.write(path, sb.toString().getBytes(), StandardOpenOption.APPEND);
+        }
+        catch(IOException ex){
+            System.out.println(ex);
+        }
+
+    }
+
+    /**
+     *  This method is for the last line of the results, if the  angel converge
+     * @param filename
+     * @param iterations
+     */
+
+    public void writeGraphResultsMaxIterations(String filename, int iterations){
+        sb = new StringBuilder();
+
+
+        sb.append(this.fileName);
+        sb.append(';');
+        sb.append(iterations);
+        sb.append(';');
+        sb.append(this.calcTime);
+        sb.append(';');
+        sb.append(this.actAngle);
+        sb.append(';');
+        sb.append(this.graph.getNodes().size());
+        sb.append(';');
+        sb.append(this.graph.getEdges().size());
+        sb.append(';');
+        sb.append(this.angular_resolution);
+        sb.append(';');
+        sb.append(this.aspect_ratio);
+        sb.append(';');
+        sb.append(this.numOfCrossings);
+        sb.append(';');
+        sb.append('\n');
+
+        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filename);
+        try {
+            Files.write(path, sb.toString().getBytes(), StandardOpenOption.APPEND);
+        }
+        catch(IOException ex){
+            System.out.println(ex);
+        }
+
+    }
+
+
+
+    public void writeGraphInformations(){
+        sb = new StringBuilder();
+        sb.append(this.calcTime);
+        sb.append(';');
+        sb.append(this.iterations);
+        sb.append(';');
+        sb.append(this.minimumAngle);
+        sb.append('\n');
+
+        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filePrefix +".csv");
+        try {
+            Files.write(path, sb.toString().getBytes(), StandardOpenOption.APPEND);
+        }
+        catch(IOException ex){
+                System.out.println(ex);
+        }
+    }
+
+
+    public void deleteGraphInformationFile(){
+        System.out.println(outputDirectory + "\\" + filePrefix +".csv");
+        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filePrefix +".csv");
+        try {
+            Files.delete(path);
+        }
+        catch(IOException ex){
+            System.out.println(outputDirectory + "\\" + filePrefix +".csv");
+            System.out.println(ex);
+        }
+    }
+
+    /**
+     * Runs the graph algorithm until it reached the max number of iterations or max time
+     */
+    public  void runAlgorithms() {
+        this.mainFrame.initSidePanel.removeDefaultListeners();
+        if(this.firstOrganicLayout){
+            LayoutUtilities.applyLayout(this.mainFrame.graph, new OrganicLayout());
+            this.firstOrganicLayout = false;
+        }
+
+        this.mainFrame.initSidePanel.addDefaultListeners();
+
+
+        if (!this.tab.isPresent()) {
+            return;
+        }
+        this.tab.get().getExecutor().setMaxIterations(maxIterations);
+        long tmpTime = System.currentTimeMillis();
+        this.tab.get().startPauseExecution();
+        boolean value = true;
+
+        //while(!tab.get().getExecutor().isFinished()){
+        while(!this.tab.get().getExecutor().isFinished() && this.tab.get().getExecutor().isRunning() && !this.isInInvLoop){
+           // System.out.println("++ while");
+            if(System.currentTimeMillis() - tmpTime > maxTimeForAlgo){
+                this.isInInvLoop = true;
+                this.tab.get().stopExecution();
+                System.out.println("Catched in a inv. Loop. The calculation will be restarted.");
+            }
+        }
+        this.positions = this.tab.get().getExecutor().getLayout().getNodePositions();
+        System.out.println(fileName + "OUT 13");
+        this.endTime = endTime + (System.currentTimeMillis() - tmpTime);
+    }
+
+    /**
+     * Loads a new graph and reset the parameters
+     */
+    public void loadGraph() {
+        this.firstOrganicLayout = true;
+        this.reached90Degree = false;
+        this.isInInvLoop = false;
+        this.numOfUnchangedAngle = 0;
+        this.minimumAngleIterations = 0;
+        this.minimumAngle = 0;
+        this.minimumAngleTime = 0;
+        this.minimumAngleAspectratio = -1;
+        this.minimumAngleAngularResolution = -1;
+        this.iterations = 0;
+        this.calcTime = 0;
+        this.numOfCrossings = -1;
+        this.actAngle = 0;
+
+
+        if (this.fileName.endsWith(".txt")){
+            System.out.println("Try to open .txt");
+            this.mainFrame.openContestFile(this.inputDirectory + this.fileName);
+        } else if(this.fileName.endsWith(".graphml")){
+            this.mainFrame.openFile(this.inputDirectory + this.fileName);
+        }
+
+        mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+        this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getMinAngle()) / 1000.0;
+        System.out.println("load Graph " + this.minimumAngle);
+        this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
+       // this.angular_resolution = GraphOperations.getMinimumCrossingForNodes(this.graph);
+    }
+
+    /**
+     * Saves the resulting graph in contest format
+     */
+    public void writeGraph() {
+        try {
+            ContestIOHandler.write(graph, outputDirectory + "out_" + filePrefix + ".txt", mainFrame.initSidePanel.getOutputTextArea());
+        } catch (IOException ioe) {
+            System.out.println("An error occured while exporting the graph.");
+        }
+    }
+
+    private static void pause(int waitTime){
+        long Time0 = System.currentTimeMillis();
+        long Time1;
+        long runTime = 0;
+        while(runTime<waitTime){
+            Time1 = System.currentTimeMillis();
+            runTime = Time1 - Time0;
+        }
+    }
+
+    /**
+     * Calculates and updates the graph parameters
+     * @return
+     */
+    public  boolean calcGraphInformations(){
+
+        ArrayList<Integer> verticesDegree = new ArrayList<>();
+
+        graph = mainFrame.graph;
+
+        for (INode u : graph.getNodes()) {
+            int deg = graph.degree(u);
+            while(deg >= verticesDegree.size()) {
+                verticesDegree.add(0);
+            }
+            verticesDegree.set(deg, verticesDegree.get(deg) + 1);
+        }
+        this.totalVertecies = graph.getNodes().size();
+        this.totalEdges = graph.getEdges().size();
+
+        RectD bounds = BoundingBox.from(PositionMap.FromIGraph(graph));
+        this.currentGraphSizeX = bounds.getWidth() < 1 ? 0 : bounds.getWidth();   //smaller than 1 is not a graph
+        this.currentGraphSizeY = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
+
+
+        this.calcTime = this.endTime - this.sartTime;
+        this.iterations += this.maxIterations;
+        this.numOfCrossings = MinimumAngle.getCrossings(this.graph, this.positions).size();
+
+        this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
+        this.angular_resolution = GraphOperations.getMinimumAngleForNodes(this.graph);
+
+
+        mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+
+
+        this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getActAngle()) / 1000.0;
+        if(this.minimumAngle >= this.actAngle){
+            this.numOfUnchangedAngle++;
+        }else{
+            this.minimumAngle = actAngle;
+            this.minimumAngleTime = this.calcTime;
+            this.minimumAngleIterations = this.iterations;
+            this.numOfUnchangedAngle = 0;
+            this.minimumAngleNumOfCrossings = this.numOfCrossings;
+            this.minimumAngleAspectratio = this.aspect_ratio;
+            this.minimumAngleAngularResolution = this.angular_resolution;
+        }
+
+        if(this.minimumAngle >= 90.0){
+            reached90Degree = true;
+        }
+
+        this.testAngle = mainFrame.minimumAngleMonitor.getMinAngle();
+        //outputTextArea.setText(graphInfo.toString());
+
+
+        this.numOfCrossings = MinimumAngle.getCrossings(this.graph, this.positions).size();
+
+        this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
+
+        return reached90Degree;
 
     }
 
@@ -216,181 +442,6 @@ public class Experiment {
         outFile.renameTo(inFile);
     }
 
-    public void writeGraphInformations(){
-        sb = new StringBuilder();
-        sb.append(this.calcTime);
-        sb.append(';');
-        sb.append(this.iterations);
-        sb.append(';');
-        sb.append(this.minimumAngle);
-        sb.append('\n');
-
-        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filePrefix +".csv");
-        try {
-            Files.write(path, sb.toString().getBytes(), StandardOpenOption.APPEND);
-        }
-        catch(IOException ex){
-                System.out.println(ex);
-        }
-    }
-    public void writeGraphInformationsWarning(String str){
-        sb = new StringBuilder();
-        sb.append(str);
-        sb.append(';');
-        sb.append(str);
-        sb.append(';');
-        sb.append(str);
-        sb.append(';');
-        sb.append(str);
-        sb.append('\n');
-
-        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filePrefix +".csv");
-        try {
-            Files.write(path, sb.toString().getBytes(), StandardOpenOption.APPEND);
-        }
-        catch(IOException ex){
-            System.out.println(ex);
-        }
-    }
-
-    public void deleteGraphInformationFile(){
-        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filePrefix +".csv");
-        try {
-            Files.delete(path);
-        }
-        catch(IOException ex){
-            System.out.println(ex);
-        }
-    }
-
-    public String getGraphInformationsString(){
-        return sb.toString();
-    }
-
-    private static void pause(int waitTime){
-        long Time0 = System.currentTimeMillis();
-        long Time1;
-        long runTime = 0;
-        while(runTime<waitTime){
-            Time1 = System.currentTimeMillis();
-            runTime = Time1 - Time0;
-        }
-    }
-
-    public void loadGraph() {
-        this.reached90Degree = false;
-        this.isInInvLoop = false;
-        this.numOfUnchangedAngle = 0;
-        this.minimumAngleIterations = 0;
-        this.minimumAngle = 0;
-        this.minimumAngleTime = 0;
-
-        if (this.fileName.endsWith(".txt")){
-            System.out.println("Try to open .txt");
-            this.mainFrame.openContestFile(this.inputDirectory + this.fileName);
-        } else if(this.fileName.endsWith(".graphml")){
-            this.mainFrame.openFile(this.inputDirectory + this.fileName);
-        }
-
-        mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
-        this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getMinAngle()) / 1000.0;
-        System.out.println("load Graph " + this.minimumAngle);
-    }
-
-    public void writeGraph() {
-        try {
-            ContestIOHandler.write(graph, outputDirectory + "out_" + filePrefix + ".txt", mainFrame.initSidePanel.getOutputTextArea());
-        } catch (IOException ioe) {
-            System.out.println("An error occured while exporting the graph.");
-        }
-    }
-
-    public  void runAlgorithms() {
-        this.mainFrame.initSidePanel.removeDefaultListeners();
-        LayoutUtilities.applyLayout(this.mainFrame.graph, new OrganicLayout());
-        this.mainFrame.initSidePanel.addDefaultListeners();
-
-
-        if (!this.tab.isPresent()) {
-            return;
-        }
-        this.tab.get().getExecutor().setMaxIterations(maxIterations);
-        long tmpTime = System.currentTimeMillis();
-        this.tab.get().startPauseExecution();
-        boolean value = true;
-
-        //while(!tab.get().getExecutor().isFinished()){
-        while(!this.tab.get().getExecutor().isFinished() && this.tab.get().getExecutor().isRunning() && !this.isInInvLoop){
-           // System.out.println("++ while");
-            if(System.currentTimeMillis() - tmpTime > maxTimeForAlgo){
-                this.isInInvLoop = true;
-                this.tab.get().stopExecution();
-                System.out.println("Catched in a inv. Loop. The calculation will be restarted.");
-            }
-        }
-        this.positions = this.tab.get().getExecutor().getLayout().getNodePositions();
-        System.out.println(fileName + "OUT 13");
-        this.endTime = endTime + (System.currentTimeMillis() - tmpTime);
-    }
-
-
-
-    public  boolean calcGraphInformations(){
-
-        ArrayList<Integer> verticesDegree = new ArrayList<>();
-
-        graph = mainFrame.graph;
-
-        for (INode u : graph.getNodes()) {
-            int deg = graph.degree(u);
-            while(deg >= verticesDegree.size()) {
-                verticesDegree.add(0);
-            }
-            verticesDegree.set(deg, verticesDegree.get(deg) + 1);
-        }
-        this.totalVertecies = graph.getNodes().size();
-        this.totalEdges = graph.getEdges().size();
-
-        RectD bounds = BoundingBox.from(PositionMap.FromIGraph(graph));
-        this.currentGraphSizeX = bounds.getWidth() < 1 ? 0 : bounds.getWidth();   //smaller than 1 is not a graph
-        this.currentGraphSizeY = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
-
-
-        this.calcTime = this.endTime - this.sartTime;
-        this.iterations += this.maxIterations;
-
-        mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
-
-        double actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getMinAngle()) / 1000.0;
-        if(this.minimumAngle >= actAngle){
-            this.numOfUnchangedAngle++;
-        }else{
-            this.minimumAngle = actAngle;
-            this.minimumAngleTime = this.calcTime;
-            this.minimumAngleIterations = this.iterations;
-            this.numOfUnchangedAngle = 0;
-        }
-
-        if(this.minimumAngle >= 90.0){
-            reached90Degree = true;
-        }
-
-        this.testAngle = mainFrame.minimumAngleMonitor.getMinAngle();
-        //outputTextArea.setText(graphInfo.toString());
-
-
-        this.numOfCrossings = MinimumAngle.getCrossings(this.graph, this.positions).size();
-
-        return reached90Degree;
-
-    }
-
-    private String getPrefixString(String str){
-        int position = str.lastIndexOf(".");
-        //System.out.println(str.substring(0, position));
-        return str.substring(0, position);
-    }
-
     public void setAlgorithm(Class<? extends ILayout> algorithmLayout){
         this.tab = this.mainFrame.getTabForAlgorithm(algorithmLayout);
     }
@@ -412,6 +463,16 @@ public class Experiment {
     public boolean getIsInInvLoop(){return this.isInInvLoop;}
 
     public int getNumOfUnchangedAngle(){return this.numOfUnchangedAngle;}
+
+    private String getPrefixString(String str){
+        int position = str.lastIndexOf(".");
+        //System.out.println(str.substring(0, position));
+        return str.substring(0, position);
+    }
+
+    public String getGraphInformationsString(){
+        return sb.toString();
+    }
 
     public  boolean printGraphInformations(){
         ArrayList<Integer> verticesDegree = new ArrayList<>();
@@ -504,6 +565,26 @@ public class Experiment {
         //outputTextArea.setText(graphInfo.toString());
         return reached90Degree;
 
+    }
+
+    public void writeGraphInformationsWarning(String str){
+        sb = new StringBuilder();
+        sb.append(str);
+        sb.append(';');
+        sb.append(str);
+        sb.append(';');
+        sb.append(str);
+        sb.append(';');
+        sb.append(str);
+        sb.append('\n');
+
+        Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filePrefix +".csv");
+        try {
+            Files.write(path, sb.toString().getBytes(), StandardOpenOption.APPEND);
+        }
+        catch(IOException ex){
+            System.out.println(ex);
+        }
     }
 
 }
