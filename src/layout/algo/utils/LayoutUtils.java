@@ -25,7 +25,7 @@ public static Boolean overlap(PointD position, Mapper<INode, PointD> positions) 
 	PointD tmp;
 		while(It.hasNext()){
 			tmp=It.next().getValue();
-			if (position.hits(tmp, 0.5)) {
+			if (position.hits(tmp, 0.5) || position.equals(tmp)) {
 				value= false;
 			}
 		}
