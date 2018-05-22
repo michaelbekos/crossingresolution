@@ -18,6 +18,15 @@ public class TotalResolutionForce implements IForce {
     private final IGraph graph;
     private AbstractLayoutInterfaceItem<Double> threshold;
     private AbstractLayoutInterfaceItem<Boolean> activated;
+    private AbstractLayoutInterfaceItem<Boolean> activated1;
+    private AbstractLayoutInterfaceItem<Boolean> activated2;
+    private AbstractLayoutInterfaceItem<Boolean> activated3;
+    private AbstractLayoutInterfaceItem<Boolean> activated4;
+
+    private AbstractLayoutInterfaceItem<Double> force1;
+    private AbstractLayoutInterfaceItem<Double> force2;
+    private AbstractLayoutInterfaceItem<Double> force3;
+    private AbstractLayoutInterfaceItem<Double> force4;
 
     public TotalResolutionForce(IGraph graph) {
         this.graph = graph;
@@ -31,6 +40,34 @@ public class TotalResolutionForce implements IForce {
         activated = itemFactory.toggleableParameter(threshold);
         activated.setValue(true);
         toggleableParameters.add(activated);
+
+        force1 = itemFactory.doubleParameter("Crossing1", 0.0, 0.1);
+        force1.setValue(0.05);
+
+        activated1 = itemFactory.toggleableParameter(force1);
+        activated1.setValue(true);
+        toggleableParameters.add(activated1);
+
+        force2 = itemFactory.doubleParameter("Crossing2", 0.0, 0.1);
+        force2.setValue(0.05);
+
+        activated2 = itemFactory.toggleableParameter(force2);
+        activated2.setValue(true);
+        toggleableParameters.add(activated2);
+
+        force3 = itemFactory.doubleParameter("Angular1", 0.0, 0.1);
+        force3.setValue(0.05);
+
+        activated3 = itemFactory.toggleableParameter(force3);
+        activated3.setValue(true);
+        toggleableParameters.add(activated3);
+
+        force4 = itemFactory.doubleParameter("Angular2", 0.0, 0.1);
+        force4.setValue(0.05);
+
+        activated4 = itemFactory.toggleableParameter(force4);
+        activated4.setValue(true);
+        toggleableParameters.add(activated4);
     }
 
     /**
@@ -43,12 +80,16 @@ public class TotalResolutionForce implements IForce {
         }
 
         //TODO: initialize parameters correctly
-        double tweak = 10000;
+        double tweak = 100;
         double c1,c2,c3, c4;
-        c1 = 0.0001;
+       /* c1 = 0.0001;
         c2 = 0.0001;
         c3 = 0.0001;
-        c4 = 0.0001;
+        c4 = 0.0001;*/
+        c1 = force1.getValue();
+        c2 = force2.getValue();
+        c3 = force3.getValue();
+        c4 = force4.getValue();
 
         //Calculate Total Resolution forces
         for (INode v : graph.getNodes()) {
@@ -349,7 +390,8 @@ public class TotalResolutionForce implements IForce {
     private static double[] calculateForceFactorOnEdgeCrossing(double c1, double c2, double angle, YPoint p, YPoint p_u, YPoint p_v) {
         double l = Math.sqrt(Math.pow(YPoint.distance(p, p_u),2)+ Math.pow(YPoint.distance(p, p_v),2));
 
-        double f_e = c1 * (YPoint.distance(p_u, p_v)-l);
+//        double f_e = c1 * (YPoin0.1t.distance(p_u, p_v)-l);
+        double f_e = c1 * Math.log(YPoint.distance(p_u, p_v)/l);
 
         double f_t = c2 * (Math.PI/2-angle)/angle;
 
