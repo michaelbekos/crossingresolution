@@ -35,13 +35,11 @@ public class DrawBoundingBox implements IVisual{
         double c_x = MainFrame.BOX_SIZE[0];
         double c_y = MainFrame.BOX_SIZE[1];
 
-        if ((int) (100 / z) > 20) { //dont draw for < 20
-            graphics2D.setStroke(new BasicStroke((float) (1 / z)));
-            graphics2D.setColor(this.color);
-            graphics2D.drawLine((int) (0), (int) (0), (int) (c_x), (int) (0));
-            graphics2D.drawLine((int) (0), (int) (0), (int) (0), (int) (c_y));
-            graphics2D.drawLine((int) (0), (int) (c_y), (int) (c_x), (int) (c_y));
-            graphics2D.drawLine((int) (c_x), (int) (0), (int) (c_x), (int) (c_y));
-        }
+        graphics2D.setStroke(new BasicStroke((float) (1 / z)));
+        graphics2D.setColor(this.color);
+        graphics2D.drawLine((int) (0), (int) (0), (int) (c_x), (int) (0));
+        graphics2D.drawLine((int) (0), (int) (0), (int) (0), (int) (c_y));
+        graphics2D.drawLine((int) (0), (int) (c_y), (int) (c_x), (int) (c_y));
+        graphics2D.drawLine((int) (c_x), (int) (0), (int) (c_x), (int) (c_y));
     }
 }
