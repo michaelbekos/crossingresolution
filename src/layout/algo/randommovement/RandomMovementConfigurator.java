@@ -13,6 +13,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Integer> numSamplesForJumping;
   AbstractLayoutInterfaceItem<Boolean> toggleNodeDistributions;
   AbstractLayoutInterfaceItem<Boolean> onlyGridPositions;
+  AbstractLayoutInterfaceItem<Boolean> allowIncreaseStepSize;
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
@@ -32,13 +33,16 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     jumpOnLocalMaximum.setValue(false);
 
     onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates");
-    onlyGridPositions.setValue(true);
+    onlyGridPositions.setValue(false);
 
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
     useGaussianDistribution.setValue(true);
 
     toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes");
     toggleNodeDistributions.setValue(true);
+
+    allowIncreaseStepSize = itemFactory.booleanParameter("Automatically increase step size");
+    allowIncreaseStepSize.setValue(false);
   }
 
 }
