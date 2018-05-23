@@ -132,6 +132,14 @@ public class Contest2018IOHandler {
      * Writing graph in JSON file with contest 2018 format
      */
     public void write(IGraph graph, String outputFileName, JTextArea outputTextArea) throws IOException {
+        //allow saving of non-contest files in contest format
+        int tagNum = 0;
+        for (INode u : graph.getNodes()) {
+            if (u.getTag() == null) {
+                u.setTag(tagNum);
+            }
+            tagNum++;
+        }
         //Get Nodes
         ArrayList<Contest2018IOHandler.Node> nodes = new ArrayList<>(graph.getNodes().size());
         StringBuilder errorText = new StringBuilder();
