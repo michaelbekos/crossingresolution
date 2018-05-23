@@ -22,7 +22,9 @@ import layout.algo.FraysseixPachPollack;
 import layout.algo.NodeSwapper;
 import layout.algo.execution.BasicIGraphLayoutExecutor;
 import layout.algo.execution.ILayout;
+import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
+import layout.algo.randommovement.RandomMovementLayout;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
 import util.BoundingBox;
@@ -475,6 +477,7 @@ public class SidePanelTab {
 //--------------------------------------------------------------------
             initSidePanel.addDefaultListeners();
         });
+        System.out.println("rmeoved "+removedChains.size());
     }
 
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
@@ -486,8 +489,8 @@ public class SidePanelTab {
             return;
         }
 
-        modifyGraph(() -> {
-            initSidePanel.removeDefaultListeners();
+//        modifyGraph(() -> {
+//            initSidePanel.removeDefaultListeners();
 
 //--------------------------------------------------------------------
 //            //TODO reinsert chains (currently regular reinsert 1 chain)
@@ -508,10 +511,10 @@ public class SidePanelTab {
             reinsertVerticesItem();
 //--------------------------------------------------------------------
 
-            Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
-
-            initSidePanel.addDefaultListeners();
-        });
+//            Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
+//
+//            initSidePanel.addDefaultListeners();
+//        });
     }
 
 
@@ -541,45 +544,80 @@ public class SidePanelTab {
             return;
         }
         Thread automaticInsertion = new Thread(() -> {
-                double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
-                double epsilon = startingAngle/100;
-                int last_iteration = executor.getCurrentIteration();
-                if (!algorithmName.equals("Random Movement")) {
-                    setOutputTextArea("Recommended to use Random Movement!");
-                    System.out.println("Recommended to use Random Movement!");
+            double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+            double epsilon = startingAngle/10;
+            boolean runRandomAll = false;
+            int last_iteration = executor.getCurrentIteration();
+            double minAngle;
+            int count = 0;
+            if (!algorithmName.equals("Random Movement")) {
+                setOutputTextArea("Recommended to use Random Movement!");
+                System.out.println("Recommended to use Random Movement!");
+            }
+            if(executor.isPaused() || executor.isFinished() || !executor.isRunning()) {
+                startPauseExecution();
+            }
+
+            reinsertChain();
+            while(initSidePanel.mainFrame.removedChains.number() > 0) {
+                if (executor.isPaused()) {
+                    continue;
                 }
-                if(executor.isPaused() || executor.isFinished() || !executor.isRunning()) {
-                    startPauseExecution();
+                if (executor.isFinished()) {
+                    return;
+                }
+                initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+                minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+//                System.out.println(initSidePanel.mainFrame.bestSolution.getBestMinimumAngleForNodes(initSidePanel.mainFrame.graph.getNodes().size()));
+                if (executor.getCurrentIteration() >= last_iteration + 2000 && !runRandomAll) {
+                    //remove chain
+                    System.out.println("INSERTING "+initSidePanel.mainFrame.graph.getNodes().size());
+                    reinsertChain();
+                    setOutputTextArea("Reinserting Chains... Chains left: "+initSidePanel.mainFrame.removedChains.number());
+//                    startingAngle = minAngle;
+                    last_iteration = executor.getCurrentIteration();
+                    count ++;
+                    try{Thread.sleep(100);} catch(InterruptedException c){}
+                }
+//                if (executor.getCurrentIteration() >= last_iteration + 1000 && !runRandomAll) {
+                if (!runRandomAll && false) {
+//                    if (minAngle < startingAngle - epsilon) {
+                    if (count >= 20 ) {
+                        System.out.println("its habbening");
+                        Map<String, AbstractLayoutInterfaceItem<Boolean>> map = configurator.getBooleanParameters().orElse(null);
+                        try {
+                            if (map != null) {
+                                modifyGraph(() -> {
+                                    map.get("useReinsertChainNodes").setValue(false);
+                                    map.get("toggleNodeDistributions").setValue(true);
+                                });
+                                runRandomAll = true;
+                            }
+                        } catch (NullPointerException npe) {
+                            setOutputTextArea("Error! Use Random Algorithm.");
+                            System.out.println("Error! Use Random Algorithm.");
+                        }
+                    }
+                }
+                if (runRandomAll && executor.getCurrentIteration() >= last_iteration + 1000) {
+                    Map<String, AbstractLayoutInterfaceItem<Boolean>> map = configurator.getBooleanParameters().orElse(null);
+                    try {
+                        if (map != null) {
+                            modifyGraph(() -> {
+                                map.get("useReinsertChainNodes").setValue(true);
+                                map.get("toggleNodeDistributions").setValue(false);
+                            });
+                            runRandomAll = false;
+                            count = 0;
+                        }
+                    } catch (NullPointerException npe) {
+                        setOutputTextArea("Error! Use Random Algorithm.");
+                        System.out.println("Error! Use Random Algorithm.");
+                    }
                 }
 
-                long iterations = 0;
-                while(initSidePanel.mainFrame.removedChains.number() > 0) {
-                    if (executor.isPaused()) {
-                        continue;
-                    }
-                    if (executor.isFinished()) {
-                        return;
-                    }
-                    double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
-//                    if (minAngle >= (startingAngle - epsilon)) {
-                    if (executor.getCurrentIteration() >= last_iteration + 5000) {
-                        //remove chain
-                        reinsertVerticesItem();
-                        Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
-                        setOutputTextArea("Reinserting Chains... Chains left: "+initSidePanel.mainFrame.removedChains.number());
-//                        System.out.println("Reinserting Chains... "+initSidePanel.mainFrame.removedChains.number()+" angle: "+minAngle);
-                        iterations = 0;
-                        epsilon = startingAngle/100;
-                    }
-////                    if (iterations == Math.pow(10,7)) {
-//                    if (executor.getCurrentIteration() >= last_iteration + 1000) {
-//                        epsilon +=0.01;
-//                        iterations = 0;
-//                    }
-
-                    iterations++;
-                }
-                stopExecution();
+            }
+            stopExecution();
         });
         automaticInsertion.start();
 
@@ -787,12 +825,14 @@ public class SidePanelTab {
     private void reinsertVerticesItem() {
         modifyGraph(() -> {
             initSidePanel.mainFrame.initSidePanel.removeDefaultListeners();
-            ArrayList<Set<INode>> setChain = initSidePanel.mainFrame.removedChains.reinsert(1);
+            ArrayList<Set<INode>> setChain = initSidePanel.mainFrame.removedChains.reinsert(1, true);
             Set<INode> allNodes = new HashSet<>();
             for (Set<INode> x : setChain) {
                 allNodes.addAll(x);
             }
             layout.setVarNodes(allNodes);
+            Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
+            initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
             initSidePanel.mainFrame.initSidePanel.addDefaultListeners();
         });
     }

@@ -8,10 +8,7 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
   public List<IForce> forces = new LinkedList<>();
@@ -39,5 +36,10 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
 
   AbstractLayoutInterfaceItem<Mapper<INode, PointD>> getDebugVectors() {
     return debugVectors;
+  }
+
+  @Override
+  public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
+    return Optional.empty();
   }
 }

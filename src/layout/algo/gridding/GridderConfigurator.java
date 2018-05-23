@@ -4,6 +4,9 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.util.Map;
+import java.util.Optional;
+
 public class GridderConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Boolean> respectMinimumAngle;
   AbstractLayoutInterfaceItem<Double> allowDecreasingBy;
@@ -39,5 +42,10 @@ public class GridderConfigurator implements ILayoutConfigurator {
 
     forceGridAfterStop = itemFactory.booleanParameter("Force grid after stop was pressed");
     forceGridAfterStop.setValue(true);
+  }
+
+  @Override
+  public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
+    return Optional.empty();
   }
 }

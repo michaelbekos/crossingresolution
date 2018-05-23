@@ -35,11 +35,16 @@ public final class RemovedChains {
     }
   }
 
-  public ArrayList<Set<INode>> reinsert(int chainNum) {
+  //lineMode: reinsert vertices on a line between the endpoint vertices
+  public ArrayList<Set<INode>> reinsert(int chainNum, boolean lineMode) {
     ArrayList<Set<INode>> chains = new ArrayList<>();
     for (int i = 0; i < chainNum; i++) {
 //        removedChains.pop().reinsertNodes();
-      chains.add(removedChains.pop().reinsertNodesLine(startEnd.get(i)));
+      if (lineMode) {
+        chains.add(removedChains.pop().reinsertNodesLine(startEnd.get(i)));
+      } else {
+        chains.add(removedChains.pop().reinsertNodes());
+      }
     }
     return chains;
   }

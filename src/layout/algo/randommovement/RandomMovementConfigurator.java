@@ -4,6 +4,10 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Double> minStepSize;
   AbstractLayoutInterfaceItem<Double> maxStepSize;
@@ -43,6 +47,14 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
     toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes");
     toggleNodeDistributions.setValue(false);
+  }
+
+  @Override
+  public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
+    Map<String, AbstractLayoutInterfaceItem<Boolean>> paramaters = new HashMap<>();
+    paramaters.put("useReinsertChainNodes", useReinsertChainNodes);
+    paramaters.put("toggleNodeDistributions", toggleNodeDistributions);
+    return Optional.of(paramaters);
   }
 
 }

@@ -517,6 +517,7 @@ public class InitMenuBar {
 
                     if (useChains.isSelected()) {
                         mainFrame.removedChains = chains.remove(numVertices, mainFrame.removedChains);
+                        mainFrame.removedChains.setStartEnd(chains.getStartEnd());
                     } else if (useHighest.isSelected()) {
                         mainFrame.removedNodes.removeHighestDegree(numVertices);
                     } else {
@@ -624,7 +625,7 @@ public class InitMenuBar {
                         throw new NumberFormatException("Too many chains");
                     }
 
-                    mainFrame.removedChains.reinsert(numChains);
+                    mainFrame.removedChains.reinsert(numChains, false);
 
                     Scaling.scaleNodeSizes(view);
                 } catch (NumberFormatException exc) {

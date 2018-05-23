@@ -46,7 +46,8 @@ public class MinimumAngleMonitor {
     Optional<Intersection> minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
     if (minAngleCr.isPresent()){
-      if (oldAngle <= minAngleCr.get().angle){
+      if (oldAngle < minAngleCr.get().angle){
+        System.out.println("set best with nodes: "+ graph.getNodes().size()+ " angle: "+ oldAngle + " new : "+ minAngleCr.get().angle);
         oldAngle = minAngleCr.get().angle;
 
         bestSolution.setBestMinimumAngle(oldAngle, graph.getNodes().size());

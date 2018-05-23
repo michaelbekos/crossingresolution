@@ -5,6 +5,8 @@ import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 
 public class GeneticForceAlgorithmConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Integer> iterationsPerGeneration;
@@ -22,6 +24,11 @@ public class GeneticForceAlgorithmConfigurator implements ILayoutConfigurator {
 
     iterationsPerGeneration.setValue(100);
     stepSize.setValue(0.1);
+  }
+
+  @Override
+  public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
+    return Optional.empty();
   }
 
 }

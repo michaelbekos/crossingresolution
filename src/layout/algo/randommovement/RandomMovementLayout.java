@@ -59,6 +59,7 @@ public class RandomMovementLayout implements ILayout {
     }
 
     fixNodes = new HashSet<>();
+//    reinsertedChain = new HashSet<>();
   }
 
   @Override
@@ -68,7 +69,16 @@ public class RandomMovementLayout implements ILayout {
 
   @Override
   public void setVarNodes(Set<INode> variableNodes) {
+      if (reinsertedChain == null) {            //cause modifygraph calls init (ie pause unpause)
+          reinsertedChain = new HashSet<>();
+      }
     this.reinsertedChain = variableNodes;
+//      this.reinsertedChain.clear();
+//      this.reinsertedChain.addAll(variableNodes);
+      System.out.println("Setting it "+variableNodes.size());
+      for (INode x : reinsertedChain) {
+          System.out.println(x);
+      }
   }
 
   private ArrayList<Sample> initSampleDirections() {
@@ -252,8 +262,17 @@ public class RandomMovementLayout implements ILayout {
   }
 
   private Optional<INode> chainNodeSelection() {
-      Object[] arr = reinsertedChain.toArray();
-      return Optional.of((INode)arr[ThreadLocalRandom.current().nextInt(0,arr.length)]);
+//      Object[] arr = reinsertedChain.toArray();
+//      return Optional.of((INode)arr[ThreadLocalRandom.current().nextInt(0,arr.length)]);
+//      System.out.println("selecting: "+reinsertedChain.size());
+//      for (INode x : reinsertedChain) {
+//          System.out.println(reinsertedChain.stream().skip(random.nextInt(reinsertedChain.size())).findFirst());
+//      }
+      return reinsertedChain.stream().skip(random.nextInt(reinsertedChain.size())).findFirst();
+//      return StreamSupport.stream(reinsertedChain.spliterator(), false)
+//              .filter(node -> !fixNodes.contains(node))
+//              .skip(random.nextInt(reinsertedChain.size()))
+//              .findFirst();
   }
 
   private Optional<INode> selectRandomNode(Iterable<INode> nodes, int size) {

@@ -5,6 +5,9 @@ import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.util.Map;
+import java.util.Optional;
+
 public class ClinchLayoutConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<IGraphSelection> selection;
   AbstractLayoutInterfaceItem<Double> initialStepSize;
@@ -18,5 +21,11 @@ public class ClinchLayoutConfigurator implements ILayoutConfigurator {
 
     initialStepSize.setValue(2.5);
     stepSizeMultiplier.setValue(1.5);
+  }
+
+
+  @Override
+  public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
+    return Optional.empty();
   }
 }
