@@ -9,6 +9,7 @@ import com.yworks.yfiles.view.GraphComponent;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ public class SlopedForce implements IForce {
   private AbstractLayoutInterfaceItem<Boolean> activated;
   private IGraph graph;
   private AbstractLayoutInterfaceItem<List<Double>> slopes;
+  ArrayList<AbstractLayoutInterfaceItem> itemList;
 
   public SlopedForce(IGraph graph) {
     this.graph = graph;
@@ -25,14 +27,24 @@ public class SlopedForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    itemList = new ArrayList<>();
+
     weight = itemFactory.doubleParameter("Slope Force", 0.0, 0.5);
     weight.setValue(0.05);
+    itemList.add(weight);
 
     activated = itemFactory.toggleableParameter(weight);
     activated.setValue(true);
+    itemList.add(activated);
     toggleableParameters.add(activated);
 
     slopes = itemFactory.slopesParameter("Slope Force");
+    itemList.add(slopes);
+  }
+
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getItems(){
+    return itemList;
   }
 
   @Override

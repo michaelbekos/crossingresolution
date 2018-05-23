@@ -7,6 +7,7 @@ import com.yworks.yfiles.graph.Mapper;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class SpringForce implements IForce {
@@ -15,6 +16,7 @@ public class SpringForce implements IForce {
   private double threshold;
   private AbstractLayoutInterfaceItem<Double> springStiffness;
   private AbstractLayoutInterfaceItem<Boolean> activated;
+  ArrayList<AbstractLayoutInterfaceItem> itemList;
 
   public SpringForce(IGraph graph, double springNaturalLength, double threshold) {
     this.graph = graph;
@@ -24,12 +26,22 @@ public class SpringForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    itemList = new ArrayList<>();
+
     springStiffness = itemFactory.doubleParameter("Spring Stiffness Force", 0.0, 150);
     springStiffness.setValue(150.0);
+    itemList.add(springStiffness);
 
     activated = itemFactory.toggleableParameter(springStiffness);
     activated.setValue(true);
+    itemList.add(activated);
+
     toggleableParameters.add(activated);
+  }
+
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getItems(){
+    return itemList;
   }
 
   @Override

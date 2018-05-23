@@ -1,18 +1,14 @@
-package Experiment;
+package experiment;
 
 import algorithms.graphs.GridGraph;
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.graphml.GraphMLIOHandler;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import graphoperations.GraphOperations;
 import io.ContestIOHandler;
-import io.GraphIOHandler;
 import layout.algo.execution.ILayout;
-import layout.algo.forcealgorithm.ForceAlgorithm;
-import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.randommovement.RandomMovementLayout;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
@@ -34,7 +30,7 @@ public class Experiment {
     private MainFrame mainFrame;
     private IGraph graph;
     private long sartTime, endTime, calcTime, minimumAngleTime, minimumAngleIterations;
-    private long maxTimeForAlgo = 100000; //default 100 sec
+    private long maxTimeForAlgo = 2000; //default 100 sec
     private boolean reached90Degree = false;
     private boolean isInInvLoop = false;
     private boolean firstOrganicLayout = true;
@@ -202,7 +198,7 @@ public class Experiment {
         sb.append(';');
         sb.append(iterations);
         sb.append(';');
-        sb.append(this.calcTime);
+        sb.append(this.maxTimeForAlgo);
         sb.append(';');
         sb.append(this.actAngle);
         sb.append(';');
@@ -285,9 +281,9 @@ public class Experiment {
         //while(!tab.get().getExecutor().isFinished()){
         while(!this.tab.get().getExecutor().isFinished() && this.tab.get().getExecutor().isRunning() && !this.isInInvLoop){
            // System.out.println("++ while");
-            if(System.currentTimeMillis() - tmpTime > maxTimeForAlgo){
+            if(System.currentTimeMillis() - tmpTime + this.calcTime >  this.maxTimeForAlgo){ // + this.calcTime
                 this.isInInvLoop = true;
-                this.tab.get().stopExecution();
+                this.tab.get().startPauseExecution();
                 System.out.println("Catched in a inv. Loop. The calculation will be restarted.");
             }
         }
@@ -454,15 +450,20 @@ public class Experiment {
         this.endTime = endTime;
     }
 
+    public void setMaxTime(long maxTime){this.maxTimeForAlgo = maxTime;}
+
     public void setMaxIterations(int maxIta){
         this.maxIterations = maxIta;
     }
+
+    public Optional<SidePanelTab> getTab(){return this.tab;}
 
     public long getCalcTime(){return this.calcTime;}
 
     public boolean getIsInInvLoop(){return this.isInInvLoop;}
 
     public int getNumOfUnchangedAngle(){return this.numOfUnchangedAngle;}
+
 
     private String getPrefixString(String str){
         int position = str.lastIndexOf(".");

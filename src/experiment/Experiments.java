@@ -1,4 +1,4 @@
-package Experiment;
+package experiment;
 
 import com.yworks.yfiles.algorithms.GraphChecker;
 import com.yworks.yfiles.graph.*;
@@ -11,17 +11,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Optional;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.yworks.yfiles.layout.YGraphAdapter;
-import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.GraphComponent;
 import layout.algo.execution.ILayout;
 import layout.algo.forcealgorithm.ForceAlgorithm;
-import layout.algo.genetic.GeneticForceAlgorithmLayout;
 import layout.algo.randommovement.RandomMovementLayout;
 import main.MainFrame;
-import sidepanel.SidePanelTab;
 
 import javax.swing.*;
 
@@ -37,7 +38,7 @@ public class Experiments {
     private int numOfIteration = 100;
     int iterationFactor = 1;
     private int numOfIterationFactor = 1000;
-    private long maxCalcTime = 6000; //in mili. sec
+    private long maxCalcTime = 1500; //in mili. sec
     private int boxSize = 10000;
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
@@ -162,7 +163,7 @@ public class Experiments {
         };
         String[] children = dir.list(filter);
         System.out.println(children.length);
-
+//TODO:beides verwenden
         if (children == null) {
             System.out.println("Children==null");
             // Either dir does not exist or is not a directory
@@ -177,7 +178,24 @@ public class Experiments {
                 System.out.println("Iteration:   "+ i);
             }
         }
-        System.out.println("ENDE");
+
+/*        for (int i=0; i<children.length; i++)
+        {
+            System.out.println("Iteration: " + i);
+
+            Path path = Paths.get(this.inputDirectory + children[i]);
+            Charset charset = StandardCharsets.UTF_8;
+try {
+
+
+    String content = new String(Files.readAllBytes(path), charset);
+    content = content.replaceAll("<!DOCTYPE graphml SYSTEM \"http://www.graphdrawing.org/dtds/graphml.dtd\">", "");
+    Files.write(path, content.getBytes(charset));
+}
+    catch(IOException ioex){}
+        }
+*/
+     System.out.println("ENDE");
     }
 
     /**
@@ -188,7 +206,7 @@ public class Experiments {
     private void openFrame(String pattern, Class<? extends ILayout> algorithmLayout) {
         MainFrame frame = new MainFrame();
         frame.init();
-        frame.setVisible(true);
+        frame.setVisible(false); //TODO
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 
@@ -203,6 +221,7 @@ public class Experiments {
         experiment.setAlgorithm(algorithmLayout);
 
         experiment.setMaxIterations(this.numOfIteration);
+        experiment.setMaxTime(this.maxCalcTime);
 
         YGraphAdapter graphAdapter = new YGraphAdapter(frame.graph);
 
@@ -216,6 +235,16 @@ public class Experiments {
             int maxNodeNum = calcMaxNodeNum(frame.graph);
             experiment.setAlgorithm(algorithmLayout);
             if(algorithmLayout.equals(RandomMovementLayout.class)){
+                                    /* Set config. parameters */
+                experiment.getTab().get().configurator.getItems().get(0).setValue(10.0); // Minimum step size
+                experiment.getTab().get().configurator.getItems().get(1).setValue(150.0); // Maximum step size
+                experiment.getTab().get().configurator.getItems().get(2).setValue(50); // Faild iteration ... detect loacal maximum
+                experiment.getTab().get().configurator.getItems().get(3).setValue(50); // numbers .. maximum resolving
+                experiment.getTab().get().configurator.getItems().get(4).setValue(false); // Allow decreasing minimum angle at local maximum
+                experiment.getTab().get().configurator.getItems().get(5).setValue(false);  // Only use grid coord.
+                experiment.getTab().get().configurator.getItems().get(6).setValue(true); // focus on critical nodes
+                experiment.getTab().get().configurator.getItems().get(7).setValue(true); // Automatically toggle focusing in critical nodes
+
 
                 startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
@@ -225,6 +254,23 @@ public class Experiments {
                 experiment.writeGraph();
 
             }else if(algorithmLayout.equals(ForceAlgorithm.class)){
+
+                                /* Set config. parameters */
+                experiment.getTab().get().configurator.getItems().get(0).setValue(1.0); // Node Neighbor Force
+                experiment.getTab().get().configurator.getItems().get(1).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(2).setValue(2.0); // Node Pair force
+                experiment.getTab().get().configurator.getItems().get(3).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(4).setValue(0.1); // Incident Edges Force
+                experiment.getTab().get().configurator.getItems().get(5).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(6).setValue(50.0); // Spring Stiffness Force
+                experiment.getTab().get().configurator.getItems().get(7).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(8).setValue(50000.0); // Electric Repulsiion Force
+                experiment.getTab().get().configurator.getItems().get(9).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(10).setValue(0.35); // Crossing Force
+                experiment.getTab().get().configurator.getItems().get(11).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(12).setValue(0.07); // Slope Force
+                experiment.getTab().get().configurator.getItems().get(13).setValue(false);
+
                 startExperiment(experiment, this.forceAlgo + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.forceAlgo + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 // experiment.writeGraphEndResults();
@@ -248,11 +294,12 @@ public class Experiments {
 
     private void openFrame(String pattern) {
 
+
+
         MainFrame frame = new MainFrame();
         frame.init();
-        frame.setVisible(true);
+        frame.setVisible(false);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
 
         frame.BOX_SIZE = this.boxSize;
         //String fileName = index +"";
@@ -262,6 +309,7 @@ public class Experiments {
         Experiment experiment = new Experiment(frame, fileName, inputDirectory, outputDirectory, this.boxSize);
         setStartConfigurations(experiment);
         experiment.setMaxIterations(this.numOfIteration);
+        experiment.setMaxTime(this.maxCalcTime);
 
         YGraphAdapter graphAdapter = new YGraphAdapter(frame.graph);
 
@@ -306,12 +354,11 @@ public class Experiments {
     }
 
         private void startExperiment(Experiment exp, boolean writeInormations, String fileName){
-            while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() <= 100 )){
+            while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() <= 100 ) && exp.getCalcTime() <= this.maxCalcTime ){
+
                 exp.runAlgorithms();
 
-                if(exp.getIsInInvLoop()){ // Restart the calc. for this graph.
-                    setStartConfigurations(exp);
-                }
+
 
                 if(writeInormations){
                     //exp.writeGraphInformations();
@@ -324,7 +371,8 @@ public class Experiments {
 
             exp.writeGraphResults(fileName);
 
-            if(this.iterationFactor <= this.numOfIterationFactor ){
+            if(this.iterationFactor <= this.numOfIterationFactor || exp.getCalcTime() > this.maxCalcTime ){
+                System.out.println("Was da lso");
                 exp.writeGraphResultsMaxIterations(fileName, this.numOfIteration * this.numOfIterationFactor);
             }
         }

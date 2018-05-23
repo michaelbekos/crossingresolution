@@ -371,11 +371,27 @@ public class MainFrame extends JFrame {
             initSidePanel.addDefaultListeners();
         }
     }
-    public void openFile(String fileNamePath) {
+    public void openSimpleFile(String fileNamePath) {
         initSidePanel.removeDefaultListeners();
         try {
           //  view.importFromGraphML(fileNamePath);
             SimpleGraphmlIOHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+
+    public void openFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+              view.importFromGraphML(fileNamePath);
+            //SimpleGraphmlIOHandler.read(graph, fileNamePath);
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();

@@ -1,5 +1,7 @@
 package layout.algo.layoutinterface;
 
+import java.util.ArrayList;
+
 /**
  * The interface for algorithm configurators. Classes implementing this interface should not contain any complex logic
  * but should instead serve as simple container for all parameters ({@link AbstractLayoutInterfaceItem}s) of the
@@ -15,4 +17,7 @@ public interface ILayoutConfigurator {
    *                    become invalid after the invocation
    */
   void init(ILayoutInterfaceItemFactory itemFactory);
+
+  ArrayList<AbstractLayoutInterfaceItem> getItems();
+
 }
