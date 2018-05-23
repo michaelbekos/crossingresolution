@@ -519,7 +519,7 @@ public class CanonicalOrder {
         if (outerFace.contains(retNode)) {
             last = retNode;
             while (dartIterator < numOfDarts) {// ignore inserted nodes
-                dartIterator++ ;                                    //TODO: wiso als erstes incre: ?
+                dartIterator++ ;
                 retNode = getTargetNode(outDarts.get(dartIterator));
                 if (!isInsertedNode.getBool(retNode))
                     break;
