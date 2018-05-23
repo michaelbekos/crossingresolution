@@ -62,7 +62,7 @@ public class CrossingForce implements IForce {
           v1 = PointD.add(p1, PointD.negate(p2)),
           v2 = PointD.add(p3, PointD.negate(p4));
       // apply cosinus force
-      Tuple2<PointD, PointD> f = calculateSomethingWithCosinuses(v1, v2, intersection.orientedAngle);
+      Tuple2<PointD, PointD> f = cosineForce(v1, v2, intersection.orientedAngle);
         PointD force1 = f.a, force2 = f.b;
         f1 = PointD.add(f1, force1);
         f2 = PointD.add(f2, PointD.negate(force1));
@@ -82,7 +82,8 @@ public class CrossingForce implements IForce {
     return forces;
   }
 
-  private Tuple2<PointD, PointD> calculateSomethingWithCosinuses(PointD e1, PointD e2, double angle) {
+  //calculateForceFactorOnEdgeCrossing, cosine force
+  private Tuple2<PointD, PointD> cosineForce(PointD e1, PointD e2, double angle) {
     double threshold = weight.getValue();
     if(e1.getVectorLength() <= G.Epsilon ||
         e2.getVectorLength() <= G.Epsilon){

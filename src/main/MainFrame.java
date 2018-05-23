@@ -15,6 +15,7 @@ import com.yworks.yfiles.view.input.*;
 import graphoperations.RemovedChains;
 import graphoperations.RemovedNodes;
 import graphoperations.Scaling;
+import io.AdjacencyMatrixHandler;
 import io.Contest2018IOHandler;
 import io.ContestIOHandler;
 import layout.algo.execution.ILayout;
@@ -36,7 +37,7 @@ import java.util.function.Consumer;
 public class MainFrame extends JFrame {
 
     /* Box related issue*/
-    public static final double BOX_SIZE = 10000;
+    public static final double BOX_SIZE[] = {1000000, 1000000};
 
     /* Graph Drawing related objects */
     public GraphComponent view;
@@ -372,4 +373,20 @@ public class MainFrame extends JFrame {
             initSidePanel.addDefaultListeners();
         }
     }
+
+	public void openAMFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            AdjacencyMatrixHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+	}
 }

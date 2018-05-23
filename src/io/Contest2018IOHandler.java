@@ -8,6 +8,7 @@ import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import layout.algo.utils.PositionMap;
+import main.MainFrame;
 import util.BoundingBox;
 
 import javax.swing.*;
@@ -109,6 +110,9 @@ public class Contest2018IOHandler {
             openFile.ydimension = MAX_Y_DIMENSION;
         }
 
+        MainFrame.BOX_SIZE[0]=openFile.xdimension;
+        MainFrame.BOX_SIZE[1]=openFile.ydimension;
+        
         //Create Nodes
         INode[] nodes = new INode[inFile.nodes.size()];
         for (int i = 0; i < inFile.nodes.size(); i++) {

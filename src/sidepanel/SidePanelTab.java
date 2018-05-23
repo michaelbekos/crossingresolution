@@ -445,7 +445,7 @@ public class SidePanelTab {
             IGraph graph = initSidePanel.mainFrame.graph;
             Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
             RectD bounds = BoundingBox.from(nodePositions);
-            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE / bounds.getWidth()), (int) (MainFrame.BOX_SIZE / bounds.getHeight())), nodePositions);
+            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth()), (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight())), nodePositions);
             PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
 

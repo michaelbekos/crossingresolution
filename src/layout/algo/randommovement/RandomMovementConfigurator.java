@@ -18,6 +18,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Integer> numSamplesForJumping;
   AbstractLayoutInterfaceItem<Boolean> toggleNodeDistributions;
   AbstractLayoutInterfaceItem<Boolean> onlyGridPositions;
+  AbstractLayoutInterfaceItem<Boolean> allowIncreaseStepSize;
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
@@ -37,7 +38,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     jumpOnLocalMaximum.setValue(false);
 
     onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates");
-    onlyGridPositions.setValue(true);
+    onlyGridPositions.setValue(false);
 
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
     useGaussianDistribution.setValue(false);
@@ -47,14 +48,17 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
     toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes");
     toggleNodeDistributions.setValue(false);
+
+    allowIncreaseStepSize = itemFactory.booleanParameter("Automatically increase step size");
+    allowIncreaseStepSize.setValue(false);
   }
 
-  @Override
-  public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
-    Map<String, AbstractLayoutInterfaceItem<Boolean>> paramaters = new HashMap<>();
-    paramaters.put("useReinsertChainNodes", useReinsertChainNodes);
-    paramaters.put("toggleNodeDistributions", toggleNodeDistributions);
-    return Optional.of(paramaters);
+    @Override
+    public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
+        Map<String, AbstractLayoutInterfaceItem<Boolean>> paramaters = new HashMap<>();
+        paramaters.put("useReinsertChainNodes", useReinsertChainNodes);
+        paramaters.put("toggleNodeDistributions", toggleNodeDistributions);
+        return Optional.of(paramaters);
   }
 
 }

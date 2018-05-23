@@ -32,6 +32,9 @@ public class ElectricForce implements IForce {
     toggleableParameters.add(activated);
   }
 
+  /**
+   * Calculate electric forces with classical spring embedder algorithm. i.e. calculateElectricForcesEades
+   */
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
     if (!activated.getValue()) {

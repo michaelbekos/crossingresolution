@@ -46,7 +46,7 @@ public class ScalingGridder implements IGridder {
     }
 
     if (iteration % iterationsPerScale == 0 && iteration > 0) {
-      Scaling.scaleBy(configurator.scaleBy.getValue(), gridder.getNodePositions(), MainFrame.BOX_SIZE);
+      Scaling.scaleBy(configurator.scaleBy.getValue(), gridder.getNodePositions(), MainFrame.BOX_SIZE[0]); // not sure if only BOX_SIZE[0] is a good idea
       configurator.statusMessage.setValue("Scaled up!");
     }
 
