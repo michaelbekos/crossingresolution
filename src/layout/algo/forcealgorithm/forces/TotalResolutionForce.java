@@ -28,21 +28,23 @@ public class TotalResolutionForce implements IForce {
     private AbstractLayoutInterfaceItem<Double> force3;
     private AbstractLayoutInterfaceItem<Double> force4;
 
+    private final double MAX_FORCES = 10;
+
     public TotalResolutionForce(IGraph graph) {
         this.graph = graph;
     }
 
     @Override
     public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
-        threshold = itemFactory.doubleParameter("Total Resolution Force", 0.0, 0.1);
-        threshold.setValue(0.05);
+        threshold = itemFactory.doubleParameter("Total Resolution Force", 0.0, 1.0);
+        threshold.setValue(1.0);
 
         activated = itemFactory.toggleableParameter(threshold);
         activated.setValue(true);
         toggleableParameters.add(activated);
 
-        force1 = itemFactory.doubleParameter("Crossing1", 0.0, 0.1);
-        force1.setValue(0.05);
+        force1 = itemFactory.doubleParameter("Crossing1", 0.0, 0.2);
+        force1.setValue(0.13);
 
         activated1 = itemFactory.toggleableParameter(force1);
         activated1.setValue(true);
@@ -56,14 +58,14 @@ public class TotalResolutionForce implements IForce {
         toggleableParameters.add(activated2);
 
         force3 = itemFactory.doubleParameter("Angular1", 0.0, 0.1);
-        force3.setValue(0.05);
+        force3.setValue(0.03);
 
         activated3 = itemFactory.toggleableParameter(force3);
         activated3.setValue(true);
         toggleableParameters.add(activated3);
 
         force4 = itemFactory.doubleParameter("Angular2", 0.0, 0.1);
-        force4.setValue(0.05);
+        force4.setValue(0.008);
 
         activated4 = itemFactory.toggleableParameter(force4);
         activated4.setValue(true);
@@ -80,16 +82,16 @@ public class TotalResolutionForce implements IForce {
         }
 
         //TODO: initialize parameters correctly
-        double tweak = 100;
+        double tweak = 1;
         double c1,c2,c3, c4;
        /* c1 = 0.0001;
         c2 = 0.0001;
         c3 = 0.0001;
         c4 = 0.0001;*/
-        c1 = force1.getValue();
-        c2 = force2.getValue();
-        c3 = force3.getValue();
-        c4 = force4.getValue();
+        c1 = activated1.getValue() ? force1.getValue() : 0;
+        c2 = activated2.getValue() ? force2.getValue() : 0;
+        c3 = activated3.getValue() ? force3.getValue() : 0;
+        c4 = activated4.getValue() ? force4.getValue() : 0;
 
         //Calculate Total Resolution forces
         for (INode v : graph.getNodes()) {
@@ -202,10 +204,12 @@ public class TotalResolutionForce implements IForce {
 
                 PointD force = new PointD(perpendicular_u1.getX(), perpendicular_u1.getY()).getNormalized();
                 force = PointD.times(force, threshold.getValue()/tweak * f[1]);
+                force = (force.getVectorLength() < MAX_FORCES) ? force : PointD.times(force, MAX_FORCES/force.getVectorLength() );
                 forces.setValue(u1, PointD.add(forces.getValue(u1), force));
 
                 PointD force2 = new PointD(perpendicular_u2.getX(), perpendicular_u2.getY()).getNormalized();
                 force2 = PointD.times(force2, -1 * threshold.getValue()/tweak * f[1]);
+                force2 = (force2.getVectorLength() < MAX_FORCES) ? force2 : PointD.times(force2, MAX_FORCES/force2.getVectorLength() );
                 forces.setValue(u2, PointD.add(forces.getValue(u2), force2));
             }
 
@@ -347,18 +351,21 @@ public class TotalResolutionForce implements IForce {
                     PointD perpendicular_4_f = new PointD(-bisection.getY() / bisection.length(), bisection.getX() / bisection.length());
 
                     perpendicular_1_f = PointD.times(perpendicular_1_f, v2Direction * threshold.getValue()/tweak * f_1[1]);
+                    perpendicular_1_f = (perpendicular_1_f.getVectorLength() < MAX_FORCES) ? perpendicular_1_f : PointD.times(perpendicular_1_f, MAX_FORCES/perpendicular_1_f.getVectorLength() );
                     perpendicular_2_f = PointD.times(perpendicular_2_f, u2Direction * threshold.getValue()/tweak * f_1[1]);
+                    perpendicular_2_f = (perpendicular_2_f.getVectorLength() < MAX_FORCES) ? perpendicular_2_f : PointD.times(perpendicular_2_f, MAX_FORCES/perpendicular_2_f.getVectorLength() );
                     perpendicular_3_f = PointD.times(perpendicular_3_f, u1Direction * threshold.getValue()/tweak * f_2[1]);
+                    perpendicular_3_f = (perpendicular_3_f.getVectorLength() < MAX_FORCES) ? perpendicular_3_f : PointD.times(perpendicular_3_f, MAX_FORCES/perpendicular_3_f.getVectorLength() );
                     perpendicular_4_f = PointD.times(perpendicular_4_f, v1Direction * threshold.getValue()/tweak * f_2[1]);
+                    perpendicular_4_f = (perpendicular_4_f.getVectorLength() < MAX_FORCES) ? perpendicular_4_f : PointD.times(perpendicular_4_f, MAX_FORCES/perpendicular_4_f.getVectorLength() );
 
                     forces.setValue(v2, PointD.add(forces.getValue(v2), perpendicular_1_f));
                     forces.setValue(u2, PointD.add(forces.getValue(u2), perpendicular_2_f));
                     forces.setValue(u1, PointD.add(forces.getValue(u1), perpendicular_3_f));
-                    forces.setValue(v2, PointD.add(forces.getValue(v1), perpendicular_4_f));
+                    forces.setValue(v1, PointD.add(forces.getValue(v1), perpendicular_4_f));
                 }
             }
         }
-
         return forces;
     }
 
@@ -390,7 +397,7 @@ public class TotalResolutionForce implements IForce {
     private static double[] calculateForceFactorOnEdgeCrossing(double c1, double c2, double angle, YPoint p, YPoint p_u, YPoint p_v) {
         double l = Math.sqrt(Math.pow(YPoint.distance(p, p_u),2)+ Math.pow(YPoint.distance(p, p_v),2));
 
-//        double f_e = c1 * (YPoin0.1t.distance(p_u, p_v)-l);
+//        double f_e = c1 * (YPoint.distance(p_u, p_v)-l);
         double f_e = c1 * Math.log(YPoint.distance(p_u, p_v)/l);
 
         double f_t = c2 * (Math.PI/2-angle)/angle;
