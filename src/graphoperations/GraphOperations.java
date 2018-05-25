@@ -58,7 +58,7 @@ public class GraphOperations {
         alpha = Math.toDegrees(alpha);
         if(alpha < angle){
           angle = alpha;
-          System.out.println("Candidate: " +angle + " a = " + a + " b = " + b + " c = " + c );
+          //System.out.println("Candidate: " +angle + " a = " + a + " b = " + b + " c = " + c );
         }
       }
 

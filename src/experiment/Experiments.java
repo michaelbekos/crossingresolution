@@ -38,7 +38,7 @@ public class Experiments {
     private int numOfIteration = 100;
     int iterationFactor = 1;
     private int numOfIterationFactor = 1000;
-    private long maxCalcTime = 1500; //in mili. sec
+    private long maxCalcTime = Long.MAX_VALUE; //in mili. sec
     private int boxSize = 10000;
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
@@ -67,6 +67,7 @@ public class Experiments {
         this.numOfIteration = numOfIterationPerStep;
         this.numOfIterationFactor = numOfSteps;
         this.boxSize = boxSize;
+
     }
 
     public Experiments(String inputDirectory, String outputDirectory, long maxCalcTime, int numOfIterationPerStep, int numOfSteps, int boxSize, boolean planarGraphsAllowed, boolean unconnectedGraphsAllowed){
@@ -353,7 +354,7 @@ try {
         startExperiment(exp, true, fileName);
     }
 
-        private void startExperiment(Experiment exp, boolean writeInormations, String fileName){
+        private void startExperiment(Experiment exp, boolean writeInormations, String fileName){ //TODO: unchanged...
             while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() <= 100 ) && exp.getCalcTime() <= this.maxCalcTime ){
 
                 exp.runAlgorithms();
@@ -372,7 +373,6 @@ try {
             exp.writeGraphResults(fileName);
 
             if(this.iterationFactor <= this.numOfIterationFactor || exp.getCalcTime() > this.maxCalcTime ){
-                System.out.println("Was da lso");
                 exp.writeGraphResultsMaxIterations(fileName, this.numOfIteration * this.numOfIterationFactor);
             }
         }
