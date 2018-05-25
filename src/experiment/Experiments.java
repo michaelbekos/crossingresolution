@@ -32,7 +32,12 @@ public class Experiments {
     private GraphComponent comp;
     private String inputDirectory  = "E:\\graph\\graphml\\";
     private String outputDirectory = "E:\\graph\\afterRandom\\graphml2\\";
-
+    private final String randomMovementString = "Random Movement";
+    private final String forceAlgoString = "Force Algorithm";
+    private final String totalResolutionString = "Total Resolution Force";
+    private final String randomMovement = "randommovement_n_";
+    private final String forceAlgo = "force_algo_n_";
+    private final String totalResForce = "total_resolution_force_n_";
 
     /* Config. for the type of experiment */
     private int numOfIteration = 100;
@@ -40,10 +45,10 @@ public class Experiments {
     private int numOfIterationFactor = 1000;
     private long maxCalcTime = Long.MAX_VALUE; //in mili. sec
     private int boxSize = 10000;
+    private int maxNumberOfUnchangedAngle = 100;
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
     boolean reached90Deg = false;
-    private String randomMovement, forceAlgo;
     private String[] childernP;
 
 
@@ -80,11 +85,10 @@ public class Experiments {
         this.boxSize = boxSize;
         this.planarGraphsAllowed = planarGraphsAllowed;
         this.unconnectedGraphsAllowed = unconnectedGraphsAllowed;
-        this.randomMovement = "randommovement_n_";
-        this.forceAlgo = "force_algo_n_";
+
     }
 
-    public synchronized void run()
+ /*   public synchronized void run()
     {
             java.io.File dir = new java.io.File(inputDirectory);
             // It is also possible to filter the list of returned files.
@@ -115,7 +119,7 @@ public class Experiments {
             }
                 System.out.println("ENDE");
     }
-
+*/
     /**
      * Run method for the force algorithm
      */
@@ -142,7 +146,40 @@ public class Experiments {
             }
             childernP = children;
             for(int i = 0; i<children.length; i++){
-                openFrame(children[i], ForceAlgorithm.class);
+                openFrame(children[i], this.forceAlgoString);
+                System.out.println("Iteration:   "+ i);
+            }
+        }
+        System.out.println("ENDE");
+    }
+
+    /**
+     * Run method for the force algorithm
+     */
+    public synchronized void runOnlyTotalResolutionForce()
+    {
+        java.io.File dir = new java.io.File(inputDirectory);
+        // It is also possible to filter the list of returned files.
+        java.io.FilenameFilter filter = new java.io.FilenameFilter() {
+            public boolean accept(java.io.File file, String name)
+            {
+                return true;
+            }
+        };
+        String[] children = dir.list(filter);
+        System.out.println(children.length);
+
+        if (children == null) {
+            System.out.println("Children==null");
+            // Either dir does not exist or is not a directory
+        }
+        else {
+            for(int  i = 20; i<=100; i+=20){
+                createFiles(i-19,i);
+            }
+            childernP = children;
+            for(int i = 0; i<children.length; i++){
+                openFrame(children[i], this.totalResolutionString);
                 System.out.println("Iteration:   "+ i);
             }
         }
@@ -175,7 +212,7 @@ public class Experiments {
             }
             childernP = children;
             for(int i = 0; i<children.length; i++){
-                openFrame(children[i], RandomMovementLayout.class);
+                openFrame(children[i], this.randomMovementString);
                 System.out.println("Iteration:   "+ i);
             }
         }
@@ -202,12 +239,12 @@ try {
     /**
      * Starts a frame and create an experiment object, load the graph and start the given algorithm
      * @param pattern
-     * @param algorithmLayout
+     * @param algorithmName
      */
-    private void openFrame(String pattern, Class<? extends ILayout> algorithmLayout) {
+    private void openFrame(String pattern, String algorithmName) {
         MainFrame frame = new MainFrame();
         frame.init();
-        frame.setVisible(false); //TODO
+        frame.setVisible(true); //TODO
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 
@@ -219,7 +256,7 @@ try {
 
         setStartConfigurations(experiment);
 
-        experiment.setAlgorithm(algorithmLayout);
+       // experiment.setAlgorithm(algorithmLayout);
 
         experiment.setMaxIterations(this.numOfIteration);
         experiment.setMaxTime(this.maxCalcTime);
@@ -234,8 +271,9 @@ try {
         }else{
 
             int maxNodeNum = calcMaxNodeNum(frame.graph);
-            experiment.setAlgorithm(algorithmLayout);
-            if(algorithmLayout.equals(RandomMovementLayout.class)){
+
+            if(algorithmName.equals(this.randomMovementString)){
+                experiment.setAlgorithm(RandomMovementLayout.class);
                                     /* Set config. parameters */
                 experiment.getTab().get().configurator.getItems().get(0).setValue(10.0); // Minimum step size
                 experiment.getTab().get().configurator.getItems().get(1).setValue(150.0); // Maximum step size
@@ -254,8 +292,8 @@ try {
             //    experiment.writeGraphEndResults();
                 experiment.writeGraph();
 
-            }else if(algorithmLayout.equals(ForceAlgorithm.class)){
-
+            }else if(algorithmName.equals(this.forceAlgoString)){
+                experiment.setAlgorithm(ForceAlgorithm.class);
                                 /* Set config. parameters */
                 experiment.getTab().get().configurator.getItems().get(0).setValue(1.0); // Node Neighbor Force
                 experiment.getTab().get().configurator.getItems().get(1).setValue(false);
@@ -271,15 +309,64 @@ try {
                 experiment.getTab().get().configurator.getItems().get(11).setValue(true);
                 experiment.getTab().get().configurator.getItems().get(12).setValue(0.07); // Slope Force
                 experiment.getTab().get().configurator.getItems().get(13).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(15).setValue(1.0);    //Total Resolution Force
+                experiment.getTab().get().configurator.getItems().get(16).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(17).setValue(0.13);   //Crossing1
+                experiment.getTab().get().configurator.getItems().get(18).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(19).setValue(0.05);   //Crossing2
+                experiment.getTab().get().configurator.getItems().get(20).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(21).setValue(0.03);   //Angular1
+                experiment.getTab().get().configurator.getItems().get(22).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(23).setValue(0.008);  //Angular2
+                experiment.getTab().get().configurator.getItems().get(24).setValue(false);
+                for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
+                    System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
+                }
 
                 startExperiment(experiment, this.forceAlgo + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.forceAlgo + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 // experiment.writeGraphEndResults();
                 System.out.println("Graph " + fileName + " finished Force.");
             //    experiment.writeGraphEndResults();
+            }else if(algorithmName.equals(this.totalResolutionString)){
+                experiment.setAlgorithm(ForceAlgorithm.class);
+                                                /* Set config. parameters */
+                experiment.getTab().get().configurator.getItems().get(0).setValue(1.0); // Node Neighbor Force
+                experiment.getTab().get().configurator.getItems().get(1).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(2).setValue(2.0); // Node Pair force
+                experiment.getTab().get().configurator.getItems().get(3).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(4).setValue(0.1); // Incident Edges Force
+                experiment.getTab().get().configurator.getItems().get(5).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(6).setValue(50.0); // Spring Stiffness Force
+                experiment.getTab().get().configurator.getItems().get(7).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(8).setValue(50000.0); // Electric Repulsiion Force
+                experiment.getTab().get().configurator.getItems().get(9).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(10).setValue(0.35); // Crossing Force
+                experiment.getTab().get().configurator.getItems().get(11).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(12).setValue(0.07); // Slope Force
+                experiment.getTab().get().configurator.getItems().get(13).setValue(false);
+                experiment.getTab().get().configurator.getItems().get(15).setValue(1.0);    //Total Resolution Force
+                experiment.getTab().get().configurator.getItems().get(16).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(17).setValue(0.13);   //Crossing1
+                experiment.getTab().get().configurator.getItems().get(18).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(19).setValue(0.05);   //Crossing2
+                experiment.getTab().get().configurator.getItems().get(20).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(21).setValue(0.03);   //Angular1
+                experiment.getTab().get().configurator.getItems().get(22).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(23).setValue(0.008);  //Angular2
+                experiment.getTab().get().configurator.getItems().get(24).setValue(true);
+
+                for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
+                    System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
+                }
+
+                startExperiment(experiment, this.totalResForce + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                experiment.writeGraphBestResults(this.totalResForce + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                // experiment.writeGraphEndResults();
+                System.out.println("Graph " + fileName + " finished Force.");
+
+
             }
-
-
         }
         frame.dispose();
         //  this.isFrameFinished = true;
@@ -293,56 +380,7 @@ try {
      * @param pattern
      */
 
-    private void openFrame(String pattern) {
 
-
-
-        MainFrame frame = new MainFrame();
-        frame.init();
-        frame.setVisible(false);
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
-     //   frame.BOX_SIZE = this.boxSize; //TODO: unterschiedliche boxsize=?
-        //String fileName = index +"";
-        String fileName = pattern;
-        System.out.println("Graph " + fileName + " started.");
-        //  System.out.println("1");
-        Experiment experiment = new Experiment(frame, fileName, inputDirectory, outputDirectory, this.boxSize);
-        setStartConfigurations(experiment);
-        experiment.setMaxIterations(this.numOfIteration);
-        experiment.setMaxTime(this.maxCalcTime);
-
-        YGraphAdapter graphAdapter = new YGraphAdapter(frame.graph);
-
-
-        if(GraphChecker.isPlanar(graphAdapter.getYGraph()) && !planarGraphsAllowed){
-            System.out.println("Graph " + fileName + " is planar.");
-        }else if (!GraphChecker.isConnected(graphAdapter.getYGraph()) && !unconnectedGraphsAllowed){
-            System.out.println("Graph " + fileName + " is not connected.");
-        }else{
-            /* Run with Random Movement  */
-            int maxNodeNum = calcMaxNodeNum(frame.graph);
-            experiment.setAlgorithm(RandomMovementLayout.class);
-            startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
-            experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
-            //experiment.writeGraphEndResults();
-            System.out.println("Graph " + fileName + " finished Random Movement.");
-            experiment.writeGraph();
-
-            /* Run with Force Movement  */
-            setStartConfigurations(experiment);
-            experiment.setAlgorithm(ForceAlgorithm.class);
-            startExperiment(experiment, this.forceAlgo + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
-           // experiment.writeGraphEndResults();
-            experiment.writeGraphBestResults(this.forceAlgo + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
-            System.out.println("Graph " + fileName + " finished Force.");
-
-        }
-        frame.dispose();
-      //  this.isFrameFinished = true;
-
-
-    }
 
 
     /**
@@ -355,7 +393,7 @@ try {
     }
 
         private void startExperiment(Experiment exp, boolean writeInormations, String fileName){ //TODO: unchanged...
-            while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() <= 100 ) && exp.getCalcTime() <= this.maxCalcTime ){
+            while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() <= this.maxNumberOfUnchangedAngle ) && exp.getCalcTime() <= this.maxCalcTime ){
 
                 exp.runAlgorithms();
 
@@ -392,11 +430,15 @@ try {
         String filenameRandomBest = this.randomMovement + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
         String filenameForce = this.forceAlgo + minNodeNum + "_to_" + maxNodeNum + ".csv";
         String filenameForceBest = this.forceAlgo + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
+        String filenameTotalRes = this.totalResForce + minNodeNum + "_to_" + maxNodeNum + ".csv";
+        String filenameTotalResBest = this.totalResForce + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
 
-        createFile(filenameForce);
-        createFile(filenameForceBest);
         createFile(filenameRandom);
         createFile(filenameRandomBest);
+        createFile(filenameForce);
+        createFile(filenameForceBest);
+        createFile(filenameTotalRes);
+        createFile(filenameTotalResBest);
     }
 
     private void createFile(String filename){

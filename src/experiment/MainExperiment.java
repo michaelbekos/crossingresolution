@@ -3,7 +3,9 @@ package experiment;
 /**
  * Created by Ama on 27.04.2018.
  */
+
 public class MainExperiment {
+
     public static void main(String[] args) {
         //Experiments e = new Experiments();
 
@@ -11,15 +13,20 @@ public class MainExperiment {
 
       Experiments e = new Experiments(
                 "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\romeTest20\\",
-                10000, 100, 1000, 10000,
+              Long.MAX_VALUE, 100, 1000, 10000,
                 false, false);
       // e.runOnlyRandom();
 
      e = new Experiments(
                 "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\romeTest20\\",
-                1000, 100, 1000, 10000,
+                Long.MAX_VALUE, 100, 1000, 10000,
                 false, false);
-        e.runOnlyForce();
+       // e.runOnlyForce();
+        e = new Experiments(
+                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\romeTestTotal\\",
+                Long.MAX_VALUE, 100, 1000, 10000,
+                false, false);
+        e.runOnlyTotalResolutionForce();
 
 
 
