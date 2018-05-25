@@ -35,6 +35,9 @@ public class NodePairForce implements IForce {
     toggleableParameters.add(activated);
   }
 
+  /**
+   * Calculate repulsive forces with Fruchterman & Reingold algorithm. i.e. calculateRepulsiveForcesFR
+   */
   @Override
   public ArrayList<AbstractLayoutInterfaceItem> getItems(){
     return itemList;

@@ -12,7 +12,11 @@ import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
+import graphoperations.RemovedChains;
+import graphoperations.RemovedNodes;
 import graphoperations.Scaling;
+import io.AdjacencyMatrixHandler;
+import io.Contest2018IOHandler;
 import io.ContestIOHandler;
 import io.SimpleGraphmlIOHandler;
 import layout.algo.execution.ILayout;
@@ -34,7 +38,8 @@ import java.util.function.Consumer;
 public class MainFrame extends JFrame {
 
     /* Box related issue*/
-    public static double BOX_SIZE = 10000;
+
+    public static final double BOX_SIZE[] = {1000000, 1000000};
 
     /* Graph Drawing related objects */
     public GraphComponent view;
@@ -57,11 +62,15 @@ public class MainFrame extends JFrame {
 
     public MinimumAngleMonitor minimumAngleMonitor;
     public BestSolutionMonitor bestSolution;
+    public Contest2018IOHandler contest2018IOHandler;
 
     @Nullable
     public JTabbedPane sidePanel;
     public InitSidePanel initSidePanel;
     public InitMenuBar menuBar;
+
+    public RemovedNodes removedNodes;
+    public RemovedChains removedChains;
 
     /**
      * Creates new form MainFrame
@@ -83,6 +92,9 @@ public class MainFrame extends JFrame {
      * This method is called within the constructor to initialize the form.
      */
     private void initComponents() {
+        contest2018IOHandler = new Contest2018IOHandler();
+        this.removedNodes = new RemovedNodes(graph);
+        this.removedChains = new RemovedChains(graph);
 
         JPanel progressBarPanel = new JPanel();
         progressBarPanel.setLayout(new GridLayout(1, 2, 10, 10));
@@ -364,6 +376,7 @@ public class MainFrame extends JFrame {
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
             setTitle(Paths.get(fileNamePath).getFileName().toString());
         } catch (IOException e) {
             infoLabel.setText("An error occured while reading the input file.");
@@ -371,6 +384,23 @@ public class MainFrame extends JFrame {
             initSidePanel.addDefaultListeners();
         }
     }
+
+    public void openContest2018File(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            contest2018IOHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+
     public void openSimpleFile(String fileNamePath) {
         initSidePanel.removeDefaultListeners();
         try {
@@ -390,17 +420,39 @@ public class MainFrame extends JFrame {
     public void openFile(String fileNamePath) {
         initSidePanel.removeDefaultListeners();
         try {
-              view.importFromGraphML(fileNamePath);
+            view.importFromGraphML(fileNamePath);
             //SimpleGraphmlIOHandler.read(graph, fileNamePath);
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        }
+        finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+
+	public void openAMFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            AdjacencyMatrixHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
+
             setTitle(Paths.get(fileNamePath).getFileName().toString());
         } catch (IOException e) {
             infoLabel.setText("An error occured while reading the input file.");
         } finally {
             initSidePanel.addDefaultListeners();
         }
+
     }
 
+
+
 }
+
+

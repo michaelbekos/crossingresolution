@@ -211,7 +211,7 @@ try {
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 
-        frame.BOX_SIZE = this.boxSize;
+       // frame.BOX_SIZE = this.boxSize; //TODO unterschiedliche boxsize?
         //String fileName = index +"";
         String fileName = pattern;
         System.out.println("Graph " + fileName + " started.");
@@ -302,7 +302,7 @@ try {
         frame.setVisible(false);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        frame.BOX_SIZE = this.boxSize;
+     //   frame.BOX_SIZE = this.boxSize; //TODO: unterschiedliche boxsize=?
         //String fileName = index +"";
         String fileName = pattern;
         System.out.println("Graph " + fileName + " started.");

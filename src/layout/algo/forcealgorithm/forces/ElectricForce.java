@@ -38,6 +38,9 @@ public class ElectricForce implements IForce {
     toggleableParameters.add(activated);
   }
 
+  /**
+   * Calculate electric forces with classical spring embedder algorithm. i.e. calculateElectricForcesEades
+   */
   @Override
   public ArrayList<AbstractLayoutInterfaceItem> getItems(){
     return itemList;

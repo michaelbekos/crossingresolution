@@ -1,7 +1,6 @@
 package sidepanel;
 
 import algorithms.graphs.GridGraph;
-import layout.algo.*;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
@@ -16,7 +15,11 @@ import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
-import graphoperations.*;
+import graphoperations.Chains;
+import graphoperations.RemovedChains;
+import graphoperations.Scaling;
+import layout.algo.FraysseixPachPollack;
+import layout.algo.NodeSwapper;
 import layout.algo.execution.BasicIGraphLayoutExecutor;
 import layout.algo.execution.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
@@ -442,7 +445,7 @@ public class SidePanelTab {
             IGraph graph = initSidePanel.mainFrame.graph;
             Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
             RectD bounds = BoundingBox.from(nodePositions);
-            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE / bounds.getWidth()), (int) (MainFrame.BOX_SIZE / bounds.getHeight())), nodePositions);
+            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth()), (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight())), nodePositions);
             PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
 
@@ -453,7 +456,7 @@ public class SidePanelTab {
         });
     }
 
-    private LinkedList<RemovedChains>  removedChains= new LinkedList<RemovedChains>();
+    private LinkedList<RemovedChains>  removedChains = new LinkedList<RemovedChains>();
     private void removeChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         if (initSidePanel.mainFrame.graph.getNodes().size() == 0) {
             return;
@@ -461,39 +464,51 @@ public class SidePanelTab {
 
         modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
-
-            removedChains.add(depth, Chains.analyze(initSidePanel.mainFrame.graph).remove());
-            outputTextArea.setText("Removed " + removedChains.get(depth).number() + " chains.");
-            if (removedChains.get(depth).number()!=0) {
-            	depth++;
-            }
-
+//--------------------------------------------------------------------
+//            removedChains.add(depth, Chains.analyze(initSidePanel.mainFrame.graph).remove());
+//            outputTextArea.setText("Removed " + removedChains.get(depth).number() + " chains.");
+//            if (removedChains.get(depth).number()!=0) {
+//            	depth++;
+//            }
+//====================================================================
+            Chains chains = Chains.analyze(initSidePanel.mainFrame.graph);
+            initSidePanel.mainFrame.removedChains = chains.remove(chains.number(), initSidePanel.mainFrame.removedChains);
+//--------------------------------------------------------------------
             initSidePanel.addDefaultListeners();
         });
+        System.out.println("rmeoved "+removedChains.size());
     }
 
     private void reinsertChainItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        if (removedChains == null || depth==0 || removedChains.get(depth-1).number() == 0) {
-            removedChains = null;
+        reinsertChain();
+    }
+
+    private void reinsertChain() {
+        if (initSidePanel.mainFrame.removedChains.number() == 0) {
             return;
         }
 
         modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
 
-            //TODO reinsert chains (currently regular reinsert 1 chain)
-            removedChains.get(depth-1).reinsertOne();
-            if (removedChains.get(depth-1).number()!=0) {
-            	outputTextArea.setText(removedChains.get(depth-1).number() + " Chains Left in the Stack on level: "+ (depth-1));
-            }
-            else { if (depth-1==0){
-            	outputTextArea.setText("All chains were reinserted.");
-            	}
-	            else {
-	            depth--;
-	            outputTextArea.setText(removedChains.get(depth-1).number() + " Chains Left in the Stack on level: "+ (depth-1));
-	            }
-            }
+//--------------------------------------------------------------------
+//            //TODO reinsert chains (currently regular reinsert 1 chain)
+//            removedChains.get(depth-1).reinsertOne();
+//            if (removedChains.get(depth-1).number()!=0) {
+//                outputTextArea.setText(removedChains.get(depth-1).number() + " Chains Left in the Stack on level: "+ (depth-1));
+//            }
+//            else {
+//                if (depth-1==0){
+//                outputTextArea.setText("All chains were reinserted.");
+//            }
+//            else {
+//                depth--;
+//                outputTextArea.setText(removedChains.get(depth-1).number() + " Chains Left in the Stack on level: "+ (depth-1));
+//            }
+//            }
+//====================================================================
+            reinsertVerticesItem();
+//--------------------------------------------------------------------
 
             Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
 
@@ -501,25 +516,73 @@ public class SidePanelTab {
         });
     }
 
+
     private void reinsertAllChainsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        if (removedChains == null || depth==0 || removedChains.get(depth-1).number() == 0) {
-            removedChains = null;
+//--------------------------------------------------------------------
+//        if (depth==0 || removedChains.get(depth-1).number() == 0) {
+//            removedChains.clear();
+//            return;
+//        }
+//
+//        modifyGraph(() -> {
+//            initSidePanel.removeDefaultListeners();
+//
+//            while(depth>0) {
+//                depth--;
+//                removedChains.get(depth).reinsertAll();
+//                outputTextArea.setText(removedChains.get(depth).number() + " Chains Left in the Stack.");
+//            }
+//
+//            Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
+//
+//            initSidePanel.addDefaultListeners();
+//        });
+//====================================================================
+
+        if (initSidePanel.mainFrame.removedChains.number() == 0) {
             return;
         }
+        Thread automaticInsertion = new Thread(() -> {
+                double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+                double epsilon = startingAngle/100;
+                if (!algorithmName.equals("Random Movement")) {
+                    setOutputTextArea("Recommended to use Random Movement!");
+                    System.out.println("Recommended to use Random Movement!");
+                }
+                if(executor.isPaused() || executor.isFinished() || !executor.isRunning()) {
+                    startPauseExecution();
+                }
 
-        modifyGraph(() -> {
-            initSidePanel.removeDefaultListeners();
+                long iterations = 0;
+                while(initSidePanel.mainFrame.removedChains.number() > 0) {
+                    if (executor.isPaused()) {
+                        continue;
+                    }
+                    if (executor.isFinished()) {
+                        return;
+                    }
+                    double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+                    if (minAngle >= (startingAngle - epsilon)) {
+                        //remove chain
+                        reinsertVerticesItem();
+                        Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
+                        setOutputTextArea("Reinserting Chains... Chains left: "+initSidePanel.mainFrame.removedChains.number());
+                        System.out.println("Reinserting Chains... "+initSidePanel.mainFrame.removedChains.number()+" angle: "+minAngle);
+                        iterations = 0;
+                        epsilon = startingAngle/100;
+                    }
+                    if (iterations == Math.pow(10,7)) {
+                        epsilon +=0.1;
+                        iterations = 0;
+                    }
 
-            while(depth>0) {
-                depth--;
-                removedChains.get(depth).reinsertAll();
-                outputTextArea.setText(removedChains.get(depth).number() + " Chains Left in the Stack.");
-            }
-
-            Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
-
-            initSidePanel.addDefaultListeners();
+                    iterations++;
+                }
+                stopExecution();
         });
+        automaticInsertion.start();
+
+//--------------------------------------------------------------------
     }
     
     private void showGraphInfoActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
@@ -552,6 +615,7 @@ public class SidePanelTab {
         double edgeThreshold = 0.999;
         boolean nodeOverlap = false;
         boolean nodeEdgeOverlap = false;
+        boolean negativeNodes = false;
         for (INode u : this.initSidePanel.mainFrame.graph.getNodes()) {
 
             if (u.getPorts().size() == 1) {
@@ -590,9 +654,13 @@ public class SidePanelTab {
                 }
 
             }
+            if (u.getLayout().getCenter().getX() < 0 || u.getLayout().getCenter().getY() < 0) {
+                negativeNodes = true;
+            }
         }
         graphInfo.append("Node Node Overlap: ").append(nodeOverlap).append("\n");
         graphInfo.append("Node Edge Overlap: ").append(nodeEdgeOverlap).append("\n");
+        graphInfo.append("Negative Nodes: ").append(negativeNodes).append("\n");
 
         graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph)).append("\n");
 
@@ -713,6 +781,14 @@ public class SidePanelTab {
         } else {
             executor.modifyGraph(graphModifier);
         }
+    }
+
+    private void reinsertVerticesItem() {
+        modifyGraph(() -> {
+            initSidePanel.mainFrame.initSidePanel.removeDefaultListeners();
+            initSidePanel.mainFrame.removedChains.reinsert(1);
+            initSidePanel.mainFrame.initSidePanel.addDefaultListeners();
+        });
     }
 
     public BasicIGraphLayoutExecutor getExecutor() {

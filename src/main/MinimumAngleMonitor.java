@@ -95,9 +95,9 @@ public class MinimumAngleMonitor {
     MinimumAngle.resetHighlighting(graph);
   }
 
-  public double getMinAngle(){
-    return this.oldAngle;
-  }
 
   public double getActAngle(){return this.actAngle;}
+
+  public double getMinimumAngle() {return this.oldAngle;}
+
 }

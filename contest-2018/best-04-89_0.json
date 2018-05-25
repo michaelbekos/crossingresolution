@@ -1,0 +1,309 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "x": 6583,
+      "y": 6149
+    },
+    {
+      "id": 1,
+      "x": 7312,
+      "y": 7001
+    },
+    {
+      "id": 2,
+      "x": 5795,
+      "y": 88
+    },
+    {
+      "id": 3,
+      "x": 3043,
+      "y": 2961
+    },
+    {
+      "id": 4,
+      "x": 3770,
+      "y": 3745
+    },
+    {
+      "id": 5,
+      "x": 2975,
+      "y": 2999
+    },
+    {
+      "id": 6,
+      "x": 6026,
+      "y": 3754
+    },
+    {
+      "id": 7,
+      "x": 3751,
+      "y": 3765
+    },
+    {
+      "id": 8,
+      "x": 5632,
+      "y": 260
+    },
+    {
+      "id": 9,
+      "x": 6101,
+      "y": 6237
+    },
+    {
+      "id": 10,
+      "x": 4056,
+      "y": 5417
+    },
+    {
+      "id": 11,
+      "x": 4758,
+      "y": 4745
+    },
+    {
+      "id": 12,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "id": 13,
+      "x": 6037,
+      "y": 6271
+    },
+    {
+      "id": 14,
+      "x": 3832,
+      "y": 3686
+    },
+    {
+      "id": 15,
+      "x": 989,
+      "y": 4969
+    },
+    {
+      "id": 16,
+      "x": 5513,
+      "y": 4077
+    }
+  ],
+  "edges": [
+    {
+      "source": 0,
+      "target": 8
+    },
+    {
+      "source": 2,
+      "target": 8
+    },
+    {
+      "source": 3,
+      "target": 8
+    },
+    {
+      "source": 8,
+      "target": 14
+    },
+    {
+      "source": 6,
+      "target": 8
+    },
+    {
+      "source": 0,
+      "target": 6
+    },
+    {
+      "source": 3,
+      "target": 14
+    },
+    {
+      "source": 6,
+      "target": 14
+    },
+    {
+      "source": 3,
+      "target": 4
+    },
+    {
+      "source": 2,
+      "target": 3
+    },
+    {
+      "source": 3,
+      "target": 12
+    },
+    {
+      "source": 4,
+      "target": 12
+    },
+    {
+      "source": 4,
+      "target": 5
+    },
+    {
+      "source": 4,
+      "target": 11
+    },
+    {
+      "source": 0,
+      "target": 2
+    },
+    {
+      "source": 2,
+      "target": 12
+    },
+    {
+      "source": 5,
+      "target": 12
+    },
+    {
+      "source": 9,
+      "target": 11
+    },
+    {
+      "source": 6,
+      "target": 9
+    },
+    {
+      "source": 0,
+      "target": 9
+    },
+    {
+      "source": 5,
+      "target": 11
+    },
+    {
+      "source": 7,
+      "target": 11
+    },
+    {
+      "source": 5,
+      "target": 15
+    },
+    {
+      "source": 5,
+      "target": 7
+    },
+    {
+      "source": 7,
+      "target": 9
+    },
+    {
+      "source": 2,
+      "target": 15
+    },
+    {
+      "source": 7,
+      "target": 15
+    },
+    {
+      "source": 9,
+      "target": 10
+    },
+    {
+      "source": 7,
+      "target": 10
+    },
+    {
+      "source": 9,
+      "target": 13
+    },
+    {
+      "source": 10,
+      "target": 15
+    },
+    {
+      "source": 10,
+      "target": 13
+    },
+    {
+      "source": 1,
+      "target": 2
+    },
+    {
+      "source": 1,
+      "target": 15
+    },
+    {
+      "source": 1,
+      "target": 10
+    },
+    {
+      "source": 1,
+      "target": 13
+    },
+    {
+      "source": 1,
+      "target": 9
+    },
+    {
+      "source": 0,
+      "target": 1
+    },
+    {
+      "source": 9,
+      "target": 14
+    },
+    {
+      "source": 11,
+      "target": 14
+    },
+    {
+      "source": 4,
+      "target": 14
+    },
+    {
+      "source": 12,
+      "target": 15
+    },
+    {
+      "source": 6,
+      "target": 16
+    },
+    {
+      "source": 14,
+      "target": 16
+    },
+    {
+      "source": 9,
+      "target": 16
+    },
+    {
+      "source": 10,
+      "target": 11
+    },
+    {
+      "source": 4,
+      "target": 7
+    },
+    {
+      "source": 12,
+      "target": 14
+    },
+    {
+      "source": 8,
+      "target": 16
+    },
+    {
+      "source": 2,
+      "target": 5
+    },
+    {
+      "source": 5,
+      "target": 10
+    },
+    {
+      "source": 11,
+      "target": 16
+    },
+    {
+      "source": 3,
+      "target": 11
+    },
+    {
+      "source": 10,
+      "target": 16
+    }
+  ],
+  "xdimension": 1000000,
+  "ydimension": 1000000
+}

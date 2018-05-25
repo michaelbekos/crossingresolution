@@ -41,6 +41,9 @@ public class NodeNeighbourForce implements IForce {
   }
 
 
+  /**
+   * Calculate spring forces with Fruchterman & Reingold algorithm. i.e.calculateAttractiveForcesFR
+   */
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
     if (!activated.getValue()) {

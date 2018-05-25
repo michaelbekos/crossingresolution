@@ -6,7 +6,7 @@ edges. It is developed in the scope of the [Graph Drawing Contest](http://www.gr
 ## Installation and Dependencies
 Currently there exists no binary version of the program. Thus you need a [Java SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 (Java 8 or higher) installed in order to run it. Additionally you need a version of [yFiles for Java 3.1](http://www.yworks.com/products/yfiles-for-java)
-and a valid license file. Put the `*.jar` and license files into the `src` directory and add the `jar` to the classpath.
+and a valid license file. Also, for parsing json the google [gson](https://github.com/google/gson) library is needed.  Put the `*.jar` and license files into the `src` directory and add the `jar` to the classpath.
 
 ## Usage
 You can run the program by compiling and executing the `main/Main` class or simply running the scripts located in

@@ -29,7 +29,8 @@ public class SpringForce implements IForce {
     itemList = new ArrayList<>();
 
     springStiffness = itemFactory.doubleParameter("Spring Stiffness Force", 0.0, 150);
-    springStiffness.setValue(150.0);
+
+    springStiffness.setValue(50.0);
     itemList.add(springStiffness);
 
     activated = itemFactory.toggleableParameter(springStiffness);
@@ -39,6 +40,9 @@ public class SpringForce implements IForce {
     toggleableParameters.add(activated);
   }
 
+  /**
+   * Calculate spring forces with classical spring embedder algorithm. i.e. calculateSpringForcesEades
+   */
   @Override
   public ArrayList<AbstractLayoutInterfaceItem> getItems(){
     return itemList;

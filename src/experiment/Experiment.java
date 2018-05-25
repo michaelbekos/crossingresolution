@@ -319,7 +319,7 @@ public class Experiment {
         }
 
         mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
-        this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getMinAngle()) / 1000.0;
+        this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getMinimumAngle()) / 1000.0;
         System.out.println("load Graph " + this.minimumAngle);
         this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
        // this.angular_resolution = GraphOperations.getMinimumCrossingForNodes(this.graph);
@@ -399,7 +399,7 @@ public class Experiment {
             reached90Degree = true;
         }
 
-        this.testAngle = mainFrame.minimumAngleMonitor.getMinAngle();
+        this.testAngle = mainFrame.minimumAngleMonitor.getMinimumAngle();
         //outputTextArea.setText(graphInfo.toString());
 
 
@@ -550,9 +550,9 @@ public class Experiment {
 
         graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph)).append("\n");
 
-        graphInfo.append("\nMin. Angle: ").append(mainFrame.minimumAngleMonitor.getMinAngle()).append("\n");
+        graphInfo.append("\nMin. Angle: ").append(mainFrame.minimumAngleMonitor.getMinimumAngle()).append("\n");
         mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
-        double minAngle = mainFrame.minimumAngleMonitor.getMinAngle();
+        double minAngle = mainFrame.minimumAngleMonitor.getMinimumAngle();
         graphInfo.append("\nMin. Angle: ").append(minAngle).append("\n");
         if(minAngle>=87.0){
             reached90Degree = true;

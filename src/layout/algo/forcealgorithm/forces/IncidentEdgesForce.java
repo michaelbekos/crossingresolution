@@ -118,6 +118,7 @@ public class IncidentEdgesForce implements IForce {
     return forces;
   }
 
+  //calculateForceFactorOnEdgeEdgeRepulsion, sine force
   private Tuple2<PointD, PointD> applyIncidentEdgeForce(PointD e1, PointD e2, double angle, int deg) {
     if(deg <= 0) return new Tuple2<>(new PointD(0, 0), new PointD(0, 0));
     double threshold = weight.getValue(),
