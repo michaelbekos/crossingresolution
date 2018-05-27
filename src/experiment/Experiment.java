@@ -382,7 +382,7 @@ public class Experiment {
         mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
 
 
-        this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getActAngle()) / 1000.0;
+        this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getCurrentAngle()) / 1000.0;
         if(this.minimumAngle >= this.actAngle){
             this.numOfUnchangedAngle++;
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!numebrs   " + this.numOfUnchangedAngle);

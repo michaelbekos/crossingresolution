@@ -1,5 +1,6 @@
 package layout.algo.randommovement;
 
+import algorithms.graphs.AngularResolution;
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.algorithms.Bfs;
 import com.yworks.yfiles.algorithms.Node;
@@ -94,7 +95,7 @@ public class RandomMovementLayout implements ILayout {
 
     Collection<Sample> samples = selectRandomSamples();
 
-    double originalAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
+    double originalAngle = getAngleForNode(positions, node, graph);
     PointD originalPosition = positions.getValue(node);
 
     Sample[] goodSamples = samples.stream()
@@ -112,7 +113,7 @@ public class RandomMovementLayout implements ILayout {
         .filter(sample -> LayoutUtils.overlap(sample.position, positions))
         .peek(sample -> {
           positions.setValue(node, sample.position);
-          sample.minimumAngle = MinimumAngle.getMinimumAngleForNode(positions, node, graph);
+          sample.minimumAngle = getAngleForNode(positions, node, graph);
         })
         .filter(sample -> sample.minimumAngle > originalAngle)
         .toArray(Sample[]::new);
@@ -200,7 +201,7 @@ public class RandomMovementLayout implements ILayout {
         .limit(configurator.numSamplesForJumping.getValue())
         .max(Comparator.comparingDouble(position -> {
           positions.setValue(node, position);
-          return MinimumAngle.getMinimumAngleForNode(positions, node, graph);
+          return getAngleForNode(positions, node, graph);
         }))
         .ifPresent(pointD -> positions.setValue(node, pointD));
   }
@@ -254,4 +255,15 @@ public class RandomMovementLayout implements ILayout {
   public Mapper<INode, PointD> getNodePositions() {
     return positions;
   }
+
+  private double getAngleForNode(Mapper<INode, PointD> positions, INode node, IGraph graph) {
+    if (configurator.useCrossingResolution.getValue() && configurator.useAngularResolution.getValue()) {
+      return Math.min(MinimumAngle.getMinimumAngleForNode(positions, node, graph), AngularResolution.getAngularResolutionForNode(positions, node, graph));
+    } else if (configurator.useAngularResolution.getValue()) {
+      return AngularResolution.getAngularResolutionForNode(positions, node, graph);
+    } else {
+     return MinimumAngle.getMinimumAngleForNode(positions, node, graph);
+    }
+  }
+
 }

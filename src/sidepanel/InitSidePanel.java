@@ -38,6 +38,8 @@ public class InitSidePanel {
     public JCheckBox masterEnableMinimumAngle;
     private boolean stateEnableMinimumAngle;
     public JCheckBox masterAllowClickCreateNodeEdge;
+    public JCheckBox masterEnableCrossingResolution;
+    public JCheckBox masterEnableAngularResolution;
 
 
     public InitSidePanel(MainFrame mainFrame) {
@@ -85,12 +87,22 @@ public class InitSidePanel {
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
         masterAllowClickCreateNodeEdge.setSelected(false);
 
+        masterEnableCrossingResolution = new JCheckBox("Crossing Resolution");
+        masterEnableCrossingResolution.addItemListener(this::masterEnableCrossingResolutionActionPerformed);
+        masterEnableCrossingResolution.setSelected(true);
+
+        masterEnableAngularResolution = new JCheckBox("Angular Resolution");
+        masterEnableAngularResolution.addItemListener(this::masterEnableAngularResolutionActionPerformed);
+        masterEnableAngularResolution.setSelected(false);
+
         sidePanelTabs = new ArrayList<>();
 
         tabbedSidePane.addChangeListener(changeEvent -> {
             int selectedTab = tabbedSidePane.getSelectedIndex();
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
+            sidePanelTabs.get(selectedTab).setEnableCrossingResolution(masterEnableCrossingResolution.isSelected());
+            sidePanelTabs.get(selectedTab).setEnableAngularResolution(masterEnableAngularResolution.isSelected());
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
                 if (sidePanelTabs.get(i).getExecutor().isRunning()) {
                     sidePanelTabs.get(selectedTab).setOutputTextArea(sidePanelTabs.get(i).algorithmName + " is Still Running!");
@@ -178,7 +190,7 @@ public class InitSidePanel {
         if (stateEnableMinimumAngle && removedListeners) {
             removedListeners = false;
             mainFrame.minimumAngleMonitor.registerGraphChangedListeners();
-            mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+            mainFrame.minimumAngleMonitor.updateAngleInfoBar();
         }
     }
 
@@ -211,5 +223,13 @@ public class InitSidePanel {
         mainFrame.graphEditorInputMode.setShowHandleItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports
         mainFrame.graphEditorInputMode.setDeletableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
         mainFrame.graphEditorInputMode.setSelectableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
+    }
+
+    private void masterEnableCrossingResolutionActionPerformed(ItemEvent evt) { //TODO: maybe sync with random
+        mainFrame.minimumAngleMonitor.setCrossingResolution(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    private void masterEnableAngularResolutionActionPerformed(ItemEvent evt) {
+        mainFrame.minimumAngleMonitor.setAngularResolution(evt.getStateChange() == ItemEvent.SELECTED);
     }
 }

@@ -1,7 +1,7 @@
 package main;
 
+import algorithms.graphs.AngularResolution;
 import algorithms.graphs.MinimumAngle;
-
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.utils.IEventListener;
@@ -19,46 +19,60 @@ public class MinimumAngleMonitor {
   private IGraph graph;
   private JLabel infoLabel;
   private GraphComponent view;
-  private double oldAngle;
-  private double actAngle;
+  private double oldMinAngle;
+  private double oldAngularRes;
+  private double currentAngle;
+  private boolean useCrossingResolution;
+  private boolean useAngularResolution;
 
   private BestSolutionMonitor bestSolution;
 
-  private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
-  private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o, EdgeEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
-  private IEventListener<ItemEventArgs<INode>> minimumAngleNodeCreatedListener = (o, ItemEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
-  private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> showMinimumAngle(graph, view, infoLabel, false);
-  private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> showMinimumAngle(graph, view, infoLabel, false);
+  private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o, ItemEventArgs) -> updateAngleInfoBar();
+  private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o, EdgeEventArgs) -> updateAngleInfoBar();
+  private IEventListener<ItemEventArgs<INode>> minimumAngleNodeCreatedListener = (o, ItemEventArgs) -> updateAngleInfoBar();
+  private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> updateAngleInfoBar();
+  private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> updateAngleInfoBar();
 
+  //Total Angle Monitor (Crossing+Angular Resolution)
   MinimumAngleMonitor(GraphComponent view, IGraph graph, JLabel infoLabel, BestSolutionMonitor bestSolution) {
     this.graph = graph;
     this.infoLabel = infoLabel;
     this.view = view;
     this.bestSolution = bestSolution;
-    this.oldAngle = 0;
-    this.actAngle = 0;
+    this.oldMinAngle = 0;
+    this.oldAngularRes = 0;
+    this.currentAngle = 0;
+    this.useCrossingResolution = true;
+    this.useAngularResolution = false;
   }
 
-  void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
-    if (!bestSolution.getBestMinimumAngleForNodes(graph.getNodes().size()).isPresent()) {
-      oldAngle = 0;
-    }
+  public Optional<Intersection> computeMinimumAngle() {
     Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
     MinimumAngle.resetHighlighting(graph);
     Optional<Intersection> minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
     if (minAngleCr.isPresent()){
-      this.actAngle = minAngleCr.get().angle;
-      if (oldAngle <= minAngleCr.get().angle){
-        oldAngle = minAngleCr.get().angle;
+      currentAngle = minAngleCr.get().angle;
+      if (oldMinAngle <= minAngleCr.get().angle){
+        oldMinAngle = minAngleCr.get().angle;
 
-        bestSolution.setBestMinimumAngle(oldAngle, graph.getNodes().size());
+        bestSolution.setBestMinimumAngle(oldMinAngle, graph.getNodes().size());
         bestSolution.setBestSolutionMapping(nodePositions, graph.getNodes().size());
       }
     }
+    return  minAngleCr;
+  }
+
+  public void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
+    if (!bestSolution.getBestMinimumAngleForNodes(graph.getNodes().size()).isPresent()) {
+      oldMinAngle = 0;
+    }
+
+    Optional<Intersection> minAngleCr = computeMinimumAngle();
 
     Optional<String> labText = minAngleCr.map(cr -> {
       String text = DisplayMessagesGui.createMinimumAngleMsg(cr, graph.getNodes().size(), bestSolution);
+
       if (viewCenter) {
         view.setCenter(cr.intersectionPoint);
       }
@@ -73,8 +87,63 @@ public class MinimumAngleMonitor {
     infoLabel.setText(labText.orElse("Graph has no crossings."));
   }
 
+  public double computeAngularResolution() {
+    Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
+    double angularRes = AngularResolution.getAngularResolution(graph);
+    if (Double.isFinite(angularRes)){
+      if (oldAngularRes <= angularRes){
+        oldAngularRes = angularRes;
+
+        bestSolution.setBestAngularResolution(oldAngularRes, graph.getNodes().size());
+        bestSolution.setBestSolutionAngularResolutionMapping(nodePositions, graph.getNodes().size());
+      }
+    }
+    return angularRes;
+  }
+
+  public void showAngularResolution(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
+    if (!bestSolution.getBestAngularResolutionForNodes(graph.getNodes().size()).isPresent()) {
+      oldAngularRes = 0;
+    }
+
+    double angularRes = computeAngularResolution();
+
+    Optional<Double> angularResOpt = Optional.of(angularRes);
+    Optional<String> labText = angularResOpt.map(cr -> {
+      String text = DisplayMessagesGui.createAngularResMsg(angularRes, graph.getNodes().size(), bestSolution);
+
+      view.updateUI();
+
+      return text;
+    });
+
+    infoLabel.setText(labText.orElse("Graph has no crossings."));
+  }
+
+
   public void updateMinimumAngleInfoBar() {
     showMinimumAngle(graph, view, infoLabel, false);
+  }
+
+  public void updateAngularResolutionInfoBar() {
+    showAngularResolution(graph, view, infoLabel, false);
+  }
+
+  public void updateAngleInfoBar() {
+    computeMinimumAngle();
+    computeAngularResolution();
+    if (useAngularResolution && useCrossingResolution) {
+      if (oldAngularRes < oldMinAngle) {
+        showAngularResolution(graph, view, infoLabel, false);
+      } else {
+        showMinimumAngle(graph, view, infoLabel, false);
+      }
+    } else if (useAngularResolution) {
+      showAngularResolution(graph, view, infoLabel, false);
+    } else {
+      showMinimumAngle(graph, view, infoLabel, false);
+    }
+
   }
 
   public void registerGraphChangedListeners() {
@@ -95,9 +164,23 @@ public class MinimumAngleMonitor {
     MinimumAngle.resetHighlighting(graph);
   }
 
+  public double getMinimumAngle() {
+    return oldMinAngle;
+  }
 
-  public double getActAngle(){return this.actAngle;}
+  public double getAngularResolution() {
+    return oldAngularRes;
+  }
 
-  public double getMinimumAngle() {return this.oldAngle;}
+  public void setCrossingResolution(boolean value) {
+    this.useCrossingResolution= value;
+  }
 
+  public void setAngularResolution(boolean value) {
+    this.useAngularResolution = value;
+  }
+
+  public double getCurrentAngle() {
+    return currentAngle;
+  }
 }

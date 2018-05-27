@@ -36,4 +36,10 @@ public class DisplayMessagesGui {
                 " after " + (iterations +1) + " iterations.";
         return text;
     }
+
+    public static String createAngularResMsg(double angularRes, int nodes, BestSolutionMonitor bestSolution) {
+        String text = "Angular Resolution: " + angularRes;
+        text += " | Stored Best: " + bestSolution.getBestAngularResolutionForNodes(nodes).orElse(Double.POSITIVE_INFINITY);
+        return text;
+    }
 }

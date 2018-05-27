@@ -3,15 +3,17 @@ package algorithms.graphs;
 import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.*;
-import com.yworks.yfiles.graph.styles.*;
-import com.yworks.yfiles.view.*;
+import com.yworks.yfiles.graph.styles.IEdgeStyle;
+import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
+import com.yworks.yfiles.view.Pen;
+import layout.algo.utils.PositionMap;
+import util.Util;
+import util.graph2d.Intersection;
+import util.graph2d.LineSegment;
 
 import java.util.*;
-import java.util.stream.*;
-
-import layout.algo.utils.PositionMap;
-import util.*;
-import util.graph2d.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // to allow overriding for caching, we have an explicit singleton object, which implements all methods. Static calls just use the singleton.
 // This is because you can't derive static methods to member-methods.
@@ -99,7 +101,7 @@ public class MinimumAngle {
   }
 
   public static double getMinimumAngleForNode(Mapper<INode, PointD> positions, INode node, IGraph graph) {
-    return getMinimumAngleForNode(graph, node, positions).orElse(Double.POSITIVE_INFINITY);
+    return m.getMinimumAngleForNode(graph, node, positions).orElse(Double.POSITIVE_INFINITY);
   }
 
   public static Optional<Double> getMinimumAngleForNode(IGraph graph, INode node, @Nullable Mapper<INode, PointD> nodePositions) {
