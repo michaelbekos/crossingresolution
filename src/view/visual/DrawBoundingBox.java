@@ -9,7 +9,6 @@ import com.yworks.yfiles.view.IRenderContext;
 import com.yworks.yfiles.view.IVisual;
 
 import main.MainFrame;
-import sidepanel.InitSidePanel;
 
 public class DrawBoundingBox implements IVisual{
 
