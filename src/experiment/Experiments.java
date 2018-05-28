@@ -45,7 +45,7 @@ public class Experiments {
     private int numOfIterationFactor = 1000;
     private long maxCalcTime = Long.MAX_VALUE; //in mili. sec
     private int boxSize = 10000;
-    private int maxNumberOfUnchangedAngle = 100;
+    private int maxNumberOfUnchangedAngle = 50;
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
     boolean reached90Deg = false;
@@ -271,6 +271,9 @@ try {
         }else{
 
             int maxNodeNum = calcMaxNodeNum(frame.graph);
+            if(maxNodeNum != 100){
+                frame.dispose();
+                return;}//TODO: Nur zum testen
 
             if(algorithmName.equals(this.randomMovementString)){
                 experiment.setAlgorithm(RandomMovementLayout.class);
@@ -283,7 +286,7 @@ try {
                 experiment.getTab().get().configurator.getItems().get(5).setValue(false);  // Only use grid coord.
                 experiment.getTab().get().configurator.getItems().get(6).setValue(true); // focus on critical nodes
                 experiment.getTab().get().configurator.getItems().get(7).setValue(true); // Automatically toggle focusing in critical nodes
-
+                experiment.getTab().get().configurator.getItems().get(8).setValue(false); // auto increase step size
 
                 startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");

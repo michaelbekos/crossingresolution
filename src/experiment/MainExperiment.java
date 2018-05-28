@@ -12,21 +12,21 @@ public class MainExperiment {
         // Experiments e = new Experiments(("E:\\graph\\graphml\\"), "E:\\graph\\afterRandom\\graphml2\\");
 
       Experiments e = new Experiments(
-                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\romeTest20\\",
+                "E:\\graph\\rome\\80-100-Set\\", "E:\\graph\\results\\romeTest100\\",
               Long.MAX_VALUE, 100, 1000, 10000,
                 false, false);
-      // e.runOnlyRandom();
+       e.runOnlyRandom();
 
      e = new Experiments(
-                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\romeTest20\\",
+                "E:\\graph\\rome\\80-100-Set\\", "E:\\graph\\results\\romeTest100\\",
                 Long.MAX_VALUE, 100, 1000, 10000,
                 false, false);
-       // e.runOnlyForce();
+        //.runOnlyForce();
         e = new Experiments(
-                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\romeTestTotal\\",
+                "E:\\graph\\rome\\80-100-Set\\", "E:\\graph\\results\\romeTest100\\",
                 Long.MAX_VALUE, 100, 1000, 10000,
                 false, false);
-        e.runOnlyTotalResolutionForce();
+       // e.runOnlyTotalResolutionForce();
 
 
 

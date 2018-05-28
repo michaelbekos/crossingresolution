@@ -24,7 +24,7 @@ public class GraphOperations {
     double angle = Double.MAX_VALUE;
     for(int i = 0; i < g.getNodes().size(); i++){
       double alpha = getMinimumAngleForOneNode(g,g.getNodes().getItem(i));
-      System.out.println(angle);
+     // System.out.println(angle);
       if(alpha < angle){
         angle = alpha;
         System.out.println("Neu: " +angle );

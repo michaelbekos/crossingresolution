@@ -60,6 +60,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
     allowIncreaseStepSize = itemFactory.booleanParameter("Automatically increase step size");
     allowIncreaseStepSize.setValue(false);
+    itemList.add(allowIncreaseStepSize);
   }
 
   @Override
