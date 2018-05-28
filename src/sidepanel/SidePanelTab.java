@@ -51,6 +51,8 @@ public class SidePanelTab {
     private JButton stopButton;
     private JCheckBox enableMinimumAngleDisplay;
     private JCheckBox allowClickCreateNodeEdge;
+    private JCheckBox enableCrossingResolution;
+    private JCheckBox enableAngularResolution;
     private JTextArea outputTextArea;
     private boolean verbose;
     
@@ -213,7 +215,7 @@ public class SidePanelTab {
         defaultPanel.add(reinsertAllChains, cDefaultPanel);
         reinsertAllChains.addActionListener(this::reinsertAllChainsItemActionPerformed);
 
-        enableMinimumAngleDisplay = new JCheckBox("Show Minimum Angle");
+        enableMinimumAngleDisplay = new JCheckBox("Show Angle");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
@@ -232,6 +234,26 @@ public class SidePanelTab {
         defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
         allowClickCreateNodeEdge.setSelected(false);
+
+        enableCrossingResolution = new JCheckBox("Crossing Resolution");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(enableCrossingResolution, cDefaultPanel);
+        enableCrossingResolution.addItemListener(this::enableCrossingResolutionActionPerformed);
+        enableCrossingResolution.setSelected(false);
+
+        enableAngularResolution = new JCheckBox("Angular Resolution");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(enableAngularResolution, cDefaultPanel);
+        enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
+        enableAngularResolution.setSelected(false);
 
         outputTextArea.setLineWrap(true);
         outputTextArea.setRows(10);
@@ -338,6 +360,22 @@ public class SidePanelTab {
         return this.allowClickCreateNodeEdge.isSelected();
     }
 
+    public void setEnableCrossingResolution(boolean value) {
+        this.enableCrossingResolution.setSelected(value);
+    }
+
+    public boolean getEnableCrossingResolution() {
+        return this.enableCrossingResolution.isSelected();
+    }
+
+    public void setEnableAngularResolution(boolean value) {
+        this.enableAngularResolution.setSelected(value);
+    }
+
+    public boolean getEnableAngularResolution() {
+        return this.enableAngularResolution.isSelected();
+    }
+
     public void setAllowClickCreateNodeEdge(boolean value) {
         this.allowClickCreateNodeEdge.setSelected(value);
     }
@@ -357,7 +395,16 @@ public class SidePanelTab {
 
     private void showBestSolution(@SuppressWarnings("unused") ActionEvent evt) {
         int nodes= initSidePanel.mainFrame.graph.getNodes().size();
-        Optional<Mapper<INode, PointD>> bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionPositions(nodes);
+        Optional<Mapper<INode, PointD>> bestPositions;
+        //Total Resolution
+        if (getEnableAngularResolution() && getEnableCrossingResolution()) {
+                bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionTotalResolutionPositions(nodes);
+        } else if (getEnableAngularResolution()) {
+            bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionAngularResolutionPositions(nodes);
+        }
+        else {
+            bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionPositions(nodes);
+        }
         if (!bestPositions.isPresent()) {
             outputTextArea.setText("No Graph Loaded.");
             return;
@@ -371,7 +418,7 @@ public class SidePanelTab {
             initSidePanel.addDefaultListeners();
         });
 
-        initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+        initSidePanel.mainFrame.minimumAngleMonitor.updateAngleInfoBar();
     }
 
     private void startPauseActionPerformed(ActionEvent evt) {
@@ -436,6 +483,14 @@ public class SidePanelTab {
 
     private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
         initSidePanel.masterAllowClickCreateNodeEdge.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    private void enableCrossingResolutionActionPerformed(ItemEvent evt) {
+        initSidePanel.masterEnableCrossingResolution.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    private void enableAngularResolutionActionPerformed(ItemEvent evt) {
+        initSidePanel.masterEnableAngularResolution.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
     private void scalingToBox(@SuppressWarnings("unused") ActionEvent evt){

@@ -108,7 +108,7 @@ public class ForceAlgorithm implements ILayout {
 
       PointD position = e.getValue();
       PointD force = forces.getValue(node);
-      if (!Double.isNaN(force.getVectorLength())) {
+      if (Double.isFinite(force.getVectorLength())) {
         nodePositions.setValue(node, PointD.add(position, force));
       }
     }

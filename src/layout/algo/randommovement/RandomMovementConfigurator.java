@@ -18,6 +18,8 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Boolean> onlyGridPositions;
   ArrayList<AbstractLayoutInterfaceItem> itemList;
   AbstractLayoutInterfaceItem<Boolean> allowIncreaseStepSize;
+  AbstractLayoutInterfaceItem<Boolean> useCrossingResolution;
+  AbstractLayoutInterfaceItem<Boolean> useAngularResolution;
 
 
   @Override
@@ -61,6 +63,14 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     allowIncreaseStepSize = itemFactory.booleanParameter("Automatically increase step size");
     allowIncreaseStepSize.setValue(false);
     itemList.add(allowIncreaseStepSize);
+
+
+    useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)");
+    useCrossingResolution.setValue(true);
+
+    useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution");
+    useAngularResolution.setValue(false);
+
   }
 
   @Override

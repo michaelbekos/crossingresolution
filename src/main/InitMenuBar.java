@@ -819,7 +819,7 @@ public class InitMenuBar {
                 this.mainFrame.removedNodes.clear();
                 this.mainFrame.removedChains.clear();
                 this.mainFrame.bestSolution.reset();
-                this.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+                this.mainFrame.minimumAngleMonitor.updateAngleInfoBar();
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while reading the input file.");
             } finally {
@@ -1003,7 +1003,7 @@ public class InitMenuBar {
     }
 
     private void minimumCrossingAngleMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        minimumAngleMonitor.showMinimumAngle(graph, view, infoLabel, true);
+        minimumAngleMonitor.updateAngleInfoBar();
     }
 
     private void overlappingNodesMenuActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
