@@ -158,7 +158,7 @@ public class RandomMovementLayout implements ILayout {
       return false;
     }
 
-    Optional<Intersection> crossing = MinimumAngle.getMinimumAngleCrossing(graph, positions);
+    Optional<Intersection> crossing = MinimumAngle.getMinimumAngleCrossing(graph, positions); //TODO angular resolution
     if (!crossing.isPresent()) {
       return true;
     }

@@ -21,7 +21,8 @@ public class MinimumAngleMonitor {
   private GraphComponent view;
   private double oldMinAngle;
   private double oldAngularRes;
-  private double currentAngle;
+  private double currentCrossingResolution;
+  private double currentAngularResolution;
   private boolean useCrossingResolution;
   private boolean useAngularResolution;
 
@@ -41,7 +42,8 @@ public class MinimumAngleMonitor {
     this.bestSolution = bestSolution;
     this.oldMinAngle = 0;
     this.oldAngularRes = 0;
-    this.currentAngle = 0;
+    this.currentCrossingResolution = 0;
+    this.currentAngularResolution = 0;
     this.useCrossingResolution = true;
     this.useAngularResolution = false;
   }
@@ -52,7 +54,7 @@ public class MinimumAngleMonitor {
     Optional<Intersection> minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
     if (minAngleCr.isPresent()){
-      currentAngle = minAngleCr.get().angle;
+      currentCrossingResolution = minAngleCr.get().angle;
       if (oldMinAngle <= minAngleCr.get().angle){
         oldMinAngle = minAngleCr.get().angle;
 
@@ -91,6 +93,7 @@ public class MinimumAngleMonitor {
     Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
     double angularRes = AngularResolution.getAngularResolution(graph);
     if (Double.isFinite(angularRes)){
+      currentAngularResolution = angularRes;
       if (oldAngularRes <= angularRes){
         oldAngularRes = angularRes;
 
@@ -133,7 +136,7 @@ public class MinimumAngleMonitor {
     computeMinimumAngle();
     computeAngularResolution();
     if (useAngularResolution && useCrossingResolution) {
-      if (oldAngularRes < oldMinAngle) {
+      if (currentAngularResolution < currentCrossingResolution) {
         showAngularResolution(graph, view, infoLabel, false);
       } else {
         showMinimumAngle(graph, view, infoLabel, false);
@@ -180,7 +183,11 @@ public class MinimumAngleMonitor {
     this.useAngularResolution = value;
   }
 
-  public double getCurrentAngle() {
-    return currentAngle;
+  public double getCurrentCrossingResolution() {
+    return currentCrossingResolution;
+  }
+
+  public double getCurrentAngularResolution() {
+    return currentAngularResolution;
   }
 }
