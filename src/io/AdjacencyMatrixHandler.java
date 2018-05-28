@@ -38,18 +38,18 @@ public class AdjacencyMatrixHandler extends GraphIOHandler {
     g.clear();
     int nodesCount = amountoflines;
     int nodesAdded = 0;
-    int counter=0;
+    int counter=10;
     // I HATE THE JAVA COMPILER "mimimi nodes might not have been initialized"
     INode[] nodes = new INode[amountoflines];
     while(nodesAdded<nodesCount){
 	    int x, y;
 	    x =counter;
-	    y =counter+nodesAdded;
+	    y =counter*counter;
 	    INode node = g.createNode(new PointD(x, y));
 	    node.setTag(nodesAdded);
 	    nodes[nodesAdded] = node;
 	    nodesAdded++;
-	    counter=counter+nodesAdded;
+	    counter=(counter+1);
     }
     int edgecount=0;
     for(String line: lines){
