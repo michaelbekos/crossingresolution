@@ -167,11 +167,13 @@ public class BasicIGraphLayoutExecutor {
   }
 
   private void updateGraph(Mapper<INode, PointD> nodePositions) {
+    propertyChange.firePropertyChange("removeListeners", false, true);
     synchronized (graph) {
       for (Map.Entry<INode, PointD> entry : nodePositions.getEntries()) {
         graph.setNodeCenter(entry.getKey(), entry.getValue());
       }
     }
+    propertyChange.firePropertyChange("removeListeners", true, false);
   }
 
   protected void updateProgress(int iteration) {
