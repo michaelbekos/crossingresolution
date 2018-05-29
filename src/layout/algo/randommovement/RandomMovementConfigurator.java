@@ -67,9 +67,11 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
     useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)");
     useCrossingResolution.setValue(true);
+    itemList.add(useCrossingResolution);
 
     useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution");
     useAngularResolution.setValue(false);
+    itemList.add(useAngularResolution);
 
   }
 

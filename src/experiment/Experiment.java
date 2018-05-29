@@ -2,6 +2,7 @@ package experiment;
 
 import algorithms.graphs.GridGraph;
 import algorithms.graphs.MinimumAngle;
+import com.sun.corba.se.impl.orbutil.graph.Graph;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
@@ -33,7 +34,6 @@ public class Experiment {
     private long maxTimeForAlgo = 2000; //default 100 sec
     private boolean reached90Degree = false;
     private boolean isInInvLoop = false;
-    private boolean firstOrganicLayout = true;
     private PrintWriter pw;
     private StringBuilder sb;
     private int maxIterations = 1000;
@@ -43,8 +43,8 @@ public class Experiment {
     private int  minimumAngleNumOfCrossings;
     private double aspect_ratio, minimumAngleAspectratio;
     private double angular_resolution, minimumAngleAngularResolution;
+    private final double approx_epsilon = 0.001; // If the angle plus epsilon doesn't change  after number of iterations, then it is converged
     private double actAngle = 0;
-    private int algorithmNum = 1; // 1: Random Algo. 2: Force Algo
     private Mapper<INode, PointD> positions;
     Optional<SidePanelTab> tab;
 
@@ -262,10 +262,6 @@ public class Experiment {
      */
     public  void runAlgorithms() {
         this.mainFrame.initSidePanel.removeDefaultListeners();
-        if(this.firstOrganicLayout){
-            LayoutUtilities.applyLayout(this.mainFrame.graph, new OrganicLayout());
-            this.firstOrganicLayout = false;
-        }
 
         this.mainFrame.initSidePanel.addDefaultListeners();
 
@@ -290,13 +286,14 @@ public class Experiment {
         this.positions = this.tab.get().getExecutor().getLayout().getNodePositions();
         System.out.println(fileName + "OUT 13");
         this.endTime = endTime + (System.currentTimeMillis() - tmpTime);
+        this.iterations += maxIterations;
+        calcGraphInformations();
     }
 
     /**
      * Loads a new graph and reset the parameters
      */
     public void loadGraph() {
-        this.firstOrganicLayout = true;
         this.reached90Degree = false;
         this.isInInvLoop = false;
         this.numOfUnchangedAngle = 0;
@@ -318,11 +315,21 @@ public class Experiment {
             this.mainFrame.openFile(this.inputDirectory + this.fileName);
         }
 
+
+        //calcGraphInformations();
+
         mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
         this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getMinimumAngle()) / 1000.0;
         System.out.println("load Graph " + this.minimumAngle);
         this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
        // this.angular_resolution = GraphOperations.getMinimumCrossingForNodes(this.graph);
+    }
+
+    void runOrganic(){
+        this.mainFrame.initSidePanel.removeDefaultListeners();
+        LayoutUtilities.applyLayout(this.mainFrame.graph, new OrganicLayout());
+        this.mainFrame.initSidePanel.addDefaultListeners();
+
     }
 
     /**
@@ -372,18 +379,20 @@ public class Experiment {
 
 
         this.calcTime = this.endTime - this.sartTime;
-        this.iterations += this.maxIterations;
+       // this.iterations += this.maxIterations;
         this.numOfCrossings = MinimumAngle.getCrossings(this.graph, this.positions).size();
 
         this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
-        this.angular_resolution = GraphOperations.getMinimumAngleForNodes(this.graph);
-
+       // this.angular_resolution = GraphOperations.getMinimumAngleForNodes(this.graph);
+        this.angular_resolution = mainFrame.minimumAngleMonitor.getAngularResolution();
 
         mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
 
 
-        this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getCurrentCrossingResolution()) / 1000.0;
-        if(this.minimumAngle >= this.actAngle){
+      //  this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getCurrentCrossingResolution()) / 1000.0; //with the act crossing angle
+        this.actAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getMinimumAngle()) / 10000.0; // with the best crossing angle
+
+        if((this.minimumAngle + this.approx_epsilon ) >= this.actAngle){
             this.numOfUnchangedAngle++;
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!numebrs   " + this.numOfUnchangedAngle);
         }else{

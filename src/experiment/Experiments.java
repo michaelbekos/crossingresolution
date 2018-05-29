@@ -45,11 +45,14 @@ public class Experiments {
     private int numOfIterationFactor = 1000;
     private long maxCalcTime = Long.MAX_VALUE; //in mili. sec
     private int boxSize = 10000;
-    private int maxNumberOfUnchangedAngle = 50;
+    private int maxNumberOfUnchangedAngle = 2;
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
     boolean reached90Deg = false;
     private String[] childernP;
+    private boolean withCrossingRes = true;
+    private boolean withAngularRes = false;
+
 
 
     public Experiments()
@@ -75,7 +78,7 @@ public class Experiments {
 
     }
 
-    public Experiments(String inputDirectory, String outputDirectory, long maxCalcTime, int numOfIterationPerStep, int numOfSteps, int boxSize, boolean planarGraphsAllowed, boolean unconnectedGraphsAllowed){
+    public Experiments(String inputDirectory, String outputDirectory, long maxCalcTime, int numOfIterationPerStep, int numOfSteps, int boxSize, boolean planarGraphsAllowed, boolean unconnectedGraphsAllowed, boolean withCrossingRes, boolean withAngularRes){
         this.comp = new GraphComponent();
         this.inputDirectory = inputDirectory;
         this.outputDirectory = outputDirectory;
@@ -85,6 +88,8 @@ public class Experiments {
         this.boxSize = boxSize;
         this.planarGraphsAllowed = planarGraphsAllowed;
         this.unconnectedGraphsAllowed = unconnectedGraphsAllowed;
+        this.withCrossingRes = withCrossingRes;
+        this.withAngularRes = withAngularRes;
 
     }
 
@@ -275,24 +280,33 @@ try {
                 frame.dispose();
                 return;}//TODO: Nur zum testen
 
+
+
             if(algorithmName.equals(this.randomMovementString)){
                 experiment.setAlgorithm(RandomMovementLayout.class);
                                     /* Set config. parameters */
                 experiment.getTab().get().configurator.getItems().get(0).setValue(10.0); // Minimum step size
                 experiment.getTab().get().configurator.getItems().get(1).setValue(150.0); // Maximum step size
-                experiment.getTab().get().configurator.getItems().get(2).setValue(50); // Faild iteration ... detect loacal maximum
+                experiment.getTab().get().configurator.getItems().get(2).setValue(50); // Failed iteration ... detect loacal maximum
                 experiment.getTab().get().configurator.getItems().get(3).setValue(50); // numbers .. maximum resolving
                 experiment.getTab().get().configurator.getItems().get(4).setValue(false); // Allow decreasing minimum angle at local maximum
                 experiment.getTab().get().configurator.getItems().get(5).setValue(false);  // Only use grid coord.
                 experiment.getTab().get().configurator.getItems().get(6).setValue(true); // focus on critical nodes
                 experiment.getTab().get().configurator.getItems().get(7).setValue(true); // Automatically toggle focusing in critical nodes
                 experiment.getTab().get().configurator.getItems().get(8).setValue(false); // auto increase step size
+                experiment.getTab().get().configurator.getItems().get(8).setValue(true); // use crossing Resolution
+                experiment.getTab().get().configurator.getItems().get(8).setValue(false); // use angular Resolution
+
+                for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
+                    System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
+                }
+
 
                 startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 //experiment.writeGraphEndResults();
                 System.out.println("Graph " + fileName + " finished Random Movement.");
-            //    experiment.writeGraphEndResults();
+                //experiment.writeGraphEndResults();
                 experiment.writeGraph();
 
             }else if(algorithmName.equals(this.forceAlgoString)){
@@ -395,23 +409,30 @@ try {
         startExperiment(exp, true, fileName);
     }
 
-        private void startExperiment(Experiment exp, boolean writeInormations, String fileName){ //TODO: unchanged...
-            while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() <= this.maxNumberOfUnchangedAngle ) && exp.getCalcTime() <= this.maxCalcTime ){
+        private void startExperiment(Experiment exp, boolean writeInormations, String fileName){ //
+            exp.runOrganic();
+            this.reached90Deg = exp.calcGraphInformations();
+            if(writeInormations){
+                //exp.
+                // Informations();
+                exp.writeGraphResults(fileName);
+            }
+            while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() < this.maxNumberOfUnchangedAngle ) && exp.getCalcTime() <= this.maxCalcTime ){
 
                 exp.runAlgorithms();
 
 
-
+                //this.reached90Deg = exp.calcGraphInformations();
                 if(writeInormations){
-                    //exp.writeGraphInformations();
+                    //exp.
+                    // Informations();
                     exp.writeGraphResults(fileName);
                 }
 
-                this.reached90Deg = exp.calcGraphInformations();
                 this.iterationFactor++;
             }
 
-            exp.writeGraphResults(fileName);
+            //exp.writeGraphResults(fileName);
 
             if(this.iterationFactor <= this.numOfIterationFactor || exp.getCalcTime() > this.maxCalcTime ){
                 exp.writeGraphResultsMaxIterations(fileName, this.numOfIteration * this.numOfIterationFactor);
@@ -464,7 +485,7 @@ try {
                 sb.append(';');
                 sb.append("iterations");
                 sb.append(';');
-                sb.append("time");
+                sb.append("time[ms]");
                 sb.append(';');
                 sb.append("crossing_res");
                 sb.append(';');
