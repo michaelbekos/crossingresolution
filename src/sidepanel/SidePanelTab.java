@@ -474,6 +474,12 @@ public class SidePanelTab {
                 }
             }
             stopExecution();
+        } else if ("removeListeners".equals(evt.getPropertyName())) {
+            if ((boolean)evt.getNewValue()) {
+                initSidePanel.removeDefaultListeners();
+            } else {
+                initSidePanel.addDefaultListeners();
+            }
         }
     }
 

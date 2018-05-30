@@ -69,6 +69,7 @@ public class MinimumAngleMonitor {
     if (!bestSolution.getBestMinimumAngleForNodes(graph.getNodes().size()).isPresent()) {
       oldMinAngle = 0;
     }
+    computeAngularResolution();
 
     Optional<Intersection> minAngleCr = computeMinimumAngle();
 
