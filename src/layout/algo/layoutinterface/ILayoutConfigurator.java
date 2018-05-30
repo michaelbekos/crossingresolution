@@ -1,7 +1,6 @@
 package layout.algo.layoutinterface;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
 
 /**
  * The interface for algorithm configurators. Classes implementing this interface should not contain any complex logic
@@ -19,5 +18,6 @@ public interface ILayoutConfigurator {
    */
   void init(ILayoutInterfaceItemFactory itemFactory);
 
-  Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters();
+  ArrayList<AbstractLayoutInterfaceItem> getItems();
+
 }

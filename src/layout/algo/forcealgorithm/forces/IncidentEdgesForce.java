@@ -18,6 +18,7 @@ public class IncidentEdgesForce implements IForce {
   private IGraph graph;
   private AbstractLayoutInterfaceItem<Double> weight;
   private AbstractLayoutInterfaceItem<Boolean> activated;
+  ArrayList<AbstractLayoutInterfaceItem> itemList;
 
   public IncidentEdgesForce(IGraph graph) {
     this.graph = graph;
@@ -25,12 +26,22 @@ public class IncidentEdgesForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    itemList = new ArrayList<>();
+
     weight = itemFactory.doubleParameter("Incident Edges Force", 0.0, 1);
     weight.setValue(0.1);
+    itemList.add(weight);
 
     activated = itemFactory.toggleableParameter(weight);
     activated.setValue(true);
+    itemList.add(activated);
+
     toggleableParameters.add(activated);
+  }
+
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getItems(){
+    return itemList;
   }
 
   @Override

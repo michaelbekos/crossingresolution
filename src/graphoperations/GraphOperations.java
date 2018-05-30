@@ -1,11 +1,15 @@
 package graphoperations;
 
 import algorithms.graphs.MinimumAngle;
+import com.yworks.yfiles.algorithms.Graph;
+import com.yworks.yfiles.algorithms.INodeCursor;
+import com.yworks.yfiles.algorithms.Node;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.layout.YGraphAdapter;
 import com.yworks.yfiles.utils.IListEnumerable;
 import layout.algo.utils.PositionMap;
 import util.graph2d.Intersection;
@@ -14,6 +18,137 @@ import java.util.*;
 
 public class GraphOperations {
   private static Mapper<INode, PointD> positions;
+
+  public static double getMinimumAngleForNodes(IGraph g){
+
+    double angle = Double.MAX_VALUE;
+    for(int i = 0; i < g.getNodes().size(); i++){
+      double alpha = getMinimumAngleForOneNode(g,g.getNodes().getItem(i));
+     // System.out.println(angle);
+      if(alpha < angle){
+        angle = alpha;
+        System.out.println("Neu: " +angle );
+      }
+    }
+    return angle;
+  }
+
+  public static double getMinimumAngleForOneNode(IGraph g, INode n){
+    YGraphAdapter graphAdapter = new YGraphAdapter(g);
+    Graph graph = graphAdapter.getYGraph();
+    Node node = graphAdapter.getCopiedNode(n);
+    double angle = Double.MAX_VALUE;
+    PointD pointA = n.getLayout().getCenter();
+    INodeCursor neighborCur = node.getNeighborCursor();
+    Node[] neighbors = new Node[neighborCur.size()];
+
+    for(int i = 0; i < neighbors.length && neighborCur.ok(); i++){
+      neighbors[i] = neighborCur.node();
+      neighborCur.cyclicNext();
+    }
+
+    for(int i = 0; i < neighbors.length; i++){
+      PointD pointC = graphAdapter.getOriginalNode(neighbors[i]).getLayout().getCenter();
+      double b = euclidDist(pointA.getX(), pointA.getY(), pointC.getX(), pointC.getY());
+      for(int j = i+1; j < neighbors.length; j++){
+        PointD pointB = graphAdapter.getOriginalNode(neighbors[j]).getLayout().getCenter();
+        double c = euclidDist(pointA.getX(), pointA.getY(), pointB.getX(), pointB.getY());
+        double a = euclidDist(pointB.getX(), pointB.getY(), pointC.getX(), pointC.getY());
+        double  alpha = lawOfCosines(a, b, c);
+        alpha = Math.toDegrees(alpha);
+        if(alpha < angle){
+          angle = alpha;
+          //System.out.println("Candidate: " +angle + " a = " + a + " b = " + b + " c = " + c );
+        }
+      }
+
+
+
+    }
+
+    return angle;
+  }
+
+  public static double lawOfCosines(double a, double b, double c){
+    return Math.acos((b*b + c*c - a*a) / (2*b*c));
+  }
+
+  public static double aspect_ratio(IGraph g){
+    IEdge sEdge = getSmallestEdge(g);
+    INode sSource = sEdge.getSourceNode();
+    INode sTarget = sEdge.getTargetNode();
+    double sLength  = euclidDist(sSource.getLayout().getCenter().getX(), sSource.getLayout().getCenter().getY(), sTarget.getLayout().getCenter().getX(), sTarget.getLayout().getCenter().getY());
+    IEdge lEdge = getLongestEdge(g);
+    INode lSource = lEdge.getSourceNode();
+    INode lTarget = lEdge.getTargetNode();
+    double lLength  = euclidDist(lSource.getLayout().getCenter().getX(), lSource.getLayout().getCenter().getY(), lTarget.getLayout().getCenter().getX(), lTarget.getLayout().getCenter().getY());
+   // System.out.println("Edge lang: " + lLength + "    " + sLength);
+    return lLength / sLength;
+  }
+
+  public static IEdge getSmallestEdge(IGraph g){
+    IListEnumerable<IEdge> edgeList = g.getEdges();
+
+    if(edgeList.size() >= 1) {
+      IEdge edge = edgeList.getItem(0);
+      INode source = edge.getSourceNode();
+      INode target = edge.getTargetNode();
+      double length  = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
+      double smallLength = length;
+      IEdge smallEdge = edge;
+
+      for (int i = 1; i < edgeList.size(); i++) {
+        edge = edgeList.getItem(i);
+        source = edge.getSourceNode();
+        target = edge.getTargetNode();
+        length = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
+        if(length < smallLength){
+          smallLength = length;
+          smallEdge = edge;
+        }
+      }
+
+      return smallEdge;
+    }
+    else{
+      System.out.println("The graph has zero edges");
+      return null;
+    }
+  }
+
+  public static IEdge getLongestEdge(IGraph g){
+    IListEnumerable<IEdge> edgeList = g.getEdges();
+
+    if(edgeList.size() >= 1) {
+      IEdge edge = edgeList.getItem(0);
+      INode source = edge.getSourceNode();
+      INode target = edge.getTargetNode();
+      double length  = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
+      double smallLength = length;
+      IEdge smallEdge = edge;
+
+      for (int i = 1; i < edgeList.size(); i++) {
+        edge = edgeList.getItem(i);
+        source = edge.getSourceNode();
+        target = edge.getTargetNode();
+        length = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
+        if(length > smallLength){
+          smallLength = length;
+          smallEdge = edge;
+        }
+      }
+
+      return smallEdge;
+    }
+    else{
+      System.out.println("The graph has zero edges");
+      return null;
+    }
+  }
+
+  public static double euclidDist(double x1, double y1, double x2, double y2){
+    return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+  }
 
   public static VertexStack reinsertChain(IGraph g, VertexStack removedVertices) {
     positions = PositionMap.FromIGraph(g);

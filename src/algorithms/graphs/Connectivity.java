@@ -110,7 +110,7 @@ public class Connectivity {
                     }
                     // create a new edge and insert it at the correct place (and
                     // it's reverse)
-                    //TODO: Ist das richtig umgesetzt mit dem Reverse? MUss noch impl. werden
+
 
                     Edge newEdge = graph.createEdge(source,
                             preDart.getOppositeDart().getAssociatedEdge(), target, curDart.getAssociatedEdge(),

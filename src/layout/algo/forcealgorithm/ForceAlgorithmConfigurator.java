@@ -12,6 +12,8 @@ import java.util.*;
 
 public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
   public List<IForce> forces = new LinkedList<>();
+  private ArrayList<AbstractLayoutInterfaceItem> itemList;
+
 
   private AbstractLayoutInterfaceItem<Mapper<INode, PointD>> debugVectors;
 
@@ -23,16 +25,27 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
+    itemList = new ArrayList<>();
+
     Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters = new HashSet<>();
     for (IForce force : forces) {
       force.init(itemFactory, toggleableParameters);
+      for(AbstractLayoutInterfaceItem abs : force.getItems()){
+          itemList.add(abs);
+      }
     }
 
     AbstractLayoutInterfaceItem<Boolean> enableDisableAll = itemFactory.masterToggle("Select All", toggleableParameters);
     enableDisableAll.setValue(true);
+    itemList.add(enableDisableAll);
 
     debugVectors = itemFactory.debugVectors("Forces");
   }
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getItems(){
+    return itemList;
+  }
+
 
   AbstractLayoutInterfaceItem<Mapper<INode, PointD>> getDebugVectors() {
     return debugVectors;

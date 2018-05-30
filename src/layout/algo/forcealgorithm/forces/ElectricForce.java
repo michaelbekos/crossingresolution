@@ -9,6 +9,7 @@ import com.yworks.yfiles.layout.YGraphAdapter;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class ElectricForce implements IForce {
@@ -16,6 +17,7 @@ public class ElectricForce implements IForce {
   private final double threshold;
   private AbstractLayoutInterfaceItem<Double> electricalRepulsion;
   private AbstractLayoutInterfaceItem<Boolean> activated;
+  ArrayList<AbstractLayoutInterfaceItem> itemList;
 
   public ElectricForce(IGraph graph, double threshold) {
     this.graph = graph;
@@ -24,17 +26,26 @@ public class ElectricForce implements IForce {
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    itemList = new ArrayList<>();
+
     electricalRepulsion = itemFactory.doubleParameter("Electric Repulsion Force", 0.0, 100000);
     electricalRepulsion.setValue(50000.0);
+    itemList.add(electricalRepulsion);
 
     activated = itemFactory.toggleableParameter(electricalRepulsion);
     activated.setValue(true);
+    itemList.add(activated);
     toggleableParameters.add(activated);
   }
 
   /**
    * Calculate electric forces with classical spring embedder algorithm. i.e. calculateElectricForcesEades
    */
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getItems(){
+    return itemList;
+  }
+
   @Override
   public Mapper<INode, PointD> calculate(Mapper<INode, PointD> forces, Mapper<INode, PointD> nodePositions) {
     if (!activated.getValue()) {

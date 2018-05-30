@@ -35,6 +35,7 @@ class MasterToggleSidePanelItem extends SidePanelItem<Boolean> {
     });
   }
 
+
   @Override
   public void setValue(Boolean value) {
     super.setValue(value);

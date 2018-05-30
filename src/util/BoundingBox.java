@@ -1,13 +1,11 @@
 package util;
 
+import java.util.Map;
+
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-
-import main.MainFrame;
-
-import java.util.Map;
 
 //public class BoundingBox {
 //  public static RectD from(Mapper<INode, PointD> nodes) {

@@ -12,6 +12,7 @@ import util.Tuple2;
 import util.Util;
 import util.graph2d.LineSegment;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class CrossingForce implements IForce {
@@ -20,6 +21,7 @@ public class CrossingForce implements IForce {
   private AbstractLayoutInterfaceItem<Double> weight;
   private AbstractLayoutInterfaceItem<Boolean> isPerpendicular;
   private AbstractLayoutInterfaceItem<Boolean> activated;
+  ArrayList<AbstractLayoutInterfaceItem> itemList;
 
   public CrossingForce(IGraph graph, CachedMinimumAngle cMinimumAngle) {
     this.cMinimumAngle = cMinimumAngle;
@@ -27,11 +29,22 @@ public class CrossingForce implements IForce {
   }
 
   @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getItems(){
+    return itemList;
+  }
+
+  @Override
   public void init(ILayoutInterfaceItemFactory itemFactory, Collection<AbstractLayoutInterfaceItem<Boolean>> toggleableParameters) {
+    itemList = new ArrayList<>();
+
     weight = itemFactory.doubleParameter("Crossings Force", 0.0, 1);
     weight.setValue(0.01);
+    itemList.add(weight);
+
     activated = itemFactory.toggleableParameter(weight);
     activated.setValue(true);
+    itemList.add(activated);
+
     toggleableParameters.add(activated);
 
     isPerpendicular = itemFactory.booleanParameter("Perpendicular");
