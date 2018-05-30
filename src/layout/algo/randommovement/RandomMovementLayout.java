@@ -110,7 +110,7 @@ public class RandomMovementLayout implements ILayout {
           }
         })
         .filter(sample -> boundingBox.contains(sample.position))
-        .filter(sample -> LayoutUtils.overlap(sample.position, positions, node, graph))
+        .filter(sample -> configurator.onlyGridPositions.getValue() || LayoutUtils.overlap(sample.position, positions, node, graph))
         .peek(sample -> {
           positions.setValue(node, sample.position);
           sample.minimumAngle = getAngleForNode(positions, node, graph);
