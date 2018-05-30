@@ -43,7 +43,7 @@ public class MainFrame extends JFrame {
 
     /* Graph Drawing related objects */
     public GraphComponent view;
-    public IGraph graph;
+    public static IGraph graph;
     private OrganicLayout defaultLayouter;
     public GraphEditorInputMode graphEditorInputMode;
     private GridVisualCreator gridVisualCreator;

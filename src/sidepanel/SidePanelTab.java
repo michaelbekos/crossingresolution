@@ -18,6 +18,8 @@ import com.yworks.yfiles.view.ISelectionModel;
 import graphoperations.Chains;
 import graphoperations.RemovedChains;
 import graphoperations.Scaling;
+import layout.algo.utils.MutualityCheck;
+import layout.algo.utils.MutualityCheck.MutualityCheckHelper;
 import layout.algo.FraysseixPachPollack;
 import layout.algo.NodeSwapper;
 import layout.algo.execution.BasicIGraphLayoutExecutor;
@@ -330,6 +332,13 @@ public class SidePanelTab {
         cCustomPanel.gridy = ++cCustomPanelY;
         swapperItem.addActionListener(this::swapperItemActionPerformed);
         custom.add(swapperItem, cCustomPanel);
+        
+        JButton mutuallyItem = new JButton("Mutually");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 1;
+        cCustomPanel.gridy = cCustomPanelY;
+        mutuallyItem.addActionListener(this::mutuallyItemActionPerformed);
+        custom.add(mutuallyItem, cCustomPanel);
 
         cSidePanel.fill = GridBagConstraints.HORIZONTAL;
         cSidePanel.gridx = 0;
@@ -796,6 +805,28 @@ public class SidePanelTab {
         initSidePanel.mainFrame.view.updateUI();
         initSidePanel.addDefaultListeners();
     }
+    
+    private void mutuallyItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+      initSidePanel.removeDefaultListeners();
+      IGraph graph = initSidePanel.mainFrame.graph;
+      Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
+      MutualityCheckHelper.detector(graph, nodePositions); 
+      PositionMap.applyToGraph(graph, nodePositions);
+      initSidePanel.mainFrame.view.fitGraphBounds();
+      
+      initSidePanel.mainFrame.view.updateUI();
+      initSidePanel.addDefaultListeners();
+    }
+    
+//    private void mutuallyItemActionPerformed{
+//        initSidePanel.removeDefaultListeners();
+//        IGraph graph=MainFrame.graph;
+//        MutualityCheckHelper.detector(graph, MainFrame.nodePositions); 
+//        
+//        
+//        initSidePanel.mainFrame.view.updateUI();
+//        initSidePanel.addDefaultListeners();
+//    }
 
     private void applyLayoutToSelection(ILayoutAlgorithm layout) {
         initSidePanel.removeDefaultListeners();
