@@ -217,31 +217,60 @@ public class RandomMovementLayout implements ILayout {
   }
 
   private Optional<INode> gaussianNodeSelection() {
-    return MinimumAngle.getMinimumAngleCrossing(graph, positions)
-        .flatMap(crossing -> {
-          YGraphAdapter graphAdapter = new YGraphAdapter(graph);
 
-          NodeList nodesOfCrossing = new NodeList();
-          nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment1.n1));
-          nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment1.n2));
-          nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment2.n1));
-          nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment2.n2));
+    if (configurator.useAngularResolution.getValue() ||
+            (configurator.useAngularResolution.getValue() && configurator.useCrossingResolution.getValue()
+                    && MinimumAngle.getMinimumAngle(graph, positions).orElse(Double.MAX_VALUE) < AngularResolution.getAngularResolution(graph))) {
+      YGraphAdapter graphAdapter = new YGraphAdapter(graph);
 
-          NodeList[] layers = Bfs.getLayers(graphAdapter.getYGraph(), nodesOfCrossing);
+      NodeList nodesOfCrossing = new NodeList();
+      INode[] tmpList = AngularResolution.getCriticalNodes(graph);
+      for (INode u : tmpList) {
+        nodesOfCrossing.add(graphAdapter.getCopiedNode(u));
+      }
 
-          // select a layer according to a normal distribution with a variance that is equal to half of the number
-          // of layers. The reason for this number is that more than 95% of all values are within the interval
-          // [-2 * sigma; 2 * sigma]:
-          //     2 * sigma = #layers
-          // <=>     sigma = #layers / 2
-          int layerIndex = Math.min((int) Math.floor(Math.abs(random.nextGaussian() * layers.length / 2d)), layers.length - 1);
+      NodeList[] layers = Bfs.getLayers(graphAdapter.getYGraph(), nodesOfCrossing);
 
-          Set<INode> nodesOfLayer = layers[layerIndex].stream()
+      // select a layer according to a normal distribution with a variance that is equal to half of the number
+      // of layers. The reason for this number is that more than 95% of all values are within the interval
+      // [-2 * sigma; 2 * sigma]:
+      //     2 * sigma = #layers
+      // <=>     sigma = #layers / 2
+      int layerIndex = Math.min((int) Math.floor(Math.abs(random.nextGaussian() * layers.length / 2d)), layers.length - 1);
+
+      Set<INode> nodesOfLayer = layers[layerIndex].stream()
               .map(node -> graphAdapter.getOriginalNode((Node) node))
               .collect(Collectors.toSet());
 
-          return selectRandomNode(nodesOfLayer, nodesOfLayer.size());
-        });
+      return selectRandomNode(nodesOfLayer, nodesOfLayer.size());
+
+    } else {
+      return MinimumAngle.getMinimumAngleCrossing(graph, positions)
+              .flatMap(crossing -> {
+                YGraphAdapter graphAdapter = new YGraphAdapter(graph);
+
+                NodeList nodesOfCrossing = new NodeList();
+                nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment1.n1));
+                nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment1.n2));
+                nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment2.n1));
+                nodesOfCrossing.add(graphAdapter.getCopiedNode(crossing.segment2.n2));
+
+                NodeList[] layers = Bfs.getLayers(graphAdapter.getYGraph(), nodesOfCrossing);
+
+                // select a layer according to a normal distribution with a variance that is equal to half of the number
+                // of layers. The reason for this number is that more than 95% of all values are within the interval
+                // [-2 * sigma; 2 * sigma]:
+                //     2 * sigma = #layers
+                // <=>     sigma = #layers / 2
+                int layerIndex = Math.min((int) Math.floor(Math.abs(random.nextGaussian() * layers.length / 2d)), layers.length - 1);
+
+                Set<INode> nodesOfLayer = layers[layerIndex].stream()
+                        .map(node -> graphAdapter.getOriginalNode((Node) node))
+                        .collect(Collectors.toSet());
+
+                return selectRandomNode(nodesOfLayer, nodesOfLayer.size());
+              });
+    }
   }
 
   private Optional<INode> selectRandomNode(Iterable<INode> nodes, int size) {
