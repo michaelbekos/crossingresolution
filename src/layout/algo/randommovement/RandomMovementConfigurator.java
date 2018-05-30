@@ -47,10 +47,8 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     itemList.add(jumpOnLocalMaximum);
 
     onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates");
-
     onlyGridPositions.setValue(false);
     itemList.add(onlyGridPositions);
-
 
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
     useGaussianDistribution.setValue(true);
@@ -64,7 +62,6 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     allowIncreaseStepSize.setValue(false);
     itemList.add(allowIncreaseStepSize);
 
-
     useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)");
     useCrossingResolution.setValue(true);
     itemList.add(useCrossingResolution);
@@ -72,7 +69,6 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution");
     useAngularResolution.setValue(false);
     itemList.add(useAngularResolution);
-
   }
 
   @Override
