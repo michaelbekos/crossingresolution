@@ -5,37 +5,28 @@ package experiment;
  */
 
 public class MainExperiment {
+    static String inputDir = "E:\\graph\\rome\\rome\\";
+    static String outputDir = "E:\\graph\\results\\TESTrome290518\\";
 
     public static void main(String[] args) {
         //Experiments e = new Experiments();
 
         // Experiments e = new Experiments(("E:\\graph\\graphml\\"), "E:\\graph\\afterRandom\\graphml2\\");
 
-      Experiments e = new Experiments(
-                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\rome290518\\",
+      Experiments e = new Experiments(inputDir, outputDir,
               Long.MAX_VALUE, 100, 1000, 10000,
-                false, false, true, false);
+              false, false, true, false);
        e.runOnlyRandom();
 
-     e = new Experiments(
-                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\rome290518\\",
-                Long.MAX_VALUE, 100, 1000, 10000,
-                false, false, true, false);
+       e = new Experiments(inputDir, outputDir,
+               Long.MAX_VALUE, 100, 1000, 10000,
+               false, false, true, false);
         e.runOnlyForce();
-        e = new Experiments(
-                "E:\\graph\\rome\\rome\\", "E:\\graph\\results\\rome290518\\",
+
+        e = new Experiments(inputDir, outputDir,
                 Long.MAX_VALUE, 100, 1000, 10000,
                 false, false, true, false);
         e.runOnlyTotalResolutionForce();
 
-
-
-     /*       Experiments e = new Experiments(
-                    "E:\\graph\\rome\\smallSet\\", "E:\\graph\\results\\rome\\",
-                    10000, 100, 1000, 10000,
-                    false, false);
-
-            e.run();
-
-    */}
+    }
 }

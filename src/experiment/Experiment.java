@@ -337,7 +337,7 @@ public class Experiment {
      */
     public void writeGraph() {
         try {
-            ContestIOHandler.write(graph, outputDirectory + "out_" + filePrefix + ".txt", mainFrame.initSidePanel.getOutputTextArea());
+            ContestIOHandler.write(graph, outputDirectory + "resultGraph\\" + "out_" + filePrefix + ".txt", mainFrame.initSidePanel.getOutputTextArea());
         } catch (IOException ioe) {
             System.out.println("An error occured while exporting the graph.");
         }
