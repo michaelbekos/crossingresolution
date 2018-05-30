@@ -51,7 +51,6 @@ public class ForceAlgorithmConfigurator implements ILayoutConfigurator {
     return debugVectors;
   }
 
-  @Override
   public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
     return Optional.empty();
   }

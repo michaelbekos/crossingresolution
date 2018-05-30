@@ -5,7 +5,9 @@ import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Double> minStepSize;
@@ -48,26 +50,24 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     itemList.add(jumpOnLocalMaximum);
 
     onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates");
-
     onlyGridPositions.setValue(false);
     itemList.add(onlyGridPositions);
 
-
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
     useGaussianDistribution.setValue(false);
-      itemList.add(useGaussianDistribution);
+    itemList.add(useGaussianDistribution);
 
     useReinsertChainNodes = itemFactory.booleanParameter("Focus on nodes from reinserted chains");
     useReinsertChainNodes.setValue(true);
+    itemList.add(useReinsertChainNodes);
 
     toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes");
     toggleNodeDistributions.setValue(false);
-      itemList.add(toggleNodeDistributions);
+    itemList.add(toggleNodeDistributions);
 
     allowIncreaseStepSize = itemFactory.booleanParameter("Automatically increase step size");
     allowIncreaseStepSize.setValue(false);
     itemList.add(allowIncreaseStepSize);
-
 
     useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)");
     useCrossingResolution.setValue(true);
@@ -81,16 +81,16 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
   @Override
   public ArrayList<AbstractLayoutInterfaceItem> getItems() {
-      return itemList;
+    System.out.println("size dsfksdaflsdfasdf" +itemList.size());return itemList;
   }
 
 
-    @Override
-    public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
-        Map<String, AbstractLayoutInterfaceItem<Boolean>> paramaters = new HashMap<>();
-        paramaters.put("useReinsertChainNodes", useReinsertChainNodes);
-        paramaters.put("toggleNodeDistributions", toggleNodeDistributions);
-        return Optional.of(paramaters);
+
+  public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
+      Map<String, AbstractLayoutInterfaceItem<Boolean>> paramaters = new HashMap<>();
+      paramaters.put("useReinsertChainNodes", useReinsertChainNodes);
+      paramaters.put("toggleNodeDistributions", toggleNodeDistributions);
+      return Optional.of(paramaters);
   }
 
 }

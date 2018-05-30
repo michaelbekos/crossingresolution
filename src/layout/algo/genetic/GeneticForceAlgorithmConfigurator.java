@@ -36,7 +36,6 @@ public class GeneticForceAlgorithmConfigurator implements ILayoutConfigurator {
   }
 
 
-  @Override
   public Optional<Map<String, AbstractLayoutInterfaceItem<Boolean>>> getBooleanParameters() {
     return Optional.empty();
   }

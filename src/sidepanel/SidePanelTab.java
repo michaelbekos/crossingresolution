@@ -630,7 +630,7 @@ public class SidePanelTab {
                 initSidePanel.mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
                 minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
 //                System.out.println(initSidePanel.mainFrame.bestSolution.getBestMinimumAngleForNodes(initSidePanel.mainFrame.graph.getNodes().size()));
-                if (executor.getCurrentIteration() >= last_iteration + 2000 && !runRandomAll) {
+                if (executor.getCurrentIteration() >= last_iteration + 4000 && !runRandomAll) {
                     //remove chain
                     System.out.println("INSERTING "+initSidePanel.mainFrame.graph.getNodes().size());
                     reinsertChain();
@@ -644,33 +644,47 @@ public class SidePanelTab {
 //                if (!runRandomAll && false) {
                 if (!runRandomAll) {
 //                    if (minAngle < startingAngle - epsilon) {
-                    if (count >= 20 ) {
-                        Map<String, AbstractLayoutInterfaceItem<Boolean>> map = configurator.getBooleanParameters().orElse(null);
+                    if (count >= 10 ) {
+//                        Map<String, AbstractLayoutInterfaceItem<Boolean>> map = configurator.getBooleanParameters().orElse(null);
+                        ArrayList<AbstractLayoutInterfaceItem> map = configurator.getItems();
                         try {
-                            if (map != null) {
-                                modifyGraph(() -> {
-                                    map.get("useReinsertChainNodes").setValue(false);
-                                    map.get("toggleNodeDistributions").setValue(true);
-                                });
-                                runRandomAll = true;
-                            }
+//                            if (map != null) {
+//                                modifyGraph(() -> {
+//                                    map.get("useReinsertChainNodes").setValue(false);
+//                                    map.get("toggleNodeDistributions").setValue(true);
+//                                });
+//                                runRandomAll = true;
+//                            }
+                            modifyGraph(() -> {
+                                map.get(7).setValue(false);
+                                map.get(8).setValue(true);
+                            });
+                            runRandomAll = true;
                         } catch (NullPointerException npe) {
                             setOutputTextArea("Error! Use Random Algorithm.");
                             System.out.println("Error! Use Random Algorithm.");
                         }
                     }
                 }
-                if (runRandomAll && executor.getCurrentIteration() >= last_iteration + 1000) {
-                    Map<String, AbstractLayoutInterfaceItem<Boolean>> map = configurator.getBooleanParameters().orElse(null);
+                if (runRandomAll && executor.getCurrentIteration() >= last_iteration + 8000) {
+//                    Map<String, AbstractLayoutInterfaceItem<Boolean>> map = configurator.getBooleanParameters().orElse(null);
+                    ArrayList<AbstractLayoutInterfaceItem> map = configurator.getItems();
                     try {
-                        if (map != null) {
-                            modifyGraph(() -> {
-                                map.get("useReinsertChainNodes").setValue(true);
-                                map.get("toggleNodeDistributions").setValue(false);
-                            });
-                            runRandomAll = false;
-                            count = 0;
-                        }
+//                        if (map != null) {
+//                            modifyGraph(() -> {
+//                                map.get("useReinsertChainNodes").setValue(true);
+//                                map.get("toggleNodeDistributions").setValue(false);
+//                            });
+//                            runRandomAll = false;
+//                            count = 0;
+//                        }
+                        modifyGraph(() -> {
+                            map.get(7).setValue(true);
+                            map.get(8).setValue(false);
+                            map.get(6).setValue(false);
+                        });
+                        runRandomAll = false;
+                        count = 0;
                     } catch (NullPointerException npe) {
                         setOutputTextArea("Error! Use Random Algorithm.");
                         System.out.println("Error! Use Random Algorithm.");
@@ -886,7 +900,7 @@ public class SidePanelTab {
     private void reinsertVerticesItem() {
         modifyGraph(() -> {
             initSidePanel.mainFrame.initSidePanel.removeDefaultListeners();
-            ArrayList<Set<INode>> setChain = initSidePanel.mainFrame.removedChains.reinsert(1, true);
+            ArrayList<Set<INode>> setChain = initSidePanel.mainFrame.removedChains.reinsert(1, false);
             Set<INode> allNodes = new HashSet<>();
             for (Set<INode> x : setChain) {
                 allNodes.addAll(x);
