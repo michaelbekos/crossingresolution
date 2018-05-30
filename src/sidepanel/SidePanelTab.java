@@ -580,10 +580,10 @@ public class SidePanelTab {
                     try{Thread.sleep(100);} catch(InterruptedException c){}
                 }
 //                if (executor.getCurrentIteration() >= last_iteration + 1000 && !runRandomAll) {
-                if (!runRandomAll && false) {
+//                if (!runRandomAll && false) {
+                if (!runRandomAll) {
 //                    if (minAngle < startingAngle - epsilon) {
                     if (count >= 20 ) {
-                        System.out.println("its habbening");
                         Map<String, AbstractLayoutInterfaceItem<Boolean>> map = configurator.getBooleanParameters().orElse(null);
                         try {
                             if (map != null) {
