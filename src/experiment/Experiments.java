@@ -30,8 +30,8 @@ public class Experiments {
 
     //private y.view.Graph2DView view;
     private GraphComponent comp;
-    private String inputDirectory  = "E:\\graph\\graphml\\";
-    private String outputDirectory = "E:\\graph\\afterRandom\\graphml2\\";
+    private String inputDirectory  = "E:\\graph\\inputfolder\\";
+    private String outputDirectory = "E:\\graph\\outputfolder\\graphml\\";
     private final String randomMovementString = "Random Movement";
     private final String forceAlgoString = "Force Algorithm";
     private final String totalResolutionString = "Total Resolution Force";
@@ -93,38 +93,43 @@ public class Experiments {
 
     }
 
- /*   public synchronized void run()
+    /**
+     * Run method with the random movement
+     */
+    public synchronized void runOnlyRandom()
     {
-            java.io.File dir = new java.io.File(inputDirectory);
-            // It is also possible to filter the list of returned files.
-            java.io.FilenameFilter filter = new java.io.FilenameFilter() {
-                public boolean accept(java.io.File file, String name)
-                {
-                    return true;
-                }
-            };
-            String[] children = dir.list(filter);
-            System.out.println(children.length);
+        java.io.File dir = new java.io.File(inputDirectory);
+        // It is also possible to filter the list of returned files.
+        java.io.FilenameFilter filter = new java.io.FilenameFilter() {
+            public boolean accept(java.io.File file, String name) {return true;}
+        };
+        String[] children = dir.list(filter);
+        System.out.println(children.length);
 
-            if (children == null) {
-                System.out.println("Children==null");
-                // Either dir does not exist or is not a directory
-            }
-            else {
+        if (children == null) {
+            System.out.println("Children==null");
+            // Either dir does not exist or is not a directory
+        }
+        else {
+            String folderName = "randomMovement";
+            fixGraphmlFormat(children, folderName);
 
-                    for(int  i = 20; i<=100; i+=20){
-                        createFiles(i-19,i);
-                    }
-                    childernP = children;
-                    //for(int i = 0; i<1; i++){
-                    for(int i = 0; i<children.length; i++){
-                        openFrame(children[i]);
-                        System.out.println("Iteration:   "+ i);
-                    }
+            for(int  i = 20; i<=100; i+=20){
+                createFiles(i-19,i);
             }
-                System.out.println("ENDE");
+            childernP = children;
+            for(int i = 0; i<children.length; i++){
+                openFrame(children[i], this.randomMovementString);
+                System.out.println("Iteration:   "+ i);
+                deleteOutPutFile(children[i], folderName);  //delete the file to see which one are left. This will delete the copied files frome the fixGraphmlFormat() method
+            }
+
+        }
+
+        System.out.println("ENDE");
     }
-*/
+
+
     /**
      * Run method for the force algorithm
      */
@@ -146,6 +151,8 @@ public class Experiments {
             // Either dir does not exist or is not a directory
         }
         else {
+            String folderName = "force";
+            fixGraphmlFormat(children, folderName);
             for(int  i = 20; i<=100; i+=20){
                 createFiles(i-19,i);
             }
@@ -153,6 +160,7 @@ public class Experiments {
             for(int i = 0; i<children.length; i++){
                 openFrame(children[i], this.forceAlgoString);
                 System.out.println("Iteration:   "+ i);
+                deleteOutPutFile(children[i], folderName);  //delete the file to see which one are left
             }
         }
         System.out.println("ENDE");
@@ -179,6 +187,9 @@ public class Experiments {
             // Either dir does not exist or is not a directory
         }
         else {
+            String folderName = "totalResolutionForce";
+            fixGraphmlFormat(children, folderName);
+
             for(int  i = 20; i<=100; i+=20){
                 createFiles(i-19,i);
             }
@@ -186,60 +197,13 @@ public class Experiments {
             for(int i = 0; i<children.length; i++){
                 openFrame(children[i], this.totalResolutionString);
                 System.out.println("Iteration:   "+ i);
+                deleteOutPutFile(children[i], folderName);  //delete the file to see which one are left
             }
         }
         System.out.println("ENDE");
     }
 
-    /**
-     * Run method with the random movement
-     */
-    public synchronized void runOnlyRandom()
-    {
-        java.io.File dir = new java.io.File(inputDirectory);
-        // It is also possible to filter the list of returned files.
-        java.io.FilenameFilter filter = new java.io.FilenameFilter() {
-            public boolean accept(java.io.File file, String name)
-            {
-                return true;
-            }
-        };
-        String[] children = dir.list(filter);
-        System.out.println(children.length);
-//TODO:beides verwenden
-        if (children == null) {
-            System.out.println("Children==null");
-            // Either dir does not exist or is not a directory
-        }
-        else {
-            for(int  i = 20; i<=100; i+=20){
-                createFiles(i-19,i);
-            }
-            childernP = children;
-            for(int i = 0; i<children.length; i++){
-                openFrame(children[i], this.randomMovementString);
-                System.out.println("Iteration:   "+ i);
-            }
-        }
 
-/*        for (int i=0; i<children.length; i++)
-        {
-            System.out.println("Iteration: " + i);
-
-            Path path = Paths.get(this.inputDirectory + children[i]);
-            Charset charset = StandardCharsets.UTF_8;
-try {
-
-
-    String content = new String(Files.readAllBytes(path), charset);
-    content = content.replaceAll("<!DOCTYPE graphml SYSTEM \"http://www.graphdrawing.org/dtds/graphml.dtd\">", "");
-    Files.write(path, content.getBytes(charset));
-}
-    catch(IOException ioex){}
-        }
-*/
-     System.out.println("ENDE");
-    }
 
     /**
      * Starts a frame and create an experiment object, load the graph and start the given algorithm
@@ -249,7 +213,7 @@ try {
     private void openFrame(String pattern, String algorithmName) {
         MainFrame frame = new MainFrame();
         frame.init();
-        frame.setVisible(true); //TODO
+        frame.setVisible(false); //TODO
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 
@@ -276,9 +240,8 @@ try {
         }else{
 
             int maxNodeNum = calcMaxNodeNum(frame.graph);
-            if(maxNodeNum != 100){
-                frame.dispose();
-                return;}//TODO: Nur zum testen
+
+            //if(maxNodeNum != 40){frame.dispose();return;}//TODO: Nur zum testen
 
 
 
@@ -297,10 +260,10 @@ try {
                 experiment.getTab().get().configurator.getItems().get(8).setValue(true); // use crossing Resolution
                 experiment.getTab().get().configurator.getItems().get(8).setValue(false); // use angular Resolution
 
-                for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
+             /*   for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
                     System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
                 }
-
+*/
 
                 startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
@@ -336,10 +299,10 @@ try {
                 experiment.getTab().get().configurator.getItems().get(22).setValue(false);
                 experiment.getTab().get().configurator.getItems().get(23).setValue(0.008);  //Angular2
                 experiment.getTab().get().configurator.getItems().get(24).setValue(false);
-                for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
+          /*      for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
                     System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
                 }
-
+*/
                 startExperiment(experiment, this.forceAlgo + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.forceAlgo + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 // experiment.writeGraphEndResults();
@@ -373,10 +336,10 @@ try {
                 experiment.getTab().get().configurator.getItems().get(23).setValue(0.008);  //Angular2
                 experiment.getTab().get().configurator.getItems().get(24).setValue(true);
 
-                for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
+        /*        for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
                     System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
                 }
-
+*/
                 startExperiment(experiment, this.totalResForce + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.totalResForce + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 // experiment.writeGraphEndResults();
@@ -474,6 +437,12 @@ try {
                 dir.mkdirs();
             }
 
+
+            dir = new File(outputDirectory + "resultGraph\\");
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+
             File file = new File(outputDirectory + "\\" + filename );
             if(!file.exists()){
                 file.createNewFile();
@@ -525,6 +494,46 @@ try {
         }
         return maxNodeNum;
 
+    }
+
+    private void fixGraphmlFormat(String[] children, String specialFoldername){
+        /**  For the rome graphs which has a strange .graphml format  **/
+        for (int i=0; i<children.length; i++)
+        {
+            System.out.println("Iteration: " + i);
+
+            Path pathInput = Paths.get(this.inputDirectory + children[i]);
+            Path pathOutput = Paths.get(this.outputDirectory + specialFoldername +"\\" + children[i]);
+            Charset charset = StandardCharsets.UTF_8;
+            try {
+
+                String content = new String(Files.readAllBytes(pathInput), charset);
+                content = content.replaceAll("<!DOCTYPE graphml SYSTEM \"http://www.graphdrawing.org/dtds/graphml.dtd\">", "");
+
+
+                File dir = new File(this.outputDirectory + specialFoldername +"\\");
+                if(!dir.exists()){
+                    dir.mkdirs();
+                }
+
+                Files.write(pathOutput, content.getBytes(charset));
+            }
+            catch(IOException ioex){
+                System.out.println("Can't read the files to convert the strange .graphml format.");
+                System.out.println(ioex);
+            }
+        }
+    }
+
+    private void deleteOutPutFile(String child, String specialFoldername){
+
+        Path path = Paths.get(this.outputDirectory+ specialFoldername +"\\" + child);
+        try {
+            Files.delete(path);
+        } catch (IOException x) {
+            // File permission problems are caught here.
+            System.err.println(x);
+        }
     }
 
 }
