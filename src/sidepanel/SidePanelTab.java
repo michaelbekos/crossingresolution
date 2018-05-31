@@ -604,7 +604,7 @@ public class SidePanelTab {
             return;
         }
         Thread automaticInsertion = new Thread(() -> {
-                double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+                double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getBestCrossingResolution();
                 double epsilon = startingAngle/100;
                 if (!algorithmName.equals("Random Movement")) {
                     setOutputTextArea("Recommended to use Random Movement!");
@@ -622,7 +622,7 @@ public class SidePanelTab {
                     if (executor.isFinished()) {
                         return;
                     }
-                    double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+                    double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getBestCrossingResolution();
                     if (minAngle >= (startingAngle - epsilon)) {
                         //remove chain
                         reinsertVerticesItem();

@@ -2,7 +2,6 @@ package experiment;
 
 import algorithms.graphs.GridGraph;
 import algorithms.graphs.MinimumAngle;
-import com.sun.corba.se.impl.orbutil.graph.Graph;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
@@ -330,8 +329,8 @@ public class Experiment {
 
         //calcGraphInformations();
 
-        mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
-        this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getMinimumAngle()) / 1000.0;
+        mainFrame.minimumAngleMonitor.updateCrossingResolutionInfoBar();
+        this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getBestCrossingResolution()) / 1000.0;
         System.out.println("load Graph " + this.minimumAngle);
         this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
        // this.angular_resolution = GraphOperations.getMinimumCrossingForNodes(this.graph);
@@ -396,18 +395,18 @@ public class Experiment {
 
         this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
        // this.angular_resolution = GraphOperations.getMinimumAngleForNodes(this.graph);
-        //this.angular_resolution = mainFrame.minimumAngleMonitor.getAngularResolution();
+        //this.angular_resolution = mainFrame.minimumAngleMonitor.getBestAngularResolution();
 
-        mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+        mainFrame.minimumAngleMonitor.updateCrossingResolutionInfoBar();
 
         mainFrame.minimumAngleMonitor.computeTotalResolution();
 
 
       //  this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getCurrentCrossingResolution()) / 1000.0; //with the act crossing angle
-        this.actAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getMinimumAngle()) / 10000.0; // with the best crossing angle
-        this.actAngularAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getAngularResolution()) / 10000.0; // with the best angular
+        this.actAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestCrossingResolution()) / 10000.0; // with the best crossing angle
+        this.actAngularAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestAngularResolution()) / 10000.0; // with the best angular
 
-        this.actTotalAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getTotalResolution()) / 10000.0; // with the best total angle
+        this.actTotalAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestTotalResolution()) / 10000.0; // with the best total angle
         System.out.println("Total res:   " + this.actTotalAngle);
         System.out.println("Total res:   " + this.actTotalAngle);
         System.out.println("Total res:   " + this.actTotalAngle);
@@ -433,7 +432,7 @@ public class Experiment {
             reached90Degree = true;
         }
 
-        this.testAngle = mainFrame.minimumAngleMonitor.getMinimumAngle();
+        this.testAngle = mainFrame.minimumAngleMonitor.getBestCrossingResolution();
         //outputTextArea.setText(graphInfo.toString());
 
 
@@ -584,9 +583,9 @@ public class Experiment {
 
         graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph)).append("\n");
 
-        graphInfo.append("\nMin. Angle: ").append(mainFrame.minimumAngleMonitor.getMinimumAngle()).append("\n");
-        mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
-        double minAngle = mainFrame.minimumAngleMonitor.getMinimumAngle();
+        graphInfo.append("\nMin. Angle: ").append(mainFrame.minimumAngleMonitor.getBestCrossingResolution()).append("\n");
+        mainFrame.minimumAngleMonitor.updateCrossingResolutionInfoBar();
+        double minAngle = mainFrame.minimumAngleMonitor.getBestCrossingResolution();
         graphInfo.append("\nMin. Angle: ").append(minAngle).append("\n");
         if(minAngle>=87.0){
             reached90Degree = true;
