@@ -1,0 +1,36 @@
+# First value is number of nodes (N)
+12 
+# Next N numbers describe the node locations
+67 112
+26 75
+19 50
+51 76
+116 119
+68 51
+106 22
+113 69
+117 72
+82 32
+41 17
+36 119
+# Remaining lines are the edges.
+# The first value is the source node index.
+# The second value is the target node index.
+0 1
+0 2
+0 3
+1 9
+1 11
+2 10
+2 11
+3 7
+3 8
+4 7
+4 8
+4 11
+5 7
+5 9
+5 10
+6 8
+6 9
+6 10
