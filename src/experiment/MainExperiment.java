@@ -15,17 +15,17 @@ public class MainExperiment {
 
       Experiments e = new Experiments(inputDir, outputDir,
               Long.MAX_VALUE, 100, 1000, 10000,
-              false, false, true, false);
+              false, false, true, true);
        e.runOnlyRandom();
 
        e = new Experiments(inputDir, outputDir,
                Long.MAX_VALUE, 100, 1000, 10000,
-               false, false, true, false);
+               false, false, true, true);
         e.runOnlyForce();
 
         e = new Experiments(inputDir, outputDir,
                 Long.MAX_VALUE, 100, 1000, 10000,
-                false, false, true, false);
+                false, false, true, true);
         e.runOnlyTotalResolutionForce();
 
     }

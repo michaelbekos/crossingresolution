@@ -21,8 +21,10 @@ public class MinimumAngleMonitor {
   private GraphComponent view;
   private double oldMinAngle;
   private double oldAngularRes;
+  private double oldTotalRes;
   private double currentCrossingResolution;
   private double currentAngularResolution;
+  private double currentTotalResolution;
   private boolean useCrossingResolution;
   private boolean useAngularResolution;
 
@@ -44,6 +46,7 @@ public class MinimumAngleMonitor {
     this.oldAngularRes = 0;
     this.currentCrossingResolution = 0;
     this.currentAngularResolution = 0;
+    this.currentTotalResolution = 0;
     this.useCrossingResolution = true;
     this.useAngularResolution = false;
   }
@@ -150,6 +153,39 @@ public class MinimumAngleMonitor {
 
   }
 
+  public double computeTotalResolution() {
+    computeMinimumAngle();
+    computeAngularResolution();
+
+    System.out.println("COMPUTE Total Resolution:  cross "  + this.currentCrossingResolution);
+    System.out.println("COMPUTE Total Resolution:   andular  "  +  this.currentAngularResolution );
+    if (useAngularResolution && useCrossingResolution) {
+      if (currentAngularResolution < currentCrossingResolution) {
+        this.currentTotalResolution = currentAngularResolution;
+      } else {
+        this.currentTotalResolution = currentCrossingResolution;
+      }
+    } else if (useAngularResolution) {
+      this.currentTotalResolution = currentAngularResolution;
+    } else {
+      this.currentTotalResolution = currentCrossingResolution;
+    }
+
+    System.out.println("COMPUTE Total Resolution:   total   "  +  this.currentTotalResolution);
+
+    if(oldTotalRes <= this.currentTotalResolution){
+      this.oldTotalRes = this.currentTotalResolution;
+    }
+
+    System.out.println("COMPUTE Total Resolution:   old crossing"  + this.oldMinAngle);
+    System.out.println("COMPUTE Total Resolution:   old angular"  +  this.oldAngularRes);
+    System.out.println("COMPUTE Total Resolution:   old total"  + this.oldTotalRes );
+
+    return this.currentTotalResolution;
+  }
+
+
+
   public void registerGraphChangedListeners() {
     graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
     graph.addEdgeCreatedListener(minimumAngleEdgeCreatedListener);
@@ -172,8 +208,10 @@ public class MinimumAngleMonitor {
     return oldMinAngle;
   }
 
-  public double getAngularResolution() {
-    return oldAngularRes;
+  public double getAngularResolution() {return oldAngularRes;}
+
+  public double getTotalResolution() {
+    return oldTotalRes;
   }
 
   public void setCrossingResolution(boolean value) {

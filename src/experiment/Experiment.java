@@ -42,14 +42,16 @@ public class Experiment {
     private int numOfCrossings = -1;
     private int  minimumAngleNumOfCrossings;
     private double aspect_ratio, minimumAngleAspectratio;
-    private double angular_resolution, minimumAngleAngularResolution;
+    private double angular_resolution, minimumAngleAngularResolution, minimumAngleTotalResolution;
     private final double approx_epsilon = 0.001; // If the angle plus epsilon doesn't change  after number of iterations, then it is converged
     private double actAngle = 0;
+    private double actAngularAngle = 0;
+    private double actTotalAngle = 0;
     private Mapper<INode, PointD> positions;
     Optional<SidePanelTab> tab;
 
     private int totalVertecies, totalEdges;
-    private double currentGraphSizeX, currentGraphSizeY, minimumAngle, testAngle;
+    private double currentGraphSizeX, currentGraphSizeY, minimumAngle, testAngle, totalAngle;
 
     public  Experiment (MainFrame mainFrame, String fileName, String inputDir, String outputDir, int boxSize) {
         this.mainFrame = mainFrame;
@@ -81,7 +83,7 @@ public class Experiment {
         sb.append(';');
         sb.append(this.numOfCrossings);
         sb.append(';');
-        sb.append(this.angular_resolution);
+        sb.append(this.actAngularAngle);
         sb.append(';');
         sb.append(this.aspect_ratio);
         sb.append(';');
@@ -133,6 +135,8 @@ public class Experiment {
         sb.append(';');
         sb.append(this.minimumAngleNumOfCrossings);
         sb.append(';');
+        sb.append(this.minimumAngleTotalResolution);
+        sb.append(';');
         sb.append('\n');
 
         Path path = FileSystems.getDefault().getPath(outputDirectory , "\\" + filename);
@@ -166,11 +170,13 @@ public class Experiment {
         sb.append(';');
         sb.append(this.graph.getEdges().size());
         sb.append(';');
-        sb.append(this.angular_resolution);
+        sb.append(this.actAngularAngle);
         sb.append(';');
         sb.append(this.aspect_ratio);
         sb.append(';');
         sb.append(this.numOfCrossings);
+        sb.append(';');
+        sb.append(this.actTotalAngle);
         sb.append(';');
         sb.append('\n');
 
@@ -200,17 +206,19 @@ public class Experiment {
         sb.append(';');
         sb.append(this.maxTimeForAlgo);
         sb.append(';');
-        sb.append(this.actAngle);
+        sb.append(this.minimumAngle);
         sb.append(';');
         sb.append(this.graph.getNodes().size());
         sb.append(';');
         sb.append(this.graph.getEdges().size());
         sb.append(';');
-        sb.append(this.angular_resolution);
+        sb.append(this.minimumAngleAngularResolution);
         sb.append(';');
         sb.append(this.aspect_ratio);
         sb.append(';');
         sb.append(this.numOfCrossings);
+        sb.append(';');
+        sb.append(this.minimumAngleTotalResolution);
         sb.append(';');
         sb.append('\n');
 
@@ -299,13 +307,17 @@ public class Experiment {
         this.numOfUnchangedAngle = 0;
         this.minimumAngleIterations = 0;
         this.minimumAngle = 0;
+        this.totalAngle = 0;
         this.minimumAngleTime = 0;
         this.minimumAngleAspectratio = -1;
-        this.minimumAngleAngularResolution = -1;
+        this.minimumAngleAngularResolution = 0;
+        this.minimumAngleTotalResolution = 0;
         this.iterations = 0;
         this.calcTime = 0;
         this.numOfCrossings = -1;
         this.actAngle = 0;
+        this.actAngularAngle = 0;
+        this.actTotalAngle = 0;
 
 
         if (this.fileName.endsWith(".txt")){
@@ -384,26 +396,37 @@ public class Experiment {
 
         this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
        // this.angular_resolution = GraphOperations.getMinimumAngleForNodes(this.graph);
-        this.angular_resolution = mainFrame.minimumAngleMonitor.getAngularResolution();
+        //this.angular_resolution = mainFrame.minimumAngleMonitor.getAngularResolution();
 
         mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+
+        mainFrame.minimumAngleMonitor.computeTotalResolution();
 
 
       //  this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getCurrentCrossingResolution()) / 1000.0; //with the act crossing angle
         this.actAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getMinimumAngle()) / 10000.0; // with the best crossing angle
+        this.actAngularAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getAngularResolution()) / 10000.0; // with the best angular
 
-        if((this.minimumAngle + this.approx_epsilon ) >= this.actAngle){
+        this.actTotalAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getTotalResolution()) / 10000.0; // with the best total angle
+        System.out.println("Total res:   " + this.actTotalAngle);
+        System.out.println("Total res:   " + this.actTotalAngle);
+        System.out.println("Total res:   " + this.actTotalAngle);
+        System.out.println("Total res:   " + this.actTotalAngle);
+        System.out.println("Total res:   " + this.actTotalAngle);
+        if(((this.totalAngle + this.approx_epsilon ) >= this.actTotalAngle)){
             this.numOfUnchangedAngle++;
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!numebrs   " + this.numOfUnchangedAngle);
         }else{
             System.out.println("numebrs   " + this.numOfUnchangedAngle);
-            this.minimumAngle = actAngle;
+            this.minimumAngle = this.actAngle;
             this.minimumAngleTime = this.calcTime;
             this.minimumAngleIterations = this.iterations;
             this.numOfUnchangedAngle = 0;
             this.minimumAngleNumOfCrossings = this.numOfCrossings;
             this.minimumAngleAspectratio = this.aspect_ratio;
-            this.minimumAngleAngularResolution = this.angular_resolution;
+            this.minimumAngleAngularResolution = this.actAngularAngle;
+            this.minimumAngleTotalResolution = this.actTotalAngle;
+            this.totalAngle = this.actTotalAngle;
         }
 
         if(this.minimumAngle >= 90.0){

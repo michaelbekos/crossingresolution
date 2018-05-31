@@ -50,8 +50,8 @@ public class Experiments {
     private boolean unconnectedGraphsAllowed = true;
     boolean reached90Deg = false;
     private String[] childernP;
-    private boolean withCrossingRes = true;
-    private boolean withAngularRes = false;
+    private boolean useCrossingRes = true;
+    private boolean useAngularRes = false;
 
 
 
@@ -78,7 +78,8 @@ public class Experiments {
 
     }
 
-    public Experiments(String inputDirectory, String outputDirectory, long maxCalcTime, int numOfIterationPerStep, int numOfSteps, int boxSize, boolean planarGraphsAllowed, boolean unconnectedGraphsAllowed, boolean withCrossingRes, boolean withAngularRes){
+    public Experiments(String inputDirectory, String outputDirectory, long maxCalcTime, int numOfIterationPerStep, int numOfSteps, int boxSize, boolean planarGraphsAllowed,
+                       boolean unconnectedGraphsAllowed, boolean useCrossingRes, boolean useAngularRes){
         this.comp = new GraphComponent();
         this.inputDirectory = inputDirectory;
         this.outputDirectory = outputDirectory;
@@ -88,8 +89,8 @@ public class Experiments {
         this.boxSize = boxSize;
         this.planarGraphsAllowed = planarGraphsAllowed;
         this.unconnectedGraphsAllowed = unconnectedGraphsAllowed;
-        this.withCrossingRes = withCrossingRes;
-        this.withAngularRes = withAngularRes;
+        this.useCrossingRes = useCrossingRes;
+        this.useAngularRes = useAngularRes;
 
     }
 
@@ -217,7 +218,7 @@ public class Experiments {
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 
-       // frame.BOX_SIZE = this.boxSize; //TODO unterschiedliche boxsize?
+       // frame.BOX_SIZE = this.boxSize; 
         //String fileName = index +"";
         String fileName = pattern;
         System.out.println("Graph " + fileName + " started.");
@@ -229,6 +230,8 @@ public class Experiments {
 
         experiment.setMaxIterations(this.numOfIteration);
         experiment.setMaxTime(this.maxCalcTime);
+        experiment.getTab().get().setEnableAngularResolution(this.useAngularRes);
+        experiment.getTab().get().setEnableCrossingResolution(this.useCrossingRes);
 
         YGraphAdapter graphAdapter = new YGraphAdapter(frame.graph);
 
@@ -257,9 +260,10 @@ public class Experiments {
                 experiment.getTab().get().configurator.getItems().get(6).setValue(true); // focus on critical nodes
                 experiment.getTab().get().configurator.getItems().get(7).setValue(true); // Automatically toggle focusing in critical nodes
                 experiment.getTab().get().configurator.getItems().get(8).setValue(false); // auto increase step size
-                experiment.getTab().get().configurator.getItems().get(8).setValue(true); // use crossing Resolution
-                experiment.getTab().get().configurator.getItems().get(8).setValue(false); // use angular Resolution
-
+                experiment.getTab().get().configurator.getItems().get(9).setValue(useCrossingRes); // use crossing Resolution
+                experiment.getTab().get().configurator.getItems().get(10).setValue(useAngularRes); // use angular Resolution
+                System.out.println("CROSS USE   " +   useCrossingRes + "        "  +  experiment.getTab().get().configurator.getItems().get(9).getValue());
+                System.out.println("Angular USE    " + useAngularRes +  "       " + experiment.getTab().get().configurator.getItems().get(10).getValue());
              /*   for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
                     System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
                 }
@@ -380,7 +384,11 @@ public class Experiments {
                 // Informations();
                 exp.writeGraphResults(fileName);
             }
-            while(exp.getCalcTime() < this.maxCalcTime  && this.iterationFactor <= this.numOfIterationFactor && !this.reached90Deg && (exp.getNumOfUnchangedAngle() < this.maxNumberOfUnchangedAngle ) && exp.getCalcTime() <= this.maxCalcTime ){
+            while(exp.getCalcTime() < this.maxCalcTime
+                    && this.iterationFactor <= this.numOfIterationFactor
+                    && !this.reached90Deg
+                    && (exp.getNumOfUnchangedAngle() < this.maxNumberOfUnchangedAngle )
+                    && exp.getCalcTime() <= this.maxCalcTime ){
 
                 exp.runAlgorithms();
 
@@ -468,6 +476,8 @@ public class Experiments {
                 sb.append(';');
                 sb.append("#crossing");
                 sb.append(';');
+                sb.append("total resolution");
+                sb.append(';');
                 sb.append('\n');
 
                 pw.write(sb.toString());
@@ -500,7 +510,6 @@ public class Experiments {
         /**  For the rome graphs which has a strange .graphml format  **/
         for (int i=0; i<children.length; i++)
         {
-            System.out.println("Iteration: " + i);
 
             Path pathInput = Paths.get(this.inputDirectory + children[i]);
             Path pathOutput = Paths.get(this.outputDirectory + specialFoldername +"\\" + children[i]);
