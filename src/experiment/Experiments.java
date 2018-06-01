@@ -218,7 +218,7 @@ public class Experiments {
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 
-       // frame.BOX_SIZE = this.boxSize; 
+       // frame.BOX_SIZE = this.boxSize;
         //String fileName = index +"";
         String fileName = pattern;
         System.out.println("Graph " + fileName + " started.");

@@ -359,7 +359,7 @@ public class Experiment {
         long Time0 = System.currentTimeMillis();
         long Time1;
         long runTime = 0;
-        while(runTime<waitTime){
+        while(runTime < waitTime){
             Time1 = System.currentTimeMillis();
             runTime = Time1 - Time0;
         }
