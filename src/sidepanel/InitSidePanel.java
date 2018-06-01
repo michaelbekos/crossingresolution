@@ -226,10 +226,10 @@ public class InitSidePanel {
     }
 
     private void masterEnableCrossingResolutionActionPerformed(ItemEvent evt) { //TODO: maybe sync with random
-        mainFrame.minimumAngleMonitor.setCrossingResolution(evt.getStateChange() == ItemEvent.SELECTED);
+        mainFrame.minimumAngleMonitor.setUseCrossingResolution(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
     private void masterEnableAngularResolutionActionPerformed(ItemEvent evt) {
-        mainFrame.minimumAngleMonitor.setAngularResolution(evt.getStateChange() == ItemEvent.SELECTED);
+        mainFrame.minimumAngleMonitor.setUseAngularResolution(evt.getStateChange() == ItemEvent.SELECTED);
     }
 }
