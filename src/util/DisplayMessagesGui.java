@@ -46,7 +46,7 @@ public class DisplayMessagesGui {
 
     public static String createAspectRatioMsg(IGraph graph) {
         GraphOperations.AspectRatio aspectRatio = GraphOperations.getAspectRatio(graph);
-        return "Aspect Ratio: " + (int)aspectRatio.getValue() +
+        return "Aspect Ratio: " + aspectRatio.getValue() +
                 " | Min: " + (int)aspectRatio.getShortestEdgeLength() +
                 " | Max.: " + (int)aspectRatio.getLongestEdgeLength();
     }

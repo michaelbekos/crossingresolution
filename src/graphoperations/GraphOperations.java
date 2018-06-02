@@ -5,10 +5,7 @@ import com.yworks.yfiles.algorithms.Graph;
 import com.yworks.yfiles.algorithms.INodeCursor;
 import com.yworks.yfiles.algorithms.Node;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.IEdge;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.layout.YGraphAdapter;
 import com.yworks.yfiles.utils.IListEnumerable;
 import layout.algo.utils.PositionMap;
@@ -121,6 +118,10 @@ public class GraphOperations {
     public double getValue() {
       return longestEdgeLength/shortestEdgeLength;
     }
+
+    public INode[] getCriticalNodes() {
+          return new INode[] {shortestEdge.getSourceNode(), shortestEdge.getTargetNode(), longestEdge.getSourceNode(), longestEdge.getTargetNode()};
+    }
   }
 
   public static AspectRatio getAspectRatio(IGraph g){
@@ -134,6 +135,28 @@ public class GraphOperations {
     double lLength = euclidDist(lSource.getLayout().getCenter().getX(), lSource.getLayout().getCenter().getY(), lTarget.getLayout().getCenter().getX(), lTarget.getLayout().getCenter().getY());
     return new AspectRatio(sLength, sEdge, lLength, lEdge);
   }
+
+  //returns false if moving the node to the position results in a worse aspect ratio
+  public static boolean improvedAspectRatio(PointD position, INode node, IGraph graph, AspectRatio aspectRatio, double maxAspectRatio) {
+      for (IPort p : node.getPorts()) {
+          for (IEdge e : graph.edgesAt(p)) {
+              INode endPoint;
+              if (e.getSourceNode() == node) {
+                  endPoint = e.getTargetNode();
+              } else {
+                  endPoint = e.getSourceNode();
+              }
+              double length = euclidDist(position.getX(), position.getY(), endPoint.getLayout().getCenter().getX(), endPoint.getLayout().getCenter().getY());
+              if (length > aspectRatio.getLongestEdgeLength() && length/aspectRatio.getShortestEdgeLength() > maxAspectRatio) {
+                  return false;
+              } else if (length < aspectRatio.getShortestEdgeLength() && aspectRatio.getLongestEdgeLength()/length > maxAspectRatio) {
+                  return false;
+              }
+          }
+      }
+      return true;
+  }
+
 
   public static IEdge getShortestEdge(IGraph g){
     IListEnumerable<IEdge> edgeList = g.getEdges();
