@@ -27,6 +27,7 @@ public class MinimumAngleMonitor {
   private double currentTotalResolution;
   private boolean useCrossingResolution;
   private boolean useAngularResolution;
+  private boolean useAspectRatio;
 
   private BestSolutionMonitor bestSolution;
 
@@ -50,6 +51,7 @@ public class MinimumAngleMonitor {
     this.currentTotalResolution = 0;
     this.useCrossingResolution = true;
     this.useAngularResolution = false;
+    this.useAspectRatio = true;
   }
 
   public Optional<Intersection> computeCrossingResolution() {
@@ -139,6 +141,11 @@ public class MinimumAngleMonitor {
   public void updateAngleInfoBar() {
     computeCrossingResolution();
     computeAngularResolution();
+    if (useAspectRatio) {   //TODO
+        String text = DisplayMessagesGui.createAspectRatioMsg(graph);
+        infoLabel.setText(text);
+        return;
+    }
     if (useAngularResolution && useCrossingResolution) {
       if (currentAngularResolution < currentCrossingResolution) {
         showAngularResolution(graph, view, infoLabel, false);
@@ -220,6 +227,10 @@ public class MinimumAngleMonitor {
 
   public void setUseAngularResolution(boolean value) {
     this.useAngularResolution = value;
+  }
+
+  public void setUseAspectRatio(boolean value) {
+      this.useAspectRatio = value;
   }
 
   public double getCurrentCrossingResolution() {

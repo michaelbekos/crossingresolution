@@ -2,6 +2,7 @@ package util;
 
 import com.yworks.yfiles.graph.IGraph;
 
+import graphoperations.GraphOperations;
 import layout.algo.utils.BestSolutionMonitor;
 import util.graph2d.Intersection;
 
@@ -41,5 +42,12 @@ public class DisplayMessagesGui {
         String text = "Angular Resolution: " + angularRes;
         text += " | Stored Best: " + bestSolution.getBestAngularResolutionForNodes(nodes).orElse(Double.POSITIVE_INFINITY);
         return text;
+    }
+
+    public static String createAspectRatioMsg(IGraph graph) {
+        GraphOperations.AspectRatio aspectRatio = GraphOperations.getAspectRatio(graph);
+        return "Aspect Ratio: " + aspectRatio.getValue() +
+                " | Min: " + (int)aspectRatio.getShortestEdgeLength() +
+                " | Max.: " + (int)aspectRatio.getLongestEdgeLength();
     }
 }

@@ -333,7 +333,7 @@ public class Experiment {
         mainFrame.minimumAngleMonitor.updateCrossingResolutionInfoBar();
         this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getBestCrossingResolution()) / 1000.0;
         System.out.println("load Graph " + this.minimumAngle);
-        this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
+        this.aspect_ratio = GraphOperations.getAspectRatio(this.graph).getValue();
        // this.angular_resolution = GraphOperations.getMinimumCrossingForNodes(this.graph);
     }
 
@@ -394,7 +394,7 @@ public class Experiment {
        // this.iterations += this.maxIterations;
         this.numOfCrossings = MinimumAngle.getCrossings(this.graph, this.positions).size();
 
-        this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
+        this.aspect_ratio = GraphOperations.getAspectRatio(this.graph).getValue();
        // this.angular_resolution = GraphOperations.getMinimumAngleForNodes(this.graph);
         //this.angular_resolution = mainFrame.minimumAngleMonitor.getBestAngularResolution();
 
@@ -439,7 +439,7 @@ public class Experiment {
 
         this.numOfCrossings = MinimumAngle.getCrossings(this.graph, this.positions).size();
 
-        this.aspect_ratio = GraphOperations.aspect_ratio(this.graph);
+        this.aspect_ratio = GraphOperations.getAspectRatio(this.graph).getValue();
 
         return reached90Degree;
 

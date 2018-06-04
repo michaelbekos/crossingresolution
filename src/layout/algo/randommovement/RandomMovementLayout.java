@@ -11,6 +11,7 @@ import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.YGraphAdapter;
+import graphoperations.GraphOperations;
 import layout.algo.execution.ILayout;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
@@ -81,10 +82,20 @@ public class RandomMovementLayout implements ILayout {
   @Override
   public boolean executeStep(int iteration) {
     Optional<INode> randomNode;
-    if (configurator.useGaussianDistribution.getValue()) {
-      randomNode = gaussianNodeSelection();
+    boolean usingAspectRatio = false;
+    GraphOperations.AspectRatio currentAspectRatio = GraphOperations.getAspectRatio(graph);
+    if (configurator.useAspectRatio.getValue()
+            && configurator.maxAspectRatio.getValue() > 0   //If slider = -1, dont correct illegal, just allow curr a.r. > prev a.r.
+            && (currentAspectRatio.getValue() > configurator.maxAspectRatio.getValue())) {
+      System.out.println("ILLEGAL Aspect Ratio, correcting ...");
+      randomNode = aspectRatioNodeSelection();
+      usingAspectRatio = true;
     } else {
-      randomNode = selectRandomNode(graph.getNodes(), graph.getNodes().size());
+      if (configurator.useGaussianDistribution.getValue()) {
+        randomNode = gaussianNodeSelection();
+      } else {
+        randomNode = selectRandomNode(graph.getNodes(), graph.getNodes().size());
+      }
     }
 
     if (!randomNode.isPresent()) {
@@ -97,7 +108,7 @@ public class RandomMovementLayout implements ILayout {
 
     double originalAngle = getAngleForNode(positions, node, graph);
     PointD originalPosition = positions.getValue(node);
-
+    final boolean usingAR = usingAspectRatio;
     Sample[] goodSamples = samples.stream()
         .peek(sample -> {
           double maxStepSize = configurator.maxStepSize.getValue();
@@ -111,11 +122,16 @@ public class RandomMovementLayout implements ILayout {
         })
         .filter(sample -> boundingBox.contains(sample.position))
         .filter(sample -> configurator.onlyGridPositions.getValue() || LayoutUtils.overlap(sample.position, positions, node, graph))
+//        .filter(sample -> !configurator.useAspectRatio.getValue() || GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio, configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio
+        .filter(sample -> !configurator.useAspectRatio.getValue() ||
+                GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio,
+                        configurator.maxAspectRatio.getValue() < 0 ? currentAspectRatio.getValue() : configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio (if slider = -1, allow all moves that dont worsen it)
         .peek(sample -> {
           positions.setValue(node, sample.position);
           sample.minimumAngle = getAngleForNode(positions, node, graph);
         })
-        .filter(sample -> sample.minimumAngle > originalAngle)
+            .filter(sample -> sample.minimumAngle > originalAngle)
+//            .filter(sample -> usingAR ||  sample.minimumAngle > originalAngle)        //Ignore crossing angle when correcting illegal a.r. (much faster)
         .toArray(Sample[]::new);
 
     if (goodSamples.length > 0) {
@@ -271,6 +287,32 @@ public class RandomMovementLayout implements ILayout {
                 return selectRandomNode(nodesOfLayer, nodesOfLayer.size());
               });
     }
+  }
+
+  private Optional<INode> aspectRatioNodeSelection() {
+
+      YGraphAdapter graphAdapter = new YGraphAdapter(graph);
+
+      NodeList nodesOfCrossing = new NodeList();
+      INode[] tmpList = GraphOperations.getAspectRatio(graph).getCriticalNodes();
+      for (INode u : tmpList) {
+        nodesOfCrossing.add(graphAdapter.getCopiedNode(u));
+      }
+
+      NodeList[] layers = Bfs.getLayers(graphAdapter.getYGraph(), nodesOfCrossing);
+
+      // select a layer according to a normal distribution with a variance that is equal to half of the number
+      // of layers. The reason for this number is that more than 95% of all values are within the interval
+      // [-2 * sigma; 2 * sigma]:
+      //     2 * sigma = #layers
+      // <=>     sigma = #layers / 2
+      int layerIndex = Math.min((int) Math.floor(Math.abs(random.nextGaussian() * layers.length / 2d)), layers.length - 1);
+
+      Set<INode> nodesOfLayer = layers[layerIndex].stream()
+              .map(node -> graphAdapter.getOriginalNode((Node) node))
+              .collect(Collectors.toSet());
+
+      return selectRandomNode(nodesOfLayer, nodesOfLayer.size());
   }
 
   private Optional<INode> selectRandomNode(Iterable<INode> nodes, int size) {

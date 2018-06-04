@@ -5,10 +5,7 @@ import com.yworks.yfiles.algorithms.Graph;
 import com.yworks.yfiles.algorithms.INodeCursor;
 import com.yworks.yfiles.algorithms.Node;
 import com.yworks.yfiles.geometry.PointD;
-import com.yworks.yfiles.graph.IEdge;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.graph.Mapper;
+import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.layout.YGraphAdapter;
 import com.yworks.yfiles.utils.IListEnumerable;
 import layout.algo.utils.PositionMap;
@@ -73,20 +70,95 @@ public class GraphOperations {
     return Math.acos((b*b + c*c - a*a) / (2*b*c));
   }
 
-  public static double aspect_ratio(IGraph g){
-    IEdge sEdge = getSmallestEdge(g);
+  public static class AspectRatio {
+    private double shortestEdgeLength;
+    private IEdge shortestEdge;
+    private double longestEdgeLength;
+    private IEdge longestEdge;
+
+    AspectRatio(double shortestEdgeLength, IEdge shortestEdge, double longestEdgeLength, IEdge longestEdge) {
+      this.shortestEdgeLength = shortestEdgeLength;
+      this.shortestEdge = shortestEdge;
+      this.longestEdgeLength = longestEdgeLength;
+      this.longestEdge = longestEdge;
+    }
+
+    public void setShortestEdgeLength(double shortestEdgeLength) {
+      this.shortestEdgeLength = shortestEdgeLength;
+    }
+
+    public void setShortestEdge(IEdge shortestEdge) {
+      this.shortestEdge = shortestEdge;
+    }
+
+    public void setLongestEdgeLength(double longestEdgeLength) {
+      this.longestEdgeLength = longestEdgeLength;
+    }
+
+    public void setLongestEdge(IEdge longestEdge) {
+      this.longestEdge = longestEdge;
+    }
+
+    public double getShortestEdgeLength() {
+      return shortestEdgeLength;
+    }
+
+    public IEdge getShortestEdge() {
+      return shortestEdge;
+    }
+
+    public double getLongestEdgeLength() {
+      return longestEdgeLength;
+    }
+
+    public IEdge getLongestEdge() {
+      return longestEdge;
+    }
+
+    public double getValue() {
+      return longestEdgeLength/shortestEdgeLength;
+    }
+
+    public INode[] getCriticalNodes() {
+          return new INode[] {shortestEdge.getSourceNode(), shortestEdge.getTargetNode(), longestEdge.getSourceNode(), longestEdge.getTargetNode()};
+    }
+  }
+
+  public static AspectRatio getAspectRatio(IGraph g){
+    IEdge sEdge = getShortestEdge(g);
     INode sSource = sEdge.getSourceNode();
     INode sTarget = sEdge.getTargetNode();
-    double sLength  = euclidDist(sSource.getLayout().getCenter().getX(), sSource.getLayout().getCenter().getY(), sTarget.getLayout().getCenter().getX(), sTarget.getLayout().getCenter().getY());
+    double sLength = euclidDist(sSource.getLayout().getCenter().getX(), sSource.getLayout().getCenter().getY(), sTarget.getLayout().getCenter().getX(), sTarget.getLayout().getCenter().getY());
     IEdge lEdge = getLongestEdge(g);
     INode lSource = lEdge.getSourceNode();
     INode lTarget = lEdge.getTargetNode();
-    double lLength  = euclidDist(lSource.getLayout().getCenter().getX(), lSource.getLayout().getCenter().getY(), lTarget.getLayout().getCenter().getX(), lTarget.getLayout().getCenter().getY());
-   // System.out.println("Edge lang: " + lLength + "    " + sLength);
-    return lLength / sLength;
+    double lLength = euclidDist(lSource.getLayout().getCenter().getX(), lSource.getLayout().getCenter().getY(), lTarget.getLayout().getCenter().getX(), lTarget.getLayout().getCenter().getY());
+    return new AspectRatio(sLength, sEdge, lLength, lEdge);
   }
 
-  public static IEdge getSmallestEdge(IGraph g){
+  //returns false if moving the node to the position results in a worse aspect ratio
+  public static boolean improvedAspectRatio(PointD position, INode node, IGraph graph, AspectRatio aspectRatio, double maxAspectRatio) {
+      for (IPort p : node.getPorts()) {
+          for (IEdge e : graph.edgesAt(p)) {
+              INode endPoint;
+              if (e.getSourceNode() == node) {
+                  endPoint = e.getTargetNode();
+              } else {
+                  endPoint = e.getSourceNode();
+              }
+              double length = euclidDist(position.getX(), position.getY(), endPoint.getLayout().getCenter().getX(), endPoint.getLayout().getCenter().getY());
+              if (length > aspectRatio.getLongestEdgeLength() && length/aspectRatio.getShortestEdgeLength() > maxAspectRatio) {
+                  return false;
+              } else if (length < aspectRatio.getShortestEdgeLength() && aspectRatio.getLongestEdgeLength()/length > maxAspectRatio) {
+                  return false;
+              }
+          }
+      }
+      return true;
+  }
+
+
+  public static IEdge getShortestEdge(IGraph g){
     IListEnumerable<IEdge> edgeList = g.getEdges();
 
     if(edgeList.size() >= 1) {
@@ -94,21 +166,20 @@ public class GraphOperations {
       INode source = edge.getSourceNode();
       INode target = edge.getTargetNode();
       double length  = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
-      double smallLength = length;
-      IEdge smallEdge = edge;
+      double shortLength = length;
+      IEdge shortEdge = edge;
 
       for (int i = 1; i < edgeList.size(); i++) {
         edge = edgeList.getItem(i);
         source = edge.getSourceNode();
         target = edge.getTargetNode();
         length = euclidDist(source.getLayout().getCenter().getX(), source.getLayout().getCenter().getY(), target.getLayout().getCenter().getX(), target.getLayout().getCenter().getY());
-        if(length < smallLength){
-          smallLength = length;
-          smallEdge = edge;
+        if(length < shortLength){
+          shortLength = length;
+          shortEdge = edge;
         }
       }
-
-      return smallEdge;
+      return shortEdge;
     }
     else{
       System.out.println("The graph has zero edges");
@@ -137,7 +208,6 @@ public class GraphOperations {
           smallEdge = edge;
         }
       }
-
       return smallEdge;
     }
     else{

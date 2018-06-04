@@ -53,6 +53,7 @@ public class SidePanelTab {
     private JCheckBox allowClickCreateNodeEdge;
     private JCheckBox enableCrossingResolution;
     private JCheckBox enableAngularResolution;
+    private JCheckBox enableAspectRatio;
     private JTextArea outputTextArea;
     private boolean verbose;
     
@@ -254,6 +255,16 @@ public class SidePanelTab {
         defaultPanel.add(enableAngularResolution, cDefaultPanel);
         enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
         enableAngularResolution.setSelected(false);
+
+        enableAspectRatio = new JCheckBox("Aspect Ratio");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(enableAspectRatio, cDefaultPanel);
+        enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
+        enableAspectRatio.setSelected(true);
 
         outputTextArea.setLineWrap(true);
         outputTextArea.setRows(10);
@@ -497,6 +508,10 @@ public class SidePanelTab {
 
     private void enableAngularResolutionActionPerformed(ItemEvent evt) {
         initSidePanel.masterEnableAngularResolution.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    private void enableAspectRatioActionPerformed(ItemEvent evt) {
+        initSidePanel.masterEnableAspectRatio.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
     private void scalingToBox(@SuppressWarnings("unused") ActionEvent evt){
