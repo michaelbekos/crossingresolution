@@ -52,6 +52,7 @@ public class Experiments {
     private String[] childernP;
     private boolean useCrossingRes = true;
     private boolean useAngularRes = false;
+    private boolean useAspectRaio = true;
 
 
 
@@ -232,6 +233,7 @@ public class Experiments {
         experiment.setMaxTime(this.maxCalcTime);
         experiment.getTab().get().setEnableAngularResolution(this.useAngularRes);
         experiment.getTab().get().setEnableCrossingResolution(this.useCrossingRes);
+        experiment.getTab().get().setEnableAspectRazio(this.useAspectRaio);
 
         YGraphAdapter graphAdapter = new YGraphAdapter(frame.graph);
 
@@ -250,24 +252,27 @@ public class Experiments {
 
             if(algorithmName.equals(this.randomMovementString)){
                 experiment.setAlgorithm(RandomMovementLayout.class);
+                for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
+                    System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
+                }
                                     /* Set config. parameters */
                 experiment.getTab().get().configurator.getItems().get(0).setValue(10.0); // Minimum step size
                 experiment.getTab().get().configurator.getItems().get(1).setValue(150.0); // Maximum step size
                 experiment.getTab().get().configurator.getItems().get(2).setValue(50); // Failed iteration ... detect loacal maximum
                 experiment.getTab().get().configurator.getItems().get(3).setValue(50); // numbers .. maximum resolving
-                experiment.getTab().get().configurator.getItems().get(4).setValue(false); // Allow decreasing minimum angle at local maximum
-                experiment.getTab().get().configurator.getItems().get(5).setValue(false);  // Only use grid coord.
-                experiment.getTab().get().configurator.getItems().get(6).setValue(true); // focus on critical nodes
-                experiment.getTab().get().configurator.getItems().get(7).setValue(true); // Automatically toggle focusing in critical nodes
-                experiment.getTab().get().configurator.getItems().get(8).setValue(false); // auto increase step size
-                experiment.getTab().get().configurator.getItems().get(9).setValue(useCrossingRes); // use crossing Resolution
-                experiment.getTab().get().configurator.getItems().get(10).setValue(useAngularRes); // use angular Resolution
+                experiment.getTab().get().configurator.getItems().get(4).setValue(5); // Maximum legal aspect Ratio TODO: welche werte soll das haben? soll es dynamisch bzs macht es der random automatisch
+                experiment.getTab().get().configurator.getItems().get(5).setValue(false); // Allow decreasing minimum angle at local maximum
+                experiment.getTab().get().configurator.getItems().get(6).setValue(false);  // Only use grid coord.
+                experiment.getTab().get().configurator.getItems().get(7).setValue(true); // focus on critical nodes
+                experiment.getTab().get().configurator.getItems().get(8).setValue(true); // Automatically toggle focusing in critical nodes
+                experiment.getTab().get().configurator.getItems().get(9).setValue(false); // auto increase step size
+                experiment.getTab().get().configurator.getItems().get(10).setValue(useCrossingRes); // use crossing Resolution
+                experiment.getTab().get().configurator.getItems().get(11).setValue(useAngularRes); // use angular Resolution
+                experiment.getTab().get().configurator.getItems().get(11).setValue(useAspectRaio); // use angular Resolution
                 System.out.println("CROSS USE   " +   useCrossingRes + "        "  +  experiment.getTab().get().configurator.getItems().get(9).getValue());
                 System.out.println("Angular USE    " + useAngularRes +  "       " + experiment.getTab().get().configurator.getItems().get(10).getValue());
-             /*   for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
-                    System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
-                }
-*/
+
+
 
                 startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");

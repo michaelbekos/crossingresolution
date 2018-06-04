@@ -17,25 +17,65 @@ public class MainExperiment {
 
         //rome
 
+     inputDir = "E:\\graph\\rome\\rome\\";
+     outputDir = "E:\\graph\\results\\rome_Crossing_aspectratio_of_5_04062018\\";
+
       Experiments e = new Experiments(inputDir, outputDir,
               Long.MAX_VALUE, 100, 1000, 10000,
               false, false, false, true);
-    //   e.runOnlyRandom();
+       e.runOnlyRandom();
 
        e = new Experiments(inputDir, outputDir,
                Long.MAX_VALUE, 100, 1000, 10000,
                false, false, false, true);
-      //  e.runOnlyForce();
+        //e.runOnlyForce();
 
         e = new Experiments(inputDir, outputDir,
                 Long.MAX_VALUE, 100, 1000, 10000,
                 false, false, false, true);
         //e.runOnlyTotalResolutionForce();
 
+     inputDir = "E:\\graph\\rome\\rome\\";
+     outputDir = "E:\\graph\\results\\rome_Angular_aspectratio_of_5_04062018\\";
+
+    e = new Experiments(inputDir, outputDir,
+             Long.MAX_VALUE, 100, 1000, 10000,
+             false, false, false, true);
+        e.runOnlyRandom();
+
+     e = new Experiments(inputDir, outputDir,
+             Long.MAX_VALUE, 100, 1000, 10000,
+             false, false, false, true);
+       //e.runOnlyForce();
+
+     e = new Experiments(inputDir, outputDir,
+             Long.MAX_VALUE, 100, 1000, 10000,
+             false, false, false, true);
+     //e.runOnlyTotalResolutionForce();
 
 
-        //north
+     inputDir = "E:\\graph\\rome\\rome\\";
+     outputDir = "E:\\graph\\results\\rome_Total_aspectratio_of_5_04062018\\";
 
+     e = new Experiments(inputDir, outputDir,
+             Long.MAX_VALUE, 100, 1000, 10000,
+             false, false, false, true);
+        e.runOnlyRandom();
+
+     e = new Experiments(inputDir, outputDir,
+             Long.MAX_VALUE, 100, 1000, 10000,
+             false, false, false, true);
+     //  e.runOnlyForce();
+
+     e = new Experiments(inputDir, outputDir,
+             Long.MAX_VALUE, 100, 1000, 10000,
+             false, false, false, true);
+     //e.runOnlyTotalResolutionForce();
+
+
+
+     //north
+/*
 
          inputDir = "E:\\graph\\north\\north\\north\\";
          outputDir = "E:\\graph\\results\\north_Crossing_01062018\\";
@@ -94,6 +134,6 @@ public class MainExperiment {
         e.runOnlyTotalResolutionForce();
 
 
-
+*/
     }
 }

@@ -387,6 +387,12 @@ public class SidePanelTab {
         return this.enableAngularResolution.isSelected();
     }
 
+    public void setEnableAspectRazio(boolean value) {
+        this.enableAspectRatio.setSelected(value);
+    }
+
+    public boolean getEnableAspectRatio(){return this.enableAspectRatio.isSelected();}
+
     public void setAllowClickCreateNodeEdge(boolean value) {
         this.allowClickCreateNodeEdge.setSelected(value);
     }
