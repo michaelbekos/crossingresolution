@@ -40,6 +40,7 @@ public class InitSidePanel {
     public JCheckBox masterAllowClickCreateNodeEdge;
     public JCheckBox masterEnableCrossingResolution;
     public JCheckBox masterEnableAngularResolution;
+    public JCheckBox masterEnableAspectRatio;
 
 
     public InitSidePanel(MainFrame mainFrame) {
@@ -89,11 +90,15 @@ public class InitSidePanel {
 
         masterEnableCrossingResolution = new JCheckBox("Crossing Resolution");
         masterEnableCrossingResolution.addItemListener(this::masterEnableCrossingResolutionActionPerformed);
-        masterEnableCrossingResolution.setSelected(true);
+        masterEnableCrossingResolution.setSelected(false);
 
         masterEnableAngularResolution = new JCheckBox("Angular Resolution");
         masterEnableAngularResolution.addItemListener(this::masterEnableAngularResolutionActionPerformed);
         masterEnableAngularResolution.setSelected(false);
+
+        masterEnableAspectRatio = new JCheckBox("Aspect Ratio");
+        masterEnableAspectRatio.addItemListener(this::masterEnableAspectRatioActionPerformed);
+        masterEnableAspectRatio.setSelected(true);
 
         sidePanelTabs = new ArrayList<>();
 
@@ -226,10 +231,14 @@ public class InitSidePanel {
     }
 
     private void masterEnableCrossingResolutionActionPerformed(ItemEvent evt) { //TODO: maybe sync with random
-        mainFrame.minimumAngleMonitor.setCrossingResolution(evt.getStateChange() == ItemEvent.SELECTED);
+        mainFrame.minimumAngleMonitor.setUseCrossingResolution(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
     private void masterEnableAngularResolutionActionPerformed(ItemEvent evt) {
-        mainFrame.minimumAngleMonitor.setAngularResolution(evt.getStateChange() == ItemEvent.SELECTED);
+        mainFrame.minimumAngleMonitor.setUseAngularResolution(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    private void masterEnableAspectRatioActionPerformed(ItemEvent evt) {
+        mainFrame.minimumAngleMonitor.setUseAspectRatio(evt.getStateChange() == ItemEvent.SELECTED);
     }
 }

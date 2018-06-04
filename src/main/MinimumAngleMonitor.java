@@ -19,12 +19,15 @@ public class MinimumAngleMonitor {
   private IGraph graph;
   private JLabel infoLabel;
   private GraphComponent view;
-  private double oldMinAngle;
-  private double oldAngularRes;
+  private double bestCrossingResolution;
+  private double bestAngularResolution;
+  private double bestTotalResolution;
   private double currentCrossingResolution;
   private double currentAngularResolution;
+  private double currentTotalResolution;
   private boolean useCrossingResolution;
   private boolean useAngularResolution;
+  private boolean useAspectRatio;
 
   private BestSolutionMonitor bestSolution;
 
@@ -40,37 +43,40 @@ public class MinimumAngleMonitor {
     this.infoLabel = infoLabel;
     this.view = view;
     this.bestSolution = bestSolution;
-    this.oldMinAngle = 0;
-    this.oldAngularRes = 0;
+    this.bestCrossingResolution = 0;
+    this.bestAngularResolution = 0;
+    this.bestTotalResolution = 0;
     this.currentCrossingResolution = 0;
     this.currentAngularResolution = 0;
+    this.currentTotalResolution = 0;
     this.useCrossingResolution = true;
     this.useAngularResolution = false;
+    this.useAspectRatio = true;
   }
 
-  public Optional<Intersection> computeMinimumAngle() {
+  public Optional<Intersection> computeCrossingResolution() {
     Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
     MinimumAngle.resetHighlighting(graph);
     Optional<Intersection> minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
     if (minAngleCr.isPresent()){
       currentCrossingResolution = minAngleCr.get().angle;
-      if (oldMinAngle <= minAngleCr.get().angle){
-        oldMinAngle = minAngleCr.get().angle;
+      if (bestCrossingResolution <= minAngleCr.get().angle){
+        bestCrossingResolution = minAngleCr.get().angle;
 
-        bestSolution.setBestMinimumAngle(oldMinAngle, graph.getNodes().size());
+        bestSolution.setBestMinimumAngle(bestCrossingResolution, graph.getNodes().size());
         bestSolution.setBestSolutionMapping(nodePositions, graph.getNodes().size());
       }
     }
     return  minAngleCr;
   }
 
-  public void showMinimumAngle(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
+  public void showCrossingResolution(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
     if (!bestSolution.getBestMinimumAngleForNodes(graph.getNodes().size()).isPresent()) {
-      oldMinAngle = 0;
+      bestCrossingResolution = 0;
     }
 
-    Optional<Intersection> minAngleCr = computeMinimumAngle();
+    Optional<Intersection> minAngleCr = computeCrossingResolution();
 
     Optional<String> labText = minAngleCr.map(cr -> {
       String text = DisplayMessagesGui.createMinimumAngleMsg(cr, graph.getNodes().size(), bestSolution);
@@ -94,10 +100,10 @@ public class MinimumAngleMonitor {
     double angularRes = AngularResolution.getAngularResolution(graph);
     if (Double.isFinite(angularRes)){
       currentAngularResolution = angularRes;
-      if (oldAngularRes <= angularRes){
-        oldAngularRes = angularRes;
+      if (bestAngularResolution <= angularRes){
+        bestAngularResolution = angularRes;
 
-        bestSolution.setBestAngularResolution(oldAngularRes, graph.getNodes().size());
+        bestSolution.setBestAngularResolution(bestAngularResolution, graph.getNodes().size());
         bestSolution.setBestSolutionAngularResolutionMapping(nodePositions, graph.getNodes().size());
       }
     }
@@ -106,7 +112,7 @@ public class MinimumAngleMonitor {
 
   public void showAngularResolution(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
     if (!bestSolution.getBestAngularResolutionForNodes(graph.getNodes().size()).isPresent()) {
-      oldAngularRes = 0;
+      bestAngularResolution = 0;
     }
 
     double angularRes = computeAngularResolution();
@@ -124,8 +130,8 @@ public class MinimumAngleMonitor {
   }
 
 
-  public void updateMinimumAngleInfoBar() {
-    showMinimumAngle(graph, view, infoLabel, false);
+  public void updateCrossingResolutionInfoBar() {
+    showCrossingResolution(graph, view, infoLabel, false);
   }
 
   public void updateAngularResolutionInfoBar() {
@@ -133,21 +139,59 @@ public class MinimumAngleMonitor {
   }
 
   public void updateAngleInfoBar() {
-    computeMinimumAngle();
+    computeCrossingResolution();
     computeAngularResolution();
+    if (useAspectRatio) {   //TODO
+        String text = DisplayMessagesGui.createAspectRatioMsg(graph);
+        infoLabel.setText(text);
+        return;
+    }
     if (useAngularResolution && useCrossingResolution) {
       if (currentAngularResolution < currentCrossingResolution) {
         showAngularResolution(graph, view, infoLabel, false);
       } else {
-        showMinimumAngle(graph, view, infoLabel, false);
+        showCrossingResolution(graph, view, infoLabel, false);
       }
     } else if (useAngularResolution) {
       showAngularResolution(graph, view, infoLabel, false);
     } else {
-      showMinimumAngle(graph, view, infoLabel, false);
+      showCrossingResolution(graph, view, infoLabel, false);
     }
 
   }
+
+  public double computeTotalResolution() {
+    computeCrossingResolution();
+    computeAngularResolution();
+
+    System.out.println("COMPUTE Total Resolution:  cross "  + this.currentCrossingResolution);
+    System.out.println("COMPUTE Total Resolution:   andular  "  +  this.currentAngularResolution );
+    if (useAngularResolution && useCrossingResolution) {
+      if (currentAngularResolution < currentCrossingResolution) {
+        this.currentTotalResolution = currentAngularResolution;
+      } else {
+        this.currentTotalResolution = currentCrossingResolution;
+      }
+    } else if (useAngularResolution) {
+      this.currentTotalResolution = currentAngularResolution;
+    } else {
+      this.currentTotalResolution = currentCrossingResolution;
+    }
+
+    System.out.println("COMPUTE Total Resolution:   total   "  +  this.currentTotalResolution);
+
+    if(bestTotalResolution <= this.currentTotalResolution){
+      this.bestTotalResolution = this.currentTotalResolution;
+    }
+
+    System.out.println("COMPUTE Total Resolution:   old crossing"  + this.bestCrossingResolution);
+    System.out.println("COMPUTE Total Resolution:   old angular"  +  this.bestAngularResolution);
+    System.out.println("COMPUTE Total Resolution:   old total"  + this.bestTotalResolution);
+
+    return this.currentTotalResolution;
+  }
+
+
 
   public void registerGraphChangedListeners() {
     graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
@@ -167,29 +211,41 @@ public class MinimumAngleMonitor {
     MinimumAngle.resetHighlighting(graph);
   }
 
-  public double getMinimumAngle() {
-    return oldMinAngle;
+  public double getBestCrossingResolution() {
+    return bestCrossingResolution;
   }
 
-  public double getAngularResolution() {
-    return oldAngularRes;
+  public double getBestAngularResolution() {return bestAngularResolution;}
+
+  public double getBestTotalResolution() {
+    return bestTotalResolution;
   }
 
-  public void setCrossingResolution(boolean value) {
+  public void setUseCrossingResolution(boolean value) {
     this.useCrossingResolution= value;
   }
 
-  public void setAngularResolution(boolean value) {
+  public void setUseAngularResolution(boolean value) {
     this.useAngularResolution = value;
   }
 
+  public void setUseAspectRatio(boolean value) {
+      this.useAspectRatio = value;
+  }
+
   public double getCurrentCrossingResolution() {
-    computeMinimumAngle();
+    computeCrossingResolution();
     return currentCrossingResolution;
   }
 
   public double getCurrentAngularResolution() {
     computeAngularResolution();
     return currentAngularResolution;
+  }
+
+  public double getCurrentTotalResolution() {
+    computeAngularResolution();
+    computeCrossingResolution();
+    return Math.min(currentAngularResolution, currentCrossingResolution);
   }
 }

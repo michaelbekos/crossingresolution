@@ -109,7 +109,7 @@ public class MinimumAngle {
   }
 
   public static Optional<Intersection> getMinimumAngleCrossing(IGraph graph) {
-    return getMinimumAngleCrossing(graph, null);
+    return m.getMinimumAngleCrossing(graph, null);
   }
 
   public static Optional<Intersection> getMinimumAngleCrossing(IGraph graph, @Nullable IMapper<INode, PointD> np){

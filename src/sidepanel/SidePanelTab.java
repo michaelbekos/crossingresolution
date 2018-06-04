@@ -53,6 +53,7 @@ public class SidePanelTab {
     private JCheckBox allowClickCreateNodeEdge;
     private JCheckBox enableCrossingResolution;
     private JCheckBox enableAngularResolution;
+    private JCheckBox enableAspectRatio;
     private JTextArea outputTextArea;
     private boolean verbose;
     
@@ -255,6 +256,16 @@ public class SidePanelTab {
         enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
         enableAngularResolution.setSelected(false);
 
+        enableAspectRatio = new JCheckBox("Aspect Ratio");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(enableAspectRatio, cDefaultPanel);
+        enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
+        enableAspectRatio.setSelected(true);
+
         outputTextArea.setLineWrap(true);
         outputTextArea.setRows(10);
         JScrollPane scrollPane = new JScrollPane(outputTextArea);
@@ -375,6 +386,12 @@ public class SidePanelTab {
     public boolean getEnableAngularResolution() {
         return this.enableAngularResolution.isSelected();
     }
+
+    public void setEnableAspectRazio(boolean value) {
+        this.enableAspectRatio.setSelected(value);
+    }
+
+    public boolean getEnableAspectRatio(){return this.enableAspectRatio.isSelected();}
 
     public void setAllowClickCreateNodeEdge(boolean value) {
         this.allowClickCreateNodeEdge.setSelected(value);
@@ -499,6 +516,10 @@ public class SidePanelTab {
         initSidePanel.masterEnableAngularResolution.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
+    private void enableAspectRatioActionPerformed(ItemEvent evt) {
+        initSidePanel.masterEnableAspectRatio.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
     private void scalingToBox(@SuppressWarnings("unused") ActionEvent evt){
         modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
@@ -604,7 +625,7 @@ public class SidePanelTab {
             return;
         }
         Thread automaticInsertion = new Thread(() -> {
-                double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+                double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getBestCrossingResolution();
                 double epsilon = startingAngle/100;
                 if (!algorithmName.equals("Random Movement")) {
                     setOutputTextArea("Recommended to use Random Movement!");
@@ -622,7 +643,7 @@ public class SidePanelTab {
                     if (executor.isFinished()) {
                         return;
                     }
-                    double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+                    double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getBestCrossingResolution();
                     if (minAngle >= (startingAngle - epsilon)) {
                         //remove chain
                         reinsertVerticesItem();
