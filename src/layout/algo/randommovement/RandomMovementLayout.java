@@ -3,14 +3,18 @@ package layout.algo.randommovement;
 import algorithms.graphs.AngularResolution;
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.algorithms.Bfs;
+import com.yworks.yfiles.algorithms.EdgeList;
 import com.yworks.yfiles.algorithms.Node;
 import com.yworks.yfiles.algorithms.NodeList;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
+import com.yworks.yfiles.graph.IEdge;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.YGraphAdapter;
+import com.yworks.yfiles.utils.IListEnumerable;
+
 import layout.algo.execution.ILayout;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
@@ -81,10 +85,16 @@ public class RandomMovementLayout implements ILayout {
   @Override
   public boolean executeStep(int iteration) {
     Optional<INode> randomNode;
+    
     if (configurator.useGaussianDistribution.getValue()) {
       randomNode = gaussianNodeSelection();
     } else {
-      randomNode = selectRandomNode(graph.getNodes(), graph.getNodes().size());
+    	if (configurator.useMutual.getValue()) {
+    		randomNode = mutuals();
+    	}
+    	else {
+    		randomNode = selectRandomNode(graph.getNodes(), graph.getNodes().size());
+    	}
     }
 
     if (!randomNode.isPresent()) {
@@ -243,6 +253,81 @@ public class RandomMovementLayout implements ILayout {
           return selectRandomNode(nodesOfLayer, nodesOfLayer.size());
         });
   }
+  
+  private Optional<INode> mutuals() {
+	  if (MinimumAngle.getMinimumAngle(graph, getNodePositions()).get()<=60) {
+
+		          YGraphAdapter graphAdapter = new YGraphAdapter(graph);
+
+		          List<Intersection> getCrossings = algorithms.graphs.yFilesSweepLine.getCrossings(graph, true, getNodePositions());
+					int amountOfEdges = graph.getEdges().size();
+					PointD crossingEdges[][]= new PointD [amountOfEdges][amountOfEdges];
+					Boolean[][] crossingEdgesvalid = new Boolean [amountOfEdges][amountOfEdges];
+					for(int i=0;i<amountOfEdges; i++) {
+						for (int j=0; j<amountOfEdges; j++) {
+							crossingEdgesvalid[i][j]=false;
+						}
+					}
+					IListEnumerable<IEdge> edges = graph.getEdges();
+					Iterator<Intersection> crossings= getCrossings.iterator();
+					while (crossings.hasNext()) {
+						Intersection crossing = crossings.next();
+						int i=0;
+						IEdge edge= edges.getItem(i);
+						while(!crossing.segment1.e.equals(edge)&& i<edges.size()){
+							i++;
+							edge= edges.getItem(i);
+						}
+						int j=0;
+						edge= edges.getItem(j);
+						while(!crossing.segment2.e.equals(edge)&& j<edges.size()){
+							j++;
+							edge= edges.getItem(j);
+						}
+						crossingEdgesvalid[i][j]=true;
+						crossingEdgesvalid[j][i]=true;
+						crossingEdges[i][j]=crossing.intersectionPoint;
+						crossingEdges[j][i]=crossing.intersectionPoint;
+					}
+
+			          NodeList nodesOfCrossing = new NodeList();
+
+			          for(int i=0; i<amountOfEdges; i++){           // Zeile in der Tabelle
+						for(int j=i+1; j<amountOfEdges; j++){     // erster Index
+							for(int k=j+1;k<amountOfEdges; k++){  // zweiter Index
+								if(crossingEdgesvalid[i][j]&&crossingEdgesvalid[i][k]&&crossingEdgesvalid[j][k]){
+							          nodesOfCrossing.add(graphAdapter.getCopiedNode(edges.getItem(i).getSourceNode()));
+							          nodesOfCrossing.add(graphAdapter.getCopiedNode(edges.getItem(i).getTargetNode()));
+							          nodesOfCrossing.add(graphAdapter.getCopiedNode(edges.getItem(j).getSourceNode()));
+							          nodesOfCrossing.add(graphAdapter.getCopiedNode(edges.getItem(j).getTargetNode()));
+							          nodesOfCrossing.add(graphAdapter.getCopiedNode(edges.getItem(k).getSourceNode()));
+							          nodesOfCrossing.add(graphAdapter.getCopiedNode(edges.getItem(k).getTargetNode()));
+//									}
+								}
+							}
+						}
+					}
+			          Optional<INode> Node;
+		          if(nodesOfCrossing.isEmpty()) {
+			          Node = gaussianNodeSelection();
+		          }
+		          else {
+		          NodeList[] layers = Bfs.getLayers(graphAdapter.getYGraph(), nodesOfCrossing);
+
+		          int layerIndex = Math.min((int) Math.floor(Math.abs(random.nextGaussian() * layers.length / 2d)), layers.length - 1);
+
+		          Set<INode> nodesOfLayer = layers[layerIndex].stream()
+		              .map(node -> graphAdapter.getOriginalNode((Node) node))
+		              .collect(Collectors.toSet());
+		          
+		          Node = selectRandomNode(nodesOfLayer, nodesOfLayer.size());}
+		          return Node;}
+	  else {
+		  configurator.toggleNodeDistributions.setValue(true);
+		  configurator.useMutual.setValue(false);
+		  return gaussianNodeSelection();
+	  }
+	  }
 
   private Optional<INode> selectRandomNode(Iterable<INode> nodes, int size) {
     return  StreamSupport.stream(nodes.spliterator(), false)

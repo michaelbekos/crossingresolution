@@ -12,6 +12,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Double> maxStepSize;
   AbstractLayoutInterfaceItem<Boolean> jumpOnLocalMaximum;
   AbstractLayoutInterfaceItem<Boolean> useGaussianDistribution;
+  AbstractLayoutInterfaceItem<Boolean> useMutual;
   AbstractLayoutInterfaceItem<Integer> iterationsForLocalMaximum;
   AbstractLayoutInterfaceItem<Integer> numSamplesForJumping;
   AbstractLayoutInterfaceItem<Boolean> toggleNodeDistributions;
@@ -55,6 +56,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
     useGaussianDistribution.setValue(true);
     itemList.add(useGaussianDistribution);
+    
 
     toggleNodeDistributions = itemFactory.booleanParameter("Automatically toggle focusing on critical nodes");
     toggleNodeDistributions.setValue(true);
@@ -70,6 +72,11 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
 
     useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution");
     useAngularResolution.setValue(false);
+    
+    
+    useMutual = itemFactory.booleanParameter("Focus on mutual crossings");
+    useMutual.setValue(false);
+    itemList.add(useMutual);
 
   }
 
