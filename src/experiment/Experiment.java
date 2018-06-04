@@ -323,7 +323,8 @@ public class Experiment {
             System.out.println("Try to open .txt");
             this.mainFrame.openContestFile(this.inputDirectory + this.fileName);
         } else if(this.fileName.endsWith(".graphml")){
-            this.mainFrame.openFile(this.inputDirectory + this.fileName);
+           // this.mainFrame.openFile(this.inputDirectory + this.fileName);
+            this.mainFrame.openSimpleFile(this.inputDirectory + this.fileName);
         }
 
 

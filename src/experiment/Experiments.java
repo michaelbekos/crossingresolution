@@ -45,7 +45,7 @@ public class Experiments {
     private int numOfIterationFactor = 1000;
     private long maxCalcTime = Long.MAX_VALUE; //in mili. sec
     private int boxSize = 10000;
-    private int maxNumberOfUnchangedAngle = 2;
+    private int maxNumberOfUnchangedAngle = 5;
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
     boolean reached90Deg = false;
@@ -214,7 +214,7 @@ public class Experiments {
     private void openFrame(String pattern, String algorithmName) {
         MainFrame frame = new MainFrame();
         frame.init();
-        frame.setVisible(false); //TODO
+        frame.setVisible(true); //TODO
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 
