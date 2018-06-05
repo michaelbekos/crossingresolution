@@ -18,7 +18,7 @@ public class MainExperiment {
         //rome
 
      inputDir = "E:\\graph\\rome\\rome\\";
-     outputDir = "E:\\graph\\results\\rome_Crossing_aspectratio_of_5_04062018\\";
+     outputDir = "E:\\graph\\results\\rome_Crossing_aspectratio_of_5_05062018\\";
 
       Experiments e = new Experiments(inputDir, outputDir,
               Long.MAX_VALUE, 100, 1000, 10000,
@@ -41,7 +41,7 @@ public class MainExperiment {
     e = new Experiments(inputDir, outputDir,
              Long.MAX_VALUE, 100, 1000, 10000,
              false, false, false, true);
-        e.runOnlyRandom();
+     //   e.runOnlyRandom();
 
      e = new Experiments(inputDir, outputDir,
              Long.MAX_VALUE, 100, 1000, 10000,

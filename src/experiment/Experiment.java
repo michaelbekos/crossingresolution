@@ -405,7 +405,8 @@ public class Experiment {
 
       //  this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getCurrentCrossingResolution()) / 1000.0; //with the act crossing angle
         this.actAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestCrossingResolution()) / 10000.0; // with the best crossing angle
-        this.actAngularAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestAngularResolution()) / 10000.0; // with the best angular
+        //this.actAngularAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestAngularResolution()) / 10000.0; // with the best angular
+        this.actAngularAngle =  mainFrame.minimumAngleMonitor.getBestAngularResolution(); // with the best angular
 
         this.actTotalAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestTotalResolution()) / 10000.0; // with the best total angle
         System.out.println("Total res:   " + this.actTotalAngle);

@@ -268,7 +268,7 @@ public class Experiments {
                 experiment.getTab().get().configurator.getItems().get(9).setValue(false); // auto increase step size
                 experiment.getTab().get().configurator.getItems().get(10).setValue(useCrossingRes); // use crossing Resolution
                 experiment.getTab().get().configurator.getItems().get(11).setValue(useAngularRes); // use angular Resolution
-                experiment.getTab().get().configurator.getItems().get(11).setValue(useAspectRaio); // use angular Resolution
+                experiment.getTab().get().configurator.getItems().get(12).setValue(useAspectRaio); // use aspect ratio
                 System.out.println("CROSS USE   " +   useCrossingRes + "        "  +  experiment.getTab().get().configurator.getItems().get(9).getValue());
                 System.out.println("Angular USE    " + useAngularRes +  "       " + experiment.getTab().get().configurator.getItems().get(10).getValue());
 
