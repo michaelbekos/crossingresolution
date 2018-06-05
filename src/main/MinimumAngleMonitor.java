@@ -233,6 +233,18 @@ public class MinimumAngleMonitor {
       this.useAspectRatio = value;
   }
 
+  public void setBestCrossingResolution(double bestCrossingResolution) {
+    this.bestCrossingResolution = bestCrossingResolution;
+  }
+
+  public void setBestAngularResolution(double bestAngularResolution) {
+    this.bestAngularResolution = bestAngularResolution;
+  }
+
+  public void setBestTotalResolution(double bestTotalResolution) {
+    this.bestTotalResolution = bestTotalResolution;
+  }
+
   public double getCurrentCrossingResolution() {
     computeCrossingResolution();
     return currentCrossingResolution;
