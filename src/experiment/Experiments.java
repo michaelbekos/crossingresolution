@@ -387,7 +387,7 @@ public class Experiments {
         }
 
     private void createFiles(String algoName, int minNodeNum, int maxNodeNum){
-        String filename = algoName+ minNodeNum + "_to_" + maxNodeNum + ".csv";
+        String filename = algoName + minNodeNum + "_to_" + maxNodeNum + ".csv";
         String filenameBest = algoName + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
 
         createFile(filename);
@@ -451,7 +451,7 @@ public class Experiments {
         int nodeNum = g.getNodes().size();
         int maxNodeNum = 0;
         for(maxNodeNum = 0; maxNodeNum <= 100; maxNodeNum+=20){
-            if(maxNodeNum > nodeNum){
+            if(maxNodeNum >= nodeNum){
                 break;
             }
         }
