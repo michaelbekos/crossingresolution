@@ -46,41 +46,22 @@ public class Experiments {
     private long maxCalcTime = Long.MAX_VALUE; //in mili. sec
     private int boxSize = 10000;
     private int maxNumberOfUnchangedAngle = 5;
+    private int aspectRatio = -1;
     private boolean planarGraphsAllowed = false;
     private boolean unconnectedGraphsAllowed = true;
     boolean reached90Deg = false;
     private String[] childernP;
     private boolean useCrossingRes = true;
     private boolean useAngularRes = false;
-    private boolean useAspectRaio = true;
+    private boolean useAspectRatio = true;
+    private boolean useOnlyGrid = false;
+    private int gridSize = 1000000;
 
 
 
-    public Experiments()
-    {
-        this.comp = new GraphComponent();
-    }
-
-    public Experiments(String inputDirectory, String outputDirectory) {
-
-        this.comp = new GraphComponent();
-        this.inputDirectory = inputDirectory;
-        this.outputDirectory = outputDirectory;
-    }
-
-    public Experiments(String inputDirectory, String outputDirectory, long maxCalcTime, int numOfIterationPerStep, int numOfSteps, int boxSize){
-        this.comp = new GraphComponent();
-        this.inputDirectory = inputDirectory;
-        this.outputDirectory = outputDirectory;
-        this.maxCalcTime = maxCalcTime;
-        this.numOfIteration = numOfIterationPerStep;
-        this.numOfIterationFactor = numOfSteps;
-        this.boxSize = boxSize;
-
-    }
 
     public Experiments(String inputDirectory, String outputDirectory, long maxCalcTime, int numOfIterationPerStep, int numOfSteps, int boxSize, boolean planarGraphsAllowed,
-                       boolean unconnectedGraphsAllowed, boolean useCrossingRes, boolean useAngularRes){
+                       boolean unconnectedGraphsAllowed, boolean useCrossingRes, boolean useAngularRes, boolean useAspectRatio){
         this.comp = new GraphComponent();
         this.inputDirectory = inputDirectory;
         this.outputDirectory = outputDirectory;
@@ -92,6 +73,7 @@ public class Experiments {
         this.unconnectedGraphsAllowed = unconnectedGraphsAllowed;
         this.useCrossingRes = useCrossingRes;
         this.useAngularRes = useAngularRes;
+        this.useAspectRatio = useAspectRatio;
 
     }
 
@@ -117,7 +99,12 @@ public class Experiments {
             fixGraphmlFormat(children, folderName);
 
             for(int  i = 20; i<=100; i+=20){
-                createFiles(i-19,i);
+                if(this.useAspectRatio){
+                    createFiles(this.randomMovement+"aspect_ratio_"+this.aspectRatio+"_", i-19,i);
+                }else {
+                    createFiles(this.randomMovement, i-19,i);
+                }
+
             }
             childernP = children;
             for(int i = 0; i<children.length; i++){
@@ -125,9 +112,7 @@ public class Experiments {
                 System.out.println("Iteration:   "+ i);
                 deleteOutPutFile(children[i], folderName);  //delete the file to see which one are left. This will delete the copied files frome the fixGraphmlFormat() method
             }
-
         }
-
         System.out.println("ENDE");
     }
 
@@ -156,7 +141,7 @@ public class Experiments {
             String folderName = "force";
             fixGraphmlFormat(children, folderName);
             for(int  i = 20; i<=100; i+=20){
-                createFiles(i-19,i);
+                createFiles(this.forceAlgo,i-19,i);
             }
             childernP = children;
             for(int i = 0; i<children.length; i++){
@@ -193,7 +178,7 @@ public class Experiments {
             fixGraphmlFormat(children, folderName);
 
             for(int  i = 20; i<=100; i+=20){
-                createFiles(i-19,i);
+                createFiles(this.totalResForce,i-19,i);
             }
             childernP = children;
             for(int i = 0; i<children.length; i++){
@@ -215,25 +200,20 @@ public class Experiments {
     private void openFrame(String pattern, String algorithmName) {
         MainFrame frame = new MainFrame();
         frame.init();
-        frame.setVisible(true); //TODO
+        frame.setVisible(false); //TODO
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-
-       // frame.BOX_SIZE = this.boxSize;
-        //String fileName = index +"";
         String fileName = pattern;
         System.out.println("Graph " + fileName + " started.");
         Experiment experiment = new Experiment(frame, fileName, inputDirectory, outputDirectory, this.boxSize);
 
         setStartConfigurations(experiment);
 
-       // experiment.setAlgorithm(algorithmLayout);
-
         experiment.setMaxIterations(this.numOfIteration);
         experiment.setMaxTime(this.maxCalcTime);
         experiment.getTab().get().setEnableAngularResolution(this.useAngularRes);
         experiment.getTab().get().setEnableCrossingResolution(this.useCrossingRes);
-        experiment.getTab().get().setEnableAspectRazio(this.useAspectRaio);
+        experiment.getTab().get().setEnableAspectRazio(this.useAspectRatio);
 
         YGraphAdapter graphAdapter = new YGraphAdapter(frame.graph);
 
@@ -252,34 +232,34 @@ public class Experiments {
 
             if(algorithmName.equals(this.randomMovementString)){
                 experiment.setAlgorithm(RandomMovementLayout.class);
-                for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
+            /*    for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
                     System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
                 }
-                                    /* Set config. parameters */
+              */                      /* Set config. parameters */
                 experiment.getTab().get().configurator.getItems().get(0).setValue(10.0); // Minimum step size
                 experiment.getTab().get().configurator.getItems().get(1).setValue(150.0); // Maximum step size
                 experiment.getTab().get().configurator.getItems().get(2).setValue(50); // Failed iteration ... detect loacal maximum
                 experiment.getTab().get().configurator.getItems().get(3).setValue(50); // numbers .. maximum resolving
-                experiment.getTab().get().configurator.getItems().get(4).setValue(5); // Maximum legal aspect Ratio TODO: welche werte soll das haben? soll es dynamisch bzs macht es der random automatisch
+                experiment.getTab().get().configurator.getItems().get(4).setValue(this.aspectRatio); // Maximum legal aspect Ratio
                 experiment.getTab().get().configurator.getItems().get(5).setValue(false); // Allow decreasing minimum angle at local maximum
-                experiment.getTab().get().configurator.getItems().get(6).setValue(false);  // Only use grid coord.
+                experiment.getTab().get().configurator.getItems().get(6).setValue(useOnlyGrid);  // Only use grid coord.
                 experiment.getTab().get().configurator.getItems().get(7).setValue(true); // focus on critical nodes
                 experiment.getTab().get().configurator.getItems().get(8).setValue(true); // Automatically toggle focusing in critical nodes
                 experiment.getTab().get().configurator.getItems().get(9).setValue(false); // auto increase step size
                 experiment.getTab().get().configurator.getItems().get(10).setValue(useCrossingRes); // use crossing Resolution
                 experiment.getTab().get().configurator.getItems().get(11).setValue(useAngularRes); // use angular Resolution
-                experiment.getTab().get().configurator.getItems().get(11).setValue(useAspectRaio); // use angular Resolution
-                System.out.println("CROSS USE   " +   useCrossingRes + "        "  +  experiment.getTab().get().configurator.getItems().get(9).getValue());
-                System.out.println("Angular USE    " + useAngularRes +  "       " + experiment.getTab().get().configurator.getItems().get(10).getValue());
+                experiment.getTab().get().configurator.getItems().get(12).setValue(useAspectRatio); // use aspect ratio
 
 
+                if(this.useAspectRatio){
+                    startExperiment(experiment, this.randomMovement+"aspect_ratio_" + this.aspectRatio + "_"+ (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                    experiment.writeGraphBestResults(this.randomMovement+"aspect_ratio_"+this.aspectRatio + "_"+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                }else{
+                    startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                    experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
+                }
 
-                startExperiment(experiment, this.randomMovement + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
-                experiment.writeGraphBestResults(this.randomMovement+ "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
-                //experiment.writeGraphEndResults();
                 System.out.println("Graph " + fileName + " finished Random Movement.");
-                //experiment.writeGraphEndResults();
-                experiment.writeGraph();
 
             }else if(algorithmName.equals(this.forceAlgoString)){
                 experiment.setAlgorithm(ForceAlgorithm.class);
@@ -314,9 +294,9 @@ public class Experiments {
 */
                 startExperiment(experiment, this.forceAlgo + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.forceAlgo + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
-                // experiment.writeGraphEndResults();
+
                 System.out.println("Graph " + fileName + " finished Force.");
-            //    experiment.writeGraphEndResults();
+
             }else if(algorithmName.equals(this.totalResolutionString)){
                 experiment.setAlgorithm(ForceAlgorithm.class);
                                                 /* Set config. parameters */
@@ -348,7 +328,7 @@ public class Experiments {
         /*        for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
                     System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
                 }
-*/
+        */
                 startExperiment(experiment, this.totalResForce + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 experiment.writeGraphBestResults(this.totalResForce + "best_" + (maxNodeNum-19) + "_to_" + maxNodeNum + ".csv");
                 // experiment.writeGraphEndResults();
@@ -358,19 +338,7 @@ public class Experiments {
             }
         }
         frame.dispose();
-        //  this.isFrameFinished = true;
-
-
     }
-
-    /**
-     * Starts a frame and generate an experiment object. The experiment loads the graph, then run the Random Movement,
-     * then loads the same graph again and start the force-algorithm
-     * @param pattern
-     */
-
-
-
 
     /**
      *
@@ -397,19 +365,12 @@ public class Experiments {
 
                 exp.runAlgorithms();
 
-
-                //this.reached90Deg = exp.calcGraphInformations();
                 if(writeInormations){
-                    //exp.
-                    // Informations();
                     exp.writeGraphResults(fileName);
                 }
 
                 this.iterationFactor++;
             }
-
-            //exp.writeGraphResults(fileName);
-
             if(this.iterationFactor <= this.numOfIterationFactor || exp.getCalcTime() > this.maxCalcTime ){
                 exp.writeGraphResultsMaxIterations(fileName, this.numOfIteration * this.numOfIterationFactor);
             }
@@ -425,31 +386,21 @@ public class Experiments {
             exp.setEndTime(System.currentTimeMillis());
         }
 
-    private void createFiles(int minNodeNum, int maxNodeNum){
-        String filenameRandom = this.randomMovement + minNodeNum + "_to_" + maxNodeNum + ".csv";
-        String filenameRandomBest = this.randomMovement + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
-        String filenameForce = this.forceAlgo + minNodeNum + "_to_" + maxNodeNum + ".csv";
-        String filenameForceBest = this.forceAlgo + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
-        String filenameTotalRes = this.totalResForce + minNodeNum + "_to_" + maxNodeNum + ".csv";
-        String filenameTotalResBest = this.totalResForce + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
+    private void createFiles(String algoName, int minNodeNum, int maxNodeNum){
+        String filename = algoName + minNodeNum + "_to_" + maxNodeNum + ".csv";
+        String filenameBest = algoName + "best_" + minNodeNum + "_to_" + maxNodeNum + ".csv";
 
-        createFile(filenameRandom);
-        createFile(filenameRandomBest);
-        createFile(filenameForce);
-        createFile(filenameForceBest);
-        createFile(filenameTotalRes);
-        createFile(filenameTotalResBest);
+        createFile(filename);
+        createFile(filenameBest);
     }
 
     private void createFile(String filename){
 
         try {
-
             File dir = new File(outputDirectory);
             if(!dir.exists()){
                 dir.mkdirs();
             }
-
 
             dir = new File(outputDirectory + "resultGraph\\");
             if(!dir.exists()){
@@ -488,34 +439,29 @@ public class Experiments {
                 pw.write(sb.toString());
                 pw.close();
             }
-
-
         }
         catch(FileNotFoundException ex){
             System.out.println(ex);
         }
         catch (IOException ex){
             System.out.println(ex);
-
         }
     }
     private int calcMaxNodeNum(IGraph g){
         int nodeNum = g.getNodes().size();
         int maxNodeNum = 0;
         for(maxNodeNum = 0; maxNodeNum <= 100; maxNodeNum+=20){
-            if(maxNodeNum > nodeNum){
+            if(maxNodeNum >= nodeNum){
                 break;
             }
         }
         return maxNodeNum;
-
     }
 
     private void fixGraphmlFormat(String[] children, String specialFoldername){
         /**  For the rome graphs which has a strange .graphml format  **/
         for (int i=0; i<children.length; i++)
         {
-
             Path pathInput = Paths.get(this.inputDirectory + children[i]);
             Path pathOutput = Paths.get(this.outputDirectory + specialFoldername +"\\" + children[i]);
             Charset charset = StandardCharsets.UTF_8;

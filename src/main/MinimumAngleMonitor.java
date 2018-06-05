@@ -164,8 +164,6 @@ public class MinimumAngleMonitor {
     computeCrossingResolution();
     computeAngularResolution();
 
-    System.out.println("COMPUTE Total Resolution:  cross "  + this.currentCrossingResolution);
-    System.out.println("COMPUTE Total Resolution:   andular  "  +  this.currentAngularResolution );
     if (useAngularResolution && useCrossingResolution) {
       if (currentAngularResolution < currentCrossingResolution) {
         this.currentTotalResolution = currentAngularResolution;
@@ -178,15 +176,10 @@ public class MinimumAngleMonitor {
       this.currentTotalResolution = currentCrossingResolution;
     }
 
-    System.out.println("COMPUTE Total Resolution:   total   "  +  this.currentTotalResolution);
-
     if(bestTotalResolution <= this.currentTotalResolution){
       this.bestTotalResolution = this.currentTotalResolution;
     }
 
-    System.out.println("COMPUTE Total Resolution:   old crossing"  + this.bestCrossingResolution);
-    System.out.println("COMPUTE Total Resolution:   old angular"  +  this.bestAngularResolution);
-    System.out.println("COMPUTE Total Resolution:   old total"  + this.bestTotalResolution);
 
     return this.currentTotalResolution;
   }
@@ -231,6 +224,18 @@ public class MinimumAngleMonitor {
 
   public void setUseAspectRatio(boolean value) {
       this.useAspectRatio = value;
+  }
+
+  public void setBestCrossingResolution(double bestCrossingResolution) {
+    this.bestCrossingResolution = bestCrossingResolution;
+  }
+
+  public void setBestAngularResolution(double bestAngularResolution) {
+    this.bestAngularResolution = bestAngularResolution;
+  }
+
+  public void setBestTotalResolution(double bestTotalResolution) {
+    this.bestTotalResolution = bestTotalResolution;
   }
 
   public double getCurrentCrossingResolution() {

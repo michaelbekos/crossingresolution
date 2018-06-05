@@ -281,9 +281,8 @@ public class Experiment {
         this.tab.get().startPauseExecution();
         boolean value = true;
 
-        //while(!tab.get().getExecutor().isFinished()){
         while(!this.tab.get().getExecutor().isFinished() && this.tab.get().getExecutor().isRunning() && !this.isInInvLoop){
-           // System.out.println("++ while");
+
             if(System.currentTimeMillis() - tmpTime + this.calcTime >  this.maxTimeForAlgo){ // + this.calcTime
                 this.isInInvLoop = true;
                 this.tab.get().startPauseExecution();
@@ -291,7 +290,6 @@ public class Experiment {
             }
         }
         this.positions = this.tab.get().getExecutor().getLayout().getNodePositions();
-        System.out.println(fileName + "OUT 13");
         this.endTime = endTime + (System.currentTimeMillis() - tmpTime);
         this.iterations += maxIterations;
         calcGraphInformations();
@@ -327,21 +325,16 @@ public class Experiment {
             this.mainFrame.openSimpleFile(this.inputDirectory + this.fileName);
         }
 
-
-        //calcGraphInformations();
-
         mainFrame.minimumAngleMonitor.updateCrossingResolutionInfoBar();
         this.minimumAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getBestCrossingResolution()) / 1000.0;
         System.out.println("load Graph " + this.minimumAngle);
         this.aspect_ratio = GraphOperations.getAspectRatio(this.graph).getValue();
-       // this.angular_resolution = GraphOperations.getMinimumCrossingForNodes(this.graph);
     }
 
     void runOrganic(){
         this.mainFrame.initSidePanel.removeDefaultListeners();
         LayoutUtilities.applyLayout(this.mainFrame.graph, new OrganicLayout());
         this.mainFrame.initSidePanel.addDefaultListeners();
-
     }
 
     /**
@@ -395,29 +388,20 @@ public class Experiment {
         this.numOfCrossings = MinimumAngle.getCrossings(this.graph, this.positions).size();
 
         this.aspect_ratio = GraphOperations.getAspectRatio(this.graph).getValue();
-       // this.angular_resolution = GraphOperations.getMinimumAngleForNodes(this.graph);
-        //this.angular_resolution = mainFrame.minimumAngleMonitor.getBestAngularResolution();
 
         mainFrame.minimumAngleMonitor.updateCrossingResolutionInfoBar();
 
         mainFrame.minimumAngleMonitor.computeTotalResolution();
 
-
-      //  this.actAngle = Math.round(1000.0 * mainFrame.minimumAngleMonitor.getCurrentCrossingResolution()) / 1000.0; //with the act crossing angle
         this.actAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestCrossingResolution()) / 10000.0; // with the best crossing angle
         this.actAngularAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestAngularResolution()) / 10000.0; // with the best angular
-
         this.actTotalAngle = Math.round(10000.0 * mainFrame.minimumAngleMonitor.getBestTotalResolution()) / 10000.0; // with the best total angle
-        System.out.println("Total res:   " + this.actTotalAngle);
-        System.out.println("Total res:   " + this.actTotalAngle);
-        System.out.println("Total res:   " + this.actTotalAngle);
-        System.out.println("Total res:   " + this.actTotalAngle);
-        System.out.println("Total res:   " + this.actTotalAngle);
+
         if(((this.totalAngle + this.approx_epsilon ) >= this.actTotalAngle)){
             this.numOfUnchangedAngle++;
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!numebrs   " + this.numOfUnchangedAngle);
+            System.out.println("Num. of unchanged angele: \t\t" + this.numOfUnchangedAngle);
         }else{
-            System.out.println("numebrs   " + this.numOfUnchangedAngle);
+            System.out.println("Num. of unchanged angele: \t\t" + this.numOfUnchangedAngle);
             this.minimumAngle = this.actAngle;
             this.minimumAngleTime = this.calcTime;
             this.minimumAngleIterations = this.iterations;
@@ -434,8 +418,6 @@ public class Experiment {
         }
 
         this.testAngle = mainFrame.minimumAngleMonitor.getBestCrossingResolution();
-        //outputTextArea.setText(graphInfo.toString());
-
 
         this.numOfCrossings = MinimumAngle.getCrossings(this.graph, this.positions).size();
 
@@ -445,7 +427,7 @@ public class Experiment {
 
     }
 
-    private void insertStringInFile(File inFile, int lineno, String lineToBeInserted) throws Exception {
+    private void insertStringInFile(File inFile, int lineNo, String lineToBeInserted) throws Exception {
         // temp file
         File outFile = new File("$$$$$$$$.tmp");
 
@@ -460,7 +442,7 @@ public class Experiment {
         String thisLine = "";
         int i =1;
         while ((thisLine = in.readLine()) != null) {
-            if(i == lineno) out.println(lineToBeInserted);
+            if(i == lineNo) out.println(lineToBeInserted);
             out.println(thisLine);
             i++;
         }

@@ -2,10 +2,7 @@ package main;
 
 import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.SizeD;
-import com.yworks.yfiles.graph.IEdge;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.IModelItem;
-import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
@@ -406,6 +403,7 @@ public class MainFrame extends JFrame {
         try {
           //  view.importFromGraphML(fileNamePath);
             SimpleGraphmlIOHandler.read(graph, fileNamePath);
+            LayoutUtilities.applyLayout(this.graph, new OrganicLayout());
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();
@@ -421,7 +419,6 @@ public class MainFrame extends JFrame {
         initSidePanel.removeDefaultListeners();
         try {
             view.importFromGraphML(fileNamePath);
-            //SimpleGraphmlIOHandler.read(graph, fileNamePath);
             view.fitGraphBounds();
             view.updateUI();
             bestSolution.reset();
