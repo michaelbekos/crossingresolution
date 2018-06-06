@@ -9,19 +9,29 @@ import java.util.ArrayList;
 public class GeneticForceAlgorithmConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Integer> iterationsPerGeneration;
   AbstractLayoutInterfaceItem<Double> stepSize;
+  ArrayList<AbstractLayoutInterfaceItem> itemList;
 
   private ArrayList<AbstractLayoutInterfaceItem> abstractLayoutInterfaceItems = new ArrayList<>();
 
   @Override
   public void init(ILayoutInterfaceItemFactory itemFactory) {
-    iterationsPerGeneration = itemFactory.intParameter("Iterations per generation", 1, 500, 5);
-    abstractLayoutInterfaceItems.add(iterationsPerGeneration);
+    itemList = new ArrayList<>();
 
-    stepSize = itemFactory.doubleParameter("Mutation step size", 0.1, 1, 1);
+    iterationsPerGeneration = itemFactory.intParameter("Iterations per generation", 1, 500);
+    iterationsPerGeneration.setValue(100);
+    abstractLayoutInterfaceItems.add(iterationsPerGeneration);
+    itemList.add(iterationsPerGeneration);
+
+    stepSize = itemFactory.doubleParameter("Mutation step size", 0.1, 1);
+    stepSize.setValue(0.1);
+    itemList.add(stepSize);
     abstractLayoutInterfaceItems.add(stepSize);
 
-    iterationsPerGeneration.setValue(100);
-    stepSize.setValue(0.1);
   }
+  @Override
+  public ArrayList<AbstractLayoutInterfaceItem> getItems(){
+    return itemList;
+  }
+
 
 }

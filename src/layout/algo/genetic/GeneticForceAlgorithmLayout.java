@@ -7,9 +7,9 @@ import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.layout.orthogonal.OrthogonalLayout;
-import layout.algo.ForceAlgorithm;
-import layout.algo.ILayout;
-import layout.algo.InitForceAlgorithm;
+import layout.algo.forcealgorithm.ForceAlgorithm;
+import layout.algo.execution.ILayout;
+import layout.algo.forcealgorithm.DefaultForceAlgorithm;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.utils.PositionMap;
 
@@ -44,9 +44,14 @@ public class GeneticForceAlgorithmLayout implements ILayout {
     geneticAlgorithm = new GeneticAlgorithm<>(objective, firstIndividuals, 5, rand);
   }
 
+  @Override
+  public void setFixNodes(Set<INode> fixNodes) {
+    throw new UnsupportedOperationException("setFixNodes is not yet supported");
+  }
+
   private void spawnIndividual(LinkedList<ForceAlgorithm> firstIndividuals, Map<ForceAlgorithm, List<AbstractLayoutInterfaceItem>> weightsMap) {
     MutationItemFactory itemFactory = new MutationItemFactory();
-    ForceAlgorithm forceAlgorithm = InitForceAlgorithm.defaultForceAlgorithm(graph, itemFactory);
+    ForceAlgorithm forceAlgorithm = DefaultForceAlgorithm.defaultForceAlgorithm(graph, itemFactory);
     firstIndividuals.add(forceAlgorithm);
     weightsMap.put(forceAlgorithm, itemFactory.weights);
   }
@@ -63,10 +68,4 @@ public class GeneticForceAlgorithmLayout implements ILayout {
         .map(ForceAlgorithm::getNodePositions)
         .orElse(PositionMap.FromIGraph(graph)); // just in case...
   }
-
-  @Override
-  public void showDebug() {}
-
-  @Override
-  public void clearDebug() {}
 }

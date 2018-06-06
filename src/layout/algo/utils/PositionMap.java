@@ -8,7 +8,8 @@ import com.yworks.yfiles.graph.Mapper;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class PositionMap extends Mapper<INode, PointD> {
+public final class PositionMap {
+  private PositionMap() {}
 
   public static Mapper<INode, PointD> newPositionMap() {
     return new Mapper<>(new WeakHashMap<>());
@@ -36,12 +37,11 @@ public class PositionMap extends Mapper<INode, PointD> {
     return positions;
   }
 
-  public static IGraph applyToGraph(IGraph g, Mapper<INode, PointD> nodePositions) {
+  public static void applyToGraph(IGraph graph, Mapper<INode, PointD> nodePositions) {
     for (Map.Entry<INode, PointD> e : nodePositions.getEntries()) {
       INode node = e.getKey();
       PointD position = e.getValue();
-      g.setNodeCenter(node, position);
+      graph.setNodeCenter(node, position);
     }
-    return g;
   }
 }

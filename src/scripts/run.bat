@@ -1,1 +1,1 @@
-java -cp ".;yfiles-for-java.jar" MainFrame
+java -cp ".;yfiles-for-java.jar" Main

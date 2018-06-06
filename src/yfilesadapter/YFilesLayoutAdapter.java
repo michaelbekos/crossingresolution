@@ -6,8 +6,10 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.ILayoutAlgorithm;
-import layout.algo.ILayout;
+import layout.algo.execution.ILayout;
 import layout.algo.utils.PositionMap;
+
+import java.util.Set;
 
 public class YFilesLayoutAdapter implements ILayout {
   private IGraph graph;
@@ -22,6 +24,11 @@ public class YFilesLayoutAdapter implements ILayout {
   public void init() {}
 
   @Override
+  public void setFixNodes(Set<INode> fixNodes) {
+    throw new UnsupportedOperationException("setFixNodes is not yet supported");
+  }
+
+  @Override
   public boolean executeStep(int iteration) {
     LayoutUtilities.applyLayout(graph, layout);
     return true;
@@ -31,10 +38,4 @@ public class YFilesLayoutAdapter implements ILayout {
   public Mapper<INode, PointD> getNodePositions() {
     return PositionMap.FromIGraph(graph);
   }
-
-  @Override
-  public void showDebug() {}
-
-  @Override
-  public void clearDebug() {}
 }

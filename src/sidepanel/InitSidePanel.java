@@ -3,19 +3,29 @@ package sidepanel;
 import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.graph.GraphItemTypes;
 import com.yworks.yfiles.graph.IGraph;
-import layout.algo.*;
-import layout.algo.forces.*;
+import com.yworks.yfiles.view.ICanvasObjectDescriptor;
+import layout.algo.clinchlayout.ClinchLayout;
+import layout.algo.clinchlayout.ClinchLayoutConfigurator;
+import layout.algo.execution.ILayout;
+import layout.algo.forcealgorithm.ForceAlgorithm;
+import layout.algo.forcealgorithm.ForceAlgorithmConfigurator;
+import layout.algo.forcealgorithm.forces.*;
 import layout.algo.genetic.GeneticForceAlgorithmConfigurator;
 import layout.algo.genetic.GeneticForceAlgorithmLayout;
-import layout.algo.gridding.QuickGridder;
-import layout.algo.gridding.QuickGridderConfigurator;
+import layout.algo.gridding.CombinedGridder;
+import layout.algo.gridding.GridderConfigurator;
+import layout.algo.gridding.IGridder;
 import layout.algo.layoutinterface.ILayoutConfigurator;
+import layout.algo.randommovement.RandomMovementConfigurator;
+import layout.algo.randommovement.RandomMovementLayout;
 import main.MainFrame;
+import view.visual.DrawBoundingBox;
+import view.visual.DrawScale;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class InitSidePanel {
     protected MainFrame mainFrame;
@@ -28,35 +38,26 @@ public class InitSidePanel {
     public JCheckBox masterEnableMinimumAngle;
     private boolean stateEnableMinimumAngle;
     public JCheckBox masterAllowClickCreateNodeEdge;
+    public JCheckBox masterEnableCrossingResolution;
+    public JCheckBox masterEnableAngularResolution;
+    public JCheckBox masterEnableAspectRatio;
 
 
     public InitSidePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
     }
 
-    public JTabbedPane initSidePanel(JPanel mainPanel) {
+    public JTabbedPane initSidePanel() {
         tabbedSidePane = new JTabbedPane();
         initDefault();
-        GridBagConstraints cc = new GridBagConstraints();
-        cc.gridx = 1;
-        cc.gridy = 1;
-        cc.weighty = 1;
-        cc.weightx = 0.2;
-        cc.insets = new Insets(0, 0, 0, 0);
-        cc.fill = GridBagConstraints.BOTH;
-        mainPanel.add(tabbedSidePane, cc);
 
         IGraph graph = mainFrame.view.getGraph();
 
         addRandomMovementAlgorithm(graph);
         addForceAlgorithm(graph);
         addGeneticAlgorithm(graph);
-        addSpringEmbedderAlgorithm(graph);
         addClinchLayout(graph);
         addGriddingAlgorithm(graph);
-
-        // TODO:
-        addAlgorithm("Sloped Spring Embedder", null, null);
 
         addMiscAlgorithms();
 
@@ -67,13 +68,18 @@ public class InitSidePanel {
         return tabbedSidePane;
     }
 
-    private void addGriddingAlgorithm(IGraph graph) {
-        QuickGridderConfigurator configurator = new QuickGridderConfigurator();
-        QuickGridder gridder = new QuickGridder(graph, configurator);
-        addAlgorithm("Gridding", configurator, gridder);
+
+    public Optional<SidePanelTab> getTabForAlgorithm(Class<? extends ILayout> layoutClass) {
+        return sidePanelTabs.stream()
+            .filter(executor -> layoutClass.isInstance(executor.getExecutor().getLayout()))
+            .findFirst();
     }
 
     private void initDefault() {
+        //show scale
+        mainFrame.view.getBackgroundGroup().addChild(new DrawScale(mainFrame.view), ICanvasObjectDescriptor.VISUAL);
+        mainFrame.view.getBackgroundGroup().addChild(new DrawBoundingBox(mainFrame.view), ICanvasObjectDescriptor.VISUAL);
+
         masterEnableMinimumAngle = new JCheckBox("Show minimum angle");
         masterEnableMinimumAngle.addItemListener(this::masterMinAngleDisplayEnabled);
         masterEnableMinimumAngle.setSelected(false);
@@ -82,15 +88,29 @@ public class InitSidePanel {
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
         masterAllowClickCreateNodeEdge.setSelected(false);
 
+        masterEnableCrossingResolution = new JCheckBox("Crossing Resolution");
+        masterEnableCrossingResolution.addItemListener(this::masterEnableCrossingResolutionActionPerformed);
+        masterEnableCrossingResolution.setSelected(false);
+
+        masterEnableAngularResolution = new JCheckBox("Angular Resolution");
+        masterEnableAngularResolution.addItemListener(this::masterEnableAngularResolutionActionPerformed);
+        masterEnableAngularResolution.setSelected(false);
+
+        masterEnableAspectRatio = new JCheckBox("Aspect Ratio");
+        masterEnableAspectRatio.addItemListener(this::masterEnableAspectRatioActionPerformed);
+        masterEnableAspectRatio.setSelected(true);
+
         sidePanelTabs = new ArrayList<>();
 
         tabbedSidePane.addChangeListener(changeEvent -> {
             int selectedTab = tabbedSidePane.getSelectedIndex();
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
+            sidePanelTabs.get(selectedTab).setEnableCrossingResolution(masterEnableCrossingResolution.isSelected());
+            sidePanelTabs.get(selectedTab).setEnableAngularResolution(masterEnableAngularResolution.isSelected());
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
-                if (i != selectedTab) {
-                    sidePanelTabs.get(i).stopExecution();
+                if (sidePanelTabs.get(i).getExecutor().isRunning()) {
+                    sidePanelTabs.get(selectedTab).setOutputTextArea(sidePanelTabs.get(i).algorithmName + " is Still Running!");
                 }
             }
         });
@@ -102,15 +122,6 @@ public class InitSidePanel {
         addAlgorithm("Clinch Nodes", configurator, clinchLayout);
     }
 
-    private void addSpringEmbedderAlgorithm(IGraph graph) {
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
-                .addForce(new SpringForce(graph, 100, 0.01, 150))
-                .addForce(new ElectricForce(graph, 0.01, 50000));
-
-        ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, graph, new CachedMinimumAngle());
-        addAlgorithm("Spring Embedder", configurator, forceAlgorithm);
-    }
-
     private void addGeneticAlgorithm(IGraph graph) {
         GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
         GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
@@ -119,11 +130,15 @@ public class InitSidePanel {
 
     private void addForceAlgorithm(IGraph graph) {
         CachedMinimumAngle cMinimumAngle = new CachedMinimumAngle();
-        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator();
-        configurator.addForce(new NodeNeighbourForce(graph))
+        ForceAlgorithmConfigurator configurator = new ForceAlgorithmConfigurator()
+                .addForce(new NodeNeighbourForce(graph))
                 .addForce(new NodePairForce(graph))
                 .addForce(new IncidentEdgesForce(graph))
-                .addForce(new CrossingForce(graph, cMinimumAngle));
+                .addForce(new SpringForce(graph, 100, 0.01))
+                .addForce(new ElectricForce(graph, 0.01))
+                .addForce(new CrossingForce(graph, cMinimumAngle))
+                .addForce(new SlopedForce(graph))
+                .addForce(new TotalResolutionForce(graph));
 
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
         addAlgorithm("Force Algorithm", configurator, forceAlgorithm);
@@ -135,16 +150,25 @@ public class InitSidePanel {
         addAlgorithm("Random Movement", config, layout);
     }
 
+
+    private void addGriddingAlgorithm(IGraph graph) {
+        GridderConfigurator configurator = new GridderConfigurator();
+        IGridder gridder = new CombinedGridder(graph, configurator);
+        SidePanelTab sidePanelTab = addAlgorithm("Gridding", configurator, gridder);
+        sidePanelTab.setVerbose(false);
+    }
+
     /**
      * Adds an algorithm in a new tab, top panel is defined by the configurator, bottom is the default panel
      * @param algorithmName - name of tab
      * @param configurator - which and what parameters
      * @param layout - interface to algorithm for start/pause/stop buttons and controls for above parameters
      */
-    private void addAlgorithm(String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
+    private SidePanelTab addAlgorithm(String algorithmName, ILayoutConfigurator configurator, ILayout layout) {
         SidePanelTab sidePanel = new SidePanelTab(this, algorithmName, configurator, layout);
         sidePanelTabs.add(sidePanel);
-        tabbedSidePane.addTab(sidePanel.algorithmName, sidePanel.sidePanelTab);
+        tabbedSidePane.addTab(sidePanel.algorithmName, new JScrollPane(sidePanel.sidePanelTab));
+        return sidePanel;
     }
 
     /**
@@ -158,19 +182,29 @@ public class InitSidePanel {
 
 
     private boolean removedListeners = false;
-    public void removeDefaultListeners() {
+    public boolean removeDefaultListeners() {
         if (stateEnableMinimumAngle && !removedListeners) {
             removedListeners = true;
             mainFrame.minimumAngleMonitor.removeGraphChangedListeners();
+            return true;
         }
+        return false;
     }
 
     public void addDefaultListeners() {
         if (stateEnableMinimumAngle && removedListeners) {
             removedListeners = false;
             mainFrame.minimumAngleMonitor.registerGraphChangedListeners();
-            mainFrame.minimumAngleMonitor.updateMinimumAngleInfoBar();
+            mainFrame.minimumAngleMonitor.updateAngleInfoBar();
         }
+    }
+
+    public void setOutputTextArea(String outputText) {
+        sidePanelTabs.get(tabbedSidePane.getSelectedIndex()).setOutputTextArea(outputText);
+    }
+
+    public JTextArea getOutputTextArea() {
+        return sidePanelTabs.get(tabbedSidePane.getSelectedIndex()).getOutputTextArea();
     }
 
     /*********************************************************************
@@ -196,4 +230,15 @@ public class InitSidePanel {
         mainFrame.graphEditorInputMode.setSelectableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
     }
 
+    private void masterEnableCrossingResolutionActionPerformed(ItemEvent evt) { //TODO: maybe sync with random
+        mainFrame.minimumAngleMonitor.setUseCrossingResolution(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    private void masterEnableAngularResolutionActionPerformed(ItemEvent evt) {
+        mainFrame.minimumAngleMonitor.setUseAngularResolution(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    private void masterEnableAspectRatioActionPerformed(ItemEvent evt) {
+        mainFrame.minimumAngleMonitor.setUseAspectRatio(evt.getStateChange() == ItemEvent.SELECTED);
+    }
 }

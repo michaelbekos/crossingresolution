@@ -1,25 +1,32 @@
 package main;
 
 import com.sun.istack.internal.Nullable;
-import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.geometry.SizeD;
-import com.yworks.yfiles.graph.IEdge;
-import com.yworks.yfiles.graph.IGraph;
-import com.yworks.yfiles.graph.IModelItem;
-import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.graph.*;
+import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
-import com.yworks.yfiles.graph.styles.SimpleLabelStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import com.yworks.yfiles.view.*;
 import com.yworks.yfiles.view.input.*;
-import layout.algo.utils.BestSolution;
+import graphoperations.RemovedChains;
+import graphoperations.RemovedNodes;
+import graphoperations.Scaling;
+import io.AdjacencyMatrixHandler;
+import io.Contest2018IOHandler;
+import io.ContestIOHandler;
+import io.SimpleGraphmlIOHandler;
+import layout.algo.execution.ILayout;
+import layout.algo.utils.BestSolutionMonitor;
 import sidepanel.InitSidePanel;
+import sidepanel.SidePanelTab;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 
 /**
@@ -28,7 +35,8 @@ import java.awt.event.WindowEvent;
 public class MainFrame extends JFrame {
 
     /* Box related issue*/
-    public static final double BOX_SIZE= 10000;
+
+    public static double BOX_SIZE[] = {1000000, 1000000};
 
     /* Graph Drawing related objects */
     public GraphComponent view;
@@ -41,24 +49,32 @@ public class MainFrame extends JFrame {
     /* Default Styles */
     private ShinyPlateNodeStyle defaultNodeStyle;
     private PolylineEdgeStyle defaultEdgeStyle;
-    private SimpleLabelStyle defaultLabelStyle;
+    private DefaultLabelStyle defaultLabelStyle;
+
+    /* Visibility from the view */
 
     /* Central gui elements */
     public JLabel infoLabel;
     public JProgressBar progressBar;
 
     public MinimumAngleMonitor minimumAngleMonitor;
-    public BestSolution bestSolution;
+    public BestSolutionMonitor bestSolution;
+    public Contest2018IOHandler contest2018IOHandler;
 
     @Nullable
     public JTabbedPane sidePanel;
     public InitSidePanel initSidePanel;
     public InitMenuBar menuBar;
 
+    public RemovedNodes removedNodes;
+    public RemovedChains removedChains;
+
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() {
+    public MainFrame() {}
+
+    public void init() {
         this.initComponents();
         this.initMenuBar();
 
@@ -66,49 +82,45 @@ public class MainFrame extends JFrame {
         super.setMinimumSize(new Dimension(400, 300));
         super.setExtendedState(MAXIMIZED_BOTH);
         super.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        super.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent evt) {
-                System.exit(0);
-            }
-        });
     }
+
 
     /**
      * This method is called within the constructor to initialize the form.
      */
     private void initComponents() {
+        contest2018IOHandler = new Contest2018IOHandler();
+        this.removedNodes = new RemovedNodes(graph);
+        this.removedChains = new RemovedChains(graph);
 
         JPanel progressBarPanel = new JPanel();
         progressBarPanel.setLayout(new GridLayout(1, 2, 10, 10));
 
         this.infoLabel = new JLabel();
         this.infoLabel.setText("Number of Vertices: 0     Number of Edges: 0");
-        this.infoLabel.setPreferredSize(new Dimension(250,20));
         progressBarPanel.add(infoLabel);
 
         this.progressBar = new JProgressBar();
-        this.progressBar.setPreferredSize(new Dimension(250, 20));
         this.progressBar.setStringPainted(true);
         progressBarPanel.add(this.progressBar);
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        mainPanel.setPreferredSize(new Dimension(300, 300));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
         mainPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridy = 2;
+        c.gridy = 1;
         c.insets = new Insets(5, 0, 5, 0);
         mainPanel.add(progressBarPanel, c);
 
         this.view = new GraphComponent();
-        this.view.setSize(330, 330);
         this.view.requestFocus();
-        view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        view.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        this.view.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        this.view.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         c.fill = GridBagConstraints.BOTH;
-        c.gridy = 1;
-        c.weightx = 0.8;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
         mainPanel.add(this.view, c);
 
         this.graph = this.view.getGraph();
@@ -132,7 +144,7 @@ public class MainFrame extends JFrame {
 
         /* Add four listeners two the graph */
         this.graph.addNodeCreatedListener((o, iNodeItemEventArgs) -> {
-            graph.addLabel(iNodeItemEventArgs.getItem(), Integer.toString(graph.getNodes().size() - 1));
+            this.graph.addLabel(iNodeItemEventArgs.getItem(), Integer.toString(graph.getNodes().size() - 1));
             this.graph.setStyle(iNodeItemEventArgs.getItem(), this.defaultNodeStyle.clone());
             this.graph.setStyle(iNodeItemEventArgs.getItem().getLabels().first(), this.defaultLabelStyle.clone());
             infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size());
@@ -151,12 +163,18 @@ public class MainFrame extends JFrame {
                 ));
 
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
-            this.initSidePanel.removeDefaultListeners();
-            double scaleValue = 1/this.view.getZoom();
-            for(INode u : this.graph.getNodes()){
-                this.graph.setNodeLayout(u, new RectD(u.getLayout().getX(),u.getLayout().getY(),this.graph.getNodeDefaults().getSize().width*scaleValue,this.graph.getNodeDefaults().getSize().height*scaleValue));
+            boolean removedListeners = this.initSidePanel.removeDefaultListeners();
+            Scaling.scaleNodeSizes(view);
+            if (this.graph.getNodes().size() > 100) {
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException x) {
+                }
             }
-            this.initSidePanel.addDefaultListeners();
+            if (removedListeners) {
+
+                this.initSidePanel.addDefaultListeners();
+            }
         });
 
 
@@ -184,28 +202,44 @@ public class MainFrame extends JFrame {
         this.graph.getEdgeDefaults().setStyle(this.defaultEdgeStyle);
 
         /* Default Label Styling */
-        this.defaultLabelStyle = new SimpleLabelStyle();
+        this.defaultLabelStyle = new DefaultLabelStyle();
         this.defaultLabelStyle.setFont(new Font("Dialog", Font.PLAIN, 0));
         this.defaultLabelStyle.setTextPaint(Colors.WHITE);
         this.graph.getNodeDefaults().getLabelDefaults().setStyle(this.defaultLabelStyle);
         this.graph.getEdgeDefaults().getLabelDefaults().setStyle(this.defaultLabelStyle);
 
-        super.getContentPane().setLayout(new java.awt.BorderLayout(20, 20));
-        super.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
-
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c. insets = new Insets(5, 0, 10, 0);
-
         this.defaultLayouter = new OrganicLayout();
         this.defaultLayouter.setPreferredEdgeLength(100);
         this.defaultLayouter.setMinimumNodeDistance(100);
 
-        bestSolution = new BestSolution();
+        bestSolution = new BestSolutionMonitor();
         this.minimumAngleMonitor = new MinimumAngleMonitor(view, graph, infoLabel, bestSolution);
 
         this.initSidePanel = new InitSidePanel(this);
-        this.sidePanel = this.initSidePanel.initSidePanel(mainPanel);
+        this.sidePanel = this.initSidePanel.initSidePanel();
+
+        GridBagConstraints cc = new GridBagConstraints();
+        cc.gridx = 1;
+        cc.gridy = 0;
+        cc.weighty = 1;
+        cc.weightx = 1;
+        cc.insets = new Insets(0, 0, 0, 0);
+        cc.fill = GridBagConstraints.BOTH;
+        JPanel sidePanelPane = new JPanel();
+        sidePanelPane.setBorder(BorderFactory.createEmptyBorder(0, 5, 10, 10));
+        sidePanelPane.setLayout(new GridBagLayout());
+        sidePanelPane.add(this.sidePanel, cc);
+
+        JSplitPane mainSplit = new JSplitPane();
+        mainSplit.setRightComponent(sidePanelPane);
+        mainSplit.setLeftComponent(mainPanel);
+        mainSplit.setContinuousLayout(true);
+        mainSplit.setOneTouchExpandable(true);
+        mainSplit.setResizeWeight(0.67);
+
+
+        super.getContentPane().setLayout(new java.awt.BorderLayout(20, 20));
+        super.getContentPane().add(mainSplit, java.awt.BorderLayout.CENTER);
     }
 
 
@@ -284,12 +318,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+    public static void start(int closeOperation, @Nullable Consumer<MainFrame> onReady) {
         try {
             // check for 'os.name == Windows 7' does not work, since JDK 1.4 uses the compatibility mode
             if (!"com.sun.java.swing.plaf.motif.MotifLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !"com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !UIManager.getSystemLookAndFeelClassName().equals(UIManager.getLookAndFeel().getClass().getName()) && !(System.getProperty("java.version").startsWith("1.4") && System.getProperty("os.name").startsWith("Windows") && "6.1".equals(System.getProperty("os.version")))) {
@@ -300,9 +329,132 @@ public class MainFrame extends JFrame {
         }
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.init();
+            frame.setVisible(true);
+            frame.setDefaultCloseOperation(closeOperation);
+            if (onReady != null) {
+                onReady.accept(frame);
+            }
+        });
+    }
+
+    public static void start(int closeOperation, boolean isVisible, @Nullable Consumer<MainFrame> onReady) {
+        try {
+            // check for 'os.name == Windows 7' does not work, since JDK 1.4 uses the compatibility mode
+            if (!"com.sun.java.swing.plaf.motif.MotifLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !"com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(UIManager.getSystemLookAndFeelClassName()) && !UIManager.getSystemLookAndFeelClassName().equals(UIManager.getLookAndFeel().getClass().getName()) && !(System.getProperty("java.version").startsWith("1.4") && System.getProperty("os.name").startsWith("Windows") && "6.1".equals(System.getProperty("os.version")))) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.init();
+            frame.setVisible(isVisible);
+            frame.setDefaultCloseOperation(closeOperation);
+            if (onReady != null) {
+                onReady.accept(frame);
+            }
+        });
+    }
+
+    public Optional<SidePanelTab> getTabForAlgorithm(Class<? extends ILayout> layoutClass) {
+        return initSidePanel.getTabForAlgorithm(layoutClass);
+    }
+
+    public void openContestFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            ContestIOHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+
+    public void openContest2018File(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            contest2018IOHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+
+    public void openSimpleFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+          //  view.importFromGraphML(fileNamePath);
+            SimpleGraphmlIOHandler.read(graph, fileNamePath);
+            LayoutUtilities.applyLayout(this.graph, new OrganicLayout());
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+
+    public void openFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            view.importFromGraphML(fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        }
+        finally {
+            initSidePanel.addDefaultListeners();
+        }
+    }
+
+	public void openAMFile(String fileNamePath) {
+        initSidePanel.removeDefaultListeners();
+        try {
+            AdjacencyMatrixHandler.read(graph, fileNamePath);
+            view.fitGraphBounds();
+            view.updateUI();
+            bestSolution.reset();
+            removedNodes = new RemovedNodes(graph);
+
+            setTitle(Paths.get(fileNamePath).getFileName().toString());
+        } catch (IOException e) {
+            infoLabel.setText("An error occured while reading the input file.");
+        } finally {
+            initSidePanel.addDefaultListeners();
+        }
 
     }
 
+    public void setBoxSize(int width, int height) {
+        BOX_SIZE[0] = width;
+        BOX_SIZE[1] = height;
+    }
+
+
 
 }
+
+

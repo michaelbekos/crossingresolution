@@ -5,10 +5,11 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
-import layout.algo.BasicIGraphLayoutExecutor;
-import layout.algo.ForceAlgorithm;
+import layout.algo.execution.BasicIGraphLayoutExecutor;
+import layout.algo.forcealgorithm.ForceAlgorithm;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.VoidItem;
+import layout.algo.layoutinterface.VoidItemFactory;
 import util.G;
 import util.graph2d.Intersection;
 
@@ -30,9 +31,13 @@ class ForceAlgorithmObjective implements IObjective<ForceAlgorithm> {
   @Override
   public ForceAlgorithm advance(ForceAlgorithm forceAlgorithm) {
     int iterations = configurator.iterationsPerGeneration.getValue();
-    final BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, iterations, iterations);
+    final BasicIGraphLayoutExecutor executor = new BasicIGraphLayoutExecutor(forceAlgorithm, graph, iterations, iterations, new VoidItemFactory());
     executor.start();
-    executor.waitUntilFinished();
+    try {
+      executor.waitUntilFinished();
+    } catch (InterruptedException e) {
+      throw new RuntimeException("ForceAlgorithmObjective was interrupted while waiting for an executor to finish", e);
+    }
     return forceAlgorithm;
   }
 
