@@ -422,9 +422,9 @@ public class Experiment {
 
         if(((this.totalAngle + this.approx_epsilon ) >= this.actTotalAngle)){
             this.numOfUnchangedAngle++;
-            System.out.println("Num. of unchanged angele: \t\t" + this.numOfUnchangedAngle);
+//            System.out.println("Num. of unchanged angele: \t\t" + this.numOfUnchangedAngle);
         }else{
-            System.out.println("Num. of unchanged angele: \t\t" + this.numOfUnchangedAngle);
+//            System.out.println("Num. of unchanged angele: \t\t" + this.numOfUnchangedAngle);
             this.minimumAngle = this.actAngle;
             this.minimumAngleTime = this.calcTime;
             this.minimumAngleIterations = this.iterations;

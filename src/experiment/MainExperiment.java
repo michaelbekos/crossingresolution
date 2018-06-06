@@ -6,7 +6,7 @@ package experiment;
 
 public class MainExperiment {
 //    static String inputRomeDir = "E:\\graph\\rome\\rome\\";
-static String inputRomeDir = "/home/ch/uni/graph_drawing/rome_tmp/";
+static String inputRomeDir = "/home/ch/uni/graph_drawing/rome/";
     static String inputNorthDir = "E:\\graph\\north\\north\\north\\";
 
     //static String inputRomeDir = "E:\\graph\\rome\\smallSet\\"; // testing
@@ -57,7 +57,7 @@ static String inputRomeDir = "/home/ch/uni/graph_drawing/rome_tmp/";
     public static void run(String mode){
         if(runRome){
 //            int[] boxSizes = {100,1000,10000,1000000};
-            int[] boxSizes = {100};
+            int[] boxSizes = {1000000};
             for (int i = 0; i < boxSizes.length; i++) {
                 useAspectRatio = false;
 //            e = new Experiments(inputRomeDir, outputDir + "rome\\"+ mode,
