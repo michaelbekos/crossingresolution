@@ -53,6 +53,7 @@ public class SidePanelTab {
     private JCheckBox allowClickCreateNodeEdge;
     private JCheckBox enableCrossingResolution;
     private JCheckBox enableAngularResolution;
+    private JCheckBox enableAspectRatio;
     private JTextArea outputTextArea;
     private boolean verbose;
     
@@ -255,6 +256,16 @@ public class SidePanelTab {
         enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
         enableAngularResolution.setSelected(false);
 
+        enableAspectRatio = new JCheckBox("Aspect Ratio");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(enableAspectRatio, cDefaultPanel);
+        enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
+        enableAspectRatio.setSelected(true);
+
         outputTextArea.setLineWrap(true);
         outputTextArea.setRows(10);
         JScrollPane scrollPane = new JScrollPane(outputTextArea);
@@ -376,6 +387,12 @@ public class SidePanelTab {
         return this.enableAngularResolution.isSelected();
     }
 
+    public void setEnableAspectRazio(boolean value) {
+        this.enableAspectRatio.setSelected(value);
+    }
+
+    public boolean getEnableAspectRatio(){return this.enableAspectRatio.isSelected();}
+
     public void setAllowClickCreateNodeEdge(boolean value) {
         this.allowClickCreateNodeEdge.setSelected(value);
     }
@@ -474,6 +491,12 @@ public class SidePanelTab {
                 }
             }
             stopExecution();
+        } else if ("removeListeners".equals(evt.getPropertyName())) {
+            if ((boolean)evt.getNewValue()) {
+                initSidePanel.removeDefaultListeners();
+            } else {
+                initSidePanel.addDefaultListeners();
+            }
         }
     }
 
@@ -493,6 +516,10 @@ public class SidePanelTab {
         initSidePanel.masterEnableAngularResolution.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
+    private void enableAspectRatioActionPerformed(ItemEvent evt) {
+        initSidePanel.masterEnableAspectRatio.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
     private void scalingToBox(@SuppressWarnings("unused") ActionEvent evt){
         modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
@@ -500,7 +527,7 @@ public class SidePanelTab {
             IGraph graph = initSidePanel.mainFrame.graph;
             Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
             RectD bounds = BoundingBox.from(nodePositions);
-            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth()), (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight())), nodePositions);
+            Scaling.scaleBy(Math.min((MainFrame.BOX_SIZE[0] / bounds.getWidth()), (MainFrame.BOX_SIZE[1] / bounds.getHeight())), nodePositions);
             PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
 
@@ -598,7 +625,7 @@ public class SidePanelTab {
             return;
         }
         Thread automaticInsertion = new Thread(() -> {
-                double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+                double startingAngle = initSidePanel.mainFrame.minimumAngleMonitor.getBestCrossingResolution();
                 double epsilon = startingAngle/100;
                 if (!algorithmName.equals("Random Movement")) {
                     setOutputTextArea("Recommended to use Random Movement!");
@@ -616,7 +643,7 @@ public class SidePanelTab {
                     if (executor.isFinished()) {
                         return;
                     }
-                    double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getMinimumAngle();
+                    double minAngle = initSidePanel.mainFrame.minimumAngleMonitor.getBestCrossingResolution();
                     if (minAngle >= (startingAngle - epsilon)) {
                         //remove chain
                         reinsertVerticesItem();

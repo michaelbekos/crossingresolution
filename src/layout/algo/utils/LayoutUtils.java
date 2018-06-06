@@ -24,27 +24,27 @@ public class LayoutUtils {
   }
 
 public static Boolean overlap(PointD position, Mapper<INode, PointD> positions, INode node, IGraph graph) {
-	Boolean value=true;
 	Iterator<Entry<INode, PointD>> It = positions.getEntries().iterator();
 	PointD tmp;
-		while(It.hasNext()){
-			tmp=It.next().getValue();
-			if (position.hits(tmp, 0.5) || position.equals(tmp)) {
-				value= false;
-			}
+	while(It.hasNext()){
+		tmp=It.next().getValue();
+		if (position.hits(tmp, 0.5) || position.equals(tmp)) {
+			return false;
 		}
-		IListEnumerable<IPort> ports= node.getPorts();
-		for(IPort port: ports){
-			for(IEdge edge: graph.edgesAt(port)){
-				It = positions.getEntries().iterator();
-				while(It.hasNext()){
-					tmp=It.next().getValue();
-					if(tmp!=positions.getValue(edge.getSourceNode()) && tmp!=positions.getValue(edge.getTargetNode()) && tmp.hitsLineSegment(positions.getValue(edge.getSourceNode()), positions.getValue(edge.getTargetNode()), 0.5)){
-						value=false;
-					}
+	}
+	IListEnumerable<IPort> ports= node.getPorts();
+	for(IPort port: ports){
+		for(IEdge edge: graph.edgesAt(port)){
+			It = positions.getEntries().iterator();
+			while(It.hasNext()){
+				tmp=It.next().getValue();
+				if(tmp!=positions.getValue(edge.getSourceNode()) && tmp!=positions.getValue(edge.getTargetNode())
+						&& tmp.hitsLineSegment(positions.getValue(edge.getSourceNode()), positions.getValue(edge.getTargetNode()), 0.5)){
+					return false;
 				}
 			}
 		}
-	return value;
+	}
+	return true;
 }
 }

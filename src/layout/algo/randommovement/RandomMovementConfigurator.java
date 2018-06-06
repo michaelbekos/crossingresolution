@@ -5,21 +5,22 @@ import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class RandomMovementConfigurator implements ILayoutConfigurator {
   AbstractLayoutInterfaceItem<Double> minStepSize;
   AbstractLayoutInterfaceItem<Double> maxStepSize;
-  AbstractLayoutInterfaceItem<Boolean> jumpOnLocalMaximum;
-  AbstractLayoutInterfaceItem<Boolean> useGaussianDistribution;
   AbstractLayoutInterfaceItem<Integer> iterationsForLocalMaximum;
   AbstractLayoutInterfaceItem<Integer> numSamplesForJumping;
+  AbstractLayoutInterfaceItem<Integer> maxAspectRatio;
+  AbstractLayoutInterfaceItem<Boolean> jumpOnLocalMaximum;
+  AbstractLayoutInterfaceItem<Boolean> useGaussianDistribution;
   AbstractLayoutInterfaceItem<Boolean> toggleNodeDistributions;
   AbstractLayoutInterfaceItem<Boolean> onlyGridPositions;
-  ArrayList<AbstractLayoutInterfaceItem> itemList;
   AbstractLayoutInterfaceItem<Boolean> allowIncreaseStepSize;
   AbstractLayoutInterfaceItem<Boolean> useCrossingResolution;
   AbstractLayoutInterfaceItem<Boolean> useAngularResolution;
+  AbstractLayoutInterfaceItem<Boolean> useAspectRatio;
+  ArrayList<AbstractLayoutInterfaceItem> itemList;
 
 
   @Override
@@ -42,15 +43,17 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     numSamplesForJumping.setValue(50);
     itemList.add(numSamplesForJumping);
 
+    maxAspectRatio = itemFactory.intParameter("Maximum Legal Aspect Ratio", -1, 20);
+    maxAspectRatio.setValue(-1);
+    itemList.add(maxAspectRatio);
+
     jumpOnLocalMaximum = itemFactory.booleanParameter("Allow decreasing minimum angle at local maximum");
     jumpOnLocalMaximum.setValue(false);
     itemList.add(jumpOnLocalMaximum);
 
     onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates");
-
     onlyGridPositions.setValue(false);
     itemList.add(onlyGridPositions);
-
 
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
     useGaussianDistribution.setValue(true);
@@ -64,13 +67,17 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     allowIncreaseStepSize.setValue(false);
     itemList.add(allowIncreaseStepSize);
 
-
     useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)");
     useCrossingResolution.setValue(true);
+    itemList.add(useCrossingResolution);
 
     useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution");
     useAngularResolution.setValue(false);
+    itemList.add(useAngularResolution);
 
+    useAspectRatio = itemFactory.booleanParameter("Use Aspect Ratio");
+    useAspectRatio.setValue(true);
+    itemList.add(useAspectRatio);
   }
 
   @Override
