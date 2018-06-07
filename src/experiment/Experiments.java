@@ -98,7 +98,7 @@ public class Experiments {
             String folderName = "randomMovement";
             fixGraphmlFormat(children, folderName);
 
-            for(int  i = 20; i<=100; i+=20){
+            for(int  i = 20; i<=120; i+=20){
                 if(this.useAspectRatio){
                     createFiles(this.randomMovement+"aspect_ratio_"+this.aspectRatio+"_", i-19,i);
                 }else {
@@ -140,7 +140,7 @@ public class Experiments {
         else {
             String folderName = "force";
             fixGraphmlFormat(children, folderName);
-            for(int  i = 20; i<=100; i+=20){
+            for(int  i = 20; i<=120; i+=20){
                 createFiles(this.forceAlgo,i-19,i);
             }
             childernP = children;
@@ -177,7 +177,7 @@ public class Experiments {
             String folderName = "totalResolutionForce";
             fixGraphmlFormat(children, folderName);
 
-            for(int  i = 20; i<=100; i+=20){
+            for(int  i = 20; i<=120; i+=20){
                 createFiles(this.totalResForce,i-19,i);
             }
             childernP = children;
@@ -226,7 +226,7 @@ public class Experiments {
 
             int maxNodeNum = calcMaxNodeNum(frame.graph);
 
-            //if(maxNodeNum != 40){frame.dispose();return;}//TODO: Nur zum testen
+            //if(maxNodeNum != 60){frame.dispose();return;}//TODO: Nur zum testen
 
 
 
