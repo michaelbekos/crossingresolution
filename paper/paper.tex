@@ -8,11 +8,9 @@
 \graphicspath{{figures/}}
 
 
-
-
 \newcommand{\myparagraph}[1]{\medskip\noindent\textbf{#1}.}
 
-\author{Michael~A.~Bekos, Henry~F\"orster, Christian~Geckeler, Lukas Holl\"ander, Michael~Kaufmann, Amad\"aus~Spallek, Jan~Splett}
+\author{Michael~A.~Bekos, Henry~F\"orster, Christian~Geckeler, Lukas Holl\"ander, Michael~Kaufmann, Amad\"aus~M.~Spallek, Jan~Splett}
 
 \authorrunning{M.~A.~Bekos et al.}
 \title{A Heuristic Approach towards Drawings of Graphs with High Crossing Resolution}
@@ -212,6 +210,7 @@ Formally, the aspect ratio of a drawing is the ratio of the length of its longes
 \myparagraph{Total resolution} 
 %
 The notion of the total resolution of a drawing was introduced relatively recently with aim of ``balancing'' the measures of the crossing and of the angular resolution of a drawing~\cite{DBLP:journals/cj/ArgyriouBS13}. Formally, it is defined as the minimum of these two measures. It was not difficult to adjust our algorithm to yield drawings with high total resolution by simply taking into account also the angular resolution of the drawing. In particular, if the total resolution of the drawing is defined by its angular resolution, then the way we compute the critical vertices of this drawing has to change; the critical vertices must be the endvertices of the pairs of edges that define the angular resolution. Also, at each iteration of our algorithm we have to ensure that the total resolution does not decrease. We do so by simply rejecting candidate positions, which yield a reduced total resolution.
+
 
 \myparagraph{Angular resolution} 
 %  
