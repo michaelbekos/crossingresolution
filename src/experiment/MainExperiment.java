@@ -11,7 +11,7 @@ public class MainExperiment {
     //static String inputRomeDir = "E:\\graph\\rome\\smallSet\\"; // testing
    //  static String inputNorthDir = "E:\\graph\\rome\\smallSet\\"; // testing
 
-    static String outputDir = "E:\\graph\\results\\06_06_2018_with_planar_40-60\\";
+    static String outputDir = "E:\\graph\\results\\07_06_2018\\";
 
     static  Experiments e;
 
@@ -20,7 +20,7 @@ public class MainExperiment {
     static int numOfIterationPerStep = 100;
     static int numOfSteps = 1000;
     static int boxSize = 10000;
-    static boolean planarGraphsAllowed = true;
+    static boolean planarGraphsAllowed = false;
     static boolean unconnectedGraphsAllowed = false;
     static boolean useCrossingRes;  // if crossing and angular is enabled, the experiment focus on total resolution
     static boolean useAngularRes;
@@ -29,10 +29,10 @@ public class MainExperiment {
     /** run booleans  **/
     static boolean runRome = true;
     static boolean runNorth = false;
-    static boolean runRandomMovement = true;
-    static boolean runRandomMovementWithAspectRatio = true;
-    static boolean runForce = true;
-    static boolean runTotalForce = true;
+    static boolean runRandomMovement = false;
+    static boolean runRandomMovementWithAspectRatio = false;
+    static boolean runForce = true; //big angle force
+    static boolean runTotalForce = false;
 
 
 
