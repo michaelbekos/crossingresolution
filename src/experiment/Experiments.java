@@ -269,13 +269,13 @@ public class Experiments {
                 experiment.getTab().get().configurator.getItems().get(2).setValue(2.0); // Node Pair force
                 experiment.getTab().get().configurator.getItems().get(3).setValue(false);
                 experiment.getTab().get().configurator.getItems().get(4).setValue(0.1); // Incident Edges Force
-                experiment.getTab().get().configurator.getItems().get(5).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(5).setValue(this.useAngularRes);
                 experiment.getTab().get().configurator.getItems().get(6).setValue(50.0); // Spring Stiffness Force
                 experiment.getTab().get().configurator.getItems().get(7).setValue(true);
                 experiment.getTab().get().configurator.getItems().get(8).setValue(50000.0); // Electric Repulsiion Force
                 experiment.getTab().get().configurator.getItems().get(9).setValue(true);
                 experiment.getTab().get().configurator.getItems().get(10).setValue(0.35); // Crossing Force
-                experiment.getTab().get().configurator.getItems().get(11).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(11).setValue(this.useCrossingRes);
                 experiment.getTab().get().configurator.getItems().get(12).setValue(0.07); // Slope Force
                 experiment.getTab().get().configurator.getItems().get(13).setValue(false);
                 experiment.getTab().get().configurator.getItems().get(15).setValue(1.0);    //Total Resolution Force
@@ -317,13 +317,13 @@ public class Experiments {
                 experiment.getTab().get().configurator.getItems().get(15).setValue(1.0);    //Total Resolution Force
                 experiment.getTab().get().configurator.getItems().get(16).setValue(true);
                 experiment.getTab().get().configurator.getItems().get(17).setValue(0.13);   //Crossing1
-                experiment.getTab().get().configurator.getItems().get(18).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(18).setValue(this.useCrossingRes);
                 experiment.getTab().get().configurator.getItems().get(19).setValue(0.05);   //Crossing2
-                experiment.getTab().get().configurator.getItems().get(20).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(20).setValue(this.useCrossingRes);
                 experiment.getTab().get().configurator.getItems().get(21).setValue(0.03);   //Angular1
-                experiment.getTab().get().configurator.getItems().get(22).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(22).setValue(this.useAngularRes);
                 experiment.getTab().get().configurator.getItems().get(23).setValue(0.008);  //Angular2
-                experiment.getTab().get().configurator.getItems().get(24).setValue(true);
+                experiment.getTab().get().configurator.getItems().get(24).setValue(this.useAngularRes);
 
         /*        for(int i = 0; i < experiment.getTab().get().configurator.getItems().size(); i++){
                     System.out.println(i + "   " + experiment.getTab().get().configurator.getItems().get(i).getName());
@@ -337,6 +337,7 @@ public class Experiments {
 
             }
         }
+        experiment.writeGraph();
         frame.dispose();
     }
 
