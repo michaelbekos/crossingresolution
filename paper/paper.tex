@@ -248,7 +248,7 @@ Our algorithm, as it has been described so far, does not necessarily produce gri
 \label{sec:experiments}
 % ==================================================================
 
-In this section, we present the results of our experimental evaluation. For comparison purposes, apart from our algorithm, we have also implemented the force-directed algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. The implementations were in Java using the yFiles library~\cite{DBLP:books/sp/04/WieseE004}. The experiment was performed on a Linux laptop with four cores at 2.5 GHz and 3 GB RAM.
+In this section, we present the results of our experimental evaluation. For comparison purposes, apart from our algorithm, we have also implemented the force-directed algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. The implementations were in Java using the yFiles library~\cite{DBLP:books/sp/04/WieseE004}. The experiment was performed on a Linux laptop with four cores at 2.4 GHz and 8 GB RAM.
 %
 As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs (commonly used for testing the efficiency of algorithms for drawing graphs). 
 
@@ -270,21 +270,28 @@ We compared the quality of the produced drawings based on the following aestheti
 \item \label{p:no-xing} number of crossings.
 \end{enumerate}
 
-The comparisons were on average across dirrerent drawings with same number of vertices. For Properties~P.\ref*{p:cr-res}, P.\ref*{p:to-res} and P.\ref*{p:an-res}, we further adjusted each of the algorithms of the experiment to optimize the corresponding measures. Then, for each of them we reported the average of the corresponding aspect ratios and number of crossings of the produced layouts. Note that all algorithms of the experiment can easily be adjusted to maximize only the crossing resolution, or only the angular resolution or both (by maximizing the total resolution). In our algorithm, this can be achieved by adjusting appropriately the content of the vertex-pool (as we saw in Section~\ref{ssec:variants}), while in the algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} by appropriately selecting the set of forces to use (as each of them, has a different set of forces to maximize the crossing and the angular resolution, such that together they maximize the total resolution)\todo{up to here}. 
+The comparisons were on average across different drawings with same number of vertices. For Properties~P.\ref*{p:cr-res}, P.\ref*{p:to-res} and P.\ref*{p:an-res}, we further adjusted each of the algorithms of the experiment to optimize the corresponding measures. Then, for each of them we reported the average of the corresponding aspect ratios and number of crossings of the produced layouts. Note that all algorithms of the experiment can easily be adjusted to maximize only the crossing resolution, or only the angular resolution or both (by maximizing the total resolution). In our algorithm, this can be achieved by adjusting appropriately the content of the vertex-pool (as we saw in Section~\ref{ssec:variants}), while in the algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} by switching on only the forces that maximize the corresponding measured properties (note that, each of these two algorithms has a different set of forces to maximize the crossing and the angular resolution, such that together they maximize the total resolution). 
 
 
-. If both the angular and the
-crossing resolution between two consecutive iterations of each
-algorithm were not improved more than 0.001 degrees, we assumed that
-the algorithm has converged and we did not proceed any more. We note
-that the termination condition is quite strict and demands a large
-number of iterations. The maximum number of iterations that an
-algorithm could perform in order to converge was set to 100.000.
-However, very few graphs required the maximum number of iterations
-in order to converge to a layout. Once an algorithm converged, we
-measured its angular, crossing and total resolution, its average
-edge length, the number of crossings, the running time, and the
-required number of iterations to converge. 
+\myparagraph{Crossing resolution} Our results for the crossing resolution are summarized in Fig.~\ref{fig:cr-res}. It is immediate to see that our algorithm outperforms all other ones in terms of the crossing resolution of the produced drawings, when we do not impose any restriction on the aspect ratio of the computed drawings; refer to the solid-black curve, denoted as \emph{unrestricted}, in Fig.~\ref{fig:cr-res-1}. The variant of our algorithm, which does not violate the aspect ratio of the initial layout, leads to drawings with slightly smaller crossing resolution; refer to the solid-gray curve, denoted as \emph{ar-restricted}, in Fig.~\ref{fig:cr-res-1}. Finally, the two spring-embedder algorithms seem to produce drawings with worse crossing resolution; refer to the dotted-black and dotted-gray curves of Fig.~\ref{fig:cr-res-1}. 
+
+While our unrestricted algorithm produces drawings of better crossing resolution, this seems to come at a cost of increased aspect ratio (see Fig.~\ref{fig:cr-res-2}), which, however, is still better that the corresponding aspect ratio of the drawings produced by the algorithm of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}. There it seems that the forces due to angles formed at the crossings outperform the corresponding spring forces, which try to keep the lengths of the edges short. Regarding our unrestricted algorithm, its behavior is up to a certain degree expected mainly due to the fact that there is no control on the lengths of the edges (as it is, e.g., in the case of the force-directed algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, whose sping forces inpose stong restrictions on the edge lengths). On the other hand, the restricted variant of our algorithm, which does not allow the aspect ratio to decrease, has more or less comparable performace (in terms of the aspect ratio of the computed drawings) as the one of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
+
+Regarding the number of crossings of the computed drawings, we observe that the restricted variant of our algorithm and the spring embedder algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} yield drawings with comparable number of crossings, which at the same time is significantly smaller than the corresponding number of crossings produced by the two other algorithms of our expertiment; refer to Fig.~\ref{fig:cr-res-3}. 
+
+A different behavior can be observed in the number of iterations, which are required by the algorithms of our experiments, in order to converge; refer to Fig.~\ref{fig:cr-res-4}. Note here that we used different criteria to determine whether our algorithm (and its variant) and whether the two spring embedder algorithms have converged, mainly due to the different nature of these algorithms. For each of the two spring embedder algorithms, if the crossing resolution between two consecutive iterations was not improved more than 0.001 degrees, we assumed that the algorithm had converged and we did not proceed any more. On the other hand, for both of our algorithms we used a more relaxed criterion, because these algorithms may perform several iterations without changing the drawing (and thus, its crossing resolution), as they based on randomization. However, if after 100 consecutive iterations there was no improvement, then we assumed that the algorithm had converged and we did not proceed any more. The maximum number of iterations that each of the algorithms of our experiment could perform in order to converge was set to 100.000. By Fig.~\ref{fig:cr-res-3}, it is immediate to see that both the unrestricted and the restricted variant of our algorithm require less iterations than the two spring-embedder algorithms. 
+
+%. If both the angular and the
+%crossing resolution between two consecutive iterations of each
+%algorithm were not improved more than 0.001 degrees, we assumed that
+%the algorithm has converged and we did not proceed any more. We note
+%that the termination condition is quite strict and demands a large
+%number of iterations. 
+%However, very few graphs required the maximum number of iterations
+%in order to converge to a layout. Once an algorithm converged, we
+%measured its angular, crossing and total resolution, its average
+%edge length, the number of crossings, the running time, and the
+%required number of iterations to converge. 
 
 \begin{itemize}
 \item Results.
