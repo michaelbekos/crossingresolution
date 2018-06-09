@@ -688,5 +688,306 @@ Finally, we observe that the number of iterations needed for convergence for gri
 
 In conclusion, we can state that our algorithm is still able to compute drawings with high crossing resolution when restricted to a grid as long as the grid is not too small. However, the computation of grid drawings takes much longer than in the unrestricted version (up to five times as long for grid size $10,000 \times 10,000$ or eight times as long for grid size $1,000,000 \times 1,000,000$). In order to improve the performance of our algorithm in this restricted variant, it may be interesting to see how much the choice of the initial drawing affects the resulting crossing resolution. Further experiments in this direction are needed.
 
+\section{Experiments on the North Graph Testset}
+
+\todo[inline]{Say something about north graph}
+
+\begin{figure}[htb]
+\centering
+\subfloat[\label{fig:northCrossing-1}{Crossing resolution vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%======================
+% Crossing Resolution
+%======================
+\begin{tikzpicture}
+\begin{axis}[
+axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,
+legend style={at={(0.425,1.35)},anchor=north,,legend columns=2,draw=none},
+width=0.475\textwidth,
+cycle list name=mylist, 
+mark repeat={5},xlabel={Number of Vertices},ylabel={Crossing Resolution},
+xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={10,20,30,40,50,60,70,80,90},
+tick pos=left,ymajorgrids]
+\addplot table [x=avg, y=cr rm, col sep=semicolon]{crossingResolutionNorth.csv};
+\addplot table [x=avg, y=cr rm-1, col sep=semicolon] {crossingResolutionNorth.csv};
+\addplot table [x=avg, y=cr fa, col sep=semicolon]{crossingResolutionNorth.csv};
+\addplot table [x=avg, y=cr tr, col sep=semicolon] {crossingResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\subfloat[\label{fig:northCrossing-2}{Aspect ratio vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%===================================
+% Crossing Resolution Aspect Ratio
+%===================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none},ylabel style={yshift=-0.2cm}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={0,10,20,30,40,50,60,70,80,90,100},ylabel={Aspect Ratio},
+xlabel={Number of Vertices},
+xmin=10,
+xmax=100,
+ytick={1,2,5,10,20,50,100,200},ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
+\addplot table [x=avg, y=ar rm, col sep=semicolon]{crossingResolutionNorth.csv};
+\addplot table [x=avg, y=ar rm-1, col sep=semicolon] {crossingResolutionNorth.csv};
+\addplot table [x=avg, y=ar fa, col sep=semicolon]{crossingResolutionNorth.csv};
+\addplot table [x=avg, y=ar tr, col sep=semicolon] {crossingResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+
+
+
+\subfloat[\label{fig:northCrossing-3}{No.~of crossings vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%======================================
+% Crossing Resolution Crossing Number
+%======================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={0,250,500,750,1000,1250,1500,1750},ylabel={Number of Crossings},
+xlabel={Number of Vertices},tick pos=left,ylabel style={yshift=-0.2cm}, ymajorgrids]
+\addplot table [x=avg, y=cn rm, col sep=semicolon]{crossingResolutionNorth.csv};
+\addplot table [x=avg, y=cn rm-1, col sep=semicolon] {crossingResolutionNorth.csv};
+\addplot table [x=avg, y=cn fa, col sep=semicolon]{crossingResolutionNorth.csv};
+\addplot table [x=avg, y=cn tr, col sep=semicolon] {crossingResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\subfloat[\label{fig:northCrossing-4}{Iterations vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%==================================
+% Crossing Resolution Iterations
+%==================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={0,1000,2000,3000,4000,5000,6000,7000,8000},tick pos=left, 
+ylabel={Iterations},
+xlabel={Number of Vertices},ymajorgrids]
+\addplot table [x=avg, y=it rm, col sep=semicolon]{crossingResolutionNorth.csv};
+\addplot table [x=avg, y=it rm-1, col sep=semicolon] {crossingResolutionNorth.csv};
+\addplot table [x=avg, y=it fa, col sep=semicolon]{crossingResolutionNorth.csv};
+\addplot table [x=avg, y=it tr, col sep=semicolon] {crossingResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\caption{Experimental results for the crossing resolution experiment on the North graph testset.}
+\label{northCrossing}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\subfloat[\label{fig:northTotal-1}{Total resolution vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%======================
+% Total Resolution
+%======================
+\begin{tikzpicture}
+\begin{axis}[
+axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,
+legend style={at={(0.425,1.35)},anchor=north,,legend columns=2,draw=none},
+width=0.475\textwidth,
+cycle list name=mylist, 
+mark repeat={5},xlabel={Number of Vertices},ylabel={Total Resolution},
+xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={10,20,30,40,50,60,70,80,90},
+tick pos=left,ymajorgrids]
+\addplot table [x=avg, y=tr rm, col sep=semicolon]{totalResolutionNorth.csv};
+\addplot table [x=avg, y=tr rm-1, col sep=semicolon] {totalResolutionNorth.csv};
+\addplot table [x=avg, y=tr fa, col sep=semicolon]{totalResolutionNorth.csv};
+\addplot table [x=avg, y=tr tr, col sep=semicolon] {totalResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\subfloat[\label{fig:northTotal-2}{Aspect ratio vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%===================================
+% Total Resolution Aspect Ratio
+%===================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none},ylabel style={yshift=-0.2cm}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={0,10,20,30,40,50,60,70,80,90,100},ylabel={Aspect Ratio},
+xlabel={Number of Vertices},
+xmin=10,
+xmax=100,
+ytick={1,2,5,10,20,50,100,200},ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
+\addplot table [x=avg, y=ar rm, col sep=semicolon]{totalResolutionNorth.csv};
+\addplot table [x=avg, y=ar rm-1, col sep=semicolon] {totalResolutionNorth.csv};
+\addplot table [x=avg, y=ar fa, col sep=semicolon]{totalResolutionNorth.csv};
+\addplot table [x=avg, y=ar tr, col sep=semicolon] {totalResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+
+
+
+\subfloat[\label{fig:northTotal-3}{No.~of crossings vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%======================================
+% Total Resolution Crossing Number
+%======================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={0,250,500,750,1000,1250,1500,1750},ylabel={Number of Crossings},
+xlabel={Number of Vertices},tick pos=left,ylabel style={yshift=-0.2cm}, ymajorgrids]
+\addplot table [x=avg, y=cn rm, col sep=semicolon]{totalResolutionNorth.csv};
+\addplot table [x=avg, y=cn rm-1, col sep=semicolon] {totalResolutionNorth.csv};
+\addplot table [x=avg, y=cn fa, col sep=semicolon]{totalResolutionNorth.csv};
+\addplot table [x=avg, y=cn tr, col sep=semicolon] {totalResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\subfloat[\label{fig:northTotal-4}{Iterations vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%==================================
+% Total Resolution Iterations
+%==================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={0,1000,2000,3000,4000,5000,6000,7000,8000},tick pos=left, 
+ylabel={Iterations},
+xlabel={Number of Vertices},ymajorgrids]
+\addplot table [x=avg, y=it rm, col sep=semicolon]{totalResolutionNorth.csv};
+\addplot table [x=avg, y=it rm-1, col sep=semicolon] {totalResolutionNorth.csv};
+\addplot table [x=avg, y=it fa, col sep=semicolon]{totalResolutionNorth.csv};
+\addplot table [x=avg, y=it tr, col sep=semicolon] {totalResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\caption{Experimental results for the total resolution experiment on the North graph testset.}
+\label{northTotal}
+\end{figure}
+
+
+\begin{figure}[htb]
+\centering
+\subfloat[\label{fig:northAngular-1}{Angular resolution vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%======================
+% Angular Resolution
+%======================
+\begin{tikzpicture}
+\begin{axis}[
+axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,
+legend style={at={(0.425,1.35)},anchor=north,,legend columns=2,draw=none},
+width=0.475\textwidth,
+cycle list name=mylist, 
+mark repeat={5},xlabel={Number of Vertices},ylabel={Angular Resolution},
+xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={10,20,30,40,50,60,70,80,90},
+tick pos=left,ymajorgrids]
+\addplot table [x=avg, y=an rm, col sep=semicolon]{angularResolutionNorth.csv};
+\addplot table [x=avg, y=an rm-1, col sep=semicolon] {angularResolutionNorth.csv};
+\addplot table [x=avg, y=an fa, col sep=semicolon]{angularResolutionNorth.csv};
+\addplot table [x=avg, y=an tr, col sep=semicolon] {angularResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\subfloat[\label{fig:northAngular-2}{Aspect ratio vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%===================================
+% Angular Resolution Aspect Ratio
+%===================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none},ylabel style={yshift=-0.2cm}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={0,10,20,30,40,50,60,70,80,90,100},ylabel={Aspect Ratio},
+xlabel={Number of Vertices},
+xmin=10,
+xmax=100,
+ytick={1,2,5,10,20,50,100,200},ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
+\addplot table [x=avg, y=ar rm, col sep=semicolon]{angularResolutionNorth.csv};
+\addplot table [x=avg, y=ar rm-1, col sep=semicolon] {angularResolutionNorth.csv};
+\addplot table [x=avg, y=ar fa, col sep=semicolon]{angularResolutionNorth.csv};
+\addplot table [x=avg, y=ar tr, col sep=semicolon] {angularResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+
+
+
+\subfloat[\label{fig:northAngular-3}{No.~of crossings vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%======================================
+% Angular Resolution Crossing Number
+%======================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={0,250,500,750,1000,1250,1500,1750},ylabel={Number of Crossings},
+xlabel={Number of Vertices},tick pos=left,ylabel style={yshift=-0.2cm}, ymajorgrids]
+\addplot table [x=avg, y=cn rm, col sep=semicolon]{angularResolutionNorth.csv};
+\addplot table [x=avg, y=cn rm-1, col sep=semicolon] {angularResolutionNorth.csv};
+\addplot table [x=avg, y=cn fa, col sep=semicolon]{angularResolutionNorth.csv};
+\addplot table [x=avg, y=cn tr, col sep=semicolon] {angularResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\subfloat[\label{fig:northAngular-4}{Iterations vs no.~of vertices}]{
+\centering
+\scalebox{.95}{
+\centering
+%==================================
+% Angular Resolution Iterations
+%==================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={0,1000,2000,3000,4000,5000,6000,7000,8000},tick pos=left, 
+ylabel={Iterations},
+xlabel={Number of Vertices},ymajorgrids]
+\addplot table [x=avg, y=it rm, col sep=semicolon]{angularResolutionNorth.csv};
+\addplot table [x=avg, y=it rm-1, col sep=semicolon] {angularResolutionNorth.csv};
+\addplot table [x=avg, y=it fa, col sep=semicolon]{angularResolutionNorth.csv};
+\addplot table [x=avg, y=it tr, col sep=semicolon] {angularResolutionNorth.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}}
+\caption{Experimental results for the angular resolution experiment on the North graph testset.}
+\label{northAngular}
+\end{figure}
 
 \end{document}
