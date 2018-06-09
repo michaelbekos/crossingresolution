@@ -54,7 +54,7 @@ public class Experiments {
     private String[] childernP;
     private boolean useCrossingRes = true;
     private boolean useAngularRes = false;
-    private boolean useAspectRatio = true;
+    private boolean useAspectRatio = false;
     private boolean useOnlyGrid = true;
     private int gridSize = 1000000;
 
@@ -230,25 +230,27 @@ public class Experiments {
 
             //if(maxNodeNum != 40){frame.dispose();return;}//TODO: Nur zum testen
 
-            experiment.runOrganic();
-            experiment.scaleToBox();
+//            experiment.runOrganic();
+//            experiment.scaleToBox();
 
             //First grid the graph
             if(useOnlyGrid) {
-                experiment.setAlgorithm(CombinedGridder.class);
-                /* Set config. parameters */
-                experiment.getTab().get().configurator.getItems().get(0).setValue(1); // Number of parallel executions
-                experiment.getTab().get().configurator.getItems().get(1).setValue(true); // Respect Minimum Angle
-                experiment.getTab().get().configurator.getItems().get(2).setValue(0.1); // Allow decreasing angle by
-                experiment.getTab().get().configurator.getItems().get(3).setValue(false); // Scale up if necessary
-                experiment.getTab().get().configurator.getItems().get(4).setValue(20); // Iterations until scale-up
-                experiment.getTab().get().configurator.getItems().get(5).setValue(2.0); // Scale by
-                experiment.getTab().get().configurator.getItems().get(6).setValue("");  // Status message
-                experiment.getTab().get().configurator.getItems().get(7).setValue(true); // Force grid after stop was pressed
-
-                //TODO: run gridding
-                experiment.runAlgorithms();
+//                experiment.setAlgorithm(CombinedGridder.class);
+//                /* Set config. parameters */
+//                experiment.getTab().get().configurator.getItems().get(0).setValue(1); // Number of parallel executions
+//                experiment.getTab().get().configurator.getItems().get(1).setValue(true); // Respect Minimum Angle
+//                experiment.getTab().get().configurator.getItems().get(2).setValue(0.1); // Allow decreasing angle by
+//                experiment.getTab().get().configurator.getItems().get(3).setValue(false); // Scale up if necessary
+//                experiment.getTab().get().configurator.getItems().get(4).setValue(20); // Iterations until scale-up
+//                experiment.getTab().get().configurator.getItems().get(5).setValue(2.0); // Scale by
+//                experiment.getTab().get().configurator.getItems().get(6).setValue("");  // Status message
+//                experiment.getTab().get().configurator.getItems().get(7).setValue(true); // Force grid after stop was pressed
+//
+//                //TODO: run gridding
+//                experiment.runAlgorithms();
+                experiment.runRandomLayout();
             }
+            System.out.println("grid size " + gridSize);
             experiment.isGridded();
 
 
@@ -360,6 +362,7 @@ public class Experiments {
 
             }
         }
+        experiment.writeGraph();
         frame.dispose();
     }
 
@@ -399,9 +402,9 @@ public class Experiments {
         }
 
         private void setStartConfigurations(Experiment exp){
-            System.out.println("Load Prob1");
+//            System.out.println("Load Prob1");
             exp.loadGraph();
-            System.out.println("Load Prob2");
+//            System.out.println("Load Prob2");
             this.iterationFactor = 1;
             this.reached90Deg = false;
             exp.setStartTime(System.currentTimeMillis());

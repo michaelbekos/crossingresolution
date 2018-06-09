@@ -50,7 +50,10 @@ public class QuickGridder implements IGridder {
       double allowedAngle = oldAngle - configurator.allowDecreasingBy.getValue();
 
       Stream<PointD> samplePositions = getNeighborGridPositions(oldPosition, iteration).stream()
-          .filter(position -> !reservedPositions.contains(position));
+          .filter(position -> !reservedPositions.contains(position))
+          .filter(position -> LayoutUtils.overlap(position, positions, node, graph))    //nodes not on top of each other
+          .filter(position -> LayoutUtils.overlapNodeEdge(position, positions, graph))   //nodes not on top of edges
+          .filter(position -> position.getX() >= 0 && position.getY() >= 0);      //no negative
 
       if (configurator.respectMinimumAngle.getValue()) {
         samplePositions = samplePositions.filter(position -> {
@@ -60,6 +63,7 @@ public class QuickGridder implements IGridder {
       }
 
       List<PointD> goodPositions = samplePositions.collect(Collectors.toList());
+//      System.out.println("good pos " + goodPositions.size());
 
       if (goodPositions.size() == 0) {
         positions.setValue(node, oldPosition);
@@ -97,6 +101,9 @@ public class QuickGridder implements IGridder {
           .filter(node -> !griddedNodes.contains(node))
           .forEach(node -> positions.setValue(node, getNeighborGridPositions(positions.getValue(node), 1).stream()
               .filter(position -> !reservedPositions.contains(position))
+              .filter(position -> LayoutUtils.overlap(position, positions, node, graph))    //nodes not on top of each other
+              .filter(position -> LayoutUtils.overlapNodeEdge(position, positions, graph))   //nodes not on top of edges
+              .filter(position -> position.getX() >= 0 && position.getY() >= 0)      //no negative
               .findFirst()
               .orElseGet(() -> {
                 configurator.statusMessage.setValue("Force gridding failed!\n(node overlaps with another node)");

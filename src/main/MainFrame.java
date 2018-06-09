@@ -36,7 +36,7 @@ public class MainFrame extends JFrame {
 
     /* Box related issue*/
 
-    public static double BOX_SIZE[] = {1000000, 1000000};
+    public static int BOX_SIZE[] = {100, 100};
 
     /* Graph Drawing related objects */
     public GraphComponent view;

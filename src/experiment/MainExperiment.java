@@ -56,12 +56,12 @@ static String inputRomeDir = "/home/ch/uni/graph_drawing/rome/";
     }
     public static void run(String mode){
         if(runRome){
-//            int[] boxSizes = {100,1000,10000,1000000};
+//            int[] boxSizes = {100,1000,10000, 1000000};
             int[] boxSizes = {1000000};
             for (int i = 0; i < boxSizes.length; i++) {
                 useAspectRatio = false;
 //            e = new Experiments(inputRomeDir, outputDir + "rome\\"+ mode,
-                e = new Experiments(inputRomeDir, outputDir + "rome/" + mode,
+                e = new Experiments(inputRomeDir, outputDir + "rome-"+String.valueOf(boxSizes[i])+"/" + mode,
                         maxCalcTime, numOfIterationPerStep, numOfSteps, boxSizes[i],
                         planarGraphsAllowed, unconnectedGraphsAllowed, useCrossingRes, useAngularRes, useAspectRatio);
                 if (runRandomMovement)

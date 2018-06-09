@@ -125,15 +125,19 @@ public class GraphOperations {
   }
 
   public static AspectRatio getAspectRatio(IGraph g){
-    IEdge sEdge = getShortestEdge(g);
-    INode sSource = sEdge.getSourceNode();
-    INode sTarget = sEdge.getTargetNode();
-    double sLength = euclidDist(sSource.getLayout().getCenter().getX(), sSource.getLayout().getCenter().getY(), sTarget.getLayout().getCenter().getX(), sTarget.getLayout().getCenter().getY());
-    IEdge lEdge = getLongestEdge(g);
-    INode lSource = lEdge.getSourceNode();
-    INode lTarget = lEdge.getTargetNode();
-    double lLength = euclidDist(lSource.getLayout().getCenter().getX(), lSource.getLayout().getCenter().getY(), lTarget.getLayout().getCenter().getX(), lTarget.getLayout().getCenter().getY());
-    return new AspectRatio(sLength, sEdge, lLength, lEdge);
+    try {
+      IEdge sEdge = getShortestEdge(g);
+      INode sSource = sEdge.getSourceNode();
+      INode sTarget = sEdge.getTargetNode();
+      double sLength = euclidDist(sSource.getLayout().getCenter().getX(), sSource.getLayout().getCenter().getY(), sTarget.getLayout().getCenter().getX(), sTarget.getLayout().getCenter().getY());
+      IEdge lEdge = getLongestEdge(g);
+      INode lSource = lEdge.getSourceNode();
+      INode lTarget = lEdge.getTargetNode();
+      double lLength = euclidDist(lSource.getLayout().getCenter().getX(), lSource.getLayout().getCenter().getY(), lTarget.getLayout().getCenter().getX(), lTarget.getLayout().getCenter().getY());
+      return new AspectRatio(sLength, sEdge, lLength, lEdge);
+    } catch (NullPointerException e) {
+      return new AspectRatio(0,null, 0, null);
+    }
   }
 
   //returns false if moving the node to the position results in a worse aspect ratio

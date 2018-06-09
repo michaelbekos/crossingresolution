@@ -118,11 +118,26 @@ public class RandomMovementLayout implements ILayout {
 
           if (configurator.onlyGridPositions.getValue()) {
             sample.position = LayoutUtils.round(sample.position);
+//            System.out.println(sample.position);
+//            System.out.println(!LayoutUtils.checkNodeEdgeOverlap(graph, positions) + " and " + !LayoutUtils.overlapNodeEdge());
           }
         })
         .filter(sample -> boundingBox.contains(sample.position))
-        .filter(sample -> configurator.onlyGridPositions.getValue() || LayoutUtils.overlap(sample.position, positions, node, graph))
-//        .filter(sample -> !configurator.useAspectRatio.getValue() || GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio, configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio
+        .filter(sample -> !configurator.onlyGridPositions.getValue() || LayoutUtils.overlap(sample.position, positions, node, graph))
+//        .filter(sample -> !configurator.onlyGridPositions.getValue() || !LayoutUtils.checkNodeEdgeOverlap(graph, positions))
+//            .filter(sample -> LayoutUtils.overlap(sample.position, positions, node, graph))
+            .filter(sample -> {
+              Mapper<INode, PointD> test = PositionMap.copy(positions);
+              test.setValue(node, sample.position);
+//              System.out.println(!LayoutUtils.checkNodeEdgeOverlap(graph, test) + " and " + LayoutUtils.overlapNodeEdge(sample.position, test, graph) + " and " + !LayoutUtils.suckit(sample.position, graph, test));
+//              return !LayoutUtils.checkNodeEdgeOverlap(graph, positions);
+//              return LayoutUtils.overlapNodeEdge(sample.position, test, graph) && !LayoutUtils.checkNodeEdgeOverlap(graph, test);// && !LayoutUtils.suckit(sample.position, graph, test);
+//              return !LayoutUtils.suckit(sample.position, graph, positions);
+              return !LayoutUtils.checkNodeEdgeOverlap(graph, test);
+            })
+
+
+        .filter(sample -> !configurator.useAspectRatio.getValue() || GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio, configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio
         .filter(sample -> !configurator.useAspectRatio.getValue() ||
                 GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio,
                         configurator.maxAspectRatio.getValue() < 0 ? currentAspectRatio.getValue() : configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio (if slider = -1, allow all moves that dont worsen it)

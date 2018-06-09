@@ -23,6 +23,7 @@ import layout.algo.NodeSwapper;
 import layout.algo.execution.BasicIGraphLayoutExecutor;
 import layout.algo.execution.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
+import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
 import util.BoundingBox;
@@ -342,6 +343,13 @@ public class SidePanelTab {
         swapperItem.addActionListener(this::swapperItemActionPerformed);
         custom.add(swapperItem, cCustomPanel);
 
+        JButton randomLayoutItem = new JButton("Random Layout");
+        cCustomPanel.fill = GridBagConstraints.HORIZONTAL;
+        cCustomPanel.gridx = 1;
+        cCustomPanel.gridy = cCustomPanelY;
+        randomLayoutItem.addActionListener(this::randomLayoutItemActionPerformed);
+        custom.add(randomLayoutItem, cCustomPanel);
+
         cSidePanel.fill = GridBagConstraints.HORIZONTAL;
         cSidePanel.gridx = 0;
         cSidePanel.gridy = 0;
@@ -524,11 +532,11 @@ public class SidePanelTab {
         modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
 
-            IGraph graph = initSidePanel.mainFrame.graph;
-            Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
+//            IGraph graph = initSidePanel.mainFrame.graph;
+            Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(initSidePanel.mainFrame.graph);
             RectD bounds = BoundingBox.from(nodePositions);
             Scaling.scaleBy(Math.min((MainFrame.BOX_SIZE[0] / bounds.getWidth()), (MainFrame.BOX_SIZE[1] / bounds.getHeight())), nodePositions);
-            PositionMap.applyToGraph(graph, nodePositions);
+            PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
 
             bounds = BoundingBox.from(nodePositions);
@@ -666,8 +674,8 @@ public class SidePanelTab {
 
 //--------------------------------------------------------------------
     }
-    
-    private void showGraphInfoActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+
+    private void updateGraphInfo() {
         ArrayList<Integer> verticesDegree = new ArrayList<>();
 
         IGraph graph = initSidePanel.mainFrame.graph;
@@ -686,15 +694,17 @@ public class SidePanelTab {
             }
         }
         graphInfo.append("\nTotal Vertices: ").append(graph.getNodes().size())
-            .append("\nTotal Edges:    ").append(graph.getEdges().size()).append("\n");
+                .append("\nTotal Edges:    ").append(graph.getEdges().size()).append("\n");
 
         RectD bounds = BoundingBox.from(PositionMap.FromIGraph(graph));
         double width = bounds.getWidth() < 1 ? 0 : bounds.getWidth();   //smaller than 1 is not a graph
         double height = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
         graphInfo.append("\nCurrent Graph Size: \nX: ").append(width).append("\nY: ").append(height).append("\n\n");
 
-        double threshold = 0.999;
-        double edgeThreshold = 0.999;
+//        double threshold = 0.999;
+//        double edgeThreshold = 0.999;
+        double threshold = 0.001;
+        double edgeThreshold = 0.001;
         boolean nodeOverlap = false;
         boolean nodeEdgeOverlap = false;
         boolean negativeNodes = false;
@@ -747,6 +757,91 @@ public class SidePanelTab {
         graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph)).append("\n");
 
         outputTextArea.setText(graphInfo.toString());
+    }
+    
+    private void showGraphInfoActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        updateGraphInfo();
+//        ArrayList<Integer> verticesDegree = new ArrayList<>();
+//
+//        IGraph graph = initSidePanel.mainFrame.graph;
+//        for (INode u : graph.getNodes()) {
+//            int deg = graph.degree(u);
+//            while(deg >= verticesDegree.size()) {
+//                verticesDegree.add(0);
+//            }
+//            verticesDegree.set(deg, verticesDegree.get(deg) + 1);
+//        }
+//        StringBuilder graphInfo = new StringBuilder();
+//        graphInfo.append("Deg. Num.\n");
+//        for (int i = 0 ; i < verticesDegree.size(); i++) {
+//            if (verticesDegree.get(i) > 0) {
+//                graphInfo.append("  ").append(i).append("   :   ").append(verticesDegree.get(i).toString()).append("\n");
+//            }
+//        }
+//        graphInfo.append("\nTotal Vertices: ").append(graph.getNodes().size())
+//            .append("\nTotal Edges:    ").append(graph.getEdges().size()).append("\n");
+//
+//        RectD bounds = BoundingBox.from(PositionMap.FromIGraph(graph));
+//        double width = bounds.getWidth() < 1 ? 0 : bounds.getWidth();   //smaller than 1 is not a graph
+//        double height = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
+//        graphInfo.append("\nCurrent Graph Size: \nX: ").append(width).append("\nY: ").append(height).append("\n\n");
+//
+////        double threshold = 0.999;
+////        double edgeThreshold = 0.999;
+//        double threshold = 0.001;
+//        double edgeThreshold = 0.001;
+//        boolean nodeOverlap = false;
+//        boolean nodeEdgeOverlap = false;
+//        boolean negativeNodes = false;
+//        for (INode u : this.initSidePanel.mainFrame.graph.getNodes()) {
+//
+//            if (u.getPorts().size() == 1) {
+//                for (IEdge e : graph.edgesAt(u.getPorts().first())) {
+//                    INode src = e.getSourceNode();
+//                    INode dst = e.getTargetNode();
+//                    for (INode v : this.initSidePanel.mainFrame.graph.getNodes()) {
+//                        if ((u.hashCode() != v.hashCode()) &&
+//                                v.hashCode() != src.hashCode() && v.hashCode() != dst.hashCode()) {
+//                            double x0 = v.getLayout().getCenter().getX();
+//                            double y0 = v.getLayout().getCenter().getY();
+//                            double x1 = src.getLayout().getCenter().getX();
+//                            double y1 = src.getLayout().getCenter().getY();
+//                            double x2 = dst.getLayout().getCenter().getX();
+//                            double y2 = dst.getLayout().getCenter().getY();
+//                            double dist;
+//                            if (y1 == y2) { //vertical
+//                                dist = Math.abs(x0 - x1);
+//                            } else if (x1 == x2) {  //horizontal
+//                                dist = Math.abs(y0 -y1);
+//                            } else {
+//                                dist = Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) / Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
+//                            }
+//                            if (dist < edgeThreshold) {
+//                                nodeEdgeOverlap = true;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            for (INode v : this.initSidePanel.mainFrame.graph.getNodes()) {
+//                if ((u.hashCode() != v.hashCode()) &&
+//                        Math.abs(u.getLayout().getCenter().getX() - v.getLayout().getCenter().getX()) < threshold &&
+//                        Math.abs(u.getLayout().getCenter().getY() - v.getLayout().getCenter().getY()) < threshold ) {
+//                    nodeOverlap = true;
+//                }
+//
+//            }
+//            if (u.getLayout().getCenter().getX() < 0 || u.getLayout().getCenter().getY() < 0) {
+//                negativeNodes = true;
+//            }
+//        }
+//        graphInfo.append("Node Node Overlap: ").append(nodeOverlap).append("\n");
+//        graphInfo.append("Node Edge Overlap: ").append(nodeEdgeOverlap).append("\n");
+//        graphInfo.append("Negative Nodes: ").append(negativeNodes).append("\n");
+//
+//        graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph)).append("\n");
+//
+//        outputTextArea.setText(graphInfo.toString());
     }
 
     private void organicItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
@@ -823,6 +918,33 @@ public class SidePanelTab {
         initSidePanel.mainFrame.view.updateUI();
         initSidePanel.addDefaultListeners();
     }
+
+    private void randomLayoutItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        modifyGraph(() -> {
+            initSidePanel.removeDefaultListeners();
+
+            Mapper<INode, PointD> nodePositions = PositionMap.newPositionMap();
+            int counter = 0;
+            boolean done = false;
+            while (!done || counter <= 10) {
+                nodePositions = PositionMap.newPositionMap();
+                done = LayoutUtils.randomLayout(initSidePanel.mainFrame.graph, initSidePanel.mainFrame.BOX_SIZE, nodePositions);
+                counter ++;
+            }
+            PositionMap.applyToGraph(initSidePanel.mainFrame.graph, nodePositions);
+            initSidePanel.mainFrame.view.fitGraphBounds();
+            System.out.println("random layout grid size: " + initSidePanel.mainFrame.BOX_SIZE[0]);
+
+//            outputTextArea.setText("Random Layout Performed");
+            if (!done) {
+                setOutputTextArea("FAILED ");
+            }
+            updateGraphInfo();
+
+            initSidePanel.addDefaultListeners();
+        });
+    }
+
 
     private void applyLayoutToSelection(ILayoutAlgorithm layout) {
         initSidePanel.removeDefaultListeners();
