@@ -6,7 +6,6 @@
 \usepackage{todonotes,lineno,paralist,soul}
 \usepackage{rotating,hyperref,multicol}
 \graphicspath{{figures/}}
-
 % ==================================================================
 % Format tiks and pgfplots
 \tikzstyle{densely dashed}=[dash pattern=on 0.75pt off 0.5pt]
@@ -566,13 +565,11 @@ In this paper, we introduced a new heuristic aiming to produce drawings of high 
 \section{Experiments on Grid Drawings}
 
 In addition to the experiments described in Section~\ref{sec:experiments}, we also evaluated how our algorithm performs, if we restrict its vertices to be placed on grid coordinates whilst avoiding vertices to overlap with other vertices or edges. Further, we restricted the grid size to \begin{inparaenum}[(i)]
-\item $1,000,000 \times 1,000,000$, denoted by $1M \times 1M$ for short,
-\item $10,000 \times 10,000$, denoted by $10k \times 10k$ for short,
-\item $1,000 \times 1,000$, denoted by $1k \times 1k$ for short, and
-\item $100 \times 100$.
-
-\end{inparaenum}
-While the test set for this experiment was again the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, we computed a different initial since our algorithm requires its input drawing to maintain its invariants (that is, vertices must be on the grid). More precisely, we computed a random grid layout of each graph where vertices to overlap with other vertices or edges. For each grid size, we computed a layout with the variant of our algorithm focusing on crossing resolution. Fig.~\ref{fig:experimentsGrid} summarizes the results.
+\item $10^6 \times 10^6$
+\item $10^4 \times 10^4$
+\item $10^3 \times 10^3$, and
+\item $10^2 \times 10^2$.
+\end{inparaenum} The test set for this experiment was again the set of non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, but we computed a different initial since our algorithm requires its input drawing to maintain its invariants (that is, vertices must be on the grid). More precisely, we computed a random grid layout of each graph where vertices to overlap with other vertices or edges. For each grid size, we computed a layout with the variant of our algorithm focusing on crossing resolution. Fig.~\ref{fig:experimentsGrid} summarizes the results.
 
 
 \begin{figure}[!b]
@@ -601,7 +598,8 @@ tick pos=left,ymajorgrids]
 \addplot table [x=n, y=crossing resolution rm1000, col sep=semicolon]{gridExperiment.csv};
 \addplot table [x=n, y=crossing resolution rm100, col sep=semicolon] {gridExperiment.csv};
 \addplot table [x=n, y=crossing resolution rm, col sep=semicolon]{gridExperiment.csv};
-\legend{{$1M \times 1M$},{$10k \times 10k$},{$1k \times 1k$},{$100 \times 100$}}\end{axis}
+\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
+\end{axis}
 \end{tikzpicture}}}
 \subfloat[\label{fig:crossingResolutionAspectRatioGrid}{Aspect ratio vs no.~of vertices}]{
 \centering
@@ -622,7 +620,7 @@ ytick={1,2,5,10,20,50,100,200},ymode=log, log ticks with fixed point,tick pos=le
 \addplot table [x=n, y=Aspect ratio rm1000, col sep=semicolon]{gridExperiment.csv};
 \addplot table [x=n, y=Aspect ratio rm100, col sep=semicolon] {gridExperiment.csv};
 \addplot table [x=n, y=Aspect ratio rm, col sep=semicolon]{gridExperiment.csv};
-\legend{{$1M \times 1M$},{$10k \times 10k$},{$1k \times 1k$},{$100 \times 100$}}
+\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
 \end{axis}
 \end{tikzpicture}}}
 
@@ -647,7 +645,7 @@ xlabel={Number of Vertices},tick pos=left,ylabel style={yshift=-0.2cm}, ymajorgr
 \addplot table [x=n, y=Crossing number rm1000, col sep=semicolon]{gridExperiment.csv};
 \addplot table [x=n, y=Crossing number rm100, col sep=semicolon] {gridExperiment.csv};
 \addplot table [x=n, y=Crossing number rm, col sep=semicolon] {gridExperiment.csv};
-\legend{{$1M \times 1M$},{$10k \times 10k$},{$1k \times 1k$},{$100 \times 100$}}
+\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
 \end{axis}
 \end{tikzpicture}}}
 \subfloat[\label{fig:crossingResolutionTimeGrid}{Iterations vs no.~of vertices}]{
@@ -670,7 +668,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \addplot table [x=n, y=Iterations rm1000, col sep=semicolon]{gridExperiment.csv};
 \addplot table [x=n, y=Iterations rm100, col sep=semicolon] {gridExperiment.csv};
 \addplot table [x=n, y=Iterations rm, col sep=semicolon] {gridExperiment.csv};
-\legend{{$1M \times 1M$},{$10k \times 10k$},{$1k \times 1k$},{$100 \times 100$}}
+\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
 \end{axis}
 \end{tikzpicture}}}
 \caption{Illustration of our experimental results on the crossing resolution with grid restriction. The double line shows the results of our unrestricted algorithm from Section~\ref{sec:experiments}.}
@@ -678,19 +676,20 @@ xlabel={Number of Vertices},ymajorgrids]
 \end{figure}
 
 
-Regarding the crossing resulotion, we can observe that with increasing grid size, we could achieve better crossing resolution; see Fig.~\ref{fig:crossingResolutionGrid}. More precisely, the grid of size $100 \times 100$ was too restrictive for the vast majority of graphs which often resulted in the initial layout to be accepted as the best solution for larger graphs. Starting from grid size $1,000 \times 1,000$, we could observe, for small graphs, the performance was close to the performance of the unrestricted version of our algorithm (double line in Fig.~\ref{fig:crossingResolutionGrid}). For grid size $1,000 \times 1,000$, the performance declined for the larger graphs in the test set and we again could observe that for some of them the algorithm was not able to improve the initial layout. For grid size $10,000 \times 10,000$, the algorithm performed only about $10^\circ$ worse than the unrestricted version of our algorithm which could only slightly be improved by increasing the grid size to $1,000,000 \times 1,000,000$.
+Regarding the crossing resulotion, we can observe that with increasing grid size, we could achieve better crossing resolution; see Fig.~\ref{fig:crossingResolutionGrid}. More precisely, the grid of size $10^2 \times 10^2$ was too restrictive for the vast majority of graphs which often resulted in the initial layout to be accepted as the best solution for larger graphs. Starting from grid size $10^3 \times 10^3$, we could observe, for small graphs, the performance was close to the performance of the unrestricted version of our algorithm (double line in Fig.~\ref{fig:crossingResolutionGrid}). For grid size $10^3 \times 10^3$, the performance declined for the larger graphs in the test set and we again could observe that for some of them the algorithm was not able to improve the initial layout. For grid size $10^4 \times 10^4$, the algorithm performed only about $10^\circ$ worse than the unrestricted version of our algorithm which could only slightly be improved by increasing the grid size to $10^6 \times 10^6$.
 
-The aspect ratio of computed drawings was more or less the same for all grid size with the exception of size $100 \times 100$ and always about twice the aspect ratio of the unrestricted variant of our algorithm; see Fig.~\ref{fig:crossingResolutionAspectRatioGrid}. For grid size $100 \times 100$, this may again be explained by the fact, that for the majority of graphs, the initial layout could not be improved.
+The aspect ratio of computed drawings was more or less the same for all grid size with the exception of size $10^2 \times 10^2$ and always about twice the aspect ratio of the unrestricted variant of our algorithm; see Fig.~\ref{fig:crossingResolutionAspectRatioGrid}. For grid size $10^2 \times 10^2$, this may again be explained by the fact, that for the majority of graphs, the initial layout could not be improved.
 
-The number of crossings increased with the restriction on the size of the grid; see Fig.~\ref{fig:crossingResolutionCrossingNumberGrid}. As with the crossing resolution, there is clear differences between grid sizes $100 \times 100$, $1,000 \times 1,000$ and $10,000 \times 10,000$ whereas there is only a slight improvement from grid size $10,000 \times 10,000$ to $1,000,000 \times 1,000,000$ which still uses twice as many crossings as our unrestricted variant. This can partially be explained with the different choice of the initial drawing.
+The number of crossings increased with the restriction on the size of the grid; see Fig.~\ref{fig:crossingResolutionCrossingNumberGrid}. As with the crossing resolution, there is clear differences between grid sizes $10^2 \times 10^2$, $10^3 \times 10^3$ and $10^4 \times 10^4$ whereas there is only a slight improvement from grid size $10^4 \times 10^4$ to $10^6 \times 10^6$ which still uses twice as many crossings as our unrestricted variant. This can partially be explained with the different choice of the initial drawing.
 
-Finally, we observe that the number of iterations needed for convergence for grid size $1,000 \times 1,000$ was already twice as much as for our unrestricted algorithm; see Fig.~\ref{fig:crossingResolutionTimeGrid}. From there on, the number of iterations for convergence increases with the grid size. Note that grid size $1,000,000 \times 1,000,000$ needed about 1000 to 2000 iterations more than grid size $10,000 \times 10,000$ even though the final layout was only marginally better as discussed prior. The curve for $100 \times 100$ highlights that this grid size was too restrictive for the vast majority of graphs which often resulted in the initial layout to be accepted as the best solution for larger graphs.
+Finally, we observe that the number of iterations needed for convergence for grid size $10^3 \times 10^3$ was already twice as much as for our unrestricted algorithm; see Fig.~\ref{fig:crossingResolutionTimeGrid}. From there on, the number of iterations for convergence increases with the grid size. Note that grid size $10^6 \times 10^6$ needed about 1000 to 2000 iterations more than grid size $10^4 \times 10^4$ even though the final layout was only marginally better as discussed prior. The curve for $10^2 \times 10^2$ highlights that this grid size was too restrictive for the vast majority of graphs which often resulted in the initial layout to be accepted as the best solution for larger graphs.
 
-In conclusion, we can state that our algorithm is still able to compute drawings with high crossing resolution when restricted to a grid as long as the grid is not too small. However, the computation of grid drawings takes much longer than in the unrestricted version (up to five times as long for grid size $10,000 \times 10,000$ or eight times as long for grid size $1,000,000 \times 1,000,000$). In order to improve the performance of our algorithm in this restricted variant, it may be interesting to see how much the choice of the initial drawing affects the resulting crossing resolution. Further experiments in this direction are needed.
+In conclusion, we can state that our algorithm is still able to compute drawings with high crossing resolution when restricted to a grid as long as the grid is not too small. However, the computation of grid drawings takes much longer than in the unrestricted version (up to five times as long for grid size $10^4 \times 10^4$ or eight times as long for grid size $10^6 \times 10^6$). In order to improve the performance of our algorithm in this restricted variant, it may be interesting to see how much the choice of the initial drawing affects the resulting crossing resolution. Further experiments in this direction are needed.
 
-\section{Experiments on the North Graph Testset}
+\section{Experiments on the AT\&T  Graph Test Set}
 
-\todo[inline]{Say something about north graph}
+We repeated our experimental evaluation on the crossing resolution, total resolution and angular resolution without grid constraint on a second test set of graphs, the set of non-planar AT\&T graphs, which form a collection of 424 benchmark graphs (also known as Graph Catalog and North graphs; available at \texttt{http://graphdrawing.org/data}). The corresponding results are illustrated in Figs.~\ref{fig:northCrossing}, \ref{fig:northTotal} and~\ref{fig:northAngular}.
+
 
 \begin{figure}[htb]
 \centering
@@ -733,7 +732,7 @@ anchor=north,legend columns=2,draw=none},ylabel style={yshift=-0.2cm}, width=0.4
 xlabel={Number of Vertices},
 xmin=10,
 xmax=100,
-ytick={1,2,5,10,20,50,100,200},ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
+ytick={1,2,5,10,20,50,100,200,500,1000,2000},ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
 \addplot table [x=avg, y=ar rm, col sep=semicolon]{crossingResolutionNorth.csv};
 \addplot table [x=avg, y=ar rm-1, col sep=semicolon] {crossingResolutionNorth.csv};
 \addplot table [x=avg, y=ar fa, col sep=semicolon]{crossingResolutionNorth.csv};
@@ -788,7 +787,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \end{axis}
 \end{tikzpicture}}}
 \caption{Experimental results for the crossing resolution experiment on the North graph testset.}
-\label{northCrossing}
+\label{fig:northCrossing}
 \end{figure}
 
 \begin{figure}[htb]
@@ -887,7 +886,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \end{axis}
 \end{tikzpicture}}}
 \caption{Experimental results for the total resolution experiment on the North graph testset.}
-\label{northTotal}
+\label{fig:northTotal}
 \end{figure}
 
 
@@ -987,7 +986,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \end{axis}
 \end{tikzpicture}}}
 \caption{Experimental results for the angular resolution experiment on the North graph testset.}
-\label{northAngular}
+\label{fig:northAngular}
 \end{figure}
 
 \end{document}
