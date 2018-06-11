@@ -197,7 +197,7 @@ To compute the position of $v_i$ in the next drawing $\Gamma_i$, we consider a s
 
 If none of the points $\pi_j$, with $j=0,1,\ldots,\rho-1$ is feasible, then the position of $v_i$ in $\Gamma_i$ is $p(v_i)$, i.e., same as in $\Gamma_{i-1}$, since $c(\Gamma_i) \geq c(\Gamma_{i-1})$ must hold. If there is one or more feasible points, then one may consider two different approaches to determine the position of $v_i$ in $\Gamma_i$. The most natural is to chose the feasible point that maximizes the crossing resolution of the obtained drawing. As an alternative, one may rely again on randomization and chose uniformly at random one of the feasible points as the position of $v_i$ in $\Gamma_i$. We note that we did not observe any significant difference between these two approaches (in terms of the crossing resolution of the obtained drawings), so we simply adopted the first one. 
 
-The termination condition of our algorithm is simple and depends on an input parameter~$\tau$. More specifically, if the crossing resolution has not been improved during the last $\tau$ iterations, then we assume that the algorithm has converged and we do not proceed any more.
+The termination condition of our algorithm is simple and depends on an in\-put parameter~$\tau$. More specifically, if the crossing resolution has not improved~during the last $\tau$ iterations, we assume that the algorithm has converged and we~stop.
 
 % ==================================================================
 \myparagraph{Avoiding local maxima}
@@ -228,12 +228,13 @@ Our second approach is based on parameters $\rho$, $\delta_{min}$ and $\delta_{m
 Of course, this approach may lead to drawings with larger area, but this is expected, as it turns out that drawings with high crossing resolution may require large area~\cite{DBLP:journals/jgaa/AngeliniCDFBKS11,DBLP:journals/tcs/BrandenburgDEKL16}. 
 
 % ==================================================================
-\myparagraph{Complexity related issues}
+\myparagraph{Complexity issues}
 % ==================================================================
 %
-A critical factor that highly affects the efficiency of our algorithm is the computation of the crossing points of the edges (and the corresponding angles at these points, which determine the crossing resolution of the drawing). Given  a drawing, a naive approach to compute its crossings requires $O(m^2)$ time, which can be slightly improved using a standard plane-sweep technique to $O(m \log m + c)$ time, where $m$ and $c$ are the number of edges and crossings of the drawing, respectively; see, e.g.,~\cite{DBLP:books/lib/BergCKO08}. 
+A factor that highly affects the efficiency of our algorithm is the computation of the crossing points of the edges and the corresponding angles at these points. Given  a drawing, a naive approach to compute its crossings requires $O(m^2)$ time, which can be improved by a plane-sweep technique to $O(m \log m + c)$ time, where $m$ and $c$ denote the number of edges and crossings.
+%; see, e.g.,~\cite{DBLP:books/lib/BergCKO08}. 
 
-However, if the algorithm had to compute all crossing points and the corresponding angles at these points for each candidate position of each iteration, then it would not be useful in practice. Instead, we adopted a different approach, which turned out to be quite efficient in practice. Recall that we denoted by $v_i$ the vertex chosen at the $i$-th iteration step, and by $\pi_0,\ldots,\pi_{\rho-1}$ the candidate points to move $v_i$. Let $e_0,\ldots,e_{d_i-1}$ be the edges incident to $v_i$, where $d_i=deg(v_i)$. Next, for each edge $e_k$ with $k=0,\ldots,d_i-1$  we compute the crossings and the corresponding crossing angles of $e_k$ with all other edges in $\Gamma_{i-1}$. Let $\phi_i$ be the minimum crossing angle computed with this procedure; this is our reference angle. Also, for each candidate position $\pi_j$ with $j=0,\ldots,\rho-1$, and for each edge $e_k$ with $k=0,\ldots,d_i-1$, we compute the crossings and the corresponding crossing angles of $e_k$ with all other edges of the drawing, assuming that $v_i$ is at $\pi_j$. Let $\chi_j$ be the minimum crossing angle computed with this approach, when $v_i$ is at position $\pi_j$. Clearly, $\pi_j$ is feasible only if $\chi_j \geq \phi_i$. Note that the complexity of this approach is $O(deg(v_i) \cdot m)$, which in worst-case is $O(nm)$. 
+If the algorithm had to compute all crossing points and the corresponding angles for each candidate position of each iteration, then it would not be useful in practice. Instead, we adopted a different approach, which turned out to be quite efficient in practice. Recall that we denoted by $v_i$ the vertex chosen at the $i$-th iteration step, and by $\pi_0,\ldots,\pi_{\rho-1}$ the candidate points to move $v_i$. Let $e_0,\ldots,e_{d_i-1}$ be the edges incident to $v_i$, where $d_i=deg(v_i)$. Next, for each edge $e_k$ with $k=0,\ldots,d_i-1$  we compute the crossings and the corresponding crossing angles of $e_k$ with all other edges in $\Gamma_{i-1}$. Let $\phi_i$ be the minimum crossing angle computed; this is our reference angle. Also, for each candidate position $\pi_j$ with $j=0,\ldots,\rho-1$, and for each edge $e_k$ with $k=0,\ldots,d_i-1$, we compute the crossings and the corresponding crossing angles of $e_k$ with all other edges of the drawing, assuming that $v_i$ is at $\pi_j$. Let $\chi_j$ be the minimum crossing angle computed with this approach, when $v_i$ is at position $\pi_j$. Clearly, $\pi_j$ is feasible only if $\chi_j \geq \phi_i$. Note that the complexity of this approach is $O(deg(v_i)m) = O(nm)$. 
 
 % ==================================================================
 \subsection{Some interesting variants}
@@ -268,7 +269,7 @@ As it is the case with the force-directed algorithms of Huang et al.~\cite{DBLP:
 \myparagraph{Grid drawings}
 % ==================================================================
 %
-Our algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produce such drawings. More precisely, if we round the candidate positions computed at each iteration of our algorithm to their closest grid points and use these grid points as candidates for the next position of the vertex to be moved, then the obtained drawing will be grid (assuming, of course, that the starting drawing is grid). One can even bound the size of the grid, which simply implies that candidate grid positions outside the bounds must be rejected. 
+Our algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produce such drawings. More precisely, if we round the candidate positions computed at each iteration of our algorithm to their closest grid points and use these grid points as candidates for the next position of the vertex to be moved, then the obtained drawing will be grid (assuming, of course, that the starting drawing is grid). One can even bound the size of the grid, by rejecting candidate grid positions outside the bounds. 
 
  %(the latter requirement is not difficult to be achieved, e.g., by slightly adjusting the positions of the vertices of a circular layout, whose underlying circle has large radius, to be at grid points). 
 
@@ -562,6 +563,8 @@ In this paper, we introduced a new heuristic aiming to produce drawings of high 
 \newpage
 \appendix
 
+\section*{Appendix}
+
 \section{Experiments on Grid Drawings}
 
 In addition to the experiments described in Section~\ref{sec:experiments}, we also evaluated how our algorithm performs, if we restrict its vertices to be placed on grid coordinates whilst avoiding vertices to overlap with other vertices or edges. Further, we restricted the grid size to \begin{inparaenum}[(i)]
@@ -688,7 +691,7 @@ In conclusion, we can state that our algorithm is still able to compute drawings
 
 \section{Experiments on the AT\&T  Graph Test Set}
 
-We repeated our experimental evaluation on the crossing resolution, total resolution and angular resolution without grid constraint on a second test set of graphs, the set of non-planar AT\&T graphs, which form a collection of 424 benchmark graphs (also known as Graph Catalog and North graphs; available at \texttt{http://graphdrawing.org/data}). The corresponding results are illustrated in Figs.~\ref{fig:northCrossing}, \ref{fig:northTotal} and~\ref{fig:northAngular}.
+We repeated our experimental evaluation on the crossing resolution, total resolution and angular resolution without grid constraint on a second test set of graphs, the set of non-planar AT\&T graphs, which form a collection of 424 benchmark graphs (also known as Graph Catalog and North graphs; available at \texttt{http://graphdrawing.org/data}). The corresponding results are illustrated in Figs.~\ref{fig:northCrossing}, \ref{fig:northTotal} and~\ref{fig:northAngular}. In general we observed that the variance of results is much larger than in the experiments on the Rome graphs. This manifests in spikes of large magnitude in the illustrations of results and indicates that the structural properties of graphs in this second test set varies vastly between different graph sizes. 
 
 
 \begin{figure}[htb]
@@ -790,6 +793,8 @@ xlabel={Number of Vertices},ymajorgrids]
 \label{fig:northCrossing}
 \end{figure}
 
+For the crossing resolution we observed that both the unrestricted and the aspect ratio restricted variants of our algorithm again outperformed the two evaluated force directed approachs; see Fig.~\ref{fig:northCrossing-1}. Remarkable is the synchronous behaviour of all four algorithms with respect to the crossing resolution on different graph sizes such that the curves are nearly parallel. By all these results, we can classify the graphs into ``hard'' or ``easy'' graphs with respect to the crossing resolution maximization; in particular graphs between 50 and 70 vertices appear to be harder to improve than graphs between 70 and 80 vertices. With respect to the aspect ratio of produced drawings we observe that while our algorithms show a slight increase with the number of vertices, the behaviour for both force directed algorithms appears to be quite unstable resulting in a large variance. Again the restricted variant of our algorithm and the two force directed approaches produce drawings with similar aspect ratio which is much lower than the one of our unrestricted algorithm for larger graphs. All four algorithms behave nearly the same in terms of number of crossings; see Fig.~\ref{fig:northCrossing-3}. In terms of the number of iterations, we observe that surprisingly the algorithm of Argyriou et al. converges in the least amout of iterations throughout the test set whereas the remaining three algorithms behave nearly the same; see Fig.~\ref{fig:northCrossing-4}.
+
 \begin{figure}[htb]
 \centering
 \subfloat[\label{fig:northTotal-1}{Total resolution vs no.~of vertices}]{
@@ -889,6 +894,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \label{fig:northTotal}
 \end{figure}
 
+In the total resolution experiment, for smaller graphs,  we observed similar results as in the experiment on the Rome graphs, that is, our unrestricted algorithm achieves best total resolution followed by the restricted variant and then the algorithm by Argyriou et al.; see Fig.~\ref{fig:northTotal-1}. For larger graphs, however, these three algorithms achieve similar results while still outperforming the algorithm by Huang et al. The results for the aspect ratio and number of crossings are similar to those of the crossing resolution experiment, with the exception of the fact that the algorithm of Huang et al. performs more stable with respect to the aspect ratio; see Figs.~\ref{fig:northTotal-2} and~\ref{fig:northTotal-3}. With respect to the number of iterations our two algorithms and the one by Argyriou et al. show similar behaviour needing more iterations than the algorithm by Huang et al.; see Fig.~\ref{fig:northTotal-4}. Observe that the number of iterations does not seem to correlate with the number of vertices.
 
 \begin{figure}[htb]
 \centering
@@ -988,5 +994,52 @@ xlabel={Number of Vertices},ymajorgrids]
 \caption{Experimental results for the angular resolution experiment on the North graph testset.}
 \label{fig:northAngular}
 \end{figure}
+
+In the angular resolution experiments we again obtain a not-so-clear picture concerning the ranking of the algorithms, especially for higher number of vertices the ranking varies; see Fig.~\ref{fig:northAngular-1}. Only the algorithm by Huang et al. seems to be mostly at the last rank. Concerning the aspect ratio we see very good behaviour for our restricted variant and the algorithm by Huang et al. while the remaining two algorithms show large variance and much worse values; see Fig.~\ref{fig:northAngular-2}. For the number of crossings, we again observe that all algorithms achieve similar values, however, our unrestricted algorithm and the algorithm by Argyriou et al. achieve slightly higher values for larger graphs; see Fig.~\ref{fig:northAngular-3}. Finally, both our algorithms and the one by Huang et al. need a similar number of iterations for convergence which is lower than the one by Argyriou et al.; see Fig.~\ref{fig:northAngular-4}.
+
+\section{Graph Drawing Contest 2017 Graphs}
+
+We give a comparison of our new approach to the performances of the clear winner ``CoffeeVM'' of last year's graph drawing contest\footnote{\texttt{http://www.graphdrawing.de/contest2017/results.html}} on the crossing angle maximization and our previous team ``TuebingenMidnight'' in Table~\ref{tab:gdContest2017}. Note that in the contest the teams had only one hour to compute a layout for all 15 contest graphs.
+
+\begin{table}[htb]
+
+\caption{Results for the Graph Drawing Contest Graphs.}
+\centering
+\begin{tabular}{c|c|c|c}
+Graph & CoffeeVM & Our New Approach & TuebingenMidnight \\
+\hline 
+1 & 90 & 89.78 & 77 \\
+2 & 88.23 & 88.7 & 42 \\
+3 & 90 & 89.95 & 89 \\
+4 & 88.97 & 89.05 & 89 \\
+5 & 80.4 & 86.96 &  30 \\
+6 & 90 & 89.72 & 78 \\
+7 & 56.537 & 63.62 & 34 \\
+8 & 84.95 & 89.28 & 61 \\
+9 & 59.885 & 88.2 & 9 \\
+10 & 20.978 & 23.72 & 4 \\
+11 & 46.684 & 72 & 6 \\
+12 & 36.47 & 35.86 & 5 \\
+13 & 25.456 & 33.68 & 4 \\
+14 & 33.52 & 43.08 & 5 \\
+15 & 20.512 & 29.18 & 4 \\
+%Graph & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
+%\hline 
+%Contest Winner & 90 & 88.23 & 90 & 88.97 & 80.4 & 90 & 56.537  \\ 
+%Our New Approach & 89.78 & 88.7 & 89.95 & 89.05 & 86.96 & 89.72 & 63.62  \\ 
+\end{tabular} 
+\label{tab:gdContest2017}
+\end{table}
+
+For all the graphs, our results are (sometimes considerably) better than or about the same as the contest winner's.
+
+%\begin{tabular}{c|ccc}
+%Graph & Contest Winner & Our New Approach & T\"ubingen Midnight \\
+%\hline 
+%
+%Graph &  8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\ 
+%Contest Winner & 84.95 & 59.885 & 20.978 & 46.684 & 36.47 & 25.456 & 33.52 & 20.512 \\ 
+%Our New Approach & 89.28 & 88.2 & 23.72 & 72 & 35.86 & 33.68 & 43.08 & 29.18 \\ 
+%\end{tabular} 
 
 \end{document}
