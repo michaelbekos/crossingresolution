@@ -1005,30 +1005,30 @@ Summarizing this section, we conclude that compared to the Rome graphs the AT\&T
 
 Our primary motivation for this work was our participation to the graph drawing contest in 2017\footnote{\texttt{http://www.graphdrawing.de/contest2017/results.html}} on the maximization of the crossing resolution where we miserably performed. Our approach for the contest in 2017 was a mixture of the two force directed algorithms by Huang et al. and Argyriou et al.
 
-We give a comparison of our new approach to the performances of the clear winner ``CoffeeVM'' of last year's graph drawing contest and our previous team ``TuebingenMidnight'' in Table~\ref{tab:gdContest2017}. Note that in the contest the teams had only one hour to compute a layout for all 15 contest graphs.
+We give a comparison of our new approach to the performances of the clear winner ``CoffeeVM'' of last year's graph drawing contest and our previous team ``TuebingenMidnight'' in Table~\ref{tab:gdContest2017}. Note that in the contest the teams had only one hour to compute a layout for all 15 contest graphs, for our algorithm we provide results that were achieved with the same time restriction (see column ``Time restricted'') as well as our best result which were achieved without a strict time restriction (see column ``Our best'').
 
 \begin{table}[htb]
 
 \caption{Results for the Graph Drawing Contest Graphs.}
 \centering
-\begin{tabular}{c|c|c|c}
-Graph & CoffeeVM & Our New Approach & TuebingenMidnight \\
+\begin{tabular}{c|c|c|c|c}
+Graph & CoffeeVM & TuebingenMidnight & Time restricted & Our best \\
 \hline 
-1 & 90 & 89.78 & 77 \\
-2 & 88.23 & 88.7 & 42 \\
-3 & 90 & 89.95 & 89 \\
-4 & 88.97 & 89.05 & 89 \\
-5 & 80.4 & 86.96 &  30 \\
-6 & 90 & 89.72 & 78 \\
-7 & 56.537 & 63.62 & 34 \\
-8 & 84.95 & 89.28 & 61 \\
-9 & 59.885 & 88.2 & 9 \\
-10 & 20.978 & 23.72 & 4 \\
-11 & 46.684 & 72 & 6 \\
-12 & 36.47 & 35.86 & 5 \\
-13 & 25.456 & 33.68 & 4 \\
-14 & 33.52 & 43.08 & 5 \\
-15 & 20.512 & 29.18 & 4 \\
+1 & 90  & 77  & 89.99 & 89.99\\
+2 & 88.23  & 42 & 88.21 & 88.7 \\
+3 & 90  & 89 & 87.86 & 89.95 \\
+4 & 88.97  & 89 & 77.13  & 89.05 \\
+5 & 80.4  &  30 & 78.68 & 86.96 \\
+6 & 90  & 78 & 89.96 & 89.96\\
+7 & 56.537  & 34 & 55.77  & 63.62 \\
+8 & 84.95  & 61 & 81.18 & 89.28 \\
+9 & 59.885  & 9 & 54.63 & 88.2 \\
+10 & 20.978  & 4 & 23.60  & 23.72 \\
+11 & 46.684  & 6 & 57.00 & 72.00 \\
+12 & 36.47  & 5 & 26.24 & 35.86 \\
+13 & 25.456  & 4 & 22.43 & 33.68 \\
+14 & 33.52  & 5 & 29.69 & 43.08 \\
+15 & 20.512  & 4 & 13.51 & 29.18 \\
 %Graph & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
 %\hline 
 %Contest Winner & 90 & 88.23 & 90 & 88.97 & 80.4 & 90 & 56.537  \\ 
@@ -1037,8 +1037,8 @@ Graph & CoffeeVM & Our New Approach & TuebingenMidnight \\
 \label{tab:gdContest2017}
 \end{table}
 
-For all the graphs, our results are (sometimes considerably) better than or about the same as last year's contest winner's.
-
+We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the last year's contest winners. On a few graphs (namely graphs 10 and 11) we even achieve better results. With a single exception (graph 4), we also outperform our results from last year.
+If we neglect the time restriction, for all the graphs, the results  are (sometimes considerably) better than or about the same as last year's contest winner's. We can conclude that our new approach has good potential for the application in this year's graph drawing contest, however, we also note that more careful graph dependent parametrization will be needed to compute competitive solutions within the provided time.
 %\begin{tabular}{c|ccc}
 %Graph & Contest Winner & Our New Approach & T\"ubingen Midnight \\
 %\hline 
