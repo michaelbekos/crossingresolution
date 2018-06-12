@@ -5,6 +5,7 @@
 \usepackage{algorithm2e}
 \usepackage{todonotes,lineno,paralist,soul}
 \usepackage{rotating,hyperref,multicol}
+\usepackage{booktabs,tabularx}
 \graphicspath{{figures/}}
 % ==================================================================
 % Format tiks and pgfplots
@@ -110,7 +111,7 @@ Given a drawing $\Gamma(G)$ of $G$, we denote by $p(u)=(x_u,y_u)$ the position o
 \medskip\noindent{\it Structure of the paper:}
 The remainder of this paper is structured as follows. Section~\ref{sec:relatedwork} overviews related works. 
 %In Section~\ref{sec:preliminaries}, we introduce preliminary notions and the notation used throughout the paper. 
-Our algorithm is presented in detail in Section~\ref{sec:algorithm} and is experimentally evaluated against the ones of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou et al.\ in Section~\ref{sec:experiments}. We conclude in Section~\ref{sec:conclusions} with open problems. In the appendix, we add more experimental results on grid restricted drawings, on more test sets and on the graphs from the graph drawing competition in 2017.
+Our algorithm is presented in detail in Section~\ref{sec:algorithm} and is experimentally evaluated against the ones of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou et al.\ in Section~\ref{sec:experiments}, where we also discuss our insights from this project. In the appendix, we provide more experimental results on grid restricted drawings, on more test sets and on the graphs from the graph drawing competition in 2017.
  
 % ==================================================================
 \section{Related Work}
@@ -241,23 +242,25 @@ If the algorithm had to compute all crossing points and the corresponding angles
 \label{ssec:variants}
 % ==================================================================
 
-In general, aesthetically pleasant drawings of graphs are usually the result of compromising between different aesthetic criteria. Towards this direction, we discuss in this section interesting variants of our~algorithm, which are motivated by the following observations that we made during our experimental evaluation (see Section~\ref{sec:experiments}): Drawings with good crossing resolution tend to have bad aspect ratio 
+In general, aesthetically pleasant drawings of graphs are usually the result of compromising between different aesthetic criteria. Towards this direction, we discuss in this section interesting variants of our~algorithm, which are motivated by the following observation that we made while working on this project (see Section~\ref{sec:experiments}): Drawings that are optimised only in terms of the crossing resolution tend to have bad aspect ratio 
 %(that is, the ratio of the longest to the shortest edge is large) 
 and poor angular resolution.
 %(that is, the angles formed by adjacent edges are small). 
-The former seems to be a consequence of the fact that drawings with good crossing resolution tend to be quite demanding in area. For the latter observe that if in a drawing all edges are either almost horizontally or almost vertically drawn, such that only ``horizontal'' and ``vertical'' edges cross, then the crossing resolution of this drawing is arbitrarily close to $90^\circ$, while its angular resolution is arbitrarily close to~$0^\circ$. 
+%The former seems to be a consequence of the fact that drawings with good crossing resolution tend to be quite demanding in area. For the latter observe that if in a drawing all edges are either almost horizontally or almost vertically drawn, such that only ``horizontal'' and ``vertical'' edges cross, then the crossing resolution of this drawing is arbitrarily close to $90^\circ$, while its angular resolution is arbitrarily close to~$0^\circ$. 
 
 % ==================================================================
 \myparagraph{Aspect ratio}
 % ==================================================================
 %
-Formally, the aspect ratio of a drawing is the ratio of the length of its longest edge to the length of its shortest edge. Sometimes it is also used as a measure of the area of non-grid drawings. It was easy to instruct our algorithm to prevent producing drawings with aspect ratio either higher than the one of the starting layout or higher than a given input value. What we simply had to do was to reject candidate positions, which violate this precondition.  
+%Formally, the aspect ratio of a drawing is the ratio of the length of its longest edge to the length of its shortest edge. Sometimes it is also used as a measure of the area of non-grid drawings. 
+It was easy to instruct our algorithm to prevent producing drawings with aspect ratio either higher than the one of the starting layout or higher than a given input value. What we simply had to do was to reject candidate positions, which violate this precondition.  
 
 % ==================================================================
 \myparagraph{Total resolution} 
 % ==================================================================
 %
-The notion of the total resolution of a drawing was introduced relatively recently with aim of ``balancing'' the measures of the crossing and of the angular resolution of a drawing~\cite{DBLP:journals/cj/ArgyriouBS13}. Formally, it is defined as the minimum of these two measures. It was not difficult to adjust our algorithm to yield drawings with high total resolution by simply taking into account also the angular resolution of the drawing. In particular, if the total resolution of the drawing is defined by its angular resolution, then the way we compute the critical vertices of this drawing has to change; the critical vertices must be the endvertices of the pairs of edges that define the angular resolution. Also, at each iteration of our algorithm we have to ensure that the total resolution does not decrease. We do so by rejecting candidate positions which yield a reduced total~resolution.
+%The notion of the total resolution of a drawing was introduced relatively recently with aim of ``balancing'' the measures of the crossing and of the angular resolution of a drawing~\cite{DBLP:journals/cj/ArgyriouBS13}. Formally, it is defined as the minimum of these two measures. It was not difficult to 
+Similarly as above, we could adjust our algorithm to yield drawings with high total resolution by simply taking into account also the angular resolution of the drawing. In particular, if the total resolution of the drawing is defined by its angular resolution, then the way we compute the critical vertices of this drawing has to change; the critical vertices must be the endvertices of the pairs of edges that define the angular resolution. Also, at each iteration of our algorithm we have to ensure that the total resolution does not decrease. We do so by rejecting candidate positions which yield a reduced total~resolution.
 
 % ==================================================================
 \myparagraph{Angular resolution} 
@@ -281,9 +284,9 @@ Our algorithm, as it has been described so far, does not necessarily produce gri
 \label{sec:experiments}
 % ==================================================================
 
-In this section, we present the results of our experimental evaluation. For comparison purposes, apart from our algorithm, we also implemented the force-directed algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. The implementations were in Java using the yFiles library~\cite{DBLP:books/sp/04/WieseE004}. The experiment was performed on a Linux laptop with four cores at 2.4 GHz and 8 GB RAM.
+In this section, we present the results of our experimental evaluation. For comparison purposes, apart from our algorithm, we also implemented the force-directed algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. The implementations were in Java using yFiles~\cite{DBLP:books/sp/04/WieseE004}. The experiment was performed on a Linux laptop with four cores at 2.4 GHz and 8 GB RAM.
 %
-As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs. For another test set (AT\&T graphs) refer to Appendix~\ref{app:north}. 
+As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs; in Appendix~\ref{app:north}, we also report on the AT\&T graphs. 
 
 The experiment was performed as follows. Initially, each Rome graph was laid out using the SmartOrganic layouter of yFiles~\cite{DBLP:books/sp/04/WieseE004}. Starting from this layout, every graph was drawn with 
 \begin{inparaenum}[(i)]
@@ -379,7 +382,7 @@ xmax=100, ytick={0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000},tick pos=le
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Illustration of our experimental results on the crossing resolution.}
+\caption{Experimental results on the crossing resolution for the Rome graphs.}
 \label{fig:cr-res}
 \end{figure}
 
@@ -391,7 +394,7 @@ Regarding the number of crossings, we observe that the restricted variant of our
 
 A different behaviour can be observed in the number of iterations, which are required by the algorithms to converge; refer to Fig.~\ref{fig:cr-res-4}. We note here that we used different criteria to determine whether the algorithms of our experiment had converged. For our algorithms and for the force-directed algorithm by Huang et al., we assumed that the algorithm had converged, if the crossing resolution between 500 consecutive iterations was not improved by more than 0.001 degrees. For the algorithm by Argyriou et al., we decided to use a much more restricted convergence criterion, because the produced layouts can change vastly between  consecutive iterations. We made this choice mainly to have ``comparable'' number of iterations among the algorithms of the experiment. In this direction, we adopted the convergence criterion that the authors used in their previous experimental analysis\, that is, we assumed that the algorithm had converged, if the crossing resolution between two consecutive iterations was not improved by more than 0.001 degrees. Observe that even under this more restricted convergence criterion, the algorithm needs significantly more iterations to converge than the remaining three algorithms of the experiment; see Fig.~\ref{fig:cr-res-4}. The maximum number of iterations that each of the algorithms could perform in order to converge was set to 100.000, but that limit was never reached. We observe that both force-directed algorithms seem to require a great amount of iterations to converge for small graphs, where a drawing with really good crossing resolution is possible. However, for bigger graphs  the algorithm by Huang et al.\ requires the least amount of iterations. On the other hand, both the unrestricted and the restricted variant of our algorithm require comparable number of iterations to converge, but clearly more than the ones of the algorithm by Huang et al. 
 
-\myparagraph{Total resolution} Our results for the total resolution are summarized in Fig.~\ref{fig:to-res}. Here, each algorithm was adjusted to maximize the minimum of the crossing and of the angular resolution. For the vast majority of the graphs in the experiment, both our unrestricted algorithm and its restricted variant yield  drawings with better total resolution than the corresponding ones by Argyriou et al. The drawings produced by the algorithm by Huang et al.\ seems to have worse total resolution; see Fig.~\ref{fig:to-res-1}. It is worth noting, however, that both variants of our algorithm as well as the force-directed algorithm by Argyriou et al.\ tend to produce drawings of the same total resolution for larger graphs (even though there seems to be a small difference in our favor). 
+\myparagraph{Total resolution} Our results for the total resolution are summarized in Fig.~\ref{fig:to-res}. Here, each algorithm was adjusted to maximize both the crossing and the angular resolution. For the vast majority of the graphs in the experiment, both our unrestricted algorithm and its restricted variant yield  drawings with better total resolution than the corresponding ones by Argyriou et al. The drawings produced by the algorithm by Huang et al.\ seems to have worse total resolution; see Fig.~\ref{fig:to-res-1}. Note, however, that both variants of our algorithm as well as the force-directed algorithm by Argyriou et al.\ tend to produce drawings of the same total resolution for larger graphs with a small difference in our favor. 
 
 \begin{figure}[t]
 \centering
@@ -462,14 +465,14 @@ xmax=100, ytick={0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000},tick pos=le
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Illustration of our experimental results on the total resolution.}
+\caption{Experimental results on the total resolution for the Rome graphs.}
 \label{fig:to-res}
 \end{figure} 
 
 Contrary to the results for the total resolution, the results for the aspect ratio show that the drawings produced by the algorithm by Huang et al.\ are better (in terms of aspect ratio) than the drawings produced by remaining algorithms; see Fig.~\ref{fig:to-res-2}. More concretely, the drawings produced by the restricted variant of our algorithm have slightly worse aspect ratios. Then, the ones produced by the force-directed algorithm by Argyriou et al.\ follow. Again, we observe that our unrestricted algorithm leads to drawings with very high aspect ratio.
 
 %Analogous observations can be made for the number of crossings of the produced layouts; see Fig.~\ref{fig:to-res-3}. 
-The restricted variant of our algorithm and the algorithm by Huang et al.\ yield drawings with the least number of crossings; see Fig.~\ref{fig:to-res-3}. Comparable but slightly worse (in terms of the number of crossings) are the drawings produced by the force-directed algorithm by Argyriou et al. Our unrestricted algorithm seems to require the largest number of crossings, which turn out to be notably higher than the corresponding ones of the remaining algorithms of our experiment (especially for large graphs). 
+The restricted variant of our algorithm and the algorithm by Huang et al.\ yield drawings with the least number of crossings; see Fig.~\ref{fig:to-res-3}. Comparable but slightly worse (in terms of the number of crossings) are the drawings produced by the force-directed algorithm by Argyriou et al. Our unrestricted algorithm seems to require the largest number of crossings, which turn out to be notably higher than the corresponding ones of the other three algorithms. 
 
 On the negative side, both the unrestricted and the restricted variant of our algorithm require more iterations than the  force-directed algorithm by Huang et al.; see Fig.~\ref{fig:to-res-4}. Recall, however, that the latter algorithm is clearly outperformed by both our variants in term of total resolution. The algorithm by Argyriou et al.\ clearly requires the highest number of iterations (especially for large graphs). We note that the convergence criterion was the same as for the crossing resolution; however, the measured quality was (not the crossing but) the total resolution.
 
@@ -544,18 +547,22 @@ xmax=100, ytick={0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000},tick pos=le
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Illustration of our experimental results on the angular resolution.}
+\caption{Experimental results on the angular resolution for the Rome graphs.}
 \label{fig:an-res}
 \end{figure} 
 
 The results for the aspect ratio, the number of crossings and the required number of iterations are very similar with corresponding ones for the total resolution; see Figs.~\ref{fig:an-res-2}--\ref{fig:an-res-4}. This observation suggests that, for most of the graphs of our experiment, the angular resolution dominates the crossing resolution (and thus is the one defining the total resolution) in the constructed drawings, which explains the similarity in the reported results. The small differences result from the fact that the crossing resolution cannot be entirely neglected.
 
 % ==================================================================
-\section{Conclusions}
-\label{sec:conclusions}
+\myparagraph{Discussion}
+%
 % ==================================================================
+%
+%In this paper, we introduced a new heuristic aiming to produce drawings of high crossing resolution, for which we also presented variants that take into account other common aesthetic criteria in Graph Drawing. Our experimental evaluation indicates that the new heuristic is competitive to state of the art force-directed algorithms, even when restricted to a given maximum aspect ratio. As a future direction, we plan to evaluate the performance of variants of our heuristic that compromise between even more aesthetic criteria.
+%
+While working on this project, we made some useful observations and  obtained some interesting insights. In particular, there is a recent hypothesis (also supported by experiments) that drawings in which the crossing angles are large are easy to read and understand. What we observed is that the drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other (nearly at the same spot). Hence, the angular resolution was very often poor, while the aspect ratio could be arbitrarily bad. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped in significantly improving the readability of the drawings, without loosing too much of their quality in terms of the crossing resolution.
 
-In this paper, we introduced a new heuristic aiming to produce drawings of high crossing resolution, for which we also presented variants that take into account other common aesthetic criteria in Graph Drawing. Our experimental evaluation indicates that the new heuristic is competitive to state of the art force-directed algorithms, even when restricted to a given maximum aspect ratio. As a future direction, we plan to evaluate the performance of variants of our heuristic that compromise between even more aesthetic criteria.
+We conclude by noting that our motivation to work with this problem was our participation to GD2017 contest, where we performed miserably using a force-directed algorithm; for details see Appendix~\ref{app:contest}. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely more promising than our previous (as also evidenced by our experimental evaluation). The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing (even although our initial plan was to optimize only the crossing resolution). 
 
 \bibliographystyle{abbrvurl}
 \bibliography{references}
@@ -791,7 +798,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Experimental results for the crossing resolution experiment on the AT\&T graph testset.}
+\caption{Experimental results for the crossing resolution on the AT\&T graphs.}
 \label{fig:northCrossing}
 \end{figure}
 
@@ -892,7 +899,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Experimental results for the total resolution experiment on the AT\&T graph testset.}
+\caption{Experimental results for the total resolution on the AT\&T graphs.}
 \label{fig:northTotal}
 \end{figure}
 
@@ -993,7 +1000,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Experimental results for the angular resolution experiment on the AT\&T graph testset.}
+\caption{Experimental results for the angular resolution on the AT\&T graphs.}
 \label{fig:northAngular}
 \end{figure}
 
@@ -1001,19 +1008,14 @@ In the angular resolution experiments we again obtain a not-so-clear picture con
 
 Summarizing this section, we conclude that compared to the Rome graphs the AT\&T graphs show a much higher variance regarding the various resolution measures. The crossing resolution results of our method still outperform the other approaches by far but especially for larger graphs as well as angular and total resolution the methods tend to perform similarly.
 
-\section{Graph Drawing Contest 2017 Graphs}
+\begin{table}[t!]
 
-Our primary motivation for this work was our participation to the graph drawing contest in 2017\footnote{\texttt{http://www.graphdrawing.de/contest2017/results.html}} on the maximization of the crossing resolution where we miserably performed. Our approach for the contest in 2017 was a mixture of the two force directed algorithms by Huang et al. and Argyriou et al.
-
-We give a comparison of our new approach to the performances of the clear winner ``CoffeeVM'' of last year's graph drawing contest and our previous team ``TuebingenMidnight'' in Table~\ref{tab:gdContest2017}. Note that in the contest the teams had only one hour to compute a layout for all 15 contest graphs, for our algorithm we provide results that were achieved with the same time restriction (see column ``Time restricted'') as well as our best result which were achieved without a strict time restriction (see column ``Our best'').
-
-\begin{table}[htb]
-
-\caption{Results for the Graph Drawing Contest Graphs.}
+\caption{Summary of the results for the Graph Drawing Contest Graphs.}
 \centering
 \begin{tabular}{c|c|c|c|c}
-Graph & CoffeeVM & TuebingenMidnight & Time restricted & Our best \\
-\hline 
+\toprule
+~~Graph~~ & ~~CoffeeVM~~ & ~~TuebingenMidnight~~ & ~~Time restricted~~ & ~~Our best~~ \\
+\midrule
 1 & 90  & 77  & 89.99 & 89.99\\
 2 & 88.23  & 42 & 88.21 & 88.7 \\
 3 & 90  & 89 & 87.86 & 89.95 \\
@@ -1029,6 +1031,7 @@ Graph & CoffeeVM & TuebingenMidnight & Time restricted & Our best \\
 13 & 25.456  & 4 & 22.43 & 33.68 \\
 14 & 33.52  & 5 & 29.69 & 43.08 \\
 15 & 20.512  & 4 & 13.51 & 29.18 \\
+\bottomrule
 %Graph & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\ 
 %\hline 
 %Contest Winner & 90 & 88.23 & 90 & 88.97 & 80.4 & 90 & 56.537  \\ 
@@ -1037,15 +1040,14 @@ Graph & CoffeeVM & TuebingenMidnight & Time restricted & Our best \\
 \label{tab:gdContest2017}
 \end{table}
 
-We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the last year's contest winners. On a few graphs (namely graphs 10 and 11) we even achieve better results. With a single exception (graph 4), we also outperform our results from last year.
-If we neglect the time restriction, for all the graphs, the results  are (sometimes considerably) better than or about the same as last year's contest winner's. We can conclude that our new approach has good potential for the application in this year's graph drawing contest, however, we also note that more careful graph dependent parametrization will be needed to compute competitive solutions within the provided time.
-%\begin{tabular}{c|ccc}
-%Graph & Contest Winner & Our New Approach & T\"ubingen Midnight \\
-%\hline 
-%
-%Graph &  8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\ 
-%Contest Winner & 84.95 & 59.885 & 20.978 & 46.684 & 36.47 & 25.456 & 33.52 & 20.512 \\ 
-%Our New Approach & 89.28 & 88.2 & 23.72 & 72 & 35.86 & 33.68 & 43.08 & 29.18 \\ 
-%\end{tabular} 
+\section{Graph Drawing Contest 2017 Graphs}
+\label{app:contest}
+
+Our primary motivation for this work was our participation to the graph drawing contest in 2017, where we miserably performed\footnote{\texttt{http://www.graphdrawing.de/contest2017/results.html}}. The topic was exactly the maximization of the crossing resolution. Our approach for the contest in 2017 was a mixture of the two force directed algorithms by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
+
+We give a comparison of our new approach to the performances of the clear winner ``CoffeeVM'' of last year's graph drawing contest and our previous team ``TuebingenMidnight'' in Table~\ref{tab:gdContest2017}. Note that in the contest the teams had only one hour to compute layouts for all 15 contest graphs. For our algorithm, we provide results that were achieved with the same time limit (see column ``Time restricted''), as well as our best results which were achieved without a strict time limit (see column ``Our best'').
+
+We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the last year's contest winner. On a few graphs (namely, graphs 10 and 11), we even achieve better results. With a single exception (namely, graph 4), we easily outperformed our results from last year.
+If we neglect the time restriction, for all the graphs, the results  are (sometimes considerably) better than or at least about the same as last year's contest winner. We can conclude that our new approach has good potential for the application in this year's graph drawing contest, however, we also note that more careful graph dependent parametrization will be needed to compute competitive solutions within the provided time.
 
 \end{document}
