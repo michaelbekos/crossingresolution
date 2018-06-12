@@ -110,7 +110,7 @@ Given a drawing $\Gamma(G)$ of $G$, we denote by $p(u)=(x_u,y_u)$ the position o
 \medskip\noindent{\it Structure of the paper:}
 The remainder of this paper is structured as follows. Section~\ref{sec:relatedwork} overviews related works. 
 %In Section~\ref{sec:preliminaries}, we introduce preliminary notions and the notation used throughout the paper. 
-Our algorithm is presented in detail in Section~\ref{sec:algorithm} and is experimentally evaluated against the ones of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou et al.\ in Section~\ref{sec:experiments}. We conclude in Section~\ref{sec:conclusions} with open problems.
+Our algorithm is presented in detail in Section~\ref{sec:algorithm} and is experimentally evaluated against the ones of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou et al.\ in Section~\ref{sec:experiments}. We conclude in Section~\ref{sec:conclusions} with open problems. In the appendix, we add more experimental results on grid restricted drawings, on more test sets and on the graphs from the graph drawing competition in 2017.
  
 % ==================================================================
 \section{Related Work}
@@ -269,7 +269,7 @@ As it is the case with the force-directed algorithms of Huang et al.~\cite{DBLP:
 \myparagraph{Grid drawings}
 % ==================================================================
 %
-Our algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produce such drawings. More precisely, if we round the candidate positions computed at each iteration of our algorithm to their closest grid points and use these grid points as candidates for the next position of the vertex to be moved, then the obtained drawing will be grid (assuming, of course, that the starting drawing is grid). One can even bound the size of the grid, by rejecting candidate grid positions outside the bounds. 
+Our algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produce such drawings. More precisely, if we round the candidate positions computed at each iteration of our algorithm to their closest grid points and use these grid points as candidates for the next position of the vertex to be moved, then the obtained drawing will be grid (assuming, of course, that the starting drawing is grid). One can even bound the size of the grid, by rejecting candidate grid positions outside the bounds. In Appendix~\ref{app:grid}, we report experimental results on this variant.
 
  %(the latter requirement is not difficult to be achieved, e.g., by slightly adjusting the positions of the vertices of a circular layout, whose underlying circle has large radius, to be at grid points). 
 
@@ -283,7 +283,7 @@ Our algorithm, as it has been described so far, does not necessarily produce gri
 
 In this section, we present the results of our experimental evaluation. For comparison purposes, apart from our algorithm, we also implemented the force-directed algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. The implementations were in Java using the yFiles library~\cite{DBLP:books/sp/04/WieseE004}. The experiment was performed on a Linux laptop with four cores at 2.4 GHz and 8 GB RAM.
 %
-As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs (commonly used for testing the efficiency of algorithms for drawing graphs). 
+As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs. For another test set (AT\&T graphs) refer to Appendix~\ref{app:north}. 
 
 The experiment was performed as follows. Initially, each Rome graph was laid out using the SmartOrganic layouter of yFiles~\cite{DBLP:books/sp/04/WieseE004}. Starting from this layout, every graph was drawn with 
 \begin{inparaenum}[(i)]
@@ -566,8 +566,9 @@ In this paper, we introduced a new heuristic aiming to produce drawings of high 
 \section*{Appendix}
 
 \section{Experiments on Grid Drawings}
+\label{app:grid}
 
-In addition to the experiments described in Section~\ref{sec:experiments}, we also evaluated how our algorithm performs, if we restrict its vertices to be placed on grid coordinates whilst avoiding vertices to overlap with other vertices or edges. Further, we restricted the grid size to \begin{inparaenum}[(i)]
+In addition to the experiments described in Section~\ref{sec:experiments}, we also evaluated how our algorithm performs, if we restrict its vertices to be placed on grid coordinates while avoiding vertices to overlap with other vertices or edges. Further, we restricted the grid size to \begin{inparaenum}[(i)]
 \item $10^6 \times 10^6$
 \item $10^4 \times 10^4$
 \item $10^3 \times 10^3$, and
@@ -683,15 +684,16 @@ Regarding the crossing resolution, we can observe that with increasing grid size
 
 The aspect ratio of computed drawings was more or less the same for all grid size with the exception of size $10^2 \times 10^2$ and always about twice the aspect ratio of the unrestricted variant of our algorithm; see Fig.~\ref{fig:crossingResolutionAspectRatioGrid}. For grid size $10^2 \times 10^2$, this may again be explained by the fact, that for the majority of graphs, the initial layout could not be improved.
 
-The number of crossings increased with the restriction on the size of the grid; see Fig.~\ref{fig:crossingResolutionCrossingNumberGrid}. As with the crossing resolution, there is clear differences between grid sizes $10^2 \times 10^2$, $10^3 \times 10^3$ and $10^4 \times 10^4$ whereas there is only a slight improvement from grid size $10^4 \times 10^4$ to $10^6 \times 10^6$ which still uses twice as many crossings as our unrestricted variant. This can partially be explained with the different choice of the initial drawing.
+The number of crossings increased with the restriction on the size of the grid; see Fig.~\ref{fig:crossingResolutionCrossingNumberGrid}. As with the crossing resolution, there are clear differences between grid sizes $10^2 \times 10^2$, $10^3 \times 10^3$ and $10^4 \times 10^4$ whereas there is only a slight improvement from grid size $10^4 \times 10^4$ to $10^6 \times 10^6$ which still uses twice as many crossings as our unrestricted variant. This can partially be explained with the different choice of the initial drawing.
 
 Finally, we observe that the number of iterations needed for convergence for grid size $10^3 \times 10^3$ was already twice as much as for our unrestricted algorithm; see Fig.~\ref{fig:crossingResolutionTimeGrid}. From there on, the number of iterations for convergence increases with the grid size. Note that grid size $10^6 \times 10^6$ needed about 1000 to 2000 iterations more than grid size $10^4 \times 10^4$ even though the final layout was only marginally better as discussed prior. The curve for $10^2 \times 10^2$ highlights that this grid size was too restrictive for the vast majority of graphs which often resulted in the initial layout to be accepted as the best solution for larger graphs.
 
 In conclusion, we can state that our algorithm is still able to compute drawings with high crossing resolution when restricted to a grid as long as the grid is not too small. However, the computation of grid drawings takes much longer than in the unrestricted version (up to five times as long for grid size $10^4 \times 10^4$ or eight times as long for grid size $10^6 \times 10^6$). In order to improve the performance of our algorithm in this restricted variant, it may be interesting to see how much the choice of the initial drawing affects the resulting crossing resolution. Further experiments in this direction are needed.
 
 \section{Experiments on the AT\&T  Graph Test Set}
+\label{app:north}
 
-We repeated our experimental evaluation on the crossing resolution, total resolution and angular resolution without grid constraint on a second test set of graphs, the set of non-planar AT\&T graphs, which form a collection of 424 benchmark graphs (also known as Graph Catalog and North graphs; available at \texttt{http://graphdrawing.org/data}). The corresponding results are illustrated in Figs.~\ref{fig:northCrossing}, \ref{fig:northTotal} and~\ref{fig:northAngular}. In general we observed that the variance of results is much larger than in the experiments on the Rome graphs. This manifests in spikes of large magnitude in the illustrations of results and indicates that the structural properties of graphs in this second test set varies vastly between different graph sizes. 
+We repeated our experimental evaluation on the crossing resolution, total resolution and angular resolution without grid constraint on a second test set of graphs, the set of non-planar AT\&T graphs, which form a collection of 424 benchmark graphs (also known as Graph Catalog and North graphs; available at \texttt{http://graphdrawing.org/data}). The corresponding results are illustrated in Figs.~\ref{fig:northCrossing}, \ref{fig:northTotal} and~\ref{fig:northAngular}. In general we observed that the variance of results is much larger than in the experiments on the Rome graphs. This manifests in spikes of large magnitude in the illustrations of the results and indicates that the structural properties of graphs in this second test set varies vastly between different graph sizes. 
 
 
 \begin{figure}[htb]
@@ -789,11 +791,11 @@ xlabel={Number of Vertices},ymajorgrids]
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Experimental results for the crossing resolution experiment on the North graph testset.}
+\caption{Experimental results for the crossing resolution experiment on the AT\&T graph testset.}
 \label{fig:northCrossing}
 \end{figure}
 
-For the crossing resolution we observed that both the unrestricted and the aspect ratio restricted variants of our algorithm again outperformed the two evaluated force directed approachs; see Fig.~\ref{fig:northCrossing-1}. Remarkable is the synchronous behaviour of all four algorithms with respect to the crossing resolution on different graph sizes such that the curves are nearly parallel. By all these results, we can classify the graphs into ``hard'' or ``easy'' graphs with respect to the crossing resolution maximization; in particular graphs between 50 and 70 vertices appear to be harder to improve than graphs between 70 and 80 vertices. With respect to the aspect ratio of produced drawings we observe that while our algorithms show a slight increase with the number of vertices, the behaviour for both force directed algorithms appears to be quite unstable resulting in a large variance. Again the restricted variant of our algorithm and the two force directed approaches produce drawings with similar aspect ratio which is much lower than the one of our unrestricted algorithm for larger graphs. All four algorithms behave nearly the same in terms of number of crossings; see Fig.~\ref{fig:northCrossing-3}. In terms of the number of iterations, we observe that surprisingly the algorithm of Argyriou et al. converges in the least amout of iterations throughout the test set whereas the remaining three algorithms behave nearly the same; see Fig.~\ref{fig:northCrossing-4}.
+For the crossing resolution we observed that both the unrestricted and the aspect ratio restricted variants of our algorithm again outperformed the two evaluated force directed approachs; see Fig.~\ref{fig:northCrossing-1}. Remarkable is the synchronous behaviour of all four algorithms regarding the crossing resolution on different graph sizes as the curves are nearly parallel. By all these results, we can classify the graphs into ``hard'' or ``easy'' graphs regarding the crossing resolution maximization; in particular graphs between 50 and 70 vertices appear to be harder to improve than graphs between 70 and 80 vertices. Regarding the aspect ratio of the produced drawings we observe that while our algorithms show a slight increase with the number of vertices, the behaviour for both force directed algorithms appears to be quite unstable resulting in a large variance. Again the restricted variant of our algorithm and the two force directed approaches produce drawings with similar aspect ratio which is much lower than the one of our unrestricted algorithm for larger graphs. All four algorithms behave nearly the same in terms of number of crossings; see Fig.~\ref{fig:northCrossing-3}. In terms of the number of iterations, we observe that somewhat surprisingly the algorithm of Argyriou et al. converges in the least amout of iterations throughout the test set whereas the remaining three algorithms behave nearly the same; see Fig.~\ref{fig:northCrossing-4}.
 
 \begin{figure}[htb]
 \centering
@@ -890,7 +892,7 @@ xlabel={Number of Vertices},ymajorgrids]
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Experimental results for the total resolution experiment on the North graph testset.}
+\caption{Experimental results for the total resolution experiment on the AT\&T graph testset.}
 \label{fig:northTotal}
 \end{figure}
 
@@ -991,15 +993,19 @@ xlabel={Number of Vertices},ymajorgrids]
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}}
-\caption{Experimental results for the angular resolution experiment on the North graph testset.}
+\caption{Experimental results for the angular resolution experiment on the AT\&T graph testset.}
 \label{fig:northAngular}
 \end{figure}
 
 In the angular resolution experiments we again obtain a not-so-clear picture concerning the ranking of the algorithms, especially for higher number of vertices the ranking varies; see Fig.~\ref{fig:northAngular-1}. Only the algorithm by Huang et al. seems to be mostly at the last rank. Concerning the aspect ratio we see very good behaviour for our restricted variant and the algorithm by Huang et al. while the remaining two algorithms show large variance and much worse values; see Fig.~\ref{fig:northAngular-2}. For the number of crossings, we again observe that all algorithms achieve similar values, however, our unrestricted algorithm and the algorithm by Argyriou et al. achieve slightly higher values for larger graphs; see Fig.~\ref{fig:northAngular-3}. Finally, both our algorithms and the one by Huang et al. need a similar number of iterations for convergence which is lower than the one by Argyriou et al.; see Fig.~\ref{fig:northAngular-4}.
 
+Summarizing this section, we conclude that compared to the Rome graphs the AT\&T graphs show a much higher variance regarding the various resolution measures. The crossing resolution results of our method still outperform the other approaches by far but especially for larger graphs as well as angular and total resolution the methods tend to perform similarly.
+
 \section{Graph Drawing Contest 2017 Graphs}
 
-We give a comparison of our new approach to the performances of the clear winner ``CoffeeVM'' of last year's graph drawing contest\footnote{\texttt{http://www.graphdrawing.de/contest2017/results.html}} on the crossing angle maximization and our previous team ``TuebingenMidnight'' in Table~\ref{tab:gdContest2017}. Note that in the contest the teams had only one hour to compute a layout for all 15 contest graphs.
+Our primary motivation for this work was our participation to the graph drawing contest in 2017\footnote{\texttt{http://www.graphdrawing.de/contest2017/results.html}} on the maximization of the crossing resolution where we miserably performed. Our approach for the contest in 2017 was a mixture of the two force directed algorithms by Huang et al. and Argyriou et al.
+
+We give a comparison of our new approach to the performances of the clear winner ``CoffeeVM'' of last year's graph drawing contest and our previous team ``TuebingenMidnight'' in Table~\ref{tab:gdContest2017}. Note that in the contest the teams had only one hour to compute a layout for all 15 contest graphs.
 
 \begin{table}[htb]
 
@@ -1031,7 +1037,7 @@ Graph & CoffeeVM & Our New Approach & TuebingenMidnight \\
 \label{tab:gdContest2017}
 \end{table}
 
-For all the graphs, our results are (sometimes considerably) better than or about the same as the contest winner's.
+For all the graphs, our results are (sometimes considerably) better than or about the same as last year's contest winner's.
 
 %\begin{tabular}{c|ccc}
 %Graph & Contest Winner & Our New Approach & T\"ubingen Midnight \\
