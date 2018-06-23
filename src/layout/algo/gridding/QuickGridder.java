@@ -50,7 +50,9 @@ public class QuickGridder implements IGridder {
       double allowedAngle = oldAngle - configurator.allowDecreasingBy.getValue();
 
       Stream<PointD> samplePositions = getNeighborGridPositions(oldPosition, iteration).stream()
-          .filter(position -> !reservedPositions.contains(position));
+          .filter(position -> !reservedPositions.contains(position))
+          .filter(position -> LayoutUtils.overlap(position, positions, node, graph))
+          .filter(position -> position.x > 0 && position.y > 0);
 
       if (configurator.respectMinimumAngle.getValue()) {
         samplePositions = samplePositions.filter(position -> {
