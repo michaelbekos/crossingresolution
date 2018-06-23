@@ -71,4 +71,8 @@ public abstract class Util {
   public static boolean isInteger(double d) {
     return d % 1 == 0;
   }
+
+  public static boolean isAlmostInteger(double d) {
+    return Math.abs(Math.min(d%1, 1-d%1)) < 0.0000001;  //TODO: fix, yFiles bug where moving a node by hand results in 0.0000000000001 or 0.9999999999999
+  }
 }

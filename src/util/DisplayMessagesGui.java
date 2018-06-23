@@ -1,7 +1,6 @@
 package util;
 
 import com.yworks.yfiles.graph.IGraph;
-
 import graphoperations.GraphOperations;
 import layout.algo.utils.BestSolutionMonitor;
 import util.graph2d.Intersection;
@@ -44,8 +43,7 @@ public class DisplayMessagesGui {
         return text;
     }
 
-    public static String createAspectRatioMsg(IGraph graph) {
-        GraphOperations.AspectRatio aspectRatio = GraphOperations.getAspectRatio(graph);
+    public static String createAspectRatioMsg(IGraph graph, GraphOperations.AspectRatio aspectRatio) {
         return "Aspect Ratio: " + aspectRatio.getValue() +
                 " | Min: " + (int)aspectRatio.getShortestEdgeLength() +
                 " | Max.: " + (int)aspectRatio.getLongestEdgeLength();

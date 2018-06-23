@@ -1,6 +1,7 @@
 package main;
 
 import com.sun.istack.internal.Nullable;
+import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
@@ -37,6 +38,7 @@ public class MainFrame extends JFrame {
     /* Box related issue*/
 
     public static final double BOX_SIZE[] = {1000000, 1000000};
+    private static int gridSize = 20;
 
     /* Graph Drawing related objects */
     public GraphComponent view;
@@ -164,6 +166,9 @@ public class MainFrame extends JFrame {
 
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
             boolean removedListeners = this.initSidePanel.removeDefaultListeners();
+            int spacing = (int)(gridSize/view.getZoom()) > 0 ? (int)(gridSize/view.getZoom()) : 1;
+            gridVisualCreator.getGridInfo().setHorizontalSpacing(spacing);
+            gridVisualCreator.getGridInfo().setVerticalSpacing(spacing);
             Scaling.scaleNodeSizes(view);
             if (this.graph.getNodes().size() > 100) {
                 try {
@@ -181,8 +186,9 @@ public class MainFrame extends JFrame {
         /* Add two listeners two the graph */
         this.graphSnapContext = new GraphSnapContext();
         this.graphEditorInputMode.setSnapContext(this.graphSnapContext);
-        GridInfo gridInfo = new GridInfo();
+        GridInfo gridInfo = new GridInfo(gridSize,gridSize, new PointD(0,0));
         this.gridVisualCreator = new GridVisualCreator(gridInfo);
+        this.gridVisualCreator.setVisibilityThreshold(5);
         this.view.getBackgroundGroup().addChild(this.gridVisualCreator, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE);
         this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
         this.graphSnapContext.setNodeGridConstraintProvider(new GridConstraintProvider<>(gridInfo));

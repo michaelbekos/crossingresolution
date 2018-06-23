@@ -125,6 +125,9 @@ public class GraphOperations {
   }
 
   public static AspectRatio getAspectRatio(IGraph g){
+    if (g.getNodes().size() <= 0) {
+      return null;
+    }
     IEdge sEdge = getShortestEdge(g);
     INode sSource = sEdge.getSourceNode();
     INode sTarget = sEdge.getTargetNode();

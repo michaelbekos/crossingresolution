@@ -7,6 +7,7 @@ import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
+import graphoperations.GraphOperations;
 import layout.algo.utils.BestSolutionMonitor;
 import layout.algo.utils.PositionMap;
 import util.DisplayMessagesGui;
@@ -129,6 +130,19 @@ public class MinimumAngleMonitor {
     infoLabel.setText(labText.orElse("Graph has no crossings."));
   }
 
+  public void showAspectRatio(IGraph graph, GraphComponent view, JLabel infoLabel, boolean viewCenter) {
+    Optional<GraphOperations.AspectRatio> aspectRatio = Optional.ofNullable(GraphOperations.getAspectRatio(graph));
+    Optional<String> labText = aspectRatio.map(cr -> {
+      String text = DisplayMessagesGui.createAspectRatioMsg(graph, aspectRatio.get());
+
+      view.updateUI();
+
+      return text;
+    });
+
+    infoLabel.setText(labText.orElse("Graph has no crossings."));
+  }
+
 
   public void updateCrossingResolutionInfoBar() {
     showCrossingResolution(graph, view, infoLabel, false);
@@ -142,9 +156,8 @@ public class MinimumAngleMonitor {
     computeCrossingResolution();
     computeAngularResolution();
     if (useAspectRatio) {   //TODO
-        String text = DisplayMessagesGui.createAspectRatioMsg(graph);
-        infoLabel.setText(text);
-        return;
+      showAspectRatio(graph, view, infoLabel, false);
+      return;
     }
     if (useAngularResolution && useCrossingResolution) {
       if (currentAngularResolution < currentCrossingResolution) {
