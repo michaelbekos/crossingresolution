@@ -15,6 +15,8 @@ import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
+
+import graphoperations.Centering;
 import graphoperations.Chains;
 import graphoperations.RemovedChains;
 import graphoperations.Scaling;
@@ -39,7 +41,8 @@ import java.util.LinkedList;
 import java.util.Optional;
 
 public class SidePanelTab {
-    public JPanel sidePanelTab;
+    private static final double scaleFactorWhenCentering = 0.8;
+	public JPanel sidePanelTab;
     public String algorithmName;
     public ILayoutConfigurator configurator;
     public ILayout layout;
@@ -177,7 +180,7 @@ public class SidePanelTab {
         showBestSolution.addActionListener(this::showBestSolution);
         defaultPanel.add(showBestSolution, cDefaultPanel);
 
-        JButton scaleToBox = new JButton("Scale Me to the Box");
+        JButton scaleToBox = new JButton("Center");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
@@ -527,7 +530,8 @@ public class SidePanelTab {
             IGraph graph = initSidePanel.mainFrame.graph;
             Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
             RectD bounds = BoundingBox.from(nodePositions);
-            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth()), (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight())), nodePositions);
+            Scaling.scaleBy(Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth()) *scaleFactorWhenCentering, (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight()))*0.9, nodePositions);
+            Centering.moveToCenter(MainFrame.BOX_SIZE[0], MainFrame.BOX_SIZE[1], nodePositions);
             PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
 
