@@ -11,8 +11,8 @@ public final class GridGraph {
     return graph.getNodes().stream()
         .allMatch(node -> {
           PointD center = node.getLayout().getCenter();
-//          return Util.isInteger(center.getX()) && Util.isInteger(center.getY());
-            return Util.isAlmostInteger(center.getX()) && Util.isAlmostInteger(center.getY());  //TODO: fix with yFiles bug
+          return Util.isInteger(center.getX()) && Util.isInteger(center.getY());
+//            return Util.isAlmostInteger(center.getX()) && Util.isAlmostInteger(center.getY());  //TODO: fix with yFiles bug
         });
   }
 }
