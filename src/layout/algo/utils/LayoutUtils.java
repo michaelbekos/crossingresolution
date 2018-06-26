@@ -23,12 +23,12 @@ public class LayoutUtils {
     return new PointD(Math.round(p.getX()), Math.round(p.getY()));
   }
 
-public static Boolean overlap(PointD position, Mapper<INode, PointD> positions, INode node, IGraph graph) {
+public static Boolean overlap(PointD position, Mapper<INode, PointD> positions, INode node, IGraph graph, double th) {
 	Iterator<Entry<INode, PointD>> It = positions.getEntries().iterator();
 	PointD tmp;
 	while(It.hasNext()){
 		tmp=It.next().getValue();
-		if (position.hits(tmp, 0.5) || position.equals(tmp)) {
+		if (position.hits(tmp, th) || position.equals(tmp)) {
 			return false;
 		}
 	}
@@ -47,4 +47,7 @@ public static Boolean overlap(PointD position, Mapper<INode, PointD> positions, 
 	}
 	return true;
 }
+	public static Boolean overlap(PointD position, Mapper<INode, PointD> positions, INode node, IGraph graph) {
+		return overlap(position, positions,node, graph, 0.5);
+	}
 }
