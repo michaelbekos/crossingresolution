@@ -9,7 +9,6 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
-import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.graph.Mapper;
 import com.yworks.yfiles.layout.YGraphAdapter;
 import graphoperations.GraphOperations;
@@ -110,7 +109,6 @@ public class RandomMovementLayout implements ILayout {
     double originalAngle = getAngleForNode(positions, node, graph);
     PointD originalPosition = positions.getValue(node);
     final boolean usingAR = usingAspectRatio;
-    System.out.println("Next");
     Sample[] goodSamples = samples.stream()
         .peek(sample -> {
           double maxStepSize = configurator.maxStepSize.getValue();
@@ -123,14 +121,13 @@ public class RandomMovementLayout implements ILayout {
           }
         })
         .filter(sample -> boundingBox.contains(sample.position))
-        .filter(sample ->LayoutUtils.overlap(sample.position, positions, node, graph, nodeOverlapThreshold))
+        .filter(  sample ->  LayoutUtils.overlapFree(sample.position, positions, node, graph, nodeOverlapThreshold))
 //        .filter(sample -> !configurator.useAspectRatio.getValue() || GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio, configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio
         .filter(sample -> !configurator.useAspectRatio.getValue() ||
                 GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio,
                         configurator.maxAspectRatio.getValue() < 0 ? currentAspectRatio.getValue() : configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio (if slider = -1, allow all moves that dont worsen it)
         .peek(sample -> {
           this.positions.setValue(node, sample.position);
-          System.out.println("Pos. " + node.getTag().toString() + "    X=" + sample.position.getX() + "     Y=" + sample.position.getY());
 
           sample.minimumAngle = getAngleForNode(positions, node, graph);
         })
@@ -153,9 +150,7 @@ public class RandomMovementLayout implements ILayout {
     } else {
       failedSteps++;
       positions.setValue(node, originalPosition);
-      for(INode n : graph.getNodes()){
-        System.out.println("Bad Node" + n.getTag().toString() + "    X=" + positions.getValue(n).getX() + "     Y=" + positions.getValue(n).getY());
-      }
+
 
       if (failedSteps >= configurator.iterationsForLocalMaximum.getValue()) {
         failedSteps = 0;
@@ -213,16 +208,28 @@ public class RandomMovementLayout implements ILayout {
 
     Stream
         .generate(() -> {
+
+      while(true){
+
+
           double x = random.nextDouble() * bounds.getWidth() + bounds.getX();
           double y = random.nextDouble() * bounds.getHeight() + bounds.getY();
 
           PointD point = new PointD(x, y);
+          //PointD point2 = new PointD()
           if (configurator.onlyGridPositions.getValue()) {
-            return LayoutUtils.round(point);
+
+            //return LayoutUtils.round(point);
+            point = LayoutUtils.round(point);
+           // System.out.println("Position " + point + "overlapFree " + !LayoutUtils.overlapFree(point, positions, node, graph, nodeOverlapThreshold));
+            if(LayoutUtils.overlapFree(point, positions, node, graph, nodeOverlapThreshold)){
+              return point;
+            }
           } else {
             return point;
-          }
+          }}
         })
+            //.filter(  position -> !configurator.onlyGridPositions.getValue() || LayoutUtils.overlapFree(position, positions, node, graph, nodeOverlapThreshold))
         .limit(configurator.numSamplesForJumping.getValue())
         .max(Comparator.comparingDouble(position -> {
           positions.setValue(node, position);

@@ -19,8 +19,8 @@ public class Centering {
 	        INode node = entry.getKey();
 	        PointD center = entry.getValue();
 	        nodePositions.setValue(node, new PointD(
-	            (center.getX() + moveX),
-	            (center.getY() + moveY)
+					(int) (center.getX() + moveX),
+					(int) (center.getY() + moveY)
 	        ));
 	      }
 	}

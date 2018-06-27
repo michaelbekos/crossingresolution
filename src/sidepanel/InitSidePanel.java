@@ -90,7 +90,7 @@ public class InitSidePanel {
 
         masterEnableCrossingResolution = new JCheckBox("Crossing Resolution");
         masterEnableCrossingResolution.addItemListener(this::masterEnableCrossingResolutionActionPerformed);
-        masterEnableCrossingResolution.setSelected(false);
+        masterEnableCrossingResolution.setSelected(true);
 
         masterEnableAngularResolution = new JCheckBox("Angular Resolution");
         masterEnableAngularResolution.addItemListener(this::masterEnableAngularResolutionActionPerformed);
@@ -98,7 +98,7 @@ public class InitSidePanel {
 
         masterEnableAspectRatio = new JCheckBox("Aspect Ratio");
         masterEnableAspectRatio.addItemListener(this::masterEnableAspectRatioActionPerformed);
-        masterEnableAspectRatio.setSelected(true);
+        masterEnableAspectRatio.setSelected(false);
 
         sidePanelTabs = new ArrayList<>();
 

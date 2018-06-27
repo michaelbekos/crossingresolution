@@ -52,7 +52,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     itemList.add(jumpOnLocalMaximum);
 
     onlyGridPositions = itemFactory.booleanParameter("Only use grid coordinates");
-    onlyGridPositions.setValue(false);
+    onlyGridPositions.setValue(true);
     itemList.add(onlyGridPositions);
 
     useGaussianDistribution = itemFactory.booleanParameter("Focus on critical nodes");
@@ -76,7 +76,7 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     itemList.add(useAngularResolution);
 
     useAspectRatio = itemFactory.booleanParameter("Use Aspect Ratio");
-    useAspectRatio.setValue(true);
+    useAspectRatio.setValue(false);
     itemList.add(useAspectRatio);
   }
 
