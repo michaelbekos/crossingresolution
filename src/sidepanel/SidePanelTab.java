@@ -267,7 +267,7 @@ public class SidePanelTab {
         cDefaultPanel.weighty = 0;
         defaultPanel.add(enableAspectRatio, cDefaultPanel);
         enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
-        enableAspectRatio.setSelected(true);
+        enableAspectRatio.setSelected(false);
 
         outputTextArea.setLineWrap(true);
         outputTextArea.setRows(10);
