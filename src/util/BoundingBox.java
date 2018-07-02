@@ -6,6 +6,7 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
+import main.MainFrame;
 
 //public class BoundingBox {
 //  public static RectD from(Mapper<INode, PointD> nodes) {
@@ -33,4 +34,11 @@ public class BoundingBox {
 
 	    return new RectD(minX, minY, maxX - minX, maxY - minY);
 	  }
+
+	public static RectD maxBox() {
+		double minX = 0, maxX = MainFrame.BOX_SIZE[0];
+		double minY = 0, maxY = MainFrame.BOX_SIZE[1];
+
+		return new RectD(minX, minY, maxX - minX, maxY - minY);
 	}
+}

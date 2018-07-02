@@ -37,7 +37,6 @@ public class RandomMovementLayout implements ILayout {
   private RectD boundingBox;
   private int successfulSteps, failedSteps;
   private Set<INode> fixNodes;
-  private double nodeOverlapThreshold = 0.999;
   public RandomMovementLayout(IGraph graph, RandomMovementConfigurator configurator) {
     this.graph = graph;
     this.configurator = configurator;
@@ -48,8 +47,8 @@ public class RandomMovementLayout implements ILayout {
     positions = PositionMap.FromIGraph(graph);
     sampleDirections = initSampleDirections();
     random = new Random(System.currentTimeMillis());
-    boundingBox = BoundingBox.from(positions);
-
+//    boundingBox = BoundingBox.from(positions);
+    boundingBox = BoundingBox.maxBox();
     double maxStepSize = Math.max(boundingBox.getWidth(), boundingBox.getHeight()) * 0.5;
     configurator.maxStepSize.setValue(maxStepSize);
     configurator.minStepSize.setValue(maxStepSize * 0.01);
@@ -121,7 +120,7 @@ public class RandomMovementLayout implements ILayout {
           }
         })
         .filter(sample -> boundingBox.contains(sample.position))
-        .filter(  sample ->  LayoutUtils.overlapFree(sample.position, positions, node, graph, nodeOverlapThreshold))
+        .filter(  sample ->  LayoutUtils.overlapFree(sample.position, positions, node, graph))
 //        .filter(sample -> !configurator.useAspectRatio.getValue() || GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio, configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio
         .filter(sample -> !configurator.useAspectRatio.getValue() ||
                 GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio,
@@ -207,29 +206,18 @@ public class RandomMovementLayout implements ILayout {
     );
 
     Stream
-        .generate(() -> {
-
-      while(true){
-
-
+      .generate(() -> {
           double x = random.nextDouble() * bounds.getWidth() + bounds.getX();
           double y = random.nextDouble() * bounds.getHeight() + bounds.getY();
 
-          PointD point = new PointD(x, y);
-          //PointD point2 = new PointD()
-          if (configurator.onlyGridPositions.getValue()) {
-
-            //return LayoutUtils.round(point);
-            point = LayoutUtils.round(point);
-           // System.out.println("Position " + point + "overlapFree " + !LayoutUtils.overlapFree(point, positions, node, graph, nodeOverlapThreshold));
-            if(LayoutUtils.overlapFree(point, positions, node, graph, nodeOverlapThreshold)){
-              return point;
-            }
-          } else {
-            return point;
-          }}
-        })
-            //.filter(  position -> !configurator.onlyGridPositions.getValue() || LayoutUtils.overlapFree(position, positions, node, graph, nodeOverlapThreshold))
+        PointD point = new PointD(x, y);
+        if (configurator.onlyGridPositions.getValue()) {
+          return LayoutUtils.round(point);
+        } else {
+          return point;
+        }
+      })
+        .filter(position -> !configurator.onlyGridPositions.getValue() || LayoutUtils.overlapFree(position, positions, node, graph))
         .limit(configurator.numSamplesForJumping.getValue())
         .max(Comparator.comparingDouble(position -> {
           positions.setValue(node, position);

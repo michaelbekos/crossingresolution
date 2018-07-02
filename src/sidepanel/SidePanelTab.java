@@ -15,7 +15,6 @@ import com.yworks.yfiles.layout.tree.TreeLayout;
 import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.view.IGraphSelection;
 import com.yworks.yfiles.view.ISelectionModel;
-
 import graphoperations.Centering;
 import graphoperations.Chains;
 import graphoperations.RemovedChains;

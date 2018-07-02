@@ -52,7 +52,7 @@ public class MinimumAngleMonitor {
     this.currentTotalResolution = 0;
     this.useCrossingResolution = true;
     this.useAngularResolution = false;
-    this.useAspectRatio = true;
+    this.useAspectRatio = false;
   }
 
   public Optional<Intersection> computeCrossingResolution() {
