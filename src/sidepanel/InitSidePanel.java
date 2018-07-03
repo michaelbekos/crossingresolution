@@ -40,6 +40,7 @@ public class InitSidePanel {
     public JCheckBox masterEnableMinimumAngle;
     private boolean stateEnableMinimumAngle;
     public JCheckBox masterAllowClickCreateNodeEdge;
+    public JCheckBox masterAllowClickGraphEditor;
     public JCheckBox masterEnableCrossingResolution;
     public JCheckBox masterEnableAngularResolution;
     public JCheckBox masterEnableAspectRatio;
@@ -90,6 +91,10 @@ public class InitSidePanel {
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
         masterAllowClickCreateNodeEdge.setSelected(false);
 
+        masterAllowClickGraphEditor = new JCheckBox("User Mode");
+        masterAllowClickGraphEditor.addItemListener(this::masterAllowGraphEditorActionPerformed);
+        masterAllowClickGraphEditor.setSelected(false);
+
         masterEnableCrossingResolution = new JCheckBox("Crossing Resolution");
         masterEnableCrossingResolution.addItemListener(this::masterEnableCrossingResolutionActionPerformed);
         masterEnableCrossingResolution.setSelected(true);
@@ -108,6 +113,7 @@ public class InitSidePanel {
             int selectedTab = tabbedSidePane.getSelectedIndex();
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
+            sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickGraphEditor.isSelected());
             sidePanelTabs.get(selectedTab).setEnableCrossingResolution(masterEnableCrossingResolution.isSelected());
             sidePanelTabs.get(selectedTab).setEnableAngularResolution(masterEnableAngularResolution.isSelected());
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
@@ -224,16 +230,18 @@ public class InitSidePanel {
     }
 
     private void masterAllowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
-        mainFrame.graphEditorInputMode.setEnabled(evt.getStateChange() == ItemEvent.DESELECTED);
-       /*
-        mainFrame.graphEditorInputMode.getClickInputMode().setEnabled(evt.getStateChange() == ItemEvent.DESELECTED);
+
         mainFrame.graphEditorInputMode.setCreateNodeAllowed(evt.getStateChange() == ItemEvent.DESELECTED);     //no new nodes
         mainFrame.graphEditorInputMode.setCreateEdgeAllowed(evt.getStateChange() == ItemEvent.DESELECTED);     //no new edges
         mainFrame.graphEditorInputMode.setEditLabelAllowed(evt.getStateChange() == ItemEvent.DESELECTED);      //no editing of labels
         mainFrame.graphEditorInputMode.setShowHandleItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports
         mainFrame.graphEditorInputMode.setDeletableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
         mainFrame.graphEditorInputMode.setSelectableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
-*/
+
+    }
+
+    private void masterAllowGraphEditorActionPerformed(ItemEvent evt) {
+        mainFrame.graphEditorInputMode.setEnabled(evt.getStateChange() == ItemEvent.DESELECTED);
     }
 
     private void masterEnableCrossingResolutionActionPerformed(ItemEvent evt) { //TODO: maybe sync with random

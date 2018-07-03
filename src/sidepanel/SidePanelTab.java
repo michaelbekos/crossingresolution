@@ -53,6 +53,7 @@ public class SidePanelTab {
     private JButton stopButton;
     private JCheckBox enableMinimumAngleDisplay;
     private JCheckBox allowClickCreateNodeEdge;
+    private JCheckBox allowClickGraphEditor;
     private JCheckBox enableCrossingResolution;
     private JCheckBox enableAngularResolution;
     private JCheckBox enableAspectRatio;
@@ -228,7 +229,7 @@ public class SidePanelTab {
         enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
         enableMinimumAngleDisplay.setSelected(false);
 
-        allowClickCreateNodeEdge = new JCheckBox("User Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+        allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
@@ -237,6 +238,16 @@ public class SidePanelTab {
         defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
         allowClickCreateNodeEdge.setSelected(false);
+
+        allowClickGraphEditor = new JCheckBox("Use Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        defaultPanel.add(allowClickGraphEditor, cDefaultPanel);
+        allowClickGraphEditor.addItemListener(this::allowClickGraphEditorActionPerformed);
+        allowClickGraphEditor.setSelected(false);
 
         enableCrossingResolution = new JCheckBox("Crossing Resolution");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -508,6 +519,10 @@ public class SidePanelTab {
 
     private void allowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
         initSidePanel.masterAllowClickCreateNodeEdge.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    private void allowClickGraphEditorActionPerformed(ItemEvent evt) {
+        initSidePanel.masterAllowClickGraphEditor.setSelected(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
     private void enableCrossingResolutionActionPerformed(ItemEvent evt) {
