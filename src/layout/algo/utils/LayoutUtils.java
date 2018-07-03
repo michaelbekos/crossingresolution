@@ -38,24 +38,23 @@ public class LayoutUtils {
     }
 
     public static Boolean overlapFree(PointD position, Mapper<INode, PointD> positions, INode node, IGraph graph) {
-        Iterator<Entry<INode, PointD>> It2 = positions.getEntries().iterator();
-        PointD tmp;
-        while(It2.hasNext()){					//Check new position does not overlap with nodes
-            tmp=It2.next().getValue();
-            if (position.hits(tmp, 0.999) || position.equals(tmp)) {
+        Iterator<Entry<INode, PointD>> It = positions.getEntries().iterator();
+        Entry<INode, PointD> tmp;
+        while(It.hasNext()){					//Check new position does not overlap with nodes
+            tmp = It.next();
+            if (tmp.getKey() != node &&  position.hits(tmp.getValue(), 0.999) || position.equals(tmp.getValue())) {
                 return false;
             }
         }
-
+        positions.setValue(node,position);      //TODO? Putting this at start = bug
         for (IEdge edge : graph.getEdges()) {	//Check new position does not overlap with edges
             if (StreamSupport.stream(graph.edgesAt(node).spliterator(), false).anyMatch(edge::equals)) {    //check if this edge is one of the edges from the moved node
-                Iterator<Entry<INode, PointD>> It = positions.getEntries().iterator();                  //if so  Check new edges at new position do not overlap with nodes
+                It = positions.getEntries().iterator();                  //if so  Check new edges at new position do not overlap with nodes
                 while(It.hasNext()) {
-                    tmp = It.next().getValue();
-
-                    if (tmp != positions.getValue(edge.getSourceNode()) && tmp != positions.getValue(edge.getTargetNode())      //It.next() != node &&
+                    tmp = It.next();
+                    if (tmp.getKey() != node && tmp.getValue() != positions.getValue(edge.getSourceNode()) && tmp.getValue() != positions.getValue(edge.getTargetNode())
 //						&& tmp.hitsLineSegment(positions.getValue(edge.getSourceNode()), positions.getValue(edge.getTargetNode()), 0.5)){			//ERROR HERE
-                            && pointCloseToLine(tmp,positions.getValue(edge.getSourceNode()), positions.getValue(edge.getTargetNode()), 0.01)) {    //tmp
+                            && pointCloseToLine(tmp.getValue(),positions.getValue(edge.getSourceNode()), positions.getValue(edge.getTargetNode()), 0.01)) {
                         return false;
                     }
                 }
