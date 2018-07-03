@@ -4,6 +4,8 @@ import algorithms.graphs.CachedMinimumAngle;
 import com.yworks.yfiles.graph.GraphItemTypes;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.view.ICanvasObjectDescriptor;
+import com.yworks.yfiles.view.input.ClickInputMode;
+import com.yworks.yfiles.view.input.HandleInputMode;
 import layout.algo.clinchlayout.ClinchLayout;
 import layout.algo.clinchlayout.ClinchLayoutConfigurator;
 import layout.algo.execution.ILayout;
@@ -222,12 +224,16 @@ public class InitSidePanel {
     }
 
     private void masterAllowClickCreateNodeEdgeActionPerformed(ItemEvent evt) {
+        mainFrame.graphEditorInputMode.setEnabled(evt.getStateChange() == ItemEvent.DESELECTED);
+       /*
+        mainFrame.graphEditorInputMode.getClickInputMode().setEnabled(evt.getStateChange() == ItemEvent.DESELECTED);
         mainFrame.graphEditorInputMode.setCreateNodeAllowed(evt.getStateChange() == ItemEvent.DESELECTED);     //no new nodes
         mainFrame.graphEditorInputMode.setCreateEdgeAllowed(evt.getStateChange() == ItemEvent.DESELECTED);     //no new edges
         mainFrame.graphEditorInputMode.setEditLabelAllowed(evt.getStateChange() == ItemEvent.DESELECTED);      //no editing of labels
         mainFrame.graphEditorInputMode.setShowHandleItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE); //no resizing of nodes nor selection of ports
         mainFrame.graphEditorInputMode.setDeletableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NONE);  //no deleting of nodes
         mainFrame.graphEditorInputMode.setSelectableItems(evt.getStateChange() == ItemEvent.DESELECTED ? GraphItemTypes.ALL : GraphItemTypes.NODE); //no selecting of edges (only nodes)
+*/
     }
 
     private void masterEnableCrossingResolutionActionPerformed(ItemEvent evt) { //TODO: maybe sync with random

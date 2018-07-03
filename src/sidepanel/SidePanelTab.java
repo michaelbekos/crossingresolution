@@ -228,7 +228,7 @@ public class SidePanelTab {
         enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
         enableMinimumAngleDisplay.setSelected(false);
 
-        allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+        allowClickCreateNodeEdge = new JCheckBox("User Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
         cDefaultPanel.gridy = cDefaultPanelY;
