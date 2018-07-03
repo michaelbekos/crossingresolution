@@ -120,7 +120,7 @@ public class RandomMovementLayout implements ILayout {
           }
         })
         .filter(sample -> boundingBox.contains(sample.position))
-        .filter(  sample ->  LayoutUtils.overlapFree(sample.position, positions, node, graph))
+        .filter(sample -> !configurator.onlyGridPositions.getValue() || LayoutUtils.overlapFree(sample.position, positions, node, graph))
 //        .filter(sample -> !configurator.useAspectRatio.getValue() || GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio, configurator.maxAspectRatio.getValue()) ) //filter out non-ok aspect ratio
         .filter(sample -> !configurator.useAspectRatio.getValue() ||
                 GraphOperations.improvedAspectRatio(sample.position, node, graph, currentAspectRatio,

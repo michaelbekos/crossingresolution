@@ -702,7 +702,7 @@ public class SidePanelTab {
         boolean nodeOverlap = false;
         boolean nodeEdgeOverlap = false;
         boolean negativeNodes = false;
-        for (INode u : this.initSidePanel.mainFrame.graph.getNodes()) {
+        for (INode u : this.initSidePanel.mainFrame.graph.getNodes()) {     //TODO update according to LayoutUtils.OverlapFree
 
             if (u.getPorts().size() == 1) {
                 for (IEdge e : graph.edgesAt(u.getPorts().first())) {
