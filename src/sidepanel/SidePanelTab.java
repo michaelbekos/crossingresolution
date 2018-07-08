@@ -24,6 +24,7 @@ import layout.algo.NodeSwapper;
 import layout.algo.execution.BasicIGraphLayoutExecutor;
 import layout.algo.execution.ILayout;
 import layout.algo.layoutinterface.ILayoutConfigurator;
+import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
 import main.MainFrame;
 import util.BoundingBox;
@@ -712,56 +713,9 @@ public class SidePanelTab {
         double height = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
         graphInfo.append("\nCurrent Graph Size: \nX: ").append(width).append("\nY: ").append(height).append("\n\n");
 
-        double threshold = 0.999;
-        double edgeThreshold = 0.999;
-        boolean nodeOverlap = false;
-        boolean nodeEdgeOverlap = false;
-        boolean negativeNodes = false;
-        for (INode u : this.initSidePanel.mainFrame.graph.getNodes()) {     //TODO update according to LayoutUtils.OverlapFree
-
-            if (u.getPorts().size() == 1) {
-                for (IEdge e : graph.edgesAt(u.getPorts().first())) {
-                    INode src = e.getSourceNode();
-                    INode dst = e.getTargetNode();
-                    for (INode v : this.initSidePanel.mainFrame.graph.getNodes()) {
-                        if ((u.hashCode() != v.hashCode()) &&
-                                v.hashCode() != src.hashCode() && v.hashCode() != dst.hashCode()) {
-                            double x0 = v.getLayout().getCenter().getX();
-                            double y0 = v.getLayout().getCenter().getY();
-                            double x1 = src.getLayout().getCenter().getX();
-                            double y1 = src.getLayout().getCenter().getY();
-                            double x2 = dst.getLayout().getCenter().getX();
-                            double y2 = dst.getLayout().getCenter().getY();
-                            double dist;
-                            if (y1 == y2) { //vertical
-                                dist = Math.abs(x0 - x1);
-                            } else if (x1 == x2) {  //horizontal
-                                dist = Math.abs(y0 -y1);
-                            } else {
-                                dist = Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) / Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
-                            }
-                            if (dist < edgeThreshold) {
-                                nodeEdgeOverlap = true;
-                            }
-                        }
-                    }
-                }
-            }
-            for (INode v : this.initSidePanel.mainFrame.graph.getNodes()) {
-                if ((u.hashCode() != v.hashCode()) &&
-                        Math.abs(u.getLayout().getCenter().getX() - v.getLayout().getCenter().getX()) < threshold &&
-                        Math.abs(u.getLayout().getCenter().getY() - v.getLayout().getCenter().getY()) < threshold ) {
-                    nodeOverlap = true;
-                }
-
-            }
-            if (u.getLayout().getCenter().getX() < 0 || u.getLayout().getCenter().getY() < 0) {
-                negativeNodes = true;
-            }
-        }
-        graphInfo.append("Node Node Overlap: ").append(nodeOverlap).append("\n");
-        graphInfo.append("Node Edge Overlap: ").append(nodeEdgeOverlap).append("\n");
-        graphInfo.append("Negative Nodes: ").append(negativeNodes).append("\n");
+        graphInfo.append("Node Node Overlap: ").append(!LayoutUtils.nodeOverlapFree(graph)).append("\n");
+        graphInfo.append("Node Edge Overlap: ").append(!LayoutUtils.edgeOverlapFree(graph)).append("\n");
+        graphInfo.append("Negative Nodes: ").append(LayoutUtils.negativeNodes(graph)).append("\n");
 
         graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph)).append("\n");
 

@@ -29,6 +29,9 @@ public class LayoutUtils {
         double y1 = L1.getY();
         double x2 = L2.getX();
         double y2 = L2.getY();
+        if (y0 < Math.min(y1, y2) || y0 > Math.max(y1, y2) || x0 < Math.min(x1, x2) || x0 > Math.max(x1,x2)) {  //preemptive out-of-bound check
+            return false;
+        }
         if (x0 == x1 && x1 == x2 || y0 == y1 && y1 == y2) {    //preemptive horiz/vert check
             return true;
         }
@@ -64,9 +67,40 @@ public class LayoutUtils {
                     && pointCloseToLine(position,positions.getValue(edge.getSourceNode()), positions.getValue(edge.getTargetNode()), 0.01)) {
                 return false;
             }
-
         }
         return true;
+    }
+
+    public static Boolean nodeOverlapFree(IGraph graph) {
+        for (INode node1 : graph.getNodes()) {
+            for (INode node2 : graph.getNodes()) {
+                if (node1 != node2 && node1.getLayout().getCenter().hits(node2.getLayout().getCenter(), 0.999)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static Boolean edgeOverlapFree(IGraph graph) {
+        for (IEdge edge : graph.getEdges()) {
+            for (INode node : graph.getNodes()) {
+                if (node != edge.getSourceNode() && node != edge.getTargetNode()
+                        && pointCloseToLine(node.getLayout().getCenter(), edge.getSourceNode().getLayout().getCenter(), edge.getTargetNode().getLayout().getCenter(), 0.01)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static Boolean negativeNodes(IGraph graph) {
+        for (INode node : graph.getNodes()) {
+            if (node.getLayout().getCenter().getX() < 0 || node.getLayout().getCenter().getY() < 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
