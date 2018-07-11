@@ -1,6 +1,7 @@
 package sidepanel;
 
 import algorithms.graphs.GridGraph;
+import com.yworks.yfiles.algorithms.GraphChecker;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.*;
@@ -720,6 +721,7 @@ public class SidePanelTab {
         graphInfo.append("Node Node Overlap: ").append(!LayoutUtils.nodeOverlapFree(graph)).append("\n");
         graphInfo.append("Node Edge Overlap: ").append(!LayoutUtils.edgeOverlapFree(graph)).append("\n");
         graphInfo.append("Negative Nodes: ").append(LayoutUtils.negativeNodes(graph)).append("\n");
+        graphInfo.append("Planar Graph: ").append(GraphChecker.isPlanar(new YGraphAdapter(graph).getYGraph())).append("\n");
 
         graphInfo.append("\nGridded: ").append(GridGraph.isGridGraph(graph)).append("\n");
 
