@@ -238,9 +238,9 @@ public class SidePanelTab {
         cDefaultPanel.weighty = 0;
         defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
         allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
-        allowClickCreateNodeEdge.setSelected(false);
+        allowClickCreateNodeEdge.setSelected(true);
 
-        allowClickGraphEditor = new JCheckBox("Use Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+        allowClickGraphEditor = new JCheckBox("User Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
@@ -409,6 +409,10 @@ public class SidePanelTab {
 
     public void setAllowClickCreateNodeEdge(boolean value) {
         this.allowClickCreateNodeEdge.setSelected(value);
+    }
+
+    public void setAllowClickGraphEditor(boolean value) {
+        this.allowClickGraphEditor.setSelected(value);
     }
 
     public void setOutputTextArea(String outputText) {

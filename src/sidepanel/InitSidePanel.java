@@ -89,7 +89,7 @@ public class InitSidePanel {
 
         masterAllowClickCreateNodeEdge = new JCheckBox("Manual Mode");
         masterAllowClickCreateNodeEdge.addItemListener(this::masterAllowClickCreateNodeEdgeActionPerformed);
-        masterAllowClickCreateNodeEdge.setSelected(false);
+        masterAllowClickCreateNodeEdge.setSelected(true);
 
         masterAllowClickGraphEditor = new JCheckBox("User Mode");
         masterAllowClickGraphEditor.addItemListener(this::masterAllowGraphEditorActionPerformed);
@@ -113,7 +113,7 @@ public class InitSidePanel {
             int selectedTab = tabbedSidePane.getSelectedIndex();
             sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
-            sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickGraphEditor.isSelected());
+            sidePanelTabs.get(selectedTab).setAllowClickGraphEditor(masterAllowClickGraphEditor.isSelected());
             sidePanelTabs.get(selectedTab).setEnableCrossingResolution(masterEnableCrossingResolution.isSelected());
             sidePanelTabs.get(selectedTab).setEnableAngularResolution(masterEnableAngularResolution.isSelected());
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
