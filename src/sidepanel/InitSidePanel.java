@@ -127,13 +127,13 @@ public class InitSidePanel {
     private void addClinchLayout(IGraph graph) {
         ClinchLayoutConfigurator configurator = new ClinchLayoutConfigurator();
         ClinchLayout clinchLayout = new ClinchLayout(configurator, graph);
-        addAlgorithm("Clinch Nodes", configurator, clinchLayout);
+        addAlgorithm("Clinching", configurator, clinchLayout);
     }
 
     private void addGeneticAlgorithm(IGraph graph) {
         GeneticForceAlgorithmConfigurator geneticConfigurator = new GeneticForceAlgorithmConfigurator();
         GeneticForceAlgorithmLayout geneticAlgo = new GeneticForceAlgorithmLayout(geneticConfigurator, graph);
-        addAlgorithm("Genetic Algorithm", geneticConfigurator, geneticAlgo);
+        addAlgorithm("Genetic", geneticConfigurator, geneticAlgo);
     }
 
     private void addForceAlgorithm(IGraph graph) {
@@ -149,13 +149,13 @@ public class InitSidePanel {
                 .addForce(new TotalResolutionForce(graph));
 
         ForceAlgorithm forceAlgorithm = new ForceAlgorithm(configurator, mainFrame.graph, cMinimumAngle);
-        addAlgorithm("Force Algorithm", configurator, forceAlgorithm);
+        addAlgorithm("Force", configurator, forceAlgorithm);
     }
 
     private void addRandomMovementAlgorithm(IGraph graph) {
         RandomMovementConfigurator config = new RandomMovementConfigurator();
         RandomMovementLayout layout = new RandomMovementLayout(graph, config);
-        addAlgorithm("Random Movement", config, layout);
+        addAlgorithm("Random", config, layout);
     }
 
 
