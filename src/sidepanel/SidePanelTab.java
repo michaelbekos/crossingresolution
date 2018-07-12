@@ -718,6 +718,26 @@ public class SidePanelTab {
         double height = bounds.getHeight() < 1 ? 0 : bounds.getHeight();
         graphInfo.append("\nCurrent Graph Size: \nX: ").append(width).append("\nY: ").append(height).append("\n\n");
 
+        double minMaxXY[] = new double[4];
+        minMaxXY[0] = graph.getNodes().first().getLayout().getCenter().getX();
+        minMaxXY[1] = graph.getNodes().first().getLayout().getCenter().getX();
+        minMaxXY[2] = graph.getNodes().first().getLayout().getCenter().getY();
+        minMaxXY[3] = graph.getNodes().first().getLayout().getCenter().getY();
+        for (INode u : graph.getNodes()) {
+            if (u.getLayout().getCenter().getX() < minMaxXY[0]) {
+                minMaxXY[0] = u.getLayout().getCenter().getX();
+            } else if (u.getLayout().getCenter().getX() > minMaxXY[1]) {
+                minMaxXY[1] = u.getLayout().getCenter().getX();
+            }
+            if (u.getLayout().getCenter().getY() < minMaxXY[2]) {
+                minMaxXY[2] = u.getLayout().getCenter().getY();
+            } else if (u.getLayout().getCenter().getY() > minMaxXY[3]) {
+                minMaxXY[3] = u.getLayout().getCenter().getY();
+            }
+        }
+        graphInfo.append("Min/Max X Value: ").append(minMaxXY[0]).append(" / ").append(minMaxXY[1]).append("\n");
+        graphInfo.append("Min/Max Y Value: ").append(minMaxXY[2]).append(" / ").append(minMaxXY[3]).append("\n\n");
+
         graphInfo.append("Node Node Overlap: ").append(!LayoutUtils.nodeOverlapFree(graph)).append("\n");
         graphInfo.append("Node Edge Overlap: ").append(!LayoutUtils.edgeOverlapFree(graph)).append("\n");
         graphInfo.append("Negative Nodes: ").append(LayoutUtils.negativeNodes(graph)).append("\n");
