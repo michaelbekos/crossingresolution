@@ -213,7 +213,7 @@ public class SidePanelTab {
         cDefaultPanel.insets = new Insets(0,0,0,0);
         defaultPanel.add(showGraphInfo, cDefaultPanel);
         showGraphInfo.addActionListener(this::showGraphInfoActionPerformed);
-        
+
         JButton reinsertAllChains = new JButton("Reinsert All Chains");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
         cDefaultPanel.gridx = 1;
@@ -221,25 +221,50 @@ public class SidePanelTab {
         defaultPanel.add(reinsertAllChains, cDefaultPanel);
         reinsertAllChains.addActionListener(this::reinsertAllChainsItemActionPerformed);
 
-        enableMinimumAngleDisplay = new JCheckBox("Show Angle");
-        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-        cDefaultPanel.gridx = 0;
-        cDefaultPanel.gridy = ++cDefaultPanelY;
-        cDefaultPanel.weightx = 0.5;
-        cDefaultPanel.weighty = 0;
-        defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);
-        enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
-        enableMinimumAngleDisplay.setSelected(false);
+        if (MainFrame.CONTEST_MODE) {
+            JButton organicItem = new JButton("Organic Layout");
+            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+            cDefaultPanel.gridx = 0;
+            cDefaultPanel.gridy = ++cDefaultPanelY;
+            organicItem.addActionListener(this::organicItemActionPerformed);
+            defaultPanel.add(organicItem, cDefaultPanel);
 
-        allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
-        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-        cDefaultPanel.gridx = 1;
-        cDefaultPanel.gridy = cDefaultPanelY;
-        cDefaultPanel.weightx = 0.5;
-        cDefaultPanel.weighty = 0;
-        defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
-        allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
-        allowClickCreateNodeEdge.setSelected(true);
+            JButton fppItem = new JButton("FPP");
+            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+            cDefaultPanel.gridx = 1;
+            cDefaultPanel.gridy = cDefaultPanelY;
+            fppItem.addActionListener(this::fppItemActionPerformed);
+            defaultPanel.add(fppItem, cDefaultPanel);
+
+            JButton jitterItem = new JButton("Jitter");
+            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+            cDefaultPanel.gridx = 0;
+            cDefaultPanel.gridy = ++cDefaultPanelY;
+            jitterItem.addActionListener(this::jitterItemActionPerformed);
+            defaultPanel.add(jitterItem, cDefaultPanel);
+        }
+
+        if (!MainFrame.CONTEST_MODE) {
+            enableMinimumAngleDisplay = new JCheckBox("Show Angle");
+            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+            cDefaultPanel.gridx = 0;
+            cDefaultPanel.gridy = ++cDefaultPanelY;
+            cDefaultPanel.weightx = 0.5;
+            cDefaultPanel.weighty = 0;
+            defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);
+            enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
+            enableMinimumAngleDisplay.setSelected(false);
+
+            allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+            cDefaultPanel.gridx = 1;
+            cDefaultPanel.gridy = cDefaultPanelY;
+            cDefaultPanel.weightx = 0.5;
+            cDefaultPanel.weighty = 0;
+            defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
+            allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
+            allowClickCreateNodeEdge.setSelected(true);
+        }
 
         allowClickGraphEditor = new JCheckBox("User Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -251,35 +276,38 @@ public class SidePanelTab {
         allowClickGraphEditor.addItemListener(this::allowClickGraphEditorActionPerformed);
         allowClickGraphEditor.setSelected(false);
 
-        enableCrossingResolution = new JCheckBox("Crossing Resolution");
-        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-        cDefaultPanel.gridx = 0;
-        cDefaultPanel.gridy = ++cDefaultPanelY;
-        cDefaultPanel.weightx = 0.5;
-        cDefaultPanel.weighty = 0;
-        defaultPanel.add(enableCrossingResolution, cDefaultPanel);
-        enableCrossingResolution.addItemListener(this::enableCrossingResolutionActionPerformed);
-        enableCrossingResolution.setSelected(false);
+        if (!MainFrame.CONTEST_MODE) {
 
-        enableAngularResolution = new JCheckBox("Angular Resolution");
-        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-        cDefaultPanel.gridx = 1;
-        cDefaultPanel.gridy = cDefaultPanelY;
-        cDefaultPanel.weightx = 0.5;
-        cDefaultPanel.weighty = 0;
-        defaultPanel.add(enableAngularResolution, cDefaultPanel);
-        enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
-        enableAngularResolution.setSelected(false);
+            enableCrossingResolution = new JCheckBox("Crossing Resolution");
+            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+            cDefaultPanel.gridx = 0;
+            cDefaultPanel.gridy = ++cDefaultPanelY;
+            cDefaultPanel.weightx = 0.5;
+            cDefaultPanel.weighty = 0;
+            defaultPanel.add(enableCrossingResolution, cDefaultPanel);
+            enableCrossingResolution.addItemListener(this::enableCrossingResolutionActionPerformed);
+            enableCrossingResolution.setSelected(false);
 
-        enableAspectRatio = new JCheckBox("Aspect Ratio");
-        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-        cDefaultPanel.gridx = 0;
-        cDefaultPanel.gridy = ++cDefaultPanelY;
-        cDefaultPanel.weightx = 0.5;
-        cDefaultPanel.weighty = 0;
-        defaultPanel.add(enableAspectRatio, cDefaultPanel);
-        enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
-        enableAspectRatio.setSelected(false);
+            enableAngularResolution = new JCheckBox("Angular Resolution");
+            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+            cDefaultPanel.gridx = 1;
+            cDefaultPanel.gridy = cDefaultPanelY;
+            cDefaultPanel.weightx = 0.5;
+            cDefaultPanel.weighty = 0;
+            defaultPanel.add(enableAngularResolution, cDefaultPanel);
+            enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
+            enableAngularResolution.setSelected(false);
+
+            enableAspectRatio = new JCheckBox("Aspect Ratio");
+            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+            cDefaultPanel.gridx = 0;
+            cDefaultPanel.gridy = ++cDefaultPanelY;
+            cDefaultPanel.weightx = 0.5;
+            cDefaultPanel.weighty = 0;
+            defaultPanel.add(enableAspectRatio, cDefaultPanel);
+            enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
+            enableAspectRatio.setSelected(false);
+        }
 
         outputTextArea.setLineWrap(true);
         outputTextArea.setRows(10);

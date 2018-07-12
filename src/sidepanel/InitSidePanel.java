@@ -57,16 +57,16 @@ public class InitSidePanel {
         IGraph graph = mainFrame.view.getGraph();
 
         addRandomMovementAlgorithm(graph);
-        addForceAlgorithm(graph);
-        addGeneticAlgorithm(graph);
+        if (!MainFrame.CONTEST_MODE) {
+            addForceAlgorithm(graph);
+            addGeneticAlgorithm(graph);
+        }
         addClinchLayout(graph);
         addGriddingAlgorithm(graph);
 
-        addMiscAlgorithms();
-
-        //min angle and manual mode default on
-        sidePanelTabs.get(0).setAllowClickCreateNodeEdge(true);
-        sidePanelTabs.get(0).setEnableMinimumAngleDisplay(true);
+        if (!MainFrame.CONTEST_MODE) {
+            addMiscAlgorithms();
+        }
 
         return tabbedSidePane;
     }
@@ -111,11 +111,13 @@ public class InitSidePanel {
 
         tabbedSidePane.addChangeListener(changeEvent -> {
             int selectedTab = tabbedSidePane.getSelectedIndex();
-            sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
-            sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
             sidePanelTabs.get(selectedTab).setAllowClickGraphEditor(masterAllowClickGraphEditor.isSelected());
-            sidePanelTabs.get(selectedTab).setEnableCrossingResolution(masterEnableCrossingResolution.isSelected());
-            sidePanelTabs.get(selectedTab).setEnableAngularResolution(masterEnableAngularResolution.isSelected());
+            if (!MainFrame.CONTEST_MODE) {
+                sidePanelTabs.get(selectedTab).setEnableMinimumAngleDisplay(masterEnableMinimumAngle.isSelected());
+                sidePanelTabs.get(selectedTab).setAllowClickCreateNodeEdge(masterAllowClickCreateNodeEdge.isSelected());
+                sidePanelTabs.get(selectedTab).setEnableCrossingResolution(masterEnableCrossingResolution.isSelected());
+                sidePanelTabs.get(selectedTab).setEnableAngularResolution(masterEnableAngularResolution.isSelected());
+            }
             for (int i = 0; i < sidePanelTabs.size() - 1; i++) {    //exclude misc
                 if (sidePanelTabs.get(i).getExecutor().isRunning()) {
                     sidePanelTabs.get(selectedTab).setOutputTextArea(sidePanelTabs.get(i).algorithmName + " is Still Running!");
