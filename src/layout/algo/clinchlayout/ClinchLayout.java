@@ -53,8 +53,8 @@ public class ClinchLayout implements ILayout {
     positions = PositionMap.FromIGraph(graph);
     stepSizes = initStepSizes();
     sampleDirections = preComputeSamples();
-    boundingBox = BoundingBox.from(positions);
-
+//    boundingBox = BoundingBox.from(positions);
+    boundingBox = BoundingBox.maxBox();
     random = new Random(System.currentTimeMillis());
   }
 

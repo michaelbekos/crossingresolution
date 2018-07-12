@@ -2,11 +2,13 @@ package layout.algo.gridding;
 
 import algorithms.graphs.MinimumAngle;
 import com.yworks.yfiles.geometry.PointD;
+import com.yworks.yfiles.geometry.RectD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.graph.Mapper;
 import layout.algo.utils.LayoutUtils;
 import layout.algo.utils.PositionMap;
+import util.BoundingBox;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,6 +21,7 @@ public class QuickGridder implements IGridder {
   private Set<PointD> reservedPositions;
   private HashSet<INode> griddedNodes;
   private GridderConfigurator configurator;
+  private RectD boundingBox;
 
   public QuickGridder(IGraph graph, GridderConfigurator configurator) {
     this.graph = graph;
@@ -31,6 +34,7 @@ public class QuickGridder implements IGridder {
     random = new Random();
     reservedPositions = new HashSet<>();
     griddedNodes = new HashSet<>();
+    boundingBox = BoundingBox.maxBox();
   }
 
   @Override
@@ -51,6 +55,7 @@ public class QuickGridder implements IGridder {
 
       Stream<PointD> samplePositions = getNeighborGridPositions(oldPosition, iteration).stream()
           .filter(position -> !reservedPositions.contains(position))
+          .filter(position -> boundingBox.contains(position))
           .filter(position -> LayoutUtils.overlapFree(position, positions, node, graph))
           .filter(position -> position.x > 0 && position.y > 0);
 
