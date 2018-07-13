@@ -29,8 +29,8 @@ public class FraysseixPachPollack {
     private IGraph iGraph;
     private YGraphAdapter graphAdapter;
     private TreeNode tree;
-    private int multiplierX = 70;
-    private int multiplierY = -70; // for FPP
+    private int multiplierX = 1;
+    private int multiplierY = -1; // for FPP
     private FPPSettings settings;
 
     private List<Dart> outerFace;
@@ -49,8 +49,8 @@ public class FraysseixPachPollack {
             this.iGraph = g;
             this.graph = graphAdapter.getYGraph();
             this.settings = settings;
-            multiplierX = settings.scaleFactor;
-            multiplierY = -settings.scaleFactor;
+
+            System.out.println("mult-X: " + multiplierX + "   mult-Y: " + multiplierY);
             PlanarEmbedding planarEmbedding = new PlanarEmbedding(graph);
             start();
         }
@@ -205,6 +205,7 @@ public class FraysseixPachPollack {
 
         // Utilities.removeReversedEdges(g, plan);
         //  insertedEdges.forEach(e -> g.removeEdge(e));
+        printCoords(v1);
 
 
     }
@@ -237,6 +238,7 @@ public class FraysseixPachPollack {
     private void printCoords(TreeNode n) {
         if (n == null)
             return;
+        System.out.println("X: " + n.dx + "      Y: " + n.y);
         printCoords(n.left);
         printCoords(n.right);
 
@@ -281,6 +283,7 @@ public class FraysseixPachPollack {
         }
     }
 
+
     /**
      * Get the result from Fraysseix Pach Pollak. The result is stored in a hashmap mapping each node of the graph to a
      * point in NxN
@@ -310,13 +313,45 @@ public class FraysseixPachPollack {
 
     }
 
+    private void calcMultipliers(){
+        HashMap<Node, YPoint> res = getFFPResult();
+        Node[] nl = graph.getNodeArray();
+        double maxX = 0;
+        double maxY = 0;
+        for (Node n : nl) {
+            YPoint p = res.get(n);
+            if (p != null) {
+                if(p.getX() > maxX){
+                    maxX = p.getX();
+                }
+                if(p.getY() > maxY){
+                    maxY = p.getY();
+                }
+            }
+        }
+        if(settings.boxSizeX >= settings.boxSizeY){
+            multiplierX =(int)( settings.boxSizeX / maxX);
+            multiplierY =(int)( settings.boxSizeY / maxY);
+
+        }else{
+            multiplierX =(int)( settings.boxSizeX / maxY);
+            multiplierY =(int)( settings.boxSizeY / maxX);
+
+        }
+         }
+
     private void applyFPPresult() {
+        calcMultipliers();
         HashMap<Node, YPoint> res = getFFPResult();
         Node[] nl = graph.getNodeArray();
         for (Node n : nl) {
             YPoint p = res.get(n);
             if (p != null) {
-                iGraph.setNodeCenter(graphAdapter.getOriginalNode(n), new PointD(p.getX() * multiplierX, p.getY() * multiplierY));
+                if(settings.boxSizeX >= settings.boxSizeY){
+                    iGraph.setNodeCenter(graphAdapter.getOriginalNode(n), new PointD(p.getX() * multiplierX, p.getY() * multiplierY));
+                } else {
+                    iGraph.setNodeCenter(graphAdapter.getOriginalNode(n), new PointD(p.getY() * multiplierX, p.getX() * multiplierY));
+                }
             }
         }
         if (nl.length < 4)
@@ -400,8 +435,12 @@ public class FraysseixPachPollack {
         public int limitTop = 1;
         public int technique = 1;
         public int runs = 25;
-        public int scaleFactor = 70;
-        public double limitTopHeightFactor = 3.;
+        public int scaleFactor = 2;
+        public double scaleX = 1;
+        public double scaleY = 1;
+        public double boxSizeX = 2;
+        public double boxSizeY = 2;
+        public double limitTopHeightFactor = 2;
     }
 
 }

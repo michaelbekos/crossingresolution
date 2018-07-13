@@ -774,7 +774,11 @@ public class SidePanelTab {
         if( com.yworks.yfiles.algorithms.GraphChecker.isBiconnected(graphAdapter.getYGraph())) {
             outputTextArea.setText("Graph is biconnected.");
             initSidePanel.removeDefaultListeners();
-            FraysseixPachPollack fpp = new FraysseixPachPollack(initSidePanel.mainFrame.graph, new FraysseixPachPollack.FPPSettings());
+            FraysseixPachPollack.FPPSettings fppSettings = new FraysseixPachPollack.FPPSettings();
+            fppSettings.boxSizeX = MainFrame.BOX_SIZE[0];
+            fppSettings.boxSizeY = MainFrame.BOX_SIZE[1];
+            FraysseixPachPollack fpp = new FraysseixPachPollack(initSidePanel.mainFrame.graph, fppSettings);
+            fpp.getFFPResult();
             initSidePanel.addDefaultListeners();
         }else{
             outputTextArea.setText("Graph is not biconnected!");
