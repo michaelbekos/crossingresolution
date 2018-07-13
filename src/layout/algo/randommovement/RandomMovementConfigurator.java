@@ -3,6 +3,7 @@ package layout.algo.randommovement;
 import layout.algo.layoutinterface.AbstractLayoutInterfaceItem;
 import layout.algo.layoutinterface.ILayoutConfigurator;
 import layout.algo.layoutinterface.ILayoutInterfaceItemFactory;
+import main.MainFrame;
 
 import java.util.ArrayList;
 
@@ -43,9 +44,11 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     numSamplesForJumping.setValue(50);
     itemList.add(numSamplesForJumping);
 
-    maxAspectRatio = itemFactory.intParameter("Maximum Legal Aspect Ratio", -1, 20);
-    maxAspectRatio.setValue(-1);
-    itemList.add(maxAspectRatio);
+    if (!MainFrame.CONTEST_MODE) {
+      maxAspectRatio = itemFactory.intParameter("Maximum Legal Aspect Ratio", -1, 20);
+      maxAspectRatio.setValue(-1);
+      itemList.add(maxAspectRatio);
+    }
 
     jumpOnLocalMaximum = itemFactory.booleanParameter("Allow decreasing minimum angle at local maximum");
     jumpOnLocalMaximum.setValue(false);
@@ -67,17 +70,19 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     allowIncreaseStepSize.setValue(false);
     itemList.add(allowIncreaseStepSize);
 
-    useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)");
-    useCrossingResolution.setValue(true);
-    itemList.add(useCrossingResolution);
+    if (!MainFrame.CONTEST_MODE) {
+      useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)");
+      useCrossingResolution.setValue(true);
+      itemList.add(useCrossingResolution);
 
-    useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution");
-    useAngularResolution.setValue(false);
-    itemList.add(useAngularResolution);
+      useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution");
+      useAngularResolution.setValue(false);
+      itemList.add(useAngularResolution);
 
-    useAspectRatio = itemFactory.booleanParameter("Use Aspect Ratio");
-    useAspectRatio.setValue(false);
-    itemList.add(useAspectRatio);
+      useAspectRatio = itemFactory.booleanParameter("Use Aspect Ratio");
+      useAspectRatio.setValue(false);
+      itemList.add(useAspectRatio);
+    }
   }
 
   @Override

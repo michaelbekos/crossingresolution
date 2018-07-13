@@ -107,14 +107,12 @@ public class InitMenuBar {
          *  Graph Scale
          */
         JMenuItem scaleUpItem = new JMenuItem();
-        scaleUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.ALT_MASK));
         scaleUpItem.setIcon(new ImageIcon(getClass().getResource("/resources/scaleUp.png"))); // test Image
         scaleUpItem.setText("Scale-up Graph");
         scaleUpItem.addActionListener(this::scaleUpGraphItemActionPerformed);
         graphOpsMenu.add(scaleUpItem);
 
         JMenuItem scaleDownItem = new JMenuItem();
-        scaleDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.ALT_MASK));
         scaleDownItem.setIcon(new ImageIcon(getClass().getResource("/resources/scaleDown.png"))); // test Image
         scaleDownItem.setText("Scale-down Graph");
         scaleDownItem.addActionListener(this::scaleDownGraphItemActionPerformed);
@@ -124,14 +122,12 @@ public class InitMenuBar {
          * Remove/reinsert vertices
          */
         JMenuItem removeVerticesItem = new JMenuItem();
-        removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
         removeVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/removeNode.png"))); // test Image
         removeVerticesItem.setText("Remove Vertices");
         removeVerticesItem.addActionListener(this::removeVerticesItemActionPerformed);
         graphOpsMenu.add(removeVerticesItem);
 
         JMenuItem reinsertVerticesItem = new JMenuItem();
-        reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
         reinsertVerticesItem.setIcon(new ImageIcon(getClass().getResource("/resources/reinsertNode.png"))); // test Image
         reinsertVerticesItem.setText("Reinsert Vertices");
         reinsertVerticesItem.addActionListener(this::reinsertVerticesItemActionPerformed);
@@ -141,11 +137,18 @@ public class InitMenuBar {
          * Check legality
          */
         JMenuItem enforcelegal = new JMenuItem();
-        enforcelegal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
         enforcelegal.setIcon(new ImageIcon(getClass().getResource("/resources/exclamation.png"))); // test Image
         enforcelegal.setText("Enforce legality");
         enforcelegal.addActionListener(this::enforcelegal);
         graphOpsMenu.add(enforcelegal);
+
+        if (!MainFrame.CONTEST_MODE) {
+            scaleUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.ALT_MASK));
+            scaleDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.ALT_MASK));
+            removeVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+            reinsertVerticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+            enforcelegal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        }
 
         return graphOpsMenu;
     }
@@ -361,70 +364,104 @@ public class InitMenuBar {
 
         fileMenu.add(newMenuItem);
         fileMenu.add(new JSeparator());
+        if (MainFrame.CONTEST_MODE) {
+            JMenuItem openItem = new JMenuItem();
+            openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+            openItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
+            openItem.setText("Open");
+            openItem.addActionListener(this::openContest2018ItemActionPerformed);
+            fileMenu.add(openItem);
 
-        JMenuItem openItem = new JMenuItem();
-        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-        openItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
-        openItem.setText("Open");
-        openItem.addActionListener(this::openItemActionPerformed);
-        fileMenu.add(openItem);
 
-        JMenuItem openContestItem = new JMenuItem();
+            JMenuItem reloadItem = new JMenuItem();
+            reloadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+            reloadItem.setIcon(new ImageIcon(getClass().getResource("/resources/reload-16.png")));
+            reloadItem.setText("Reload");
+            reloadItem.addActionListener(this::reloadItemActionPerformed);
+            fileMenu.add(reloadItem);
+            fileMenu.add(new JSeparator());
+
+            JMenuItem saveItem = new JMenuItem();
+            saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+            saveItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
+            saveItem.setText("Save");
+            saveItem.addActionListener(this::saveItemActionPerformed);
+            fileMenu.add(saveItem);
+
+            JMenuItem saveAsItem = new JMenuItem();
+            saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
+            saveAsItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
+            saveAsItem.setText("Save As...");
+            saveAsItem.addActionListener(this::saveAsItemActionPerformed);
+            fileMenu.add(saveAsItem);
+
+        } else {
+            JMenuItem openItem = new JMenuItem();
+            openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+            openItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
+            openItem.setText("Open");
+            openItem.addActionListener(this::openItemActionPerformed);
+            fileMenu.add(openItem);
+
+            JMenuItem openContestItem = new JMenuItem();
 //        openContestItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
-        openContestItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
-        openContestItem.setText("Open Contest File");
-        openContestItem.addActionListener(this::openContestItemActionPerformed);
-        fileMenu.add(openContestItem);
-        
-        JMenuItem openAMItem = new JMenuItem();
+            openContestItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
+            openContestItem.setText("Open Contest File");
+            openContestItem.addActionListener(this::openContestItemActionPerformed);
+            fileMenu.add(openContestItem);
+
+            JMenuItem openAMItem = new JMenuItem();
 //      openContestItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
-        openAMItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
-        openAMItem.setText("Open AM");
-        openAMItem.addActionListener(this::openAMItemActionPerformed);
-        fileMenu.add(openAMItem);
+            openAMItem.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
+            openAMItem.setText("Open AM");
+            openAMItem.addActionListener(this::openAMItemActionPerformed);
+            fileMenu.add(openAMItem);
 
-        JMenuItem openContest2018Item = new JMenuItem();
-        openContest2018Item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
-        openContest2018Item.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
-        openContest2018Item.setText("Open JSON (Contest 2018) File");
-        openContest2018Item.addActionListener(this::openContest2018ItemActionPerformed);
-        fileMenu.add(openContest2018Item);
+            JMenuItem openContest2018Item = new JMenuItem();
+            openContest2018Item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
+            openContest2018Item.setIcon(new ImageIcon(getClass().getResource("/resources/open-16.png")));
+            openContest2018Item.setText("Open JSON (Contest 2018) File");
+            openContest2018Item.addActionListener(this::openContest2018ItemActionPerformed);
+            fileMenu.add(openContest2018Item);
 
-        JMenuItem reloadItem = new JMenuItem();
-        reloadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
-        reloadItem.setIcon(new ImageIcon(getClass().getResource("/resources/reload-16.png")));
-        reloadItem.setText("Reload");
-        reloadItem.addActionListener(this::reloadItemActionPerformed);
-        fileMenu.add(reloadItem);
-        fileMenu.add(new JSeparator());
+            JMenuItem reloadItem = new JMenuItem();
+            reloadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+            reloadItem.setIcon(new ImageIcon(getClass().getResource("/resources/reload-16.png")));
+            reloadItem.setText("Reload");
+            reloadItem.addActionListener(this::reloadItemActionPerformed);
+            fileMenu.add(reloadItem);
+            fileMenu.add(new JSeparator());
 
-        JMenuItem saveItem = new JMenuItem();
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-        saveItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
-        saveItem.setText("Save");
-        saveItem.addActionListener(this::saveItemActionPerformed);
-        fileMenu.add(saveItem);
+            JMenuItem saveItem = new JMenuItem();
+            saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+            saveItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
+            saveItem.setText("Save");
+            saveItem.addActionListener(this::saveItemActionPerformed);
+            fileMenu.add(saveItem);
 
-        JMenuItem saveAsItem = new JMenuItem();
-        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-        saveAsItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
-        saveAsItem.setText("Save As...");
-        saveAsItem.addActionListener(this::saveAsItemActionPerformed);
-        fileMenu.add(saveAsItem);
+            JMenuItem saveAsItem = new JMenuItem();
+            saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
+            saveAsItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
+            saveAsItem.setText("Save As...");
+            saveAsItem.addActionListener(this::saveAsItemActionPerformed);
+            fileMenu.add(saveAsItem);
 
-        JMenuItem exportItem = new JMenuItem();
+            JMenuItem exportItem = new JMenuItem();
 //        exportItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
-        exportItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
-        exportItem.setText("Export");
-        exportItem.addActionListener(this::exportItemActionPerformed);
-        fileMenu.add(exportItem);
+            exportItem.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
+            exportItem.setText("Export");
+            exportItem.addActionListener(this::exportItemActionPerformed);
+            fileMenu.add(exportItem);
 
-        JMenuItem exportContest2018Item = new JMenuItem();
-        exportContest2018Item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
-        exportContest2018Item.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
-        exportContest2018Item.setText("Export as JSON (Contest 2018)");
-        exportContest2018Item.addActionListener(this::exportContest2018ItemActionPerformed);
-        fileMenu.add(exportContest2018Item);
+            JMenuItem exportContest2018Item = new JMenuItem();
+            exportContest2018Item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+            exportContest2018Item.setIcon(new ImageIcon(getClass().getResource("/resources/save-16.png")));
+            exportContest2018Item.setText("Export as JSON (Contest 2018)");
+            exportContest2018Item.addActionListener(this::exportContest2018ItemActionPerformed);
+            fileMenu.add(exportContest2018Item);
+        }
+
+        fileMenu.add(new JSeparator());
 
         JMenuItem quitItem = new JMenuItem();
         quitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
@@ -837,37 +874,71 @@ public class InitMenuBar {
                     this.view.exportToGraphML(this.fileNamePath);
                 } else if (this.fileNamePath.endsWith(".txt")) {
                     ContestIOHandler.write(this.graph, this.fileNamePath, mainFrame.initSidePanel.getOutputTextArea());
+                } else if (this.fileNamePath.endsWith(".json")) {
+                    mainFrame.contest2018IOHandler.write(this.graph, this.fileNamePath, mainFrame.initSidePanel.getOutputTextArea());
                 }
             } catch (IOException ioe) {
                 this.infoLabel.setText("An error occured while exporting the graph.");
             }
         } else {
-            showFileChooser(new JFileChooser());
+            showFileChooser(new JFileChooser(this.fileNamePathFolder));
         }
     }
 
+
+    private void saveAsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
+        showFileChooser(new JFileChooser(this.fileNamePathFolder));
+    }
+
     private void showFileChooser(JFileChooser chooser) {
-        chooser.setFileFilter(new FileFilter() {
-            public boolean accept(File file) {
-                return (file.isDirectory() || file.toString().toLowerCase().endsWith(".graphml"));
-            }
+        //TODO: multiple selectable filetypes
+        if (MainFrame.CONTEST_MODE) {
+            chooser.setFileFilter(new FileFilter() {
+                public boolean accept(File file) {
+                    return (file.isDirectory() || file.toString().toLowerCase().endsWith(".json"));
+                }
 
-            public String getDescription() {
-                return "GraphML Files [.graphml]";
-            }
+                public String getDescription() {
+                    return "JSON Files [.json]";
+                }
 
-        });
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            this.fileNamePath = chooser.getSelectedFile().toString();
-            if (!this.fileNamePath.toLowerCase().endsWith(".graphml")) {
-                this.fileNamePath = this.fileNamePath + ".graphml";
-            }
-            this.fileNamePathFolder = chooser.getSelectedFile().getParent();
+            });
+            if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                this.fileNamePath = chooser.getSelectedFile().toString();
+                if (!this.fileNamePath.toLowerCase().endsWith(".json")) {
+                    this.fileNamePath = this.fileNamePath + ".json";
+                }
+                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
 
-            try {
-                this.view.exportToGraphML(this.fileNamePath);
-            } catch (IOException ioe) {
-                this.infoLabel.setText("An error occured while exporting the graph.");
+                try {
+                    mainFrame.contest2018IOHandler.write(this.graph, this.fileNamePath, mainFrame.initSidePanel.getOutputTextArea());
+                } catch (IOException ioe) {
+                    this.infoLabel.setText("An error occured while exporting the graph.");
+                }
+            }
+        } else {
+            chooser.setFileFilter(new FileFilter() {
+                public boolean accept(File file) {
+                    return (file.isDirectory() || file.toString().toLowerCase().endsWith(".graphml"));
+                }
+
+                public String getDescription() {
+                    return "GraphML Files [.graphml]";
+                }
+
+            });
+            if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                this.fileNamePath = chooser.getSelectedFile().toString();
+                if (!this.fileNamePath.toLowerCase().endsWith(".graphml")) {
+                    this.fileNamePath = this.fileNamePath + ".graphml";
+                }
+                this.fileNamePathFolder = chooser.getSelectedFile().getParent();
+
+                try {
+                    this.view.exportToGraphML(this.fileNamePath);
+                } catch (IOException ioe) {
+                    this.infoLabel.setText("An error occured while exporting the graph.");
+                }
             }
         }
     }
@@ -924,10 +995,6 @@ public class InitMenuBar {
                 this.infoLabel.setText("An error occured while exporting the graph.");
             }
         }
-    }
-
-    private void saveAsItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
-        showFileChooser(new JFileChooser(this.fileNamePathFolder));
     }
 
 

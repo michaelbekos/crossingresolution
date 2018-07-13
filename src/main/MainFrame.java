@@ -35,6 +35,8 @@ import java.util.function.Consumer;
  */
 public class MainFrame extends JFrame {
 
+    public static final Boolean CONTEST_MODE = true;
+
     /* Box related issue*/
 
     public static final double BOX_SIZE[] = {1000000, 1000000};
