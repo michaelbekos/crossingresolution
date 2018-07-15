@@ -176,6 +176,7 @@ public class SidePanelTab {
     private void addDefaultControls(JPanel defaultPanel, GridBagConstraints cDefaultPanel, int cDefaultPanelY) {
         JButton showBestSolution = new JButton("Show Best");
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.weightx = 0.5;
         cDefaultPanel.gridx = 0;
         cDefaultPanel.gridy = ++cDefaultPanelY;
         cDefaultPanel.insets = new Insets(5,0,0,0);
@@ -802,7 +803,9 @@ public class SidePanelTab {
         if( com.yworks.yfiles.algorithms.GraphChecker.isBiconnected(graphAdapter.getYGraph())) {
             outputTextArea.setText("Graph is biconnected.");
             initSidePanel.removeDefaultListeners();
+            ICompoundEdit compoundEdit = initSidePanel.mainFrame.graph.beginEdit("Undo layout", "Redo layout");
             FraysseixPachPollack fpp = new FraysseixPachPollack(initSidePanel.mainFrame.graph, new FraysseixPachPollack.FPPSettings());
+            compoundEdit.commit();
             initSidePanel.addDefaultListeners();
         }else{
             outputTextArea.setText("Graph is not biconnected!");
