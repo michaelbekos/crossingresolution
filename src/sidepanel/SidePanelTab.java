@@ -806,7 +806,11 @@ public class SidePanelTab {
             outputTextArea.setText("Graph is biconnected.");
             initSidePanel.removeDefaultListeners();
             ICompoundEdit compoundEdit = initSidePanel.mainFrame.graph.beginEdit("Undo layout", "Redo layout");
-            FraysseixPachPollack fpp = new FraysseixPachPollack(initSidePanel.mainFrame.graph, new FraysseixPachPollack.FPPSettings());
+            FraysseixPachPollack.FPPSettings fppSettings = new FraysseixPachPollack.FPPSettings();
+            fppSettings.boxSizeX = MainFrame.BOX_SIZE[0];
+            fppSettings.boxSizeY = MainFrame.BOX_SIZE[1];
+            FraysseixPachPollack fpp = new FraysseixPachPollack(initSidePanel.mainFrame.graph, fppSettings);
+            fpp.getFFPResult();
             compoundEdit.commit();
             initSidePanel.addDefaultListeners();
         }else{
