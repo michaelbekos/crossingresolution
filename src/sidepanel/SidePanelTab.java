@@ -254,7 +254,7 @@ public class SidePanelTab {
             cDefaultPanel.weighty = 0;
             defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);
             enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
-            enableMinimumAngleDisplay.setSelected(false);
+            enableMinimumAngleDisplay.setSelected(true);
 
             allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
             cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -748,10 +748,12 @@ public class SidePanelTab {
         graphInfo.append("\nCurrent Graph Size: \nX: ").append(width).append("\nY: ").append(height).append("\n\n");
 
         double minMaxXY[] = new double[4];
-        minMaxXY[0] = graph.getNodes().first().getLayout().getCenter().getX();
-        minMaxXY[1] = graph.getNodes().first().getLayout().getCenter().getX();
-        minMaxXY[2] = graph.getNodes().first().getLayout().getCenter().getY();
-        minMaxXY[3] = graph.getNodes().first().getLayout().getCenter().getY();
+        try {
+            minMaxXY[0] = graph.getNodes().first().getLayout().getCenter().getX();
+            minMaxXY[1] = graph.getNodes().first().getLayout().getCenter().getX();
+            minMaxXY[2] = graph.getNodes().first().getLayout().getCenter().getY();
+            minMaxXY[3] = graph.getNodes().first().getLayout().getCenter().getY();
+        } catch (IllegalArgumentException e) {}
         for (INode u : graph.getNodes()) {
             if (u.getLayout().getCenter().getX() < minMaxXY[0]) {
                 minMaxXY[0] = u.getLayout().getCenter().getX();

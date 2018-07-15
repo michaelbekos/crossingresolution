@@ -8,6 +8,7 @@ import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
 import graphoperations.GraphOperations;
+import graphoperations.Scaling;
 import layout.algo.utils.BestSolutionMonitor;
 import layout.algo.utils.PositionMap;
 import util.DisplayMessagesGui;
@@ -153,6 +154,7 @@ public class MinimumAngleMonitor {
   }
 
   public void updateAngleInfoBar() {
+    Scaling.scaleNodeSizes(view); //TODO: maybe performance hit
     computeCrossingResolution();
     computeAngularResolution();
     if (useAspectRatio) {   //TODO
