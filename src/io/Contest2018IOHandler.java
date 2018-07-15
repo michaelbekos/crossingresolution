@@ -184,6 +184,22 @@ public class Contest2018IOHandler {
                 errorText.append("=====================================================\n");
                 //TODO Scale Graph to fit bounds
             }
+            if (openFile.nodes.size() != graph.getNodes().size()) {
+                System.err.println("=====================================================");
+                System.err.println("Graph has changed number of nodes!");
+                System.err.println("=====================================================");
+                errorText.append("=====================================================\n");
+                errorText.append("Graph has changed number of nodes!\n");
+                errorText.append("=====================================================\n");
+            }
+            if (openFile.edges.size() != graph.getEdges().size()) {
+                System.err.println("=====================================================");
+                System.err.println("Graph has changed number of edges!");
+                System.err.println("=====================================================");
+                errorText.append("=====================================================\n");
+                errorText.append("Graph has changed number of edges!\n");
+                errorText.append("=====================================================\n");
+            }
 
         } else {
             //from graph
