@@ -28,4 +28,5 @@ abstract class SidePanelItem<T> extends AbstractLayoutInterfaceItem<T> {
   int getGridY() {
     return gridY;
   }
+
 }

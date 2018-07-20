@@ -245,7 +245,7 @@ public class SidePanelTab {
             defaultPanel.add(jitterItem, cDefaultPanel);
         }
 
-        if (!MainFrame.CONTEST_MODE) {
+//        if (!MainFrame.CONTEST_MODE) {
             enableMinimumAngleDisplay = new JCheckBox("Show Angle");
             cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
             cDefaultPanel.gridx = 0;
@@ -255,7 +255,7 @@ public class SidePanelTab {
             defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);
             enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
             enableMinimumAngleDisplay.setSelected(true);
-
+        if (!MainFrame.CONTEST_MODE) {
             allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
             cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
             cDefaultPanel.gridx = 1;

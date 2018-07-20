@@ -70,19 +70,21 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     allowIncreaseStepSize.setValue(false);
     itemList.add(allowIncreaseStepSize);
 
-    if (!MainFrame.CONTEST_MODE) {
-      useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)");
-      useCrossingResolution.setValue(true);
-      itemList.add(useCrossingResolution);
+//    if (!MainFrame.CONTEST_MODE) {
+    useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)", false);
+    useCrossingResolution.setValue(true);
+    itemList.add(useCrossingResolution);
+//    useCrossingResolution.setVisible(false);
 
-      useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution");
-      useAngularResolution.setValue(false);
-      itemList.add(useAngularResolution);
-
-      useAspectRatio = itemFactory.booleanParameter("Use Aspect Ratio");
+    useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution", false);
+    useAngularResolution.setValue(false);
+    itemList.add(useAngularResolution);
+//  }
+      useAspectRatio = itemFactory.booleanParameter("Use Aspect Ratio", false);
       useAspectRatio.setValue(false);
       itemList.add(useAspectRatio);
-    }
+//    useAspectRatio.setVisible(false);
+//    }
   }
 
   @Override

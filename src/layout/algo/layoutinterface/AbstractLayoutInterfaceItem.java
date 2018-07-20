@@ -9,9 +9,11 @@ package layout.algo.layoutinterface;
 public abstract class AbstractLayoutInterfaceItem<T> {
   private volatile T value;
   private final String name;
+//  private Boolean visible;
 
   protected AbstractLayoutInterfaceItem(String name) {
     this.name = name;
+//    this.visible = true;
   }
 
   public T getValue() {
@@ -24,4 +26,11 @@ public abstract class AbstractLayoutInterfaceItem<T> {
   public String getName() {
     return name;
   }
+
+//  public Boolean getVisible() {
+//    return visible;
+//  }
+//  public void setVisible(Boolean value) {
+//    this.visible = value;
+//  }
 }

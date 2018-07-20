@@ -37,7 +37,8 @@ public class MinimumAngleMonitor {
   private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o, EdgeEventArgs) -> updateAngleInfoBar();
   private IEventListener<ItemEventArgs<INode>> minimumAngleNodeCreatedListener = (o, ItemEventArgs) -> updateAngleInfoBar();
   private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> updateAngleInfoBar();
-  private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> updateAngleInfoBar();
+  private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> {updateAngleInfoBar();
+    };
 
   //Total Angle Monitor (Crossing+Angular Resolution)
   MinimumAngleMonitor(GraphComponent view, IGraph graph, JLabel infoLabel, BestSolutionMonitor bestSolution) {

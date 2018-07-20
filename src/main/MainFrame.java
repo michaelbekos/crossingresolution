@@ -1,5 +1,6 @@
 package main;
 
+import algorithms.graphs.GridGraph;
 import com.sun.istack.internal.Nullable;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.SizeD;
@@ -165,6 +166,13 @@ public class MainFrame extends JFrame {
         this.graph.addEdgeRemovedListener((o, iNodeItemEventArgs) ->
                 infoLabel.setText("Number of Vertices: " + graph.getNodes().size() + "     Number of Edges: " + graph.getEdges().size()
                 ));
+
+        this.view.addMouse2DReleasedListener((o, mouse2DEventArgs) -> {
+            if (!this.initSidePanel.masterAllowClickGraphEditor.isSelected()) {//TODO FIX with user mode
+                System.out.println("released");     //MORE testing, have been cases with not gridded
+                GridGraph.roundGraphToGrid(graph);  //TODO: only selected nodes (much more efficient)
+            }
+        });
 
         this.view.addZoomChangedListener((o, zoomItemEventArgs) -> {
             boolean removedListeners = this.initSidePanel.removeDefaultListeners();
