@@ -20,6 +20,21 @@ final class Components {
     sidePanel.add(checkBox, gridBagConstraints);
     return checkBox;
   }
+  static JCheckBox addCheckBox(String name, JPanel sidePanel, GridBagState gridBagState, ItemListener itemListener, Boolean visible) {
+    GridBagConstraints gridBagConstraints = new GridBagConstraints();
+    gridBagConstraints.gridx = gridBagState.getX();
+    gridBagConstraints.gridy = gridBagState.increaseY();
+    gridBagConstraints.gridwidth = 3;
+    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+
+    JCheckBox checkBox = new JCheckBox(name);
+    checkBox.addItemListener(itemListener);
+    if (visible) {
+      System.out.println(visible);
+      sidePanel.add(checkBox, gridBagConstraints);
+    }
+    return checkBox;
+  }
 
   static DoubleSlider addDoubleSlider(String name, double minValue, double initialMaxValue, JPanel sidePanel, GridBagState gridBagState) {
     GridBagConstraints cLabel = new GridBagConstraints();

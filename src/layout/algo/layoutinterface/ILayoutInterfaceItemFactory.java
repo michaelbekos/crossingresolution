@@ -41,6 +41,13 @@ public interface ILayoutInterfaceItemFactory {
   AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name);
 
   /**
+   * Creates a boolean parameter.
+   * @param name the name of the parameter
+   * @return an {@link AbstractLayoutInterfaceItem<Boolean>}
+   */
+  AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, Boolean visible);
+
+  /**
    * Creates a wrapper for a parameter to make it toggleable. The parameter will NOT automatically be switched on or off
    * as it is impossible to determine what "on" and "off" mean for this specific parameter. The difference to
    * {@link #booleanParameter(String)} is that the implementation shall make this grouping explicit.

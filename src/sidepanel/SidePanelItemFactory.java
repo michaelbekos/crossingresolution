@@ -40,7 +40,12 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
 
   @Override
   public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
-    return new BoolSidePanelItem(name, sidePanel, gridBagState);
+    return new BoolSidePanelItem(name, true, sidePanel, gridBagState);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, Boolean visible) {
+    return new BoolSidePanelItem(name, visible, sidePanel, gridBagState);
   }
 
   @Override

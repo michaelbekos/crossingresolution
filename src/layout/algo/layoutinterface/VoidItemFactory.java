@@ -30,6 +30,11 @@ public class VoidItemFactory implements ILayoutInterfaceItemFactory {
   }
 
   @Override
+  public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, Boolean visible) {
+    return new VoidItem<>(name);
+  }
+
+  @Override
   public AbstractLayoutInterfaceItem<Boolean> toggleableParameter(AbstractLayoutInterfaceItem<?> parameter) {
     return new VoidItem<>(parameter.getName());
   }
