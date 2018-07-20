@@ -93,7 +93,7 @@ public class InitSidePanel {
 
         masterAllowClickGraphEditor = new JCheckBox("User Mode");
         masterAllowClickGraphEditor.addItemListener(this::masterAllowGraphEditorActionPerformed);
-        masterAllowClickGraphEditor.setSelected(false);
+        masterAllowClickGraphEditor.setSelected(true);
 
         masterEnableCrossingResolution = new JCheckBox("Crossing Resolution");
         masterEnableCrossingResolution.addItemListener(this::masterEnableCrossingResolutionActionPerformed);
@@ -243,7 +243,7 @@ public class InitSidePanel {
     }
 
     private void masterAllowGraphEditorActionPerformed(ItemEvent evt) {
-        mainFrame.graphEditorInputMode.setEnabled(evt.getStateChange() == ItemEvent.DESELECTED);
+        mainFrame.graphEditorInputMode.setEnabled(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
     private void masterEnableCrossingResolutionActionPerformed(ItemEvent evt) { //TODO: maybe sync with random

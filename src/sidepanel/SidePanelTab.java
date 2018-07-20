@@ -273,7 +273,7 @@ public class SidePanelTab {
         cDefaultPanel.weighty = 0;
         defaultPanel.add(allowClickGraphEditor, cDefaultPanel);
         allowClickGraphEditor.addItemListener(this::allowClickGraphEditorActionPerformed);
-        allowClickGraphEditor.setSelected(false);
+        allowClickGraphEditor.setSelected(true);
 
         if (!MainFrame.CONTEST_MODE) {
 
