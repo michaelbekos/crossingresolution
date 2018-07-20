@@ -280,15 +280,16 @@ public class MainFrame extends JFrame {
             this.view.setCurrentItem(edge);
 
             JPopupMenu popupMenu = (JPopupMenu) args.getMenu();
+            if (!CONTEST_MODE) {
+                javax.swing.JMenuItem removeVertex = new javax.swing.JMenuItem("Delete");
+                removeVertex.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
+                removeVertex.addActionListener(evt -> {
+                    graph.remove(edge);
+                    view.updateUI();
+                });
 
-            javax.swing.JMenuItem removeVertex = new javax.swing.JMenuItem("Delete");
-            removeVertex.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
-            removeVertex.addActionListener(evt -> {
-                graph.remove(edge);
-                view.updateUI();
-            });
-
-            popupMenu.add(removeVertex);
+                popupMenu.add(removeVertex);
+            }
             args.setHandled(true);
         }
     }
@@ -303,25 +304,27 @@ public class MainFrame extends JFrame {
 
             JPopupMenu popupMenu = (JPopupMenu) args.getMenu();
 
-            JMenuItem editLabel = new JMenuItem(node.getLabels().first().getText().equals("") ? "Add Label" : "Edit Label");
-            editLabel.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
-            editLabel.addActionListener(evt -> {
-                JTextField labelTextField = new JTextField(node.getLabels().first().getText());
-                int result = JOptionPane.showOptionDialog(null, new Object[]{"Label: ", labelTextField}, node.getLabels().first().getText().equals("") ? "Add Label" : "Edit Label", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-                if (result == JOptionPane.OK_OPTION) {
-                    graph.setLabelText(node.getLabels().first(), labelTextField.getText());
-                }
-            });
+            if (!CONTEST_MODE) {
+                JMenuItem editLabel = new JMenuItem(node.getLabels().first().getText().equals("") ? "Add Label" : "Edit Label");
+                editLabel.setIcon(new ImageIcon(getClass().getResource("/resources/star-16.png")));
+                editLabel.addActionListener(evt -> {
+                    JTextField labelTextField = new JTextField(node.getLabels().first().getText());
+                    int result = JOptionPane.showOptionDialog(null, new Object[]{"Label: ", labelTextField}, node.getLabels().first().getText().equals("") ? "Add Label" : "Edit Label", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+                    if (result == JOptionPane.OK_OPTION) {
+                        graph.setLabelText(node.getLabels().first(), labelTextField.getText());
+                    }
+                });
 
-            javax.swing.JMenuItem removeVertex = new javax.swing.JMenuItem("Delete");
-            removeVertex.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
-            removeVertex.addActionListener(evt -> {
-                graph.remove(node);
-                view.updateUI();
-            });
+                javax.swing.JMenuItem removeVertex = new javax.swing.JMenuItem("Delete");
+                removeVertex.setIcon(new ImageIcon(getClass().getResource("/resources/delete-16.png")));
+                removeVertex.addActionListener(evt -> {
+                    graph.remove(node);
+                    view.updateUI();
+                });
 
-            popupMenu.add(editLabel);
-            popupMenu.add(removeVertex);
+                popupMenu.add(editLabel);
+                popupMenu.add(removeVertex);
+            }
             args.setHandled(true);
         }
     }
