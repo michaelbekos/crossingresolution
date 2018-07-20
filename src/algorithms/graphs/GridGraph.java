@@ -3,6 +3,7 @@ package algorithms.graphs;
 import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.graph.IGraph;
 import com.yworks.yfiles.graph.INode;
+import com.yworks.yfiles.view.ISelectionModel;
 import util.Util;
 
 public final class GridGraph {
@@ -17,15 +18,13 @@ public final class GridGraph {
   }
 
     /**
-     * rounds value of nodes to in order for it to be gridded (Yfiles bug)
+     * rounds value of selected nodes (i.e. with drag n' drop) in order for them to be gridded (Yfiles bug)
      * @param graph
      */
-  public static void roundGraphToGrid(IGraph graph) {
-      for (INode u : graph.getNodes()) {
+  public static void roundGraphToGrid(IGraph graph, ISelectionModel<INode> selectedNodes) {
+      for (INode u : selectedNodes) {
           if (u.getLayout().getCenter().getX() % 1 != 0 || u.getLayout().getCenter().getY() %1 !=0) {
-              System.out.println("before " +u.getLayout().getCenter());
               graph.setNodeCenter(u, new PointD(Math.round(u.getLayout().getCenter().getX()), Math.round(u.getLayout().getCenter().getY())));
-              System.out.println("after " + u.getLayout().getCenter());
           }
       }
   }

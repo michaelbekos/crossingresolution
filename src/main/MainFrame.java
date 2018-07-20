@@ -169,7 +169,7 @@ public class MainFrame extends JFrame {
 
         this.view.addMouse2DReleasedListener((o, mouse2DEventArgs) -> {
             if (this.initSidePanel.masterAllowClickGraphEditor.isSelected()) {
-                GridGraph.roundGraphToGrid(graph);  //TODO: only selected nodes (much more efficient)
+                GridGraph.roundGraphToGrid(graph, this.view.getSelection().getSelectedNodes());
             }
         });
 
