@@ -7,19 +7,6 @@ import java.awt.event.ItemListener;
 final class Components {
   private Components() {}
 
-  static JCheckBox addCheckBox(String name, JPanel sidePanel, GridBagState gridBagState, ItemListener itemListener) {
-    GridBagConstraints gridBagConstraints = new GridBagConstraints();
-    gridBagConstraints.gridx = gridBagState.getX();
-    gridBagConstraints.gridy = gridBagState.increaseY();
-    gridBagConstraints.gridwidth = 3;
-    gridBagConstraints.anchor = GridBagConstraints.LINE_START;
-
-    JCheckBox checkBox = new JCheckBox(name);
-    checkBox.addItemListener(itemListener);
-
-    sidePanel.add(checkBox, gridBagConstraints);
-    return checkBox;
-  }
   static JCheckBox addCheckBox(String name, JPanel sidePanel, GridBagState gridBagState, ItemListener itemListener, Boolean visible) {
     GridBagConstraints gridBagConstraints = new GridBagConstraints();
     gridBagConstraints.gridx = gridBagState.getX();
@@ -29,8 +16,8 @@ final class Components {
 
     JCheckBox checkBox = new JCheckBox(name);
     checkBox.addItemListener(itemListener);
+
     if (visible) {
-      System.out.println(visible);
       sidePanel.add(checkBox, gridBagConstraints);
     }
     return checkBox;
@@ -78,7 +65,7 @@ final class Components {
     return new DoubleSlider(slider, textField, spinner, initialMaxValue);
   }
 
-  static IntSlider addIntSlider(String name, int minValue, int initialMaxValue, JPanel sidePanel, GridBagState gridBagState) {
+  static IntSlider addIntSlider(String name, int minValue, int initialMaxValue, JPanel sidePanel, GridBagState gridBagState, Boolean visible) {
     GridBagConstraints cLabel = new GridBagConstraints();
     GridBagConstraints cSlider = new GridBagConstraints();
     GridBagConstraints cSliderMax = new GridBagConstraints();
@@ -109,11 +96,13 @@ final class Components {
     cSliderMax.gridy = gridBagState.getY();
     cSliderMax.gridx = gridBagState.getX() + 2;
     cSliderMax.fill = GridBagConstraints.HORIZONTAL;
-    sidePanel.add(new JLabel(name), cLabel);
-    sidePanel.add(textField, cOut);
-    sidePanel.add(slider, cSlider);
-    sidePanel.add(spinner, cSliderMax);
+    if (visible) {
+      sidePanel.add(new JLabel(name), cLabel);
+      sidePanel.add(textField, cOut);
+      sidePanel.add(slider, cSlider);
+      sidePanel.add(spinner, cSliderMax);
 
+    }
     return new IntSlider(slider, textField, spinner, initialMaxValue);
   }
 }

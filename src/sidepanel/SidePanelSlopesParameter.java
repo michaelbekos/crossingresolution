@@ -32,7 +32,7 @@ class SidePanelSlopesParameter extends SidePanelItem<List<Double>> {
 
   @Override
   void createComponents(JPanel sidePanel, GridBagState gridBagState) {
-    IntSlider numSlopesSlider = Components.addIntSlider(getName() + ": Num. Slopes", 1, 360, sidePanel, gridBagState);
+    IntSlider numSlopesSlider = Components.addIntSlider(getName() + ": Num. Slopes", 1, 360, sidePanel, gridBagState, true);
     numSlopesSlider.setValue(numSlopes);
     numSlopesSlider.setValueListener(value -> {
       numSlopes = value;
@@ -52,7 +52,7 @@ class SidePanelSlopesParameter extends SidePanelItem<List<Double>> {
       } else {
         clearSlopes();
       }
-    });
+    }, true);
     showSlopes.setSelected(false);
   }
 

@@ -25,6 +25,11 @@ public class VoidItemFactory implements ILayoutInterfaceItemFactory {
   }
 
   @Override
+  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, Boolean visible) {
+    return new VoidItem<>(name);
+  }
+
+  @Override
   public AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name) {
     return new VoidItem<>(name);
   }

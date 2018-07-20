@@ -44,11 +44,9 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     numSamplesForJumping.setValue(50);
     itemList.add(numSamplesForJumping);
 
-    if (!MainFrame.CONTEST_MODE) {
-      maxAspectRatio = itemFactory.intParameter("Maximum Legal Aspect Ratio", -1, 20);
-      maxAspectRatio.setValue(-1);
-      itemList.add(maxAspectRatio);
-    }
+    maxAspectRatio = itemFactory.intParameter("Maximum Legal Aspect Ratio", -1, 20, !MainFrame.CONTEST_MODE);
+    maxAspectRatio.setValue(-1);
+    itemList.add(maxAspectRatio);
 
     jumpOnLocalMaximum = itemFactory.booleanParameter("Allow decreasing minimum angle at local maximum");
     jumpOnLocalMaximum.setValue(false);
@@ -70,21 +68,17 @@ public class RandomMovementConfigurator implements ILayoutConfigurator {
     allowIncreaseStepSize.setValue(false);
     itemList.add(allowIncreaseStepSize);
 
-//    if (!MainFrame.CONTEST_MODE) {
-    useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)", false);
+    useCrossingResolution = itemFactory.booleanParameter("Use Crossing Resolution (Default)", !MainFrame.CONTEST_MODE);
     useCrossingResolution.setValue(true);
     itemList.add(useCrossingResolution);
-//    useCrossingResolution.setVisible(false);
 
-    useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution", false);
+    useAngularResolution = itemFactory.booleanParameter("Use Angular Resolution", !MainFrame.CONTEST_MODE);
     useAngularResolution.setValue(false);
     itemList.add(useAngularResolution);
-//  }
-      useAspectRatio = itemFactory.booleanParameter("Use Aspect Ratio", false);
-      useAspectRatio.setValue(false);
-      itemList.add(useAspectRatio);
-//    useAspectRatio.setVisible(false);
-//    }
+
+    useAspectRatio = itemFactory.booleanParameter("Use Aspect Ratio", !MainFrame.CONTEST_MODE);
+    useAspectRatio.setValue(false);
+    itemList.add(useAspectRatio);
   }
 
   @Override

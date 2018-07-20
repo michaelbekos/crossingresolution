@@ -245,27 +245,25 @@ public class SidePanelTab {
             defaultPanel.add(jitterItem, cDefaultPanel);
         }
 
-//        if (!MainFrame.CONTEST_MODE) {
-            enableMinimumAngleDisplay = new JCheckBox("Show Angle");
-            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-            cDefaultPanel.gridx = 0;
-            cDefaultPanel.gridy = ++cDefaultPanelY;
-            cDefaultPanel.weightx = 0.5;
-            cDefaultPanel.weighty = 0;
-            defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);
-            enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
-            enableMinimumAngleDisplay.setSelected(true);
-        if (!MainFrame.CONTEST_MODE) {
-            allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
-            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-            cDefaultPanel.gridx = 1;
-            cDefaultPanel.gridy = cDefaultPanelY;
-            cDefaultPanel.weightx = 0.5;
-            cDefaultPanel.weighty = 0;
-            defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel);
-            allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
-            allowClickCreateNodeEdge.setSelected(true);
-        }
+        enableMinimumAngleDisplay = new JCheckBox("Show Angle");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        if (!MainFrame.CONTEST_MODE) {defaultPanel.add(enableMinimumAngleDisplay, cDefaultPanel);}
+        enableMinimumAngleDisplay.addItemListener(this::minimumAngleDisplayEnabled);
+        enableMinimumAngleDisplay.setSelected(true);
+
+        allowClickCreateNodeEdge = new JCheckBox("Manual Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        if (!MainFrame.CONTEST_MODE) { defaultPanel.add(allowClickCreateNodeEdge, cDefaultPanel); }
+        allowClickCreateNodeEdge.addItemListener(this::allowClickCreateNodeEdgeActionPerformed);
+        allowClickCreateNodeEdge.setSelected(true);
 
         allowClickGraphEditor = new JCheckBox("User Mode");  //No new nodes or edges on click, can't select ports and edges, for manual tuning
         cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;

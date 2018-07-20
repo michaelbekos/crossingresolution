@@ -35,7 +35,12 @@ public class SidePanelItemFactory implements ILayoutInterfaceItemFactory {
 
   @Override
   public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue) {
-    return new IntegerSidePanelItem(name, minValue, maxValue, sidePanel, gridBagState);
+    return new IntegerSidePanelItem(name, minValue, maxValue, true, sidePanel, gridBagState);
+  }
+
+  @Override
+  public AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, Boolean visible) {
+    return new IntegerSidePanelItem(name, minValue, maxValue, visible, sidePanel, gridBagState);
   }
 
   @Override

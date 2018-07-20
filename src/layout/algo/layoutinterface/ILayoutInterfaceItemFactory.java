@@ -34,6 +34,16 @@ public interface ILayoutInterfaceItemFactory {
   AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue);
 
   /**
+   * Creates an integer parameter.
+   * @param name the name of the parameter
+   * @param minValue the minimum value of the parameter
+   * @param maxValue the maximum value of the parameter
+   * @param visible whether the item should be drawn of not
+   * @return an {@link AbstractLayoutInterfaceItem<Integer>}
+   */
+  AbstractLayoutInterfaceItem<Integer> intParameter(String name, int minValue, int maxValue, Boolean visible);
+
+  /**
    * Creates a boolean parameter.
    * @param name the name of the parameter
    * @return an {@link AbstractLayoutInterfaceItem<Boolean>}
@@ -43,6 +53,7 @@ public interface ILayoutInterfaceItemFactory {
   /**
    * Creates a boolean parameter.
    * @param name the name of the parameter
+   * @param visible whether the item should be drawn of not
    * @return an {@link AbstractLayoutInterfaceItem<Boolean>}
    */
   AbstractLayoutInterfaceItem<Boolean> booleanParameter(String name, Boolean visible);
