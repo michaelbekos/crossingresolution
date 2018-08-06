@@ -275,37 +275,37 @@ public class SidePanelTab {
         allowClickGraphEditor.addItemListener(this::allowClickGraphEditorActionPerformed);
         allowClickGraphEditor.setSelected(true);
 
+        enableCrossingResolution = new JCheckBox("Crossing Resolution");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        enableCrossingResolution.addItemListener(this::enableCrossingResolutionActionPerformed);
+        enableCrossingResolution.setSelected(false);
+
+        enableAngularResolution = new JCheckBox("Angular Resolution");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 1;
+        cDefaultPanel.gridy = cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
+        enableAngularResolution.setSelected(false);
+
+        enableAspectRatio = new JCheckBox("Aspect Ratio");
+        cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
+        cDefaultPanel.gridx = 0;
+        cDefaultPanel.gridy = ++cDefaultPanelY;
+        cDefaultPanel.weightx = 0.5;
+        cDefaultPanel.weighty = 0;
+        enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
+        enableAspectRatio.setSelected(false);
+
         if (!MainFrame.CONTEST_MODE) {
-
-            enableCrossingResolution = new JCheckBox("Crossing Resolution");
-            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-            cDefaultPanel.gridx = 0;
-            cDefaultPanel.gridy = ++cDefaultPanelY;
-            cDefaultPanel.weightx = 0.5;
-            cDefaultPanel.weighty = 0;
             defaultPanel.add(enableCrossingResolution, cDefaultPanel);
-            enableCrossingResolution.addItemListener(this::enableCrossingResolutionActionPerformed);
-            enableCrossingResolution.setSelected(false);
-
-            enableAngularResolution = new JCheckBox("Angular Resolution");
-            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-            cDefaultPanel.gridx = 1;
-            cDefaultPanel.gridy = cDefaultPanelY;
-            cDefaultPanel.weightx = 0.5;
-            cDefaultPanel.weighty = 0;
             defaultPanel.add(enableAngularResolution, cDefaultPanel);
-            enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
-            enableAngularResolution.setSelected(false);
-
-            enableAspectRatio = new JCheckBox("Aspect Ratio");
-            cDefaultPanel.fill = GridBagConstraints.HORIZONTAL;
-            cDefaultPanel.gridx = 0;
-            cDefaultPanel.gridy = ++cDefaultPanelY;
-            cDefaultPanel.weightx = 0.5;
-            cDefaultPanel.weighty = 0;
             defaultPanel.add(enableAspectRatio, cDefaultPanel);
-            enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
-            enableAspectRatio.setSelected(false);
         }
 
         outputTextArea.setLineWrap(true);
@@ -580,7 +580,7 @@ public class SidePanelTab {
 //            Scaling.scaleBy(Math.max(1, Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering),
 //             (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering))), nodePositions);
             Scaling.scaleBy(Math.min(MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering,
-            MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering), nodePositions);
+                    MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering), nodePositions);
             Centering.moveToCenter(MainFrame.BOX_SIZE[0], MainFrame.BOX_SIZE[1], nodePositions);
             PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
