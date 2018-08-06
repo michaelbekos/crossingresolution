@@ -224,10 +224,10 @@ public class InitSidePanel {
     private void masterMinAngleDisplayEnabled(ItemEvent evt) {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             stateEnableMinimumAngle = true;
-            mainFrame.minimumAngleMonitor.registerGraphChangedListeners();
+            mainFrame.initSidePanel.addDefaultListeners();
         } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
             stateEnableMinimumAngle = false;
-            mainFrame.minimumAngleMonitor.removeGraphChangedListeners();
+            mainFrame.initSidePanel.removeDefaultListeners();
         }
     }
 
@@ -243,6 +243,11 @@ public class InitSidePanel {
     }
 
     private void masterAllowGraphEditorActionPerformed(ItemEvent evt) {
+        if (evt.getStateChange() == ItemEvent.SELECTED) {   //TODO: Performance - turn listeners off permanently
+            mainFrame.initSidePanel.addDefaultListeners();
+        } else {
+            mainFrame.initSidePanel.removeDefaultListeners();
+        }
         mainFrame.graphEditorInputMode.setEnabled(evt.getStateChange() == ItemEvent.SELECTED);
     }
 
