@@ -127,13 +127,13 @@ As for the presentation, the paper is well-written and reads smoothly, I could s
 
 \response{Removed.}
 
-\tcomment{l.158: How do you choose $\rho$?}
+\rcomment{l.158: How do you choose $\rho$?}
 
-\response{}
+\response{Added the following comment: For our algorithm, we chose $\delta_{max}=\frac{1}{2}\max\{w,h\}$ (where $w$ and $h$ are the width and the height of the initial drawing, respectively), $\delta_{min}=\frac{1}{100}\delta_{max}$ and $\rho=50$.\footnote{In order to further decrease the time needed for an iteration, we only computed a candidate position for 10 of the 50 rays.} }
 
-\tcomment{l.165: You should discuss the choice of the parameters $\delta_{\min}$ and $\delta_{\max} $.}
+\rcomment{l.165: You should discuss the choice of the parameters $\delta_{\min}$ and $\delta_{\max} $.}
 
-\response{}
+\response{See above.}
 
 \rcomment{l.190: " ... becomes wider containing all the vertices" What do you mean?  That the vertex pool becomes wider unless it is not containng all the vertices already, or that you would include all the vertices into the pool.}
 

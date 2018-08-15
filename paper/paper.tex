@@ -49,6 +49,11 @@ Wilhelm-Schickhard-Institut f\"ur Informatik, Universit\"at T\"ubingen, Germany\
 \texttt{\{jan-lukas.hollaender,amadaeus.spallek,jan.splett\} @student.uni-tuebingen.de}
 }
 
+%conf for conference version, arxiv for arxiv version
+\newcommand{\ver}{arxiv}
+\newcommand{\arxapp}[2]{\ifthenelse{\equal{\ver}{conf}}{#2}{#1}}
+
+
 % ==================================================================
 \begin{document}
 \maketitle
@@ -111,7 +116,7 @@ Given a drawing $\Gamma(G)$ of $G$, we denote by $p(u)=(x_u,y_u)$ the position o
 \medskip\noindent{\it Structure of the paper:}
 The remainder of this paper is structured as follows. Section~\ref{sec:relatedwork} overviews related works.
 %In Section~\ref{sec:preliminaries}, we introduce preliminary notions and the notation used throughout the paper.
-Our algorithm is presented in detail in Section~\ref{sec:algorithm} and is experimentally evaluated against the ones of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} in Section~\ref{sec:experiments}, where we also discuss our insights from this project. In the appendix, we provide experimental results on grid restricted drawings, on more test sets and on the graphs from the Graph Drawing Competition in 2017.
+Our algorithm is presented in detail in Section~\ref{sec:algorithm} and is experimentally evaluated against the ones of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} in Section~\ref{sec:experiments}, where we also discuss our insights from this project. \arxapp{In the appendix}{In~\cite{arxivVersion}}, we provide experimental results on grid restricted drawings, on more test sets and on the graphs from the Graph Drawing Competition in 2017.
 
 % ==================================================================
 \section{Related Work}
@@ -271,7 +276,7 @@ As it is the case with the force-directed algorithms of Huang et al.~\cite{DBLP:
 \myparagraph{Grid drawings}
 % ==================================================================
 %
-Our algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produce such drawings. More precisely, if we round the candidate positions computed at each iteration of our algorithm to their closest grid points and use these grid points as candidates for the next position of the vertex to be moved, then the obtained drawing will be grid (assuming, of course, that the starting drawing is grid). One can even bound the size of the grid, by rejecting candidate grid positions outside the bounds. In Appendix~\ref{app:grid}, we report experimental results on this variant.
+Our algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produce such drawings. More precisely, if we round the candidate positions computed at each iteration of our algorithm to their closest grid points and use these grid points as candidates for the next position of the vertex to be moved, then the obtained drawing will be grid (assuming, of course, that the starting drawing is grid). One can even bound the size of the grid, by rejecting candidate grid positions outside the bounds. \arxapp{In Appendix~\ref{app:grid}}{In~\cite{arxivVersion}}, we report experimental results on this variant.
 
  %(the latter requirement is not difficult to be achieved, e.g., by slightly adjusting the positions of the vertices of a circular layout, whose underlying circle has large radius, to be at grid points).
 
@@ -285,7 +290,7 @@ Our algorithm, as it has been described so far, does not necessarily produce gri
 
 In this section, we present the results of our experimental evaluation. For comparison purposes, apart from our algorithm, we also implemented the force-directed algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. The implementations\footnote{Our implementation is available on request from the authors.} were in Java using yFiles~\cite{DBLP:books/sp/04/WieseE004}. The experiment was performed on a Linux laptop with four cores at 2.4 GHz and 8 GB RAM.
 %
-As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs; in Appendix~\ref{app:north}, we also report on the AT\&T graphs.
+As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs; \arxapp{in Appendix~\ref{app:north}}{in~\cite{arxivVersion}}, we also report on the AT\&T graphs.
 
 The experiment was performed as follows. Initially, each Rome graph was laid out using the SmartOrganic layouter of yFiles~\cite{DBLP:books/sp/04/WieseE004}. Starting from this layout, every graph was drawn with
 \begin{inparaenum}[(i)]
@@ -294,6 +299,7 @@ The experiment was performed as follows. Initially, each Rome graph was laid out
 \item by Argyriou et al.\ and
 \item by Huang et al.
 \end{inparaenum}
+For our algorithm, we chose $\delta_{max}=\frac{1}{2}\max\{w,h\}$ (where $w$ and $h$ are the width and the height of the initial drawing, respectively), $\delta_{min}=\frac{1}{100}\delta_{max}$ and $\rho=50$.\footnote{In order to further decrease the time needed for an iteration, we only computed a candidate position for 10 of the 50 rays.} 
 
 We compared the quality of the produced drawings based on crossing resolution, total resolution, and angular resolution. Additionally, we consider the aspect ratio, and the number of crossings of the corresponding drawings.
 
@@ -378,7 +384,7 @@ While our unrestricted algorithm produces drawings with better crossing resoluti
 % (as it is, e.g., in the case of the force-directed algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, whose sping forces inpose stong restrictions on the edge lengths).
 On the other hand, the restricted variant of our algorithm, which does not allow the aspect ratio to increase, has more or less comparable performance (in terms of aspect ratio) with the one of Huang et al.
 
-Regarding the number of crossings, we observe that the restricted variant of our algorithm and the force-directed algorithm of Huang et al.\ yield drawings with comparable number of crossings, which at the same time is significantly smaller than the corresponding number of crossings produced by the two other algorithms of our experiment; refer to Fig.~\ref{fig:cr-res-3}.
+We observe that the restricted variant of our algorithm and the force-directed algorithm of Huang et al.\ yield drawings with comparable number of crossings, which at the same time is significantly smaller than the corresponding number of crossings produced by the two other algorithms; refer to Fig.~\ref{fig:cr-res-3}.
 
 A different behaviour can be observed in the number of iterations, which are required by the algorithms to converge; refer to Fig.~\ref{fig:cr-res-4}. We note here that we used different criteria to determine whether the algorithms of our experiment had converged. For our algorithms and for the force-directed algorithm by Huang et al., we assumed that the algorithm had converged, if the crossing resolution between 500 consecutive iterations was not improved by more than 0.001 degrees. For the algorithm by Argyriou et al., we decided to use a much more restricted convergence criterion, because the produced layouts can change vastly between  consecutive iterations. We made this choice mainly to have ``comparable'' number of iterations among the algorithms of the experiment. In this direction, we adopted the convergence criterion that the authors used in their previous experimental analysis\, that is, we assumed that the algorithm had converged, if the crossing resolution between two consecutive iterations was not improved by more than 0.001 degrees. Observe that even under this more restricted convergence criterion, the algorithm needs significantly more iterations to converge than the remaining three algorithms of the experiment; see Fig.~\ref{fig:cr-res-4}. The maximum number of iterations that each of the algorithms could perform in order to converge was set to 100.000, but that limit was never reached. We observe that both force-directed algorithms seem to require a great amount of iterations to converge for small graphs, where a drawing with really good crossing resolution is possible. However, for larger graphs  the algorithm by Huang et al.\ requires the least amount of iterations. On the other hand, both the unrestricted and the restricted variant of our algorithm require comparable number of iterations to converge, but clearly more than the ones of the algorithm by Huang et al.
 
@@ -548,14 +554,14 @@ The results for the aspect ratio, the number of crossings and the required numbe
 %
 %In this paper, we introduced a new heuristic aiming to produce drawings of high crossing resolution, for which we also presented variants that take into account other common aesthetic criteria in Graph Drawing. Our experimental evaluation indicates that the new heuristic is competitive to state of the art force-directed algorithms, even when restricted to a given maximum aspect ratio. As a future direction, we plan to evaluate the performance of variants of our heuristic that compromise between even more aesthetic criteria.
 %
-While working on this project, we made some useful observations and  obtained some interesting insights. In particular, there is a recent hypothesis (also supported by experiments) that drawings, in which the crossing angles, are large are easy to read and understand. What we observed is that the drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other (nearly at the same spot). Hence, the angular resolution and the aspect ratio were very often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped significantly improving the readability of the drawings, without loosing too much of their quality in terms of the crossing resolution.
+While working on this project, we made some useful observations and  obtained some interesting insights. In particular, there is a recent hypothesis (also supported by experiments) that drawings, in which the crossing angles, are large are easy to read and understand. We observed that drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other. Hence, angular resolution and aspect ratio were often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped significantly improving the readability of the drawings, without loosing too much of their quality in terms of the crossing resolution.
 
-We conclude by noting that our motivation to work with this problem was our participation to GD2017 contest, where we performed miserably using a force-directed algorithm; for details see Appendix~\ref{app:contest}. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely more promising than our previous (as also evidenced by our experimental evaluation). The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing (even though our initial plan was to optimize only the crossing resolution).
+We conclude by noting that our motivation to work with this problem was our participation to GD2017 contest, where we performed miserably using a force-directed algorithm; for details \arxapp{see Appendix~\ref{app:contest}}{see~\cite{arxivVersion}}. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely more promising than our previous as evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing.
 
 \bibliographystyle{abbrvurl}
 \bibliography{references}
 
-\newpage
+\arxapp{\newpage
 \appendix
 
 \section*{Appendix}
@@ -1046,5 +1052,128 @@ We give a comparison of our new approach to the performances of the clear winner
 
 We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the last year's contest winner. On a few graphs (namely, graphs 10 and 11), we even achieve better results. With a single exception (namely, graph 4), we easily outperformed our results from last year.
 If we neglect the time restriction, for all the graphs, the results  are (sometimes considerably) better than or at least about the same as last year's contest winner. We can conclude that our new approach has good potential for the application in this year's graph drawing contest, however, we also note that more careful graph dependent parameterization will be needed to compute competitive solutions within the provided time.
+
+\newpage
+
+\section{Sample Drawings}
+\label{app:samples}
+
+\begin{figure}[htbp]
+\centering
+%\subfloat[\label{fig:graph5-yfiles}{Organic Layout}]{
+%\centering
+%\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+%}
+
+\subfloat[\label{fig:graph5-ourBest-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourBest-crossing}
+}
+\hfill
+\subfloat[\label{fig:graph5-ourBest-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourBest-angular}
+}
+\hfill
+\subfloat[\label{fig:graph5-ourBest-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourBest-total}
+}
+\hfill
+\subfloat[\label{fig:graph5-argyriou-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-argyriou-crossing}
+}
+\hfill
+\subfloat[\label{fig:graph5-argyriou-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-argyriou-angular}
+}
+\hfill
+\subfloat[\label{fig:graph5-argyriou-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-argyriou-total}
+}
+\hfill
+\subfloat[\label{fig:graph5-huang-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+}
+\hfill
+\subfloat[\label{fig:graph5-huang-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+}
+\hfill
+\subfloat[\label{fig:graph5-huang-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-huang-total}
+}
+\caption{Drawings of graph 5 from last years graph drawing contest.  
+%(a)~Organic Layout by \emph{yFiles}, 
+(a)--(c)~Our results, 
+(d)--(f)~Results computed with Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, 
+(g)--(i)~Results computed with Huang et al~\cite{DBLP:journals/vlc/HuangEHL13}.}
+\label{fig:graph5}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+%\subfloat[\label{fig:graph9-yfiles}{Organic Layout}]{
+%\centering
+%\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+%}
+
+\subfloat[\label{fig:graph9-ourBest-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-ourBest-crossing}
+}
+\hfill
+\subfloat[\label{fig:graph9-ourBest-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+}
+\hfill
+\subfloat[\label{fig:graph9-ourBest-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+}
+\hfill
+\subfloat[\label{fig:graph9-argyriou-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-argyriou-crossing}
+}
+\hfill
+\subfloat[\label{fig:graph9-argyriou-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-argyriou-angular}
+}
+\hfill
+\subfloat[\label{fig:graph9-argyriou-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-argyriou-total}
+}
+\hfill
+\subfloat[\label{fig:graph9-huang-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+}
+\hfill
+\subfloat[\label{fig:graph9-huang-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+}
+\hfill
+\subfloat[\label{fig:graph9-huang-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-huang-total}
+}
+\caption{Drawings of graph 9 from last years graph drawing contest. 
+%(a)~Organic Layout by \emph{yFiles}, 
+(a)--(c)~Our results, 
+(d)--(f)~Results computed with Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, 
+(g)--(i)~Results computed with Huang et al~\cite{DBLP:journals/vlc/HuangEHL13}.}
+\label{fig:graph9}
+\end{figure}}{}
 
 \end{document}
