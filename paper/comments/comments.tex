@@ -27,13 +27,13 @@ This is a good idea, which clearly gives improved performance.}
 
 \begin{itemize}
 
-\tcomment{However the approach is not novel (although it has been presented as such) - and so the paper comes across as preliminary work that needs to be rooted in a wider context in order to strengthen it.}
+\rcomment{However the approach is not novel (although it has been presented as such) - and so the paper comes across as preliminary work that needs to be rooted in a wider context in order to strengthen it.}
 
-\response{}
+\response{See below.}
 
-\tcomment{The process of choosing whether to move a node ("If there exists a position among them, that does not lead to a reduction of the crossing resolution, we move the vertex to this position") is an application of a simple hill-climbing algorithm (with the same advantages and disadvantages) - this needs to be acknowledged and clarified.}
+\rcomment{The process of choosing whether to move a node ("If there exists a position among them, that does not lead to a reduction of the crossing resolution, we move the vertex to this position") is an application of a simple hill-climbing algorithm (with the same advantages and disadvantages) - this needs to be acknowledged and clarified.}
 
-\response{}
+\response{Added a note stating that our approach essentially resembles a hill climbing method.}
 
 \jcomment{Or maybe the process might better be related to simulated annealing (with a temperature parameter)?}
 
@@ -49,9 +49,9 @@ This is a good idea, which clearly gives improved performance.}
 
 \begin{itemize}
 
-\tcomment{Five aesthetic properties (P1-P5) are clearly defined, but never referred to again. There are only four comparative line charts in each of fig 3 and fig 4 (one of which - iterations - is not an aesthetic property).  P2 and P3 do not seem to have been measured or plotted.}
+\rcomment{Five aesthetic properties (P1-P5) are clearly defined, but never referred to again. There are only four comparative line charts in each of fig 3 and fig 4 (one of which - iterations - is not an aesthetic property).  P2 and P3 do not seem to have been measured or plotted.}
 
-\response{}
+\response{Removed the notation with P.}
 
 
 
@@ -107,13 +107,13 @@ As for the presentation, the paper is well-written and reads smoothly, I could s
 
 \begin{itemize}
 
-\tcomment{l.103: The result of Dujmovic et al. looks like folklore. Split the edge set of the drawn graph into $\pi/\alpha$ parts each of which must be planar. If this is indeed correct, you can perhaps mention it.}
+\rcomment{l.103: The result of Dujmovic et al. looks like folklore. Split the edge set of the drawn graph into $\pi/\alpha$ parts each of which must be planar. If this is indeed correct, you can perhaps mention it.}
 
 \response{}
 
-\tcomment{l.141: "... weighted random selection procedure ..." Could you be more specific?}
+\rcomment{l.141: "... weighted random selection procedure ..." Could you be more specific?}
 
-\response{}
+\response{Changed to probabilistic.}
 
 \rcomment{l.143: Which distance do you have in mind? Graph theoretical, Euclidean, Manhattan?}
 
@@ -139,9 +139,9 @@ As for the presentation, the paper is well-written and reads smoothly, I could s
 
 \response{Changed "containing" to "by including".}
 
-\tcomment{l.193: How big is a medium-size graph?}
+\rcomment{l.193: How big is a medium-size graph?}
 
-\response{}
+\response{Made a note that we consider large to be more than 100 vertices.}
 
 \rcomment{l.207: na\"ive}
 
@@ -168,17 +168,17 @@ The authors are encouraged to address technical concerns as follows:}
 
 \begin{itemize}
 
-\tcomment{Improve the explanation at the end of the section "Complexity issues" on page 6.
+\rcomment{Improve the explanation at the end of the section "Complexity issues" on page 6.
 
 The last paragraph on page 6 describes the computational complexity of the proposed algorithm for computing edge crossings. This is basically acceptable, while still a bit hard to understand. I believe that the description can be further improved by inserting some visual figures.}
 
-\response{}
+\response{Refined the text a bit. No new figure.}
 
-\tcomment{Categorization of aesthetic properties for evaluating the present algorithm
+\rcomment{Categorization of aesthetic properties for evaluating the present algorithm
 
 Section 4 describes that the present algorithm was compared with existing ones in terms of five aesthetic properties: (P1) crossing resolution, (P2) total resolution, (P3) angular resolution, (P4) aspect ratio, and (P5) number of crossings. However, the first three were employed as the measure for adjusting the algorithms, while the last two were evaluated in the respective experiments. Thus, just listing these five properties looks unnatural. The authors are encouraged to categorize important evaluation properties appropriately from the beginning.}
 
-\response{}
+\response{Pointed out that P4 and P5 are additionally measured.}
 
 \jcomment{Aspect ratio control in the proposed approach
 
