@@ -282,6 +282,9 @@ public class SidePanelTab {
         cDefaultPanel.weightx = 0.5;
         cDefaultPanel.weighty = 0;
         enableCrossingResolution.addItemListener(this::enableCrossingResolutionActionPerformed);
+        if (!MainFrame.CONTEST_MODE) {
+            defaultPanel.add(enableCrossingResolution, cDefaultPanel);
+        }
         enableCrossingResolution.setSelected(false);
 
         enableAngularResolution = new JCheckBox("Angular Resolution");
@@ -291,6 +294,9 @@ public class SidePanelTab {
         cDefaultPanel.weightx = 0.5;
         cDefaultPanel.weighty = 0;
         enableAngularResolution.addItemListener(this::enableAngularResolutionActionPerformed);
+        if (!MainFrame.CONTEST_MODE) {
+            defaultPanel.add(enableAngularResolution, cDefaultPanel);
+        }
         enableAngularResolution.setSelected(false);
 
         enableAspectRatio = new JCheckBox("Aspect Ratio");
@@ -300,13 +306,11 @@ public class SidePanelTab {
         cDefaultPanel.weightx = 0.5;
         cDefaultPanel.weighty = 0;
         enableAspectRatio.addItemListener(this::enableAspectRatioActionPerformed);
-        enableAspectRatio.setSelected(false);
-
         if (!MainFrame.CONTEST_MODE) {
-            defaultPanel.add(enableCrossingResolution, cDefaultPanel);
-            defaultPanel.add(enableAngularResolution, cDefaultPanel);
             defaultPanel.add(enableAspectRatio, cDefaultPanel);
         }
+        enableAspectRatio.setSelected(false);
+
 
         outputTextArea.setLineWrap(true);
         outputTextArea.setRows(10);
