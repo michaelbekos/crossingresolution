@@ -581,18 +581,21 @@ public class SidePanelTab {
             IGraph graph = initSidePanel.mainFrame.graph;
             Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
             RectD bounds = BoundingBox.from(nodePositions);
-//            Scaling.scaleBy(Math.max(1, Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering),
-//             (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering))), nodePositions);
-            Scaling.scaleBy(Math.min(MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering,
-                    MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering), nodePositions);
+            Scaling.scaleBy(Math.max(1, Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering),
+             (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering))), nodePositions);
+           // Scaling.scaleBy(Math.min(MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering,
+             //      MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering), nodePositions);
             Centering.moveToCenter(MainFrame.BOX_SIZE[0], MainFrame.BOX_SIZE[1], nodePositions);
-            PositionMap.applyToGraph(graph, nodePositions);
+         //   PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
+
+
 
             bounds = BoundingBox.from(nodePositions);
             outputTextArea.setText("Scaled to Box with Size: " + bounds.getWidth() + "x" + bounds.getHeight());
 
             initSidePanel.addDefaultListeners();
+            Scaling.scaleEdgeSizes(graph,scaleFactorWhenCentering);
         });
     }
 
@@ -651,6 +654,7 @@ public class SidePanelTab {
 //--------------------------------------------------------------------
 
             Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
+            Scaling.scaleEdgeSizes(initSidePanel.mainFrame.view);
 
             initSidePanel.addDefaultListeners();
         });
@@ -706,6 +710,7 @@ public class SidePanelTab {
                         //remove chain
                         reinsertVerticesItem();
                         Scaling.scaleNodeSizes(initSidePanel.mainFrame.view);
+                        Scaling.scaleEdgeSizes(initSidePanel.mainFrame.view);
                         setOutputTextArea("Reinserting Chains... Chains left: "+initSidePanel.mainFrame.removedChains.number());
                         System.out.println("Reinserting Chains... "+initSidePanel.mainFrame.removedChains.number()+" angle: "+minAngle);
                         iterations = 0;

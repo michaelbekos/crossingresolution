@@ -156,6 +156,7 @@ public class MinimumAngleMonitor {
 
   public void updateAngleInfoBar() {
     Scaling.scaleNodeSizes(view); //TODO: maybe performance hit
+    Scaling.scaleEdgeSizes(view);
     computeCrossingResolution();
     computeAngularResolution();
     if (useAspectRatio) {   //TODO

@@ -11,7 +11,9 @@ import util.Util;
 import util.graph2d.Intersection;
 import util.graph2d.LineSegment;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -208,7 +210,8 @@ public class MinimumAngle {
    */
   public static void resetHighlighting(IGraph graph){
     for(IEdge e: graph.getEdges()){
-      paintEdge(e, Pen.getBlack());
+      //paintEdge(e, Pen.getBlack());
+      paintEdge(e, new Pen(Color.BLACK, 100));
     }
   }
 
@@ -220,7 +223,11 @@ public class MinimumAngle {
   public static void paintEdge(IEdge e, Pen p){
     IEdgeStyle s = e.getStyle();
     if(s instanceof PolylineEdgeStyle) {
-      ((PolylineEdgeStyle) s).setPen(p);
+    //  ((PolylineEdgeStyle) s).setPen(p);
+        if(((PolylineEdgeStyle)s).getPen() ==null){
+            System.out.println("pen == null");
+        }
+      ((PolylineEdgeStyle) s).getPen().setPaint(p.getPaint());
     } else {
       System.out.println(s.getClass());
     }
@@ -230,8 +237,13 @@ public class MinimumAngle {
    * Displays vectors for debugging purposes
    */
   public static void highlightCrossing(Intersection crossing) {
-      paintEdge(crossing.segment1.e, Pen.getRed());
-      paintEdge(crossing.segment2.e, Pen.getRed());
+//    paintEdge(crossing.segment1.e, Pen.getRed());
+  //  paintEdge(crossing.segment2.e, Pen.getRed());
+
+    Pen pen = new Pen();
+    pen.setPaint(Color.RED);
+    paintEdge(crossing.segment1.e, pen);
+    paintEdge(crossing.segment2.e, pen);
   }
 
   /**
