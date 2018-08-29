@@ -583,10 +583,10 @@ public class SidePanelTab {
             RectD bounds = BoundingBox.from(nodePositions);
             Scaling.scaleBy(Math.max(1, Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering),
              (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering))), nodePositions);
-           // Scaling.scaleBy(Math.min(MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering,
-             //      MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering), nodePositions);
+//            Scaling.scaleBy(Math.min(MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering,
+//                   MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering), nodePositions);
             Centering.moveToCenter(MainFrame.BOX_SIZE[0], MainFrame.BOX_SIZE[1], nodePositions);
-         //   PositionMap.applyToGraph(graph, nodePositions);
+            PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
 
 
