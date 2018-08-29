@@ -1058,6 +1058,23 @@ If we neglect the time restriction, for all the graphs, the results  are (someti
 \section{Sample Drawings}
 \label{app:samples}
 
+In the following, we showcase drawings computed by our two algorithms and the algorithms by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. For each algorithm, we present drawings attempting to optimize each of crossing, angular and total resolution. The two graphs shown here are taken from last year's graph drawing competition. As an initial drawing, we used for all algorithms the SmartOrganic layouts shown in Figure~\ref{fig:graph5And9-yfiles} computed with the yfiles library~\cite{DBLP:books/sp/04/WieseE004}. The drawings computed by each of the algorithms are shown in Figures~\ref{fig:graph5} and~\ref{fig:graph9}.
+
+\begin{figure}[htbp]
+\centering
+\subfloat[\label{fig:graph5-yfiles}{Graph 5}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+}
+\hfil
+\subfloat[\label{fig:graph9-yfiles}{Graph 9}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+}
+\caption{SmartOrganic layouts by yFiles~\cite{DBLP:books/sp/04/WieseE004} of graphs 5 and 9 from last year's graph drawing contest.}
+\label{fig:graph5And9-yfiles}
+\end{figure}
+
 \begin{figure}[htbp]
 \centering
 %\subfloat[\label{fig:graph5-yfiles}{Organic Layout}]{
@@ -1080,6 +1097,21 @@ If we neglect the time restriction, for all the graphs, the results  are (someti
 \includegraphics[width=0.3\textwidth]{graph5-ourBest-total}
 }
 \hfill
+\subfloat[\label{fig:graph5-ourRestricted-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-crossing}
+}
+\hfill
+\subfloat[\label{fig:graph5-ourRestricted-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-angular}
+}
+\hfill
+\subfloat[\label{fig:graph5-ourRestricted-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-total}
+}
+\hfill
 \subfloat[\label{fig:graph5-argyriou-cr}{Crossing Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph5-argyriou-crossing}
@@ -1097,23 +1129,24 @@ If we neglect the time restriction, for all the graphs, the results  are (someti
 \hfill
 \subfloat[\label{fig:graph5-huang-cr}{Crossing Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+\includegraphics[width=0.3\textwidth]{graph5-huang-crossing}
 }
 \hfill
 \subfloat[\label{fig:graph5-huang-ar}{Angular Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+\includegraphics[width=0.3\textwidth]{graph5-huang-angular}
 }
 \hfill
 \subfloat[\label{fig:graph5-huang-tr}{Total Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph5-huang-total}
 }
-\caption{Drawings of graph 5 from last years graph drawing contest.  
+\caption{Drawings of graph 5 from last year's graph drawing contest. 
 %(a)~Organic Layout by \emph{yFiles}, 
-(a)--(c)~Our results, 
-(d)--(f)~Results computed with Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, 
-(g)--(i)~Results computed with Huang et al~\cite{DBLP:journals/vlc/HuangEHL13}.}
+(a)--(c)~Our best results,
+(d)--(f)~Results of our algorithm restricted to maintain the aspect ratio 
+(g)--(i)~Results computed with Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, 
+(j)--(l)~Results computed with Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.}
 \label{fig:graph5}
 \end{figure}
 
@@ -1131,12 +1164,27 @@ If we neglect the time restriction, for all the graphs, the results  are (someti
 \hfill
 \subfloat[\label{fig:graph9-ourBest-ar}{Angular Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+\includegraphics[width=0.3\textwidth]{graph9-ourBest-angular}
 }
 \hfill
 \subfloat[\label{fig:graph9-ourBest-tr}{Total Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+\includegraphics[width=0.3\textwidth]{graph9-ourBest-total}
+}
+\hfill
+\subfloat[\label{fig:graph9-ourRestricted-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-crossing}
+}
+\hfill
+\subfloat[\label{fig:graph9-ourRestricted-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-angular}
+}
+\hfill
+\subfloat[\label{fig:graph9-ourRestricted-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-total}
 }
 \hfill
 \subfloat[\label{fig:graph9-argyriou-cr}{Crossing Resolution}]{
@@ -1156,23 +1204,24 @@ If we neglect the time restriction, for all the graphs, the results  are (someti
 \hfill
 \subfloat[\label{fig:graph9-huang-cr}{Crossing Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+\includegraphics[width=0.3\textwidth]{graph9-huang-crossing}
 }
 \hfill
 \subfloat[\label{fig:graph9-huang-ar}{Angular Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+\includegraphics[width=0.3\textwidth]{graph9-huang-angular}
 }
 \hfill
 \subfloat[\label{fig:graph9-huang-tr}{Total Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph9-huang-total}
 }
-\caption{Drawings of graph 9 from last years graph drawing contest. 
+\caption{Drawings of graph 9 from last year's graph drawing contest. 
 %(a)~Organic Layout by \emph{yFiles}, 
-(a)--(c)~Our results, 
-(d)--(f)~Results computed with Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, 
-(g)--(i)~Results computed with Huang et al~\cite{DBLP:journals/vlc/HuangEHL13}.}
+(a)--(c)~Our best results,
+(d)--(f)~Results of our algorithm restricted to maintain the aspect ratio 
+(g)--(i)~Results computed with Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, 
+(j)--(l)~Results computed with Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.}
 \label{fig:graph9}
 \end{figure}}{}
 
