@@ -644,6 +644,8 @@ public class InitMenuBar {
                     }
 
                     Scaling.scaleNodeSizes(view);
+                    Scaling.scaleEdgeSizes(view);
+
                 } catch (NumberFormatException exc) {
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo vertex will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 }
@@ -671,6 +673,7 @@ public class InitMenuBar {
                     mainFrame.removedChains.reinsert(numChains);
 
                     Scaling.scaleNodeSizes(view);
+                    Scaling.scaleEdgeSizes(view);
                 } catch (NumberFormatException exc) {
                     JOptionPane.showMessageDialog(null, "Incorrect input.\nNo chain will be reinserted.", "Incorrect Input", JOptionPane.ERROR_MESSAGE);
                 }

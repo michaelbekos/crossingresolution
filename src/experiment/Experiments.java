@@ -238,7 +238,7 @@ public class Experiments {
               */                      /* Set config. parameters */
                 experiment.getTab().get().configurator.getItems().get(0).setValue(10.0); // Minimum step size
                 experiment.getTab().get().configurator.getItems().get(1).setValue(150.0); // Maximum step size
-                experiment.getTab().get().configurator.getItems().get(2).setValue(50); // Failed iteration ... detect loacal maximum
+                experiment.getTab().get().configurator.getItems().get(2).setValue(50); // Failed iteration ... detect local maximum
                 experiment.getTab().get().configurator.getItems().get(3).setValue(50); // numbers .. maximum resolving
                 experiment.getTab().get().configurator.getItems().get(4).setValue(this.aspectRatio); // Maximum legal aspect Ratio
                 experiment.getTab().get().configurator.getItems().get(5).setValue(false); // Allow decreasing minimum angle at local maximum

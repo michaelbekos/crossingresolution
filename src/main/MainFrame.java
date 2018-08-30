@@ -6,6 +6,7 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
+import com.yworks.yfiles.graph.styles.IArrow;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
@@ -36,7 +37,7 @@ import java.util.function.Consumer;
  */
 public class MainFrame extends JFrame {
 
-    public static final Boolean CONTEST_MODE = true;
+    public static final Boolean CONTEST_MODE = false;
 
     /* Box related issue*/
 
@@ -94,6 +95,8 @@ public class MainFrame extends JFrame {
      * This method is called within the constructor to initialize the form.
      */
     private void initComponents() {
+
+
         contest2018IOHandler = new Contest2018IOHandler();
         this.removedNodes = new RemovedNodes(graph);
         this.removedChains = new RemovedChains(graph);
@@ -179,6 +182,7 @@ public class MainFrame extends JFrame {
             gridVisualCreator.getGridInfo().setHorizontalSpacing(spacing);
             gridVisualCreator.getGridInfo().setVerticalSpacing(spacing);
             Scaling.scaleNodeSizes(view);
+            Scaling.scaleEdgeSizes(view);
             if (this.graph.getNodes().size() > 100) {
                 try {
                     Thread.sleep(250);
@@ -197,6 +201,7 @@ public class MainFrame extends JFrame {
         this.graphEditorInputMode.setSnapContext(this.graphSnapContext);
         GridInfo gridInfo = new GridInfo(gridSize,gridSize, new PointD(0,0));
         this.gridVisualCreator = new GridVisualCreator(gridInfo);
+        this.gridVisualCreator.setVisible(CONTEST_MODE);
         this.gridVisualCreator.setVisibilityThreshold(5);
         this.view.getBackgroundGroup().addChild(this.gridVisualCreator, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE);
         this.graphSnapContext.setGridSnapType(GridSnapTypes.GRID_POINTS);
@@ -210,6 +215,7 @@ public class MainFrame extends JFrame {
         this.graph.getNodeDefaults().setStyle(defaultNodeStyle);
         this.graph.getDecorator().getNodeDecorator().getFocusIndicatorDecorator().hideImplementation();
         this.graph.getNodeDefaults().setSize(new SizeD(15,15));
+
 
         /* Default Edge Styling */
         this.defaultEdgeStyle = new PolylineEdgeStyle();
