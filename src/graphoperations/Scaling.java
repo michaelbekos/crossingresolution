@@ -60,11 +60,12 @@ public final class Scaling {
         double height = graph.getNodeDefaults().getSize().height * scaleValue;
         for (INode u : graph.getNodes()) {
             graph.setNodeLayout(u, new RectD(
-                    u.getLayout().getCenter().getX() - 0.5*width,
-                    u.getLayout().getCenter().getY() - 0.5*height,
+                    u.getLayout().getCenter().getX() - 0.5 * width,
+                    u.getLayout().getCenter().getY() - 0.5 * height,
                     width,
                     height
             ));
+
         }
     }
 
@@ -75,7 +76,6 @@ public final class Scaling {
 
     public static void scaleEdgeSizes(IGraph graph, double zoomValue){
         double scaleValue = 1 / zoomValue; // scale reinserted nodes
-        PolylineEdgeStyle edgeStyle = new PolylineEdgeStyle();
         for(IEdge e : graph.getEdges()){
             IEdgeStyle s = e.getStyle();
             if(s instanceof PolylineEdgeStyle) {
@@ -83,7 +83,6 @@ public final class Scaling {
             } else {
                 System.out.println(s.getClass());
             }
-          //  graph.setStyle(e, edgeStyle);
         }
 
 

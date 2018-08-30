@@ -594,6 +594,7 @@ public class SidePanelTab {
              Scaling.scaleBy(Math.max(1, Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering),
               (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering))), nodePositions);
 
+            Centering.moveToCenter(MainFrame.BOX_SIZE[0], MainFrame.BOX_SIZE[1], nodePositions);
             PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
 
@@ -817,9 +818,11 @@ public class SidePanelTab {
 
     private void fppItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         YGraphAdapter graphAdapter = new YGraphAdapter(initSidePanel.mainFrame.graph);
-        String outString = "Graph is planar: " + GraphChecker.isPlanar(graphAdapter.getYGraph());
+        String outString = "planar: " + GraphChecker.isPlanar(graphAdapter.getYGraph()) +
+                "\nloop free: " + GraphChecker.isSelfLoopFree(graphAdapter.getYGraph()) +
+                "\nmultiple edge free: " + GraphChecker.isMultipleEdgeFree(graphAdapter.getYGraph());
         if( com.yworks.yfiles.algorithms.GraphChecker.isBiconnected(graphAdapter.getYGraph())) {
-            outputTextArea.setText("Graph is biconnected.\n" + outString );
+            outputTextArea.setText("biconnected: true\n" + outString );
             initSidePanel.removeDefaultListeners();
             ICompoundEdit compoundEdit = initSidePanel.mainFrame.graph.beginEdit("Undo layout", "Redo layout");
             FraysseixPachPollack.FPPSettings fppSettings = new FraysseixPachPollack.FPPSettings();
@@ -830,7 +833,7 @@ public class SidePanelTab {
             compoundEdit.commit();
             initSidePanel.addDefaultListeners();
         }else{
-            outputTextArea.setText("Graph is not biconnected!" + outString);
+            outputTextArea.setText("biconnected: false \n" + outString);
         }
 
     }
