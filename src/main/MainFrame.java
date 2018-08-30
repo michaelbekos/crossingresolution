@@ -210,7 +210,7 @@ public class MainFrame extends JFrame {
         /* Default Node Styling */
         this.defaultNodeStyle = new ShinyPlateNodeStyle();
         this.defaultNodeStyle.setPaint(Color.GRAY);
-        this.defaultNodeStyle.setPen(new Pen(Color.GRAY, 1));
+        this.defaultNodeStyle.setPen(new Pen(Color.GRAY, 0));
         this.defaultNodeStyle.setShadowDrawingEnabled(false);
         this.graph.getNodeDefaults().setStyle(defaultNodeStyle);
         this.graph.getDecorator().getNodeDecorator().getFocusIndicatorDecorator().hideImplementation();
