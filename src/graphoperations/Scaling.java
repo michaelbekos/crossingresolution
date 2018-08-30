@@ -11,6 +11,7 @@ import com.yworks.yfiles.graph.styles.IEdgeStyle;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.view.GraphComponent;
 import com.yworks.yfiles.view.Pen;
+import main.MainFrame;
 import util.BoundingBox;
 
 import java.awt.*;
@@ -29,11 +30,13 @@ public final class Scaling {
      * Move all node coordinates to positive values and multiply them by a factor
      */
   public static void scaleBy(double factor, Mapper<INode, PointD> nodePositions) {
-    RectD bounds = BoundingBox.from(nodePositions);
-    scaleByCore(factor, nodePositions, bounds);
-  }
+        RectD bounds = BoundingBox.from(nodePositions);
+        scaleByCore(factor, nodePositions, bounds);
+    }
+
 
   private static void scaleByCore(double factor, Mapper<INode, PointD> nodePositions, RectD bounds) {
+
     for (Map.Entry<INode, PointD> entry : nodePositions.getEntries()) {
       INode node = entry.getKey();
       PointD center = entry.getValue();
@@ -46,7 +49,8 @@ public final class Scaling {
 
   }
 
-  public static void scaleNodeSizes(GraphComponent view) {
+
+    public static void scaleNodeSizes(GraphComponent view) {
       IGraph graph = view.getGraph();
       scaleNodeSizes(graph, view.getZoom());
   }

@@ -19,7 +19,8 @@ import main.MainFrame;
 
 
 public class BoundingBox {
-	  public static RectD from(Mapper<INode, PointD> nodes) {
+
+	public static RectD from(Mapper<INode, PointD> nodes) {
 	    double minX = Double.POSITIVE_INFINITY, maxX = Double.NEGATIVE_INFINITY;
 	    double minY = Double.POSITIVE_INFINITY, maxY = Double.NEGATIVE_INFINITY;
 

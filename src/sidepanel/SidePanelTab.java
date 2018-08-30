@@ -39,6 +39,7 @@ import java.beans.PropertyChangeEvent;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 
 public class SidePanelTab {
@@ -581,15 +582,20 @@ public class SidePanelTab {
             IGraph graph = initSidePanel.mainFrame.graph;
             Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
             RectD bounds = BoundingBox.from(nodePositions);
-            Scaling.scaleBy(Math.max(1, Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering),
-             (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering))), nodePositions);
-//            Scaling.scaleBy(Math.min(MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering,
-//                   MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering), nodePositions);
-            Centering.moveToCenter(MainFrame.BOX_SIZE[0], MainFrame.BOX_SIZE[1], nodePositions);
+            //Rotate the graph, that his max side is parallel to the max side of the box
+            if(MainFrame.BOX_SIZE[0] >= MainFrame.BOX_SIZE[1] && bounds.width < bounds.height || MainFrame.BOX_SIZE[0] < MainFrame.BOX_SIZE[1] && bounds.width > bounds.height){
+                for (Map.Entry<INode, PointD> entry : nodePositions.getEntries()) {
+                    INode node = entry.getKey();
+                    PointD center = entry.getValue();
+                    nodePositions.setValue(node, new PointD(center.getY(),center.getX()));
+                }
+            }
+            bounds = BoundingBox.from(nodePositions);
+             Scaling.scaleBy(Math.max(1, Math.min((int) (MainFrame.BOX_SIZE[0] / bounds.getWidth() * scaleFactorWhenCentering),
+              (int) (MainFrame.BOX_SIZE[1] / bounds.getHeight()*scaleFactorWhenCentering))), nodePositions);
+
             PositionMap.applyToGraph(graph, nodePositions);
             initSidePanel.mainFrame.view.fitGraphBounds();
-
-
 
             bounds = BoundingBox.from(nodePositions);
             outputTextArea.setText("Scaled to Box with Size: " + bounds.getWidth() + "x" + bounds.getHeight());
@@ -811,8 +817,9 @@ public class SidePanelTab {
 
     private void fppItemActionPerformed(@SuppressWarnings("unused") ActionEvent evt) {
         YGraphAdapter graphAdapter = new YGraphAdapter(initSidePanel.mainFrame.graph);
+        String outString = "Graph is planar: " + GraphChecker.isPlanar(graphAdapter.getYGraph());
         if( com.yworks.yfiles.algorithms.GraphChecker.isBiconnected(graphAdapter.getYGraph())) {
-            outputTextArea.setText("Graph is biconnected.");
+            outputTextArea.setText("Graph is biconnected.\n" + outString );
             initSidePanel.removeDefaultListeners();
             ICompoundEdit compoundEdit = initSidePanel.mainFrame.graph.beginEdit("Undo layout", "Redo layout");
             FraysseixPachPollack.FPPSettings fppSettings = new FraysseixPachPollack.FPPSettings();
@@ -823,7 +830,7 @@ public class SidePanelTab {
             compoundEdit.commit();
             initSidePanel.addDefaultListeners();
         }else{
-            outputTextArea.setText("Graph is not biconnected!");
+            outputTextArea.setText("Graph is not biconnected!" + outString);
         }
 
     }
