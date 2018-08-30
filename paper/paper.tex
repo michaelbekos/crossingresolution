@@ -39,7 +39,7 @@
 \newcommand{\myparagraph}[1]{\smallskip\noindent\textbf{#1}.}
 
 %conf for conference version, arxiv for arxiv version
-\newcommand{\ver}{conf}
+\newcommand{\ver}{arxiv}
 \newcommand{\arxapp}[2]{\ifthenelse{\equal{\ver}{conf}}{#2}{#1}}
 
 \author{Michael~A.~Bekos, Henry~F\"orster, Christian~Geckeler, Lukas Holl\"ander, Michael~Kaufmann, Amad\"aus~M.~Spallek, Jan~Splett}
@@ -314,7 +314,7 @@ The experiment was performed as follows. Initially, each Rome graph was laid out
 %\end{enumerate}
 %\end{multicols}
 %
-Since all algorithms of the experiment can easily be adjusted to maximize~only the crossing resolution, or only the angular resolution or both (by maximizing~the total resolution), we adjusted each of the algorithms to maximize exclusively the corresponding measures; see Figs.~\ref{fig:cr-res}, \ref{fig:to-res} and~\ref{fig:an-res}. In our algorithm, this can be achieved by modifying appropriately the content of the vertex-pool (as we saw in Section~\ref{ssec:variants}), while in the algorithms of Argyriou et al.\ and of Huang et al.\ by switching on only the forces that maximize the corresponding properties under measure (note that, each of these two algorithms has a different set of forces to maximize the crossing and the angular resolution, such that together they maximize the total resolution). The reported results are on average across different drawings with same number of vertices. Finally, we mention that for our algorithm, we chose $\delta_{max}=\frac{1}{2}\max\{w,h\}$, where $w$ and $h$ are the width and the height of the initial drawing, respectively, $\delta_{min}=\frac{1}{100}\delta_{max}$ and $\rho=50$; also, in order to further decrease the time needed for an iteration, we only computed a candidate position for 10 of the 50 rays. 
+Since all algorithms of the experiment can easily be adjusted to maximize~only the crossing resolution, or only the angular resolution or both (by maximizing~the total resolution), we adjusted each of the algorithms to maximize exclusively the corresponding measures; see Figs.~\ref{fig:cr-res}, \ref{fig:to-res} and~\ref{fig:an-res}. In our algorithm, this can be achieved by modifying appropriately the content of the vertex-pool (as we saw in Section~\ref{ssec:variants}), while in the algorithms of Argyriou et al.\ and of Huang et al.\ by switching on only the forces that maximize the corresponding properties under measure (note that, each of these two algorithms has a different set of forces to maximize the crossing and the angular resolution, such that together they maximize the total resolution). The reported results are on average across different drawings with same number of vertices. Finally, we mention that for our algorithm, we chose $\delta_{max}=\frac{1}{2}\max\{w,h\}$, where $w$ and $h$ are the width and the height of the initial drawing, respectively, $\delta_{min}=\frac{1}{100}\delta_{max}$ and $\rho=10$. 
 
 %We compared the quality of the produced drawings based on crossing resolution, total resolution, and angular resolution. Additionally, we consider the aspect ratio, and the number of crossings of the corresponding drawings.
 
@@ -570,6 +570,8 @@ The results for the aspect ratio, the number of crossings and the required numbe
 While working on this project, we made some useful observations and  obtained some interesting insights. In particular, there is a recent hypothesis (also supported by experiments) that drawings, in which the crossing angles, are large are easy to read and understand. We observed that drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other. Hence, angular resolution and aspect ratio were often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped significantly improving the readability of the drawings, without loosing too much of their quality in terms of the crossing resolution.
 
 We conclude by noting that our motivation to work with this problem was our participation to GD2017 contest, where we performed miserably using a force-directed algorithm; for details \arxapp{see Appendix~\ref{app:contest}}{see~\cite{arxivVersion}}. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely more promising than our previous as evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing.
+
+\paragraph{Acknowlegdments.} This project was supported by DFG grant KA812/18-1. The authors would also like to acknowledge Simon Wegendt and Jessica Wolz for implementing the first version of our prototype.
 
 \bibliographystyle{abbrvurl}
 \bibliography{references}
@@ -1071,15 +1073,25 @@ If we neglect the time restriction, for all the graphs, the results  are (someti
 \section{Sample Drawings}
 \label{app:samples}
 
-In this section, we present drawings of the 5th and of the 9th graph given in the Graph Drawing contest 2017 that are produced by different variants of our algorithm and of the algorithms by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}; see Figures~\ref{fig:graph5} and~\ref{fig:graph9}, respectively. Each variant was obtained by adjusting each of the aforementioned algorithms to optimize the crossing resolution, the angular resolution and the total resolution, respectively; the aesthetic criterion optimized by each variant is reported in the caption of its corresponding subfigure.
+In this section, we present drawings of the 5th and of the 9th graph given in the Graph Drawing contest 2017 that are produced by different variants of our algorithm and of the algorithms by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}; see Figures~\ref{fig:graph5} and~\ref{fig:graph9}, respectively. Each variant was obtained by adjusting each of the aforementioned algorithms to optimize the crossing resolution, the angular resolution and the total resolution, respectively; the aesthetic criterion optimized by each variant is reported in the caption of its corresponding subfigure. As an initial drawing, we used for all algorithms the SmartOrganic layouts shown in Figure~\ref{fig:graph5And9-yfiles} computed with the yfiles library~\cite{DBLP:books/sp/04/WieseE004}.
 
-\begin{figure}[h!]
+\begin{figure}[htbp]
 \centering
-%\subfloat[\label{fig:graph5-yfiles}{Organic Layout}]{
-%\centering
-%\includegraphics[width=0.3\textwidth]{graph5-yfiles}
-%}
+\subfloat[\label{fig:graph5-yfiles}{Graph 5}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+}
+\hfil
+\subfloat[\label{fig:graph9-yfiles}{Graph 9}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+}
+\caption{SmartOrganic layouts by yFiles~\cite{DBLP:books/sp/04/WieseE004} of graphs 5 and 9 from last year's graph drawing contest.}
+\label{fig:graph5And9-yfiles}
+\end{figure}
 
+\begin{figure}[htbp]
+\centering
 \subfloat[\label{fig:graph5-ourBest-cr}{Crossing Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph5-ourBest-crossing}
@@ -1093,6 +1105,21 @@ In this section, we present drawings of the 5th and of the 9th graph given in th
 \subfloat[\label{fig:graph5-ourBest-tr}{Total Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph5-ourBest-total}
+}
+\hfill
+\subfloat[\label{fig:graph5-ourRestricted-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-crossing}
+}
+\hfill
+\subfloat[\label{fig:graph5-ourRestricted-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-angular}
+}
+\hfill
+\subfloat[\label{fig:graph5-ourRestricted-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-total}
 }
 \hfill
 \subfloat[\label{fig:graph5-argyriou-cr}{Crossing Resolution}]{
@@ -1112,34 +1139,30 @@ In this section, we present drawings of the 5th and of the 9th graph given in th
 \hfill
 \subfloat[\label{fig:graph5-huang-cr}{Crossing Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+\includegraphics[width=0.3\textwidth]{graph5-huang-crossing}
 }
 \hfill
 \subfloat[\label{fig:graph5-huang-ar}{Angular Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph5-yfiles}
+\includegraphics[width=0.3\textwidth]{graph5-huang-angular}
 }
 \hfill
 \subfloat[\label{fig:graph5-huang-tr}{Total Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph5-huang-total}
 }
+
 \caption{Different drawings of the 5th graph given in the Graph Drawing 2017 contest produced by different variants of
-%(a)~Organic Layout by \emph{yFiles}, 
-(a)--(c)~our algorithm, 
-(d)--(f)~the algorithm by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and
-(g)--(i)~the algorithm by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
+(a)--(c)~the variant of our algorithm without restrictions on the aspect ratio, 
+(d)--(f)~the variant of our algorithm forced to maintain the input aspect ratio,
+(g)--(i)~the algorithm by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and
+(j)--(l)~the algorithm by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
 The aesthetic criterion optimized by each variant is reported in the caption of its subfigure.}
 \label{fig:graph5}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[htbp]
 \centering
-%\subfloat[\label{fig:graph9-yfiles}{Organic Layout}]{
-%\centering
-%\includegraphics[width=0.3\textwidth]{graph9-yfiles}
-%}
-
 \subfloat[\label{fig:graph9-ourBest-cr}{Crossing Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph9-ourBest-crossing}
@@ -1147,14 +1170,29 @@ The aesthetic criterion optimized by each variant is reported in the caption of 
 \hfill
 \subfloat[\label{fig:graph9-ourBest-ar}{Angular Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+\includegraphics[width=0.3\textwidth]{graph9-ourBest-angular}
 }
 \hfill
 \subfloat[\label{fig:graph9-ourBest-tr}{Total Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+\includegraphics[width=0.3\textwidth]{graph9-ourBest-total}
+}
+
+\subfloat[\label{fig:graph9-ourRestricted-cr}{Crossing Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-crossing}
 }
 \hfill
+\subfloat[\label{fig:graph9-ourRestricted-ar}{Angular Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-angular}
+}
+\hfill
+\subfloat[\label{fig:graph9-ourRestricted-tr}{Total Resolution}]{
+\centering
+\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-total}
+}
+
 \subfloat[\label{fig:graph9-argyriou-cr}{Crossing Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph9-argyriou-crossing}
@@ -1169,28 +1207,31 @@ The aesthetic criterion optimized by each variant is reported in the caption of 
 \centering
 \includegraphics[width=0.3\textwidth]{graph9-argyriou-total}
 }
-\hfill
+
 \subfloat[\label{fig:graph9-huang-cr}{Crossing Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+\includegraphics[width=0.3\textwidth]{graph9-huang-crossing}
 }
 \hfill
 \subfloat[\label{fig:graph9-huang-ar}{Angular Resolution}]{
 \centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
+\includegraphics[width=0.3\textwidth]{graph9-huang-angular}
 }
 \hfill
 \subfloat[\label{fig:graph9-huang-tr}{Total Resolution}]{
 \centering
 \includegraphics[width=0.3\textwidth]{graph9-huang-total}
 }
+
 \caption{Different drawings of the 9th graph given in the Graph Drawing 2017 contest produced by different variants of
-%(a)~Organic Layout by \emph{yFiles}, 
-(a)--(c)~our algorithm, 
-(d)--(f)~the algorithm by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and
-(g)--(i)~the algorithm by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
+(a)--(c)~the variant of our algorithm without restrictions on the aspect ratio, 
+(d)--(f)~the variant of our algorithm forced to maintain the input aspect ratio,
+(g)--(i)~the algorithm by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and
+(j)--(l)~the algorithm by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
 Each variant was obtained by optimizing a different aesthetic criterion, which is named in the caption of each subfigure.}
 \label{fig:graph9}
-\end{figure}}{}
+\end{figure}
+
+}{}
 
 \end{document}

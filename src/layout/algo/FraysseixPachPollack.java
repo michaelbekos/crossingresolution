@@ -341,7 +341,7 @@ public class FraysseixPachPollack {
          }
 
     private void applyFPPresult() {
-        calcMultipliers();
+        //calcMultipliers(); //for stretching
         HashMap<Node, YPoint> res = getFFPResult();
         Node[] nl = graph.getNodeArray();
         for (Node n : nl) {
