@@ -39,7 +39,7 @@
 \newcommand{\myparagraph}[1]{\smallskip\noindent\textbf{#1}.}
 
 %conf for conference version, arxiv for arxiv version
-\newcommand{\ver}{arxiv}
+\newcommand{\ver}{conf}
 \newcommand{\arxapp}[2]{\ifthenelse{\equal{\ver}{conf}}{#2}{#1}}
 
 \author{Michael~A.~Bekos, Henry~F\"orster, Christian~Geckeler, Lukas Holl\"ander, Michael~Kaufmann, Amad\"aus~M.~Spallek, Jan~Splett}
@@ -244,7 +244,7 @@ A factor that highly affects the efficiency of our algorithm is the computation 
 Instead of computing all crossing points and the corresponding angles for each candidate position of each iteration, we adopted a different approach for determining the set of feasible candidate positions, which turned out to be quite efficient in practice. Recall that we denoted by $v_i$ the vertex chosen at the $i$-th iteration step, and by $\pi_0,\ldots,\pi_{\rho-1}$ the candidate positions to move $v_i$. Let $e_0,\ldots,e_{d_i-1}$ be the edges incident to $v_i$, where $d_i=deg(v_i)$. Next, for each edge $e_k$ with $k=0,\ldots,d_i-1$  we compute the crossings and the corresponding crossing angles of $e_k$ with all other edges in $\Gamma_{i-1}$. Let $\phi_i$ be the minimum crossing angle computed; this is our reference angle. Also, for each candidate position $\pi_j$ with $j=0,\ldots,\rho-1$, and for each edge $e_k$ with $k=0,\ldots,d_i-1$, we compute the crossings and the corresponding crossing angles of $e_k$ with all other edges of the drawing, assuming that $v_i$ is at $\pi_j$. Let $\chi_j$ be the minimum crossing angle computed with this approach, when $v_i$ is at position $\pi_j$. Clearly, $\pi_j$ is feasible only if $\chi_j \geq \phi_i$. Note that the complexity of this approach is $O(deg(v_i)m) = O(nm)$.
 
 % ==================================================================
-\subsection{Some interesting variants}
+\subsection{Some Interesting Variants}
 \label{ssec:variants}
 % ==================================================================
 
@@ -571,7 +571,7 @@ While working on this project, we made some useful observations and  obtained so
 
 We conclude by noting that our motivation to work with this problem was our participation to GD2017 contest, where we performed miserably using a force-directed algorithm; for details \arxapp{see Appendix~\ref{app:contest}}{see~\cite{arxivVersion}}. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely more promising than our previous as evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing.
 
-\paragraph{Acknowlegdments.} This project was supported by DFG grant KA812/18-1. The authors would also like to acknowledge Simon Wegendt and Jessica Wolz for implementing the first version of our prototype.
+\paragraph{Acknowledgments.} This project was supported by DFG grant KA812/18-1. The authors would also like to acknowledge Simon Wegendt and Jessica Wolz for implementing the first version of our prototype.
 
 \bibliographystyle{abbrvurl}
 \bibliography{references}
