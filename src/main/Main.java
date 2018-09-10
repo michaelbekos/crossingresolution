@@ -111,6 +111,7 @@ public class Main {
       return;
     }
 
+    tab.get().scaleToBox();
     tab.get().startPauseExecution();
   }
 

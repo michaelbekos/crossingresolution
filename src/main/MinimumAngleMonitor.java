@@ -8,13 +8,14 @@ import com.yworks.yfiles.utils.IEventListener;
 import com.yworks.yfiles.utils.ItemEventArgs;
 import com.yworks.yfiles.view.GraphComponent;
 import graphoperations.GraphOperations;
-import graphoperations.Scaling;
 import layout.algo.utils.BestSolutionMonitor;
 import layout.algo.utils.PositionMap;
 import util.DisplayMessagesGui;
 import util.graph2d.Intersection;
 
 import javax.swing.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Optional;
 
 public class MinimumAngleMonitor {
@@ -30,15 +31,18 @@ public class MinimumAngleMonitor {
   private boolean useCrossingResolution;
   private boolean useAngularResolution;
   private boolean useAspectRatio;
+  private PropertyChangeSupport propertyChange;
+
 
   private BestSolutionMonitor bestSolution;
 
+
+  private IEventListener<ItemEventArgs<INode>> minimumAngleNodeCreatedListener = (o, iNodeItemEventArgs) -> updateAngleInfoBar();
+  private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> updateAngleInfoBar();
+  private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> {updateAngleInfoBar();};
   private IEventListener<ItemEventArgs<IEdge>> minimumAngleEdgeCreatedListener = (o, ItemEventArgs) -> updateAngleInfoBar();
   private IEventListener<EdgeEventArgs> minimumAngleEdgeRemovedListener = (o, EdgeEventArgs) -> updateAngleInfoBar();
-  private IEventListener<ItemEventArgs<INode>> minimumAngleNodeCreatedListener = (o, ItemEventArgs) -> updateAngleInfoBar();
-  private IEventListener<NodeEventArgs> minimumAngleNodeRemovedListener = (o, NodeEventArgs) -> updateAngleInfoBar();
-  private INodeLayoutChangedHandler minimumAngleLayoutChangedHandler = (o, iNode, rectD) -> {updateAngleInfoBar();
-    };
+
 
   //Total Angle Monitor (Crossing+Angular Resolution)
   MinimumAngleMonitor(GraphComponent view, IGraph graph, JLabel infoLabel, BestSolutionMonitor bestSolution) {
@@ -55,11 +59,12 @@ public class MinimumAngleMonitor {
     this.useCrossingResolution = true;
     this.useAngularResolution = false;
     this.useAspectRatio = false;
+    this.propertyChange = new PropertyChangeSupport(this);
   }
 
   public Optional<Intersection> computeCrossingResolution() {
     Mapper<INode, PointD> nodePositions = PositionMap.FromIGraph(graph);
-    MinimumAngle.resetHighlighting(graph);
+//    MinimumAngle.resetHighlighting(graph);      //TODO cmdline throws error
     Optional<Intersection> minAngleCr = MinimumAngle.getMinimumAngleCrossing(graph);
 
     if (minAngleCr.isPresent()){
@@ -84,13 +89,13 @@ public class MinimumAngleMonitor {
     Optional<String> labText = minAngleCr.map(cr -> {
       String text = DisplayMessagesGui.createMinimumAngleMsg(cr, graph.getNodes().size(), bestSolution);
 
-      if (viewCenter) {
-        view.setCenter(cr.intersectionPoint);
-      }
-      MinimumAngle.resetHighlighting(graph);
-      MinimumAngle.highlightCrossing(cr);
+//      if (viewCenter) {
+//        view.setCenter(cr.intersectionPoint);
+//      }
+//      MinimumAngle.resetHighlighting(graph);
+//      MinimumAngle.highlightCrossing(cr);
 
-      view.updateUI();
+//      view.updateUI();
 
       return text;
     });
@@ -124,7 +129,7 @@ public class MinimumAngleMonitor {
     Optional<String> labText = angularResOpt.map(cr -> {
       String text = DisplayMessagesGui.createAngularResMsg(angularRes, graph.getNodes().size(), bestSolution);
 
-      view.updateUI();
+//      view.updateUI();
 
       return text;
     });
@@ -137,7 +142,7 @@ public class MinimumAngleMonitor {
     Optional<String> labText = aspectRatio.map(cr -> {
       String text = DisplayMessagesGui.createAspectRatioMsg(graph, aspectRatio.get());
 
-      view.updateUI();
+//      view.updateUI();
 
       return text;
     });
@@ -155,8 +160,9 @@ public class MinimumAngleMonitor {
   }
 
   public void updateAngleInfoBar() {
-    Scaling.scaleNodeSizes(view); //TODO: maybe performance hit
-    Scaling.scaleEdgeSizes(view);
+    propertyChange.firePropertyChange("updateAngle", 0, currentCrossingResolution);
+//    Scaling.scaleNodeSizes(view); //TODO: maybe performance hit
+//    Scaling.scaleEdgeSizes(view);
     computeCrossingResolution();
     computeAngularResolution();
     if (useAspectRatio) {   //TODO
@@ -175,6 +181,10 @@ public class MinimumAngleMonitor {
       showCrossingResolution(graph, view, infoLabel, false);
     }
 
+  }
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    propertyChange.addPropertyChangeListener(listener);
   }
 
   public double computeTotalResolution() {
@@ -201,24 +211,32 @@ public class MinimumAngleMonitor {
     return this.currentTotalResolution;
   }
 
+  public void addSparseListeners() {
+    graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
+  }
 
+  public void removeSparseListeners() {
+    graph.removeNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
+  }
 
   public void registerGraphChangedListeners() {
-    graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
-    graph.addEdgeCreatedListener(minimumAngleEdgeCreatedListener);
-    graph.addEdgeRemovedListener(minimumAngleEdgeRemovedListener);
-    graph.addNodeCreatedListener(minimumAngleNodeCreatedListener);
-    graph.addNodeRemovedListener(minimumAngleNodeRemovedListener);
+//    graph.addNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
+//    graph.addEdgeCreatedListener(minimumAngleEdgeCreatedListener);
+//    graph.addEdgeRemovedListener(minimumAngleEdgeRemovedListener);
+//    graph.addNodeCreatedListener(minimumAngleNodeCreatedListener);
+//    graph.addNodeRemovedListener(minimumAngleNodeRemovedListener);
+    addSparseListeners();
   }
 
   public void removeGraphChangedListeners() {
-    graph.removeNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
-    graph.removeEdgeCreatedListener(minimumAngleEdgeCreatedListener);
-    graph.removeEdgeRemovedListener(minimumAngleEdgeRemovedListener);
-    graph.removeNodeCreatedListener(minimumAngleNodeCreatedListener);
-    graph.removeNodeRemovedListener(minimumAngleNodeRemovedListener);
+//    graph.removeNodeLayoutChangedListener(minimumAngleLayoutChangedHandler);
+//    graph.removeEdgeCreatedListener(minimumAngleEdgeCreatedListener);
+//    graph.removeEdgeRemovedListener(minimumAngleEdgeRemovedListener);
+//    graph.removeNodeCreatedListener(minimumAngleNodeCreatedListener);
+//    graph.removeNodeRemovedListener(minimumAngleNodeRemovedListener);
+    removeSparseListeners();
 
-    MinimumAngle.resetHighlighting(graph);
+//    MinimumAngle.resetHighlighting(graph);
   }
 
   public double getBestCrossingResolution() {

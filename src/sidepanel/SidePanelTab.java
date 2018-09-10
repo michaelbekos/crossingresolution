@@ -52,8 +52,8 @@ public class SidePanelTab {
     private InitSidePanel initSidePanel;
 
     private ProgressBarLayoutExecutor executor;
-    private JButton startPauseButton;
-    private JButton stopButton;
+    public JButton startPauseButton;
+    public JButton stopButton;
     private JCheckBox enableMinimumAngleDisplay;
     private JCheckBox allowClickCreateNodeEdge;
     private JCheckBox allowClickGraphEditor;
@@ -462,11 +462,15 @@ public class SidePanelTab {
      ********************************************************************/
 
     private void showBestSolution(@SuppressWarnings("unused") ActionEvent evt) {
+        showBest();
+    }
+
+    public void showBest() {
         int nodes= initSidePanel.mainFrame.graph.getNodes().size();
         Optional<Mapper<INode, PointD>> bestPositions;
         //Total Resolution
         if (getEnableAngularResolution() && getEnableCrossingResolution()) {
-                bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionTotalResolutionPositions(nodes);
+            bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionTotalResolutionPositions(nodes);
         } else if (getEnableAngularResolution()) {
             bestPositions = initSidePanel.mainFrame.bestSolution.getBestSolutionAngularResolutionPositions(nodes);
         }
@@ -576,6 +580,10 @@ public class SidePanelTab {
     }
 
     private void scalingToBox(@SuppressWarnings("unused") ActionEvent evt){
+        scaleToBox();
+    }
+
+    public void scaleToBox() {
         modifyGraph(() -> {
             initSidePanel.removeDefaultListeners();
 
