@@ -38,10 +38,6 @@
 % ==================================================================
 \newcommand{\myparagraph}[1]{\smallskip\noindent\textbf{#1}.}
 
-%conf for conference version, arxiv for arxiv version
-\newcommand{\ver}{conf}
-\newcommand{\arxapp}[2]{\ifthenelse{\equal{\ver}{conf}}{#2}{#1}}
-
 \author{Michael~A.~Bekos, Henry~F\"orster, Christian~Geckeler, Lukas Holl\"ander, Michael~Kaufmann, Amad\"aus~M.~Spallek, Jan~Splett}
 
 \authorrunning{M.~A.~Bekos et al.}
@@ -54,12 +50,10 @@ Institut f\"ur Informatik, Universit\"at T\"ubingen, T\"ubingen, Germany\\
 \texttt{\{jan-lukas.hollaender,amadaeus.spallek,jan.splett\} @student.uni-tuebingen.de}
 }
 
-
-
 % ==================================================================
 \begin{document}
 \maketitle
-%\linenumbers
+\linenumbers
 % ==================================================================
 
 \begin{abstract}
@@ -118,7 +112,7 @@ Given a drawing $\Gamma(G)$ of $G$, we denote by $p(u)=(x_u,y_u)$ the position o
 \medskip\noindent{\it Structure of the paper:}
 The remainder of this paper is structured as follows. Section~\ref{sec:relatedwork} overviews related works.
 %In Section~\ref{sec:preliminaries}, we introduce preliminary notions and the notation used throughout the paper.
-Our algorithm is presented in detail in Section~\ref{sec:algorithm} and is experimentally evaluated against the ones of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} in Section~\ref{sec:experiments}, where we also discuss our insights from this project. \arxapp{In the appendix}{In~\cite{arxivVersion}}, we provide experimental results on grid restricted drawings, on more test sets and on the graphs from the Graph Drawing Competition in 2017.
+Our algorithm is presented in detail in Section~\ref{sec:algorithm} and is experimentally evaluated against the ones of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} and Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} in Section~\ref{sec:experiments}, where we also discuss our insights from this project. In the appendix, we provide experimental results on grid restricted drawings, on more test sets and on the graphs from the Graph Drawing Competition in 2017.
 
 % ==================================================================
 \section{Related Work}
@@ -278,7 +272,7 @@ As it is the case with the force-directed algorithms of Huang et al.~\cite{DBLP:
 \myparagraph{Grid drawings}
 % ==================================================================
 %
-Our algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produce such drawings. More precisely, if we round the candidate positions computed at each iteration of our algorithm to their closest grid points and use these grid points as candidates for the next position of the vertex to be moved, then the obtained drawing will be grid (assuming, of course, that the starting drawing is grid). One can even bound the size of the grid, by rejecting candidate grid positions outside the bounds. \arxapp{In Appendix~\ref{app:grid}}{In~\cite{arxivVersion}}, we report experimental results on this variant.
+Our algorithm, as it has been described so far, does not necessarily produce grid drawings, i.e., drawings in which the vertices are at integer coordinates. However, it can be easily adjusted to produce such drawings. More precisely, if we round the candidate positions computed at each iteration of our algorithm to their closest grid points and use these grid points as candidates for the next position of the vertex to be moved, then the obtained drawing will be grid (assuming, of course, that the starting drawing is grid). One can even bound the size of the grid, by rejecting candidate grid positions outside the bounds. In Appendix~\ref{app:grid}, we report experimental results on this variant.
 
  %(the latter requirement is not difficult to be achieved, e.g., by slightly adjusting the positions of the vertices of a circular layout, whose underlying circle has large radius, to be at grid points).
 
@@ -292,7 +286,7 @@ Our algorithm, as it has been described so far, does not necessarily produce gri
 
 In this section, we present the results of our experimental evaluation. For comparison purposes, apart from our algorithm, we also implemented the force-directed algorithms of Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. The implementations\footnote{Our implementation is available on request from the authors.} were in Java using yFiles~\cite{DBLP:books/sp/04/WieseE004}. The experiment was performed on a Linux laptop with four cores at 2.4 GHz and 8 GB RAM.
 %
-As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs; \arxapp{in Appendix~\ref{app:north}}{in~\cite{arxivVersion}}, we also report on the AT\&T graphs.
+As a test set for our experiment, we used the non-planar Rome graphs~\cite{DBLP:reference/crc/BattistaD13}, which form a collection of around 8.100 benchmark graphs; in Appendix~\ref{app:north}, we also report on the AT\&T graphs.
 
 The experiment was performed as follows. Initially, each Rome graph was laid out using the SmartOrganic layouter of yFiles~\cite{DBLP:books/sp/04/WieseE004}. Starting from this layout, every graph was drawn with
 \begin{inparaenum}[(i)]
@@ -569,14 +563,14 @@ The results for the aspect ratio, the number of crossings and the required numbe
 %
 While working on this project, we made some useful observations and  obtained some interesting insights. In particular, there is a recent hypothesis (also supported by experiments) that drawings, in which the crossing angles, are large are easy to read and understand. We observed that drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other. Hence, angular resolution and aspect ratio were often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped significantly improving the readability of the drawings, without loosing too much of their quality in terms of the crossing resolution.
 
-We conclude by noting that our motivation to work with this problem was our participation to GD2017 contest, where we performed miserably using a force-directed algorithm; for details \arxapp{see Appendix~\ref{app:contest}}{see~\cite{arxivVersion}}. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely more promising than our previous as evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing.
+We conclude by noting that our motivation to work with this problem was our participation to GD2017 contest, where we performed miserably using a force-directed algorithm; for details see Appendix~\ref{app:contest}. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely more promising than our previous as evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing.
 
 \paragraph{Acknowledgments.} This project was supported by DFG grant KA812/18-1. The authors would also like to acknowledge Simon Wegendt and Jessica Wolz for implementing the first version of our prototype.
 
 \bibliographystyle{abbrvurl}
 \bibliography{references}
 
-\arxapp{\newpage
+\newpage
 \appendix
 
 \section*{Appendix}
@@ -1233,7 +1227,5 @@ The aesthetic criterion optimized by each variant is reported in the caption of 
 Each variant was obtained by optimizing a different aesthetic criterion, which is named in the caption of each subfigure.}
 \label{fig:graph9}
 \end{figure}
-
-}{}
 
 \end{document}
