@@ -6,7 +6,6 @@ import com.yworks.yfiles.geometry.PointD;
 import com.yworks.yfiles.geometry.SizeD;
 import com.yworks.yfiles.graph.*;
 import com.yworks.yfiles.graph.styles.DefaultLabelStyle;
-import com.yworks.yfiles.graph.styles.IArrow;
 import com.yworks.yfiles.graph.styles.PolylineEdgeStyle;
 import com.yworks.yfiles.graph.styles.ShinyPlateNodeStyle;
 import com.yworks.yfiles.layout.organic.OrganicLayout;

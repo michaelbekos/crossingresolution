@@ -1,5 +1,6 @@
 package main;
 
+import algorithms.graphs.GridGraph;
 import com.yworks.yfiles.graph.LayoutUtilities;
 import com.yworks.yfiles.layout.organic.OrganicLayout;
 import layout.algo.randommovement.RandomMovementLayout;
@@ -29,8 +30,7 @@ public class GraphFrame {
     private JLabel minAngleLabel;
     private JLabel timeLabel;
     private JCheckBox allowDecreasing;
-    private long runningTime;
-    private long startTime;
+    private double runningTime;
     private long prevTime;
     private long currTime;
 
@@ -45,9 +45,10 @@ public class GraphFrame {
             directory.mkdir();
         }
         this.fileName = pattern.replace("$$$", Integer.toString(id));
-        initFrame();
-        this.startTime = System.nanoTime();
+        this.runningTime = 0;
+        this.prevTime = System.nanoTime();
         initMainFrame();
+        initFrame();
         updateButtons(getSidePanel());
 
         mainFrame.minimumAngleMonitor.addPropertyChangeListener(this::angleChangedPropertyChanged);
@@ -59,9 +60,7 @@ public class GraphFrame {
         mainFrame.setVisible(false);
         mainFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-//        addClosingListener(mainFrame);
         loadGraph(mainFrame, folderPath, fileName);
-        System.out.println(folderPath +  "  " +fileName);
         runAlgorithms(mainFrame, automatic);
     }
 
@@ -82,8 +81,8 @@ public class GraphFrame {
 
 
 
-//        JLabel minAngle = new JLabel(Double.toString(mainFrame.minimumAngleMonitor.getBestCrossingResolution()));
-        minAngleLabel = new JLabel("-1");
+        minAngleLabel = new JLabel(String.format("%.5f",mainFrame.minimumAngleMonitor.getCurrentCrossingResolution()));
+//        minAngleLabel = new JLabel("-1");
         cFramePanel.gridx += 1;
         panel.add(minAngleLabel, cFramePanel);
         cFramePanel.gridx += 1;
@@ -96,7 +95,7 @@ public class GraphFrame {
         cFramePanel.gridx += 1;
         panel.add(createSeparator(), cFramePanel);
 
-        allowDecreasing = new JCheckBox("Allow Decreasing");
+        allowDecreasing = new JCheckBox("Allow Dec.");
         cFramePanel.gridx += 1;
         panel.add(allowDecreasing, cFramePanel);
         allowDecreasing.addItemListener(this::allowDecreasingEnabled);
@@ -104,7 +103,7 @@ public class GraphFrame {
         cFramePanel.gridx += 1;
         panel.add(createSeparator(), cFramePanel);
 
-        JButton showBest = new JButton("Show Best");
+        JButton showBest = new JButton("Best");
         cFramePanel.gridx += 1;
         panel.add(showBest, cFramePanel);
         showBest.addActionListener(this::showBestActionPerformed);
@@ -138,6 +137,7 @@ public class GraphFrame {
 //        String fileName = pattern.replace("$$$", Integer.toString(index));
 //        mainFrame.openContestFile(Paths.get(folderPath, fileName).toString());
         mainFrame.openContest2018File(Paths.get(folderPath, fileName).toString());
+        System.out.println("Loaded " + folderPath +  "  " +fileName);
     }
 
     private void saveGraphActionPerformed(ActionEvent evt) {
@@ -165,6 +165,8 @@ public class GraphFrame {
         LayoutUtilities.applyLayout(mainFrame.graph, new OrganicLayout());
         mainFrame.initSidePanel.addDefaultListeners();
 
+        System.out.println("Gridded " + GridGraph.isGridGraph(mainFrame.graph)); //TODO: automatically grid?
+
         Optional<SidePanelTab> tab = mainFrame.getTabForAlgorithm(RandomMovementLayout.class);
         if (!tab.isPresent()) {
             return;
@@ -178,25 +180,7 @@ public class GraphFrame {
 
     private void angleChangedPropertyChanged(PropertyChangeEvent evt) {
         if ("updateAngle".equals(evt.getPropertyName())) {
-//            this.minAngle = mainFrame.minimumAngleMonitor.getBestCrossingResolution();
-            this.minAngle = mainFrame.minimumAngleMonitor.getCurrentCrossingResolution();
-            minAngleLabel.setText(String.format("%.5f",this.minAngle));
-
-            //termination conditions
-            if (!automatic) {
-                return;
-            }
-            if (this.minAngle >= 89.9) {
-                saveGraph();
-                stopAlgo();
-            } else if (this.minAngle >= 89 && getRunningTimeS() > 15) {
-                saveGraph();
-                stopAlgo();
-            } else if (this.minAngle >= 85 && getRunningTimeS() > 30) {
-                saveGraph();
-                stopAlgo();
-            }
-            //other scenarios?
+            updateAngle();
         }
     }
 
@@ -208,7 +192,7 @@ public class GraphFrame {
         }
         tab.get().startPauseExecution();
         updateButtons(tab.get());
-
+        prevTime = System.nanoTime();
     }
 
     private void stopActionPerformed(ActionEvent evt) {
@@ -219,10 +203,10 @@ public class GraphFrame {
         SidePanelTab tab = getSidePanel();
         tab.stopExecution();
         updateButtons(tab);
+        automatic = false;
     }
 
     private void updateButtons(SidePanelTab tab) {
-        automatic = false;
         startPauseButton.setText(tab.startPauseButton.getText());
         startPauseButton.setBackground(tab.startPauseButton.getBackground());
         stopButton.setText(tab.stopButton.getText());
@@ -243,11 +227,12 @@ public class GraphFrame {
     }
 
     public double getRunningTimeS() {//in seconds
-//        currTime = System.nanoTime();
-//        runningTime += (currTime - prevTime) / 1000000000.0;
-//        prevTime = currTime;
-//        return runningTime;
-        return (System.nanoTime() - startTime) / 1000000000.0; //TODO when pausing
+        if (getSidePanel().getExecutor().isRunning()) {
+            currTime = System.nanoTime();
+            runningTime += (currTime - prevTime) / 1000000000.0;
+            prevTime = currTime;
+        }
+        return runningTime;
     }
 
     public void updateTime() {
@@ -264,21 +249,38 @@ public class GraphFrame {
             return;
         }
         if (this.minAngle >= 89.9) {
-            saveGraph();
             stopAlgo();
+            saveGraph();
+            automatic = false;
         } else if (this.minAngle >= 89 && getRunningTimeS() > 15) {
-            saveGraph();
             stopAlgo();
+            saveGraph();
+            automatic = false;
         } else if (this.minAngle >= 85 && getRunningTimeS() > 30) {
-            saveGraph();
             stopAlgo();
+            saveGraph();
+            automatic = false;
+        } else if (this.minAngle >= 80 && getRunningTimeS() > 60) {
+            stopAlgo();
+            saveGraph();
+            automatic = false;
+        } else if (this.minAngle < 60 && getRunningTimeS() > 15) { //experimental
+            setAllowDecreasing(true);
+        } else if (this.minAngle > 60 && getRunningTimeS() > 15) {
+            setAllowDecreasing(false);
         }
         //other scenarios?
     }
 
     private void allowDecreasingEnabled(ItemEvent evt) {
-        getSidePanel().configurator.getItems().get(5).setValue(evt.getStateChange() == ItemEvent.SELECTED); //better with map
+        setAllowDecreasing(evt.getStateChange() == ItemEvent.SELECTED);
     }
+
+    private void setAllowDecreasing(boolean value) {
+        getSidePanel().configurator.getItems().get(5).setValue(value); //better with map
+        allowDecreasing.setSelected(value);
+    }
+
 
 
 }

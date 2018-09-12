@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 import static main.GraphFrame.createSeparator;
 
 public class ContestWindow {
-    private static volatile int openFrames;
     private JFrame contestWindow;
     private GridBagConstraints cFrame;
 
@@ -45,8 +44,9 @@ public class ContestWindow {
         int endIndex = startIndex;
         String folderPath = "contest-2018";
         String pattern = "$$$.json";
+        boolean automatic = false;
 
-        if (args.length == 1) {
+        if (args.length == 1) {     //load all files in folder, automate first 8
             folderPath = args[0];
             try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
                 List<Integer> list = paths
@@ -56,6 +56,7 @@ public class ContestWindow {
                         .collect(Collectors.toList());
                 startIndex = list.get(0);
                 endIndex = list.get(list.size() - 1);
+                automatic = true;
 
                 System.out.println(startIndex +  " " + endIndex);
             } catch (IOException e) {
@@ -63,19 +64,40 @@ public class ContestWindow {
             }
         }
 
-        try {
-            startIndex = Integer.parseInt(args[0]);
-            if (args.length >= 2) {
-                endIndex = Integer.parseInt(args[1]);
-            } else {
-                endIndex = startIndex;
+        if (args.length == 2) {     //load all files, no automation
+            folderPath = args[0];
+//            try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
+            try (Stream<Path> paths = Files.list(Paths.get(folderPath))) { //non-recursive
+                List<Integer> list = paths
+                        .filter(Files::isRegularFile)
+//                        .map(path -> path.getFileName().toString().replaceAll("[^0-9]","")) //TODO: rename files so only number.json
+//                        .map(path -> Integer.parseInt(path.replaceFirst("[.][^.]+$", "")))
+                        .map(path -> Integer.parseInt(path.getFileName().toString().replaceFirst("[.][^.]+$", "")))
+                        .sorted()
+                        .collect(Collectors.toList());
+                startIndex = list.get(0);
+                endIndex = list.get(list.size() - 1);
+                automatic = false;
+
+                System.out.println(startIndex +  " " + endIndex);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Could not parse indices");
-            printUsage();
         }
 
         if (args.length >= 3) {
+            try {
+                startIndex = Integer.parseInt(args[0]);
+                if (args.length >= 2) {
+                    endIndex = Integer.parseInt(args[1]);
+                } else {
+                    endIndex = startIndex;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Could not parse indices");
+                printUsage();
+            }
+
             folderPath = args[2];
             Path path = Paths.get(folderPath);
             if (Files.notExists(path) || !Files.isDirectory(path)) {
@@ -92,15 +114,14 @@ public class ContestWindow {
             }
         }
 
-        openFrames(contestWindow, startIndex, endIndex, folderPath, pattern);
+        openFrames(contestWindow, startIndex, endIndex, folderPath, pattern, automatic);
     }
 
     private static void runSingleFrame() {
         MainFrame.start(WindowConstants.EXIT_ON_CLOSE, true, null);
     }
 
-    private static void openFrames(ContestWindow contestWindow, int startIndex, int endIndex, String folderPath, String pattern) {
-        boolean automatic = true;
+    private static void openFrames(ContestWindow contestWindow, int startIndex, int endIndex, String folderPath, String pattern, boolean automatic) {
         for (int i = startIndex; i < endIndex + 1; i++) {
             if ((i - startIndex) >= 8) { //only first 8 start automatically
                 automatic = false;
@@ -112,32 +133,26 @@ public class ContestWindow {
         }
         contestWindow.addStopAllButton();
         contestWindow.addSaveAllButton();
+        contestWindow.contestWindow.revalidate();
+        contestWindow.timer.start();
     }
-
-    private static void addClosingListener(MainFrame mainFrame) {
-        synchronized (Main.class) {
-            openFrames++;
-        }
-        mainFrame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent evt) {
-                synchronized (Main.class) {
-                    openFrames--;
-                }
-                if (openFrames == 0) {
-                    System.exit(0);
-                }
-            }
-        });
-    }
-
-
 
     public ContestWindow() {
         this.contestWindow = new JFrame("Contest Window");
         this.contestWindow.setLayout(new GridBagLayout());
-        this.contestWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);     //TODO: window listener to save and exit others gracefully
-
-        this.contestWindow.setMinimumSize(new Dimension(500,700));
+        this.contestWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.contestWindow.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                contestWindow.setVisible(false);
+                super.windowClosing(windowEvent);
+                stopAll();
+                saveAll();
+                contestWindow.dispose();
+                System.exit(0); //maybe nicer way
+            }
+        });
+        this.contestWindow.setMinimumSize(new Dimension(700,700));
         this.contestWindow.setVisible(true);
 //        this.contestWindow.pack();
 
@@ -154,10 +169,10 @@ public class ContestWindow {
         graphFrames = new ArrayList<>();
 
         timer = new Timer(INTERVAL, time -> {
-            for (GraphFrame frame : graphFrames) {
-                    if (frame.getSidePanel().getExecutor().isRunning()) {
+            for (int i = 0; i < graphFrames.size(); i++) {
+                    if (graphFrames.get(i).getSidePanel().getExecutor().isRunning()) {
 //                        frame.updateAngle(); //maybe use it to update angle vs firingevent
-                        frame.updateTime();
+                        graphFrames.get(i).updateTime();
                     }
                 };
 //                if (graphFrames.stream().noneMatch(frame -> frame.getSidePanel().getExecutor().isRunning())) {
@@ -244,6 +259,10 @@ public void addFrameToContestWindow(GraphFrame graphFrame) {
     }
 
     private void saveAllActionPerformed(ActionEvent evt) {
+        saveAll();
+    }
+
+    private  void saveAll() {
         for (GraphFrame frame : graphFrames) {
             frame.saveGraph();
         }
@@ -258,6 +277,10 @@ public void addFrameToContestWindow(GraphFrame graphFrame) {
     }
 
     private void stopAllActionPerformed(ActionEvent evt) {
+        stopAll();
+    }
+
+    private void stopAll() {
         for (GraphFrame frame : graphFrames) {
             frame.stopAlgo();
         }
