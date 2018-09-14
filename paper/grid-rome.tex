@@ -1,0 +1,93 @@
+\begin{figure*}[!t]
+\centering
+\subfloat[\label{fig:crossingResolutionGrid}{Crossing resolution vs no.~of vertices}]{
+\centering
+%======================
+% Crossing Resolution
+%======================
+\begin{tikzpicture}
+\begin{axis}[
+axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,
+legend style={at={(0.425,1.35)},anchor=north,,legend columns=2,draw=none},
+width=0.475\textwidth,
+cycle list name=mylist,
+mark repeat={5},xlabel={Number of Vertices},ylabel={Crossing Resolution},
+xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={10,20,30,40,50,60,70,80,90},
+tick pos=left,ymajorgrids]
+\addplot table [x=n, y=crossing resolution rm1M, col sep=semicolon]{gridExperiment.csv};
+\addplot table [x=n, y=crossing resolution rm10k, col sep=semicolon] {gridExperiment.csv};
+\addplot table [x=n, y=crossing resolution rm1000, col sep=semicolon]{gridExperiment.csv};
+\addplot table [x=n, y=crossing resolution rm100, col sep=semicolon] {gridExperiment.csv};
+\addplot table [x=n, y=crossing resolution rm, col sep=semicolon]{gridExperiment.csv};
+\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
+\end{axis}
+\end{tikzpicture}}
+\subfloat[\label{fig:crossingResolutionAspectRatioGrid}{Aspect ratio vs no.~of vertices}]{
+\centering
+%===================================
+% Crossing Resolution Aspect Ratio
+%===================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none},ylabel style={yshift=-0.2cm}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={0,10,20,30,40,50,60,70,80,90,100},ylabel={Aspect Ratio},
+xlabel={Number of Vertices},
+xmin=10,
+xmax=100,
+ytick={1,2,5,10,20,50,100,200},ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
+\addplot table [x=n, y=Aspect ratio rm1M, col sep=semicolon]{gridExperiment.csv};
+\addplot table [x=n, y=Aspect ratio rm10k, col sep=semicolon] {gridExperiment.csv};
+\addplot table [x=n, y=Aspect ratio rm1000, col sep=semicolon]{gridExperiment.csv};
+\addplot table [x=n, y=Aspect ratio rm100, col sep=semicolon] {gridExperiment.csv};
+\addplot table [x=n, y=Aspect ratio rm, col sep=semicolon]{gridExperiment.csv};
+\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
+\end{axis}
+\end{tikzpicture}}
+
+\subfloat[\label{fig:crossingResolutionCrossingNumberGrid}{No.~of crossings vs no.~of vertices}]{
+\centering
+%======================================
+% Crossing Resolution Crossing Number
+%======================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={0,250,500,750,1000,1250,1500,1750},ylabel={Number of Crossings},
+xlabel={Number of Vertices},tick pos=left,ylabel style={yshift=-0.2cm}, ymajorgrids]
+\addplot table [x=n, y=Crossing number rm1M, col sep=semicolon]{gridExperiment.csv};
+\addplot table [x=n, y=Crossing number rm10k, col sep=semicolon] {gridExperiment.csv};
+\addplot table [x=n, y=Crossing number rm1000, col sep=semicolon]{gridExperiment.csv};
+\addplot table [x=n, y=Crossing number rm100, col sep=semicolon] {gridExperiment.csv};
+\addplot table [x=n, y=Crossing number rm, col sep=semicolon] {gridExperiment.csv};
+\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
+\end{axis}
+\end{tikzpicture}}
+\subfloat[\label{fig:crossingResolutionTimeGrid}{Iterations vs no.~of vertices}]{
+\centering
+%==================================
+% Crossing Resolution Iterations
+%==================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
+anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
+xmin=10,
+xmax=100,
+ytick={0,1000,2000,3000,4000,5000,6000,7000,8000},tick pos=left,
+ylabel={Iterations},
+xlabel={Number of Vertices},ymajorgrids]
+\addplot table [x=n, y=Iterations rm1M, col sep=semicolon]{gridExperiment.csv};
+\addplot table [x=n, y=Iterations rm10k, col sep=semicolon] {gridExperiment.csv};
+\addplot table [x=n, y=Iterations rm1000, col sep=semicolon]{gridExperiment.csv};
+\addplot table [x=n, y=Iterations rm100, col sep=semicolon] {gridExperiment.csv};
+\addplot table [x=n, y=Iterations rm, col sep=semicolon] {gridExperiment.csv};
+\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
+\end{axis}
+\end{tikzpicture}}
+\caption{Our experimental results on the crossing resolution with different grid restrictions.
+The double line corresponds to our unrestricted algorithm.}
+\label{fig:experimentsGrid}
+\end{figure*}
