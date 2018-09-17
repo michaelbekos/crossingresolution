@@ -18,6 +18,8 @@ import static main.GraphFrame.createSeparator;
 
 public class ContestWindow {
     private JFrame contestWindow;
+    private JPanel contestWindowPanel;
+    private JScrollPane scrollPane;
     private GridBagConstraints cFrame;
 
     private ArrayList<GraphFrame> graphFrames;
@@ -139,7 +141,6 @@ public class ContestWindow {
 
     public ContestWindow() {
         this.contestWindow = new JFrame("Contest Window");
-        this.contestWindow.setLayout(new GridBagLayout());
         this.contestWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.contestWindow.addWindowListener(new WindowAdapter() {
             @Override
@@ -152,9 +153,18 @@ public class ContestWindow {
                 System.exit(0); //maybe nicer way
             }
         });
-        this.contestWindow.setMinimumSize(new Dimension(700,700));
+        this.contestWindow.setSize(new Dimension(900,600));
         this.contestWindow.setVisible(true);
-//        this.contestWindow.pack();
+        this.contestWindow.revalidate();
+        this.contestWindow.repaint();
+
+        this.contestWindowPanel = new JPanel();
+        this.contestWindowPanel.setLayout(new GridBagLayout());
+        this.scrollPane = new JScrollPane(contestWindowPanel);
+        this.scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        this.contestWindow.getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+
 
         this.cFrame = new GridBagConstraints();
         this.cFrame.gridx = 0;
@@ -164,7 +174,7 @@ public class ContestWindow {
 
 
         //TODO align columns
-        this.contestWindow.add(createLegend(), this.cFrame);
+        this.contestWindowPanel.add(createLegend(), this.cFrame);
 
         graphFrames = new ArrayList<>();
 
@@ -204,7 +214,13 @@ public class ContestWindow {
         cFramePanel.gridx += 1;
         panel.add(createSeparator(), cFramePanel);
 
-        JLabel timeElapsed = new JLabel("Time Elapsed (s)");
+        JLabel showBest = new JLabel("Best Angle");
+        cFramePanel.gridx += 1;
+        panel.add(showBest, cFramePanel);
+        cFramePanel.gridx += 1;
+        panel.add(createSeparator(), cFramePanel);
+
+        JLabel timeElapsed = new JLabel("Time Elapsed (m:s)");
         cFramePanel.gridx += 1;
         panel.add(timeElapsed, cFramePanel);
         cFramePanel.gridx += 1;
@@ -213,12 +229,6 @@ public class ContestWindow {
         JLabel allowDecreasing = new JLabel("Allow Decreasing");
         cFramePanel.gridx += 1;
         panel.add(allowDecreasing, cFramePanel);
-        cFramePanel.gridx += 1;
-        panel.add(createSeparator(), cFramePanel);
-
-        JLabel showBest = new JLabel("Show Best");
-        cFramePanel.gridx += 1;
-        panel.add(showBest, cFramePanel);
         cFramePanel.gridx += 1;
         panel.add(createSeparator(), cFramePanel);
 
@@ -234,20 +244,25 @@ public class ContestWindow {
         cFramePanel.gridx += 1;
         panel.add(saveButton, cFramePanel);
 
+        cFramePanel.gridx += 1;
+        panel.add(createSeparator(), cFramePanel);
+
+        JLabel visualizeButton= new JLabel("Visualize");
+        cFramePanel.gridx += 1;
+        panel.add(visualizeButton, cFramePanel);
+
         return panel;
     }
 
-public void addFrameToContestWindow(GraphFrame graphFrame) {
+    public void addFrameToContestWindow(GraphFrame graphFrame) {
         this.cFrame.gridy = graphFrame.id;
 
         this.graphFrames.add(graphFrame);
 
-        this.contestWindow.add(graphFrame.panel, this.cFrame);
-
-//        this.contestWindow.pack();
-        this.contestWindow.setVisible(true);
-        this.contestWindow.revalidate();
-        this.contestWindow.repaint();
+        this.contestWindowPanel.add(graphFrame.panel, this.cFrame);
+        this.contestWindowPanel.setVisible(true);
+        this.contestWindowPanel.revalidate();
+        this.contestWindowPanel.repaint();
     }
 
     private void addSaveAllButton() {
@@ -255,7 +270,7 @@ public void addFrameToContestWindow(GraphFrame graphFrame) {
         cFrame.gridx = 0;
         cFrame.gridy += 1;
         saveAllButton.addActionListener(this::saveAllActionPerformed);
-        contestWindow.add(saveAllButton, cFrame);
+        contestWindowPanel.add(saveAllButton, cFrame);
     }
 
     private void saveAllActionPerformed(ActionEvent evt) {
@@ -273,7 +288,7 @@ public void addFrameToContestWindow(GraphFrame graphFrame) {
         cFrame.gridx = 0;
         cFrame.gridy += 1;
         stopAllButton.addActionListener(this::stopAllActionPerformed);
-        contestWindow.add(stopAllButton, cFrame);
+        contestWindowPanel.add(stopAllButton, cFrame);
     }
 
     private void stopAllActionPerformed(ActionEvent evt) {

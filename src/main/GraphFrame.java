@@ -21,6 +21,7 @@ public class GraphFrame {
     public JPanel panel;
     public MainFrame mainFrame;
     public double minAngle;
+    public double bestAngle;
     public String fileName;
     public String folderPath;
     public String savePath;
@@ -28,6 +29,7 @@ public class GraphFrame {
     private JButton startPauseButton;
     private JButton stopButton;
     private JLabel minAngleLabel;
+    private JLabel bestAngleLabel;
     private JLabel timeLabel;
     private JCheckBox allowDecreasing;
     private double runningTime;
@@ -88,6 +90,11 @@ public class GraphFrame {
         cFramePanel.gridx += 1;
         panel.add(createSeparator(), cFramePanel);
 
+        bestAngleLabel = new JLabel("-1");
+        cFramePanel.gridx += 1;
+        panel.add(bestAngleLabel, cFramePanel);
+        cFramePanel.gridx += 1;
+        panel.add(createSeparator(), cFramePanel);
 
         timeLabel = new JLabel("-1");
         cFramePanel.gridx += 1;
@@ -103,12 +110,6 @@ public class GraphFrame {
         cFramePanel.gridx += 1;
         panel.add(createSeparator(), cFramePanel);
 
-        JButton showBest = new JButton("Best");
-        cFramePanel.gridx += 1;
-        panel.add(showBest, cFramePanel);
-        showBest.addActionListener(this::showBestActionPerformed);
-        cFramePanel.gridx += 1;
-        panel.add(createSeparator(), cFramePanel);
 
         startPauseButton = new JButton("Start");
         cFramePanel.gridx += 1;
@@ -124,6 +125,16 @@ public class GraphFrame {
         cFramePanel.gridx += 1;
         saveButton.addActionListener(this::saveGraphActionPerformed);
         panel.add(saveButton, cFramePanel);
+
+        cFramePanel.gridx += 1;
+        panel.add(createSeparator(), cFramePanel);
+
+        JCheckBox allowDecreasing = new JCheckBox("Visualize");
+        cFramePanel.gridx += 1;
+        panel.add(allowDecreasing, cFramePanel);
+        allowDecreasing.addItemListener(this::visualizeEnabled);
+        allowDecreasing.setSelected(false);
+
     }
 
     public  static JComponent createSeparator() {
@@ -236,13 +247,17 @@ public class GraphFrame {
     }
 
     public void updateTime() {
-        timeLabel.setText(String.format("%.2f",(getRunningTimeS())));
+//        timeLabel.setText(String.format("%.2f",(getRunningTimeS())));
+        timeLabel.setText(String.format("%2d : %.2f", (int)getRunningTimeS() / 60, getRunningTimeS() % 60));
     }
 
     public void updateAngle() {
         //            this.minAngle = mainFrame.minimumAngleMonitor.getBestCrossingResolution();
         this.minAngle = mainFrame.minimumAngleMonitor.getCurrentCrossingResolution();
         minAngleLabel.setText(String.format("%.5f",this.minAngle));
+
+        this.bestAngle = mainFrame.minimumAngleMonitor.getBestCrossingResolution();
+        bestAngleLabel.setText(String.format("%.5f", this.bestAngle));
 
         //termination conditions
         if (!automatic) {
@@ -279,6 +294,12 @@ public class GraphFrame {
     private void setAllowDecreasing(boolean value) {
         getSidePanel().configurator.getItems().get(5).setValue(value); //better with map
         allowDecreasing.setSelected(value);
+    }
+
+    private void visualizeEnabled(ItemEvent evt) {
+        mainFrame.view.fitGraphBounds();
+        mainFrame.setVisible(evt.getStateChange() == ItemEvent.SELECTED);
+//        mainFrame.view.updateUI();
     }
 
 
