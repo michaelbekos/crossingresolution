@@ -1,0 +1,64 @@
+\begin{figure*}[t]
+\centering
+\subfloat[\label{fig:an-res-1}{Angular resolution vs no.~of vertices}]{
+\centering
+%======================
+% Total Resolution
+%======================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm}, legend style={at={(0.425,1.35)},anchor=north,legend columns=2,draw=none}, width=0.475\textwidth, cycle list name=mylist,
+mark repeat={5}, xtick={10,20,30,40,50,60,70,80,90,100}, ytick={0,10,20,30,40,50,60,70,80,90}, ylabel={Angular Resolution}, xlabel={Number of Vertices}, xmin=10, xmax=100, tick pos=left,ymajorgrids]
+\addplot table [x=n, y=Angular resolution rm, col sep=semicolon]{angularResolution.csv};
+\addplot table [x=n, y=Angular resolution rm-1, col sep=semicolon] {angularResolution.csv};
+\addplot table [x=n, y=Angular resolution fa, col sep=semicolon]{angularResolution.csv};
+\addplot table [x=Nodes, y=Angular Only, col sep=semicolon]{abs-angularResolution.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}
+\subfloat[\label{fig:an-res-2}{Aspect ratio vs no.~of vertices}]{
+\centering
+%===================================
+% Total Resolution Aspect Ratio
+%===================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},ylabel={Aspect Ratio}, xlabel={Number of Vertices}, ytick={1,2.5,10,25,100,250,1000,2500,10000}, xmin=10, xmax=100,ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
+\addplot table [x=n, y=Aspect ratio rm, col sep=semicolon]{angularResolution.csv};
+\addplot table [x=n, y=Aspect ratio rm-1, col sep=semicolon] {angularResolution.csv};
+\addplot table [x=n, y=Aspect ratio fa, col sep=semicolon]{angularResolution.csv};
+\addplot table [x=Nodes, y=Angular Only, col sep=semicolon]{abs-aspectRatio.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}
+
+\subfloat[\label{fig:an-res-3}{No.~of crossings vs no.~of vertices}]{
+\centering
+%======================================
+% Total Resolution Crossing Number
+%======================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100}, xmin=10, xmax=100, ytick={0,25,50,75,100,125,150,175,200},ylabel={Number of Crossings}, xlabel={Number of Vertices},tick pos=left, ymajorgrids]
+\addplot table [x=n, y=Crossing number rm, col sep=semicolon]{angularResolution.csv};
+\addplot table [x=n, y=Crossing number rm-1, col sep=semicolon] {angularResolution.csv};
+\addplot table [x=n, y=Crossing number fa, col sep=semicolon]{angularResolution.csv};
+\addplot table [x=Nodes, y=Angular Only, col sep=semicolon]{abs-crossings.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}
+\subfloat[\label{fig:an-res-4}{No.~of iterations vs no.~of vertices}]{
+\centering
+%==================================
+% Total Resolution Iterations
+%==================================
+\begin{tikzpicture}
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  ylabel={Iterations}, xlabel={Number of Vertices}, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100}, xmin=10,
+xmax=100, ytick={0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000},tick pos=left, ymajorgrids]
+\addplot table [x=n, y=Iterations rm, col sep=semicolon]{angularResolution.csv};
+\addplot table [x=n, y=Iterations rm-1, col sep=semicolon] {angularResolution.csv};
+\addplot table [x=n, y=Iterations fa, col sep=semicolon]{angularResolution.csv};
+\addplot table [x=Nodes, y=Angular Only, col sep=semicolon]{abs-iterations.csv};
+\legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
+\end{axis}
+\end{tikzpicture}}
+\caption{Experimental results on the angular resolution for the Rome graphs.}
+\label{fig:an-res}
+\end{figure*}
