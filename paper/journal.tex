@@ -74,7 +74,7 @@ Institut f\"ur Informatik, Universit\"at T\"ubingen, T\"ubingen, Germany\\
 
 \volumeyear{2018} 
 \volumenumber{--} 
-\issuenumber{-} 
+\issuenumber{--} 
 % ==================================================================
 
 \begin{abstract}
@@ -316,6 +316,33 @@ In this subsection, we report the results of our expertimental evaluation for th
 \input{grid-rome.tex}
 % ==================================================================
 
+\begin{table*}[t!]
+\caption{Summary of the results for the Graph Drawing Contest 2017.}
+\centering
+\begin{tabular}{c|c|c|c|c}
+\toprule
+~~Graph~~ & ~~CoffeeVM~~ & ~~TuebingenMidnight~~ & ~~Time restricted~~ & ~~Our best~~ \\
+\midrule
+1 & 90  & 77  & 89.99 & 89.99\\
+2 & 88.23  & 42 & 88.21 & 88.7 \\
+3 & 90  & 89 & 87.86 & 89.95 \\
+4 & 88.97  & 89 & 77.13  & 89.05 \\
+5 & 80.4  &  30 & 78.68 & 86.96 \\
+6 & 90  & 78 & 89.96 & 89.96\\
+7 & 56.537  & 34 & 55.77  & 63.62 \\
+8 & 84.95  & 61 & 81.18 & 89.28 \\
+9 & 59.885  & 9 & 54.63 & 88.2 \\
+10 & 20.978  & 4 & 23.60  & 23.72 \\
+11 & 46.684  & 6 & 57.00 & 72.00 \\
+12 & 36.47  & 5 & 26.24 & 35.86 \\
+13 & 25.456  & 4 & 22.43 & 33.68 \\
+14 & 33.52  & 5 & 29.69 & 43.08 \\
+15 & 20.512  & 4 & 13.51 & 29.18 \\
+\bottomrule
+\end{tabular}
+\label{tab:gdContest2017}
+\end{table*}
+
 While our unrestricted algorithm produces drawings with better crossing resolution, this comes at a cost of drastically increased aspect ratio (see Fig.~\ref{fig:cr-res-2}), which, however, is still better that the corresponding aspect ratio of the drawings produced by the algorithm of Argyriou et al. For the latter algorithm, it seems that the forces due to the angles formed at the crossings outperform the corresponding spring forces, which try to keep the lengths of the edges short. Going back to our unrestricted algorithm, its behavior is up to a certain degree expected, mainly due to the fact that there is no control on the lengths of the edges (as it is, e.g., in the case of the force-directed algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, whose sping forces inpose stong restrictions on the edge lengths). On the other hand, the restricted variant of our algorithm, which does not allow the aspect ratio to increase, has more or less comparable performance (in terms of aspect ratio) as the one of Huang et al.
 
 Regarding the number of crossings, the restricted variant of our algorithm and the force-directed algorithm of Huang et al.\ yield drawings with comparable number of crossings, which at the same time is significantly smaller than the  number of crossings produced by the two other algorithms; see Fig.~\ref{fig:cr-res-3}.
@@ -361,7 +388,7 @@ Summarizing, we conclude that compared to the Rome graphs, the AT\&T graphs show
 \label{ssec:grid}
 % ==================================================================
 
-In addition to the experiments that we have described so far, we also evaluated how our algorithm performs, if we restrict its vertices to integer grid coordinates. In particular, we were interesting to see how the different quality measures that we have evaluated so far are affected by the restrictions imposed on having the vertices of the graph on integer grids of different sizes:
+In addition to the experiments that we have described so far, we also evaluated how our algorithm performs, if we restrict its vertices to integer grid coordinates. In particular, we were interesting to see how the different quality measures that we have investigated so far are affected by the restrictions imposed on having the vertices of the graph on integer grids of different sizes:
 
 \begin{enumerate}[(i)]
 \item $10^6 \times 10^6$
@@ -370,11 +397,11 @@ In addition to the experiments that we have described so far, we also evaluated 
 \item $10^2 \times 10^2$.
 \end{enumerate}
 
-The test suite for this experiment was the non-planar Rome graphs. The algorithm to be evaluated was the variant of our algorithm that optimizes the drawing's crossing resolution. However, since this algorithm is guaranteed to produce a grid drawing, only if its initial drawing is grid, each of the Rome graphs was initially laid out by randomly placing its vertices on the grid, ensuring that neither two vertices nor two edges overlap. Fig.~\ref{fig:experimentsGrid} summarizes the results.
+The test suite for this experiment was the non-planar Rome graphs. The algorithm to be evaluated was the variant of our algorithm that optimizes the drawing's crossing resolution (without any restriction on the aspect ratio). However, since this algorithm is guaranteed to produce a grid drawing, only if its initial drawing is grid, each of the Rome graphs was initially laid out by randomly placing its vertices on the underlying grid, ensuring that neither two vertices nor two edges overlap. Fig.~\ref{fig:experimentsGrid} summarizes the results.
 
-Regarding the crossing resolution, we natural observe that the bigger the grid is, the easier it is to compute a drawing with higher crossing resolution; see Fig.~\ref{fig:crossingResolutionGrid}. More precisely, the grid of size $10^2 \times 10^2$ was too restrictive for the vast majority of the graphs. As a result, the reported drawings were often the initial ones (as our algorithm could not improve them), especially for large graphs. Significantly fewer were the graphs for which our algorithm could not report an improved drawing, when the underlying grid was of size $10^3 \times 10^3$. The crossing resolution of the drawings produced by our algorithm, when the underlying grid was of size $10^4 \times 10^4$, were on average worse by only $10^\circ$ than those produced by our algorithm, when imposing no restriction on the size of the underlying grid (refer to the double line in Fig.~\ref{fig:crossingResolutionGrid}). As expected, the gap was more narrow, when the underlying grid was of size $10^6 \times 10^6$.
+Regarding the crossing resolution, we natural observe that the bigger the grid is, the easier it is to compute a drawing with high crossing resolution; see Fig.~\ref{fig:crossingResolutionGrid}. More precisely, the grid of size $10^2 \times 10^2$ was too restrictive for the vast majority of the graphs. As a result, the reported drawings were often the initial ones (as our algorithm could not improve them), especially for large graphs. Significantly fewer were the graphs for which our algorithm could not report an improved drawing, when the underlying grid was of size $10^3 \times 10^3$. The crossing resolution of the drawings produced by our algorithm, when the underlying grid was of size $10^4 \times 10^4$, were on average worse by only $10^\circ$ than those produced by our algorithm, when imposing no restriction on the size of the underlying grid (refer to the double line in Fig.~\ref{fig:crossingResolutionGrid}). As expected, the gap was more narrow, when the underlying grid was of size $10^6 \times 10^6$.
 
-The aspect ratio of the computed drawings was more or less the same regardless of the size of the underlying grid, with the exception of the drawings computed on the grid of size $10^2 \times 10^2$; see Fig.~\ref{fig:crossingResolutionAspectRatioGrid}. The fact that the aspect ratio of these drawings was worse can be explained of course by the fact that in most cases an improved drawing could not be reported.
+The aspect ratio of the computed drawings was more or less the same regardless of the size of the underlying grid, with the exception of the drawings computed on the $10^2 \times 10^2$ grid; see Fig.~\ref{fig:crossingResolutionAspectRatioGrid}. The fact that the aspect ratio of these drawings was worse can be explained of course by the fact that in most cases an improved drawing could not be reported.
 
 As expected, the smaller the underlying grid is, the more crossings the computed drawings contain; see Fig.~\ref{fig:crossingResolutionCrossingNumberGrid}. As a result, the drawings produced by our algorithm, when imposing no restriction on the size of the underlying grid, are clearly better (in terms of the number of crossings) than those produced by our algorithm, when the size of the underlying grid is limited. As a matter of fact, the larger the underlying grid is, the fewer crossing the reported drawings have, and the differences are quite clear. Exceptional are the grids of sizes $10^4 \times 10^4$ and $10^6 \times 10^6$, where the improvement (in the number of crossings) from the latter to the former is small on average; this can partially be explained by the different choices of the initial drawings.
 
@@ -383,209 +410,43 @@ In general, the number of iterations needed for convergence increases with the s
 In conclusion, we can state that our algorithm is still able to compute drawings with high crossing resolution, when restricted to a grid, as long as the grid is not too small. However, the computation of a grid drawing takes longer, which is of course expected. Finally, the choice of the initial grid drawing seems to affect the performance of our algorithm, both with respect to the quality of the produced drawings (counted here in terms of the crossing resolution), but also with respect to the number of iterations needed for convergence.
 
 % ==================================================================
-\subsection{Graph Drawing Contest 2017}
-\label{ssec:contest17}
+\subsection{Graph Drawing Contests}
+\label{ssec:contest}
 % ==================================================================
 
-Our primary motivation for this work was our participation to the Graph Drawing contest in 2017, where we miserably performed\footnote{\texttt{http://www.graphdrawing.de/contest2017/results.html}}; the topic was the maximization of the crossing resolution. Our approach for the contest in 2017 was a mixture of the two force directed algorithms by Argyriou et al. and Huang et al.
+Every year, the Graph Drawing conference organizes a contest, in which the task is to visualize a set of challenge graphs in a predefined drawing style. The teams participating to the contest receive a set of challenge graphs, and after one hour they must submit their final drawings for each of them. The team with the highest cumulative score wins. In years 2017 and 2018, the task of the contest was the crossing resolution maximization problem, which actually formed our primary motivation for this work. 
 
-We give a comparison of our new approach to the performances of the clear winner ``CoffeeVM'' of last year's graph drawing contest and our previous team ``TuebingenMidnight'' in Table~\ref{tab:gdContest2017}. Note that in the contest the teams had only one hour to compute layouts for all 15 contest graphs. For our algorithm, we provide results that were achieved with the same time limit (see column ``Time restricted''), as well as our best results which were achieved without a strict time limit (see column ``Our best'').
+\myparagraph{Graph Drawing Contest 2017} In 2017, we participated to the contest (by implementing a mixture of the two force-directed algorithms by Argyriou et al. and by Huang et al.). 
+%
+Table~\ref{tab:gdContest2017} summarizes the results, which are also available at \texttt{www.graphdrawing.de/contest2017/results.html}. 
 
-We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the last year's contest winner. On a few graphs (namely, graphs 10 and 11), we even achieve better results. With a single exception (namely, graph 4), we easily outperformed our results from last year.
-If we neglect the time restriction, for all the graphs, the results  are (sometimes considerably) better than or at least about the same as last year's contest winner. We can conclude that our new approach has good potential for the application in this year's graph drawing contest, however, we also note that more careful graph dependent parameterization will be needed to compute competitive solutions within the provided time.
+It is far from clear that the wining team was the team  ``CoffeeVM''. Our team ``TuebingenMidnight''  miserably performed. As already mentioned, each team had only one hour to compute a layout for each of the $16$ challenge graphs. In Table~\ref{tab:gdContest2017}, we additionally provide results that were achieved with our algorithm with the same time limit (see column ``Time restricted''), as well as our best results, which were achieved without any time limitations (see column ``Our best'').
 
-\begin{table*}[t!]
+We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the contest's winner when restricted within the one hour. On a few graphs (namely, graphs 10 and 11), we even achieved better results. With a single exception (namely, graph 4), we could easily outperformed our results from last year. If we neglect the time restriction, for all the graphs, the results  are (sometimes considerably) better than or at least about the same as the contest's winner. 
 
-\caption{Summary of the results for the Graph Drawing Contest Graphs.}
-\centering
-\begin{tabular}{c|c|c|c|c}
-\toprule
-~~Graph~~ & ~~CoffeeVM~~ & ~~TuebingenMidnight~~ & ~~Time restricted~~ & ~~Our best~~ \\
-\midrule
-1 & 90  & 77  & 89.99 & 89.99\\
-2 & 88.23  & 42 & 88.21 & 88.7 \\
-3 & 90  & 89 & 87.86 & 89.95 \\
-4 & 88.97  & 89 & 77.13  & 89.05 \\
-5 & 80.4  &  30 & 78.68 & 86.96 \\
-6 & 90  & 78 & 89.96 & 89.96\\
-7 & 56.537  & 34 & 55.77  & 63.62 \\
-8 & 84.95  & 61 & 81.18 & 89.28 \\
-9 & 59.885  & 9 & 54.63 & 88.2 \\
-10 & 20.978  & 4 & 23.60  & 23.72 \\
-11 & 46.684  & 6 & 57.00 & 72.00 \\
-12 & 36.47  & 5 & 26.24 & 35.86 \\
-13 & 25.456  & 4 & 22.43 & 33.68 \\
-14 & 33.52  & 5 & 29.69 & 43.08 \\
-15 & 20.512  & 4 & 13.51 & 29.18 \\
-\bottomrule
-\end{tabular}
-\label{tab:gdContest2017}
-\end{table*}
+%We can conclude that our new approach has good potential for the application in this year's graph drawing contest, however, we also note that more careful graph dependent parameterization will be needed to compute competitive solutions within the provided time.
+
+\myparagraph{Graph Drawing Contest 2018} In 2018,  
+\vspace{10cm}
 
 
 \section{Sample Drawings}
 \label{app:samples}
 
-In this section, we present drawings of the 5th and of the 9th graph given in the Graph Drawing contest 2017 that are produced by different variants of our algorithm and of the algorithms by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}; see Figures~\ref{fig:graph5} and~\ref{fig:graph9}, respectively. Each variant was obtained by adjusting each of the aforementioned algorithms to optimize the crossing resolution, the angular resolution and the total resolution, respectively; the aesthetic criterion optimized by each variant is reported in the caption of its corresponding subfigure. As initial drawings for all algorithms, we used the layouts shown in Figure~\ref{fig:graph5And9-yfiles} that we computed with the SmartOrganic layouter of the yFiles library~\cite{DBLP:books/sp/04/WieseE004}.
+In this section, we present sample drawings of the 5th and of the 9th graph given in the Graph Drawing contest 2017 that are produced by different variants of our algorithm and of the algorithms by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}; see Figures~\ref{fig:graph5} and~\ref{fig:graph9}, respectively. Each variant was obtained by adjusting each of the aforementioned algorithms to optimize the crossing resolution, the angular resolution and the total resolution, respectively; the aesthetic criterion optimized by each variant is reported in the caption of its corresponding subfigure. As initial drawings for all algorithms, we used the layouts shown in Fig.~\ref{fig:graph5And9-yfiles} that we computed with the SmartOrganic layouter of the yFiles library~\cite{DBLP:books/sp/04/WieseE004}.
 
-\begin{figure*}[htbp]
+\begin{figure}[t]
 \centering
 \subfloat[\label{fig:graph5-yfiles}{}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-yfiles}
-}
-\hfil
+\includegraphics[width=0.3\textwidth]{graph5-yfiles}}
+
 \subfloat[\label{fig:graph9-yfiles}{}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-yfiles}
-}
+\includegraphics[width=0.27\textwidth]{graph9-yfiles}}
 \caption{Illustration of 
 (a)~the 5th, and of
 (b)~the 9th graph of the Graph Drawing contest 2017.}
 \label{fig:graph5And9-yfiles}
-\end{figure*}
-
-\begin{figure*}[p]
-\centering
-\subfloat[\label{fig:graph5-ourBest-cr}{Crossing Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-ourBest-crossing}
-}
-\hfill
-\subfloat[\label{fig:graph5-ourBest-ar}{Angular Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-ourBest-angular}
-}
-\hfill
-\subfloat[\label{fig:graph5-ourBest-tr}{Total Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-ourBest-total}
-}
-\hfill
-\subfloat[\label{fig:graph5-ourRestricted-cr}{Crossing Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-crossing}
-}
-\hfill
-\subfloat[\label{fig:graph5-ourRestricted-ar}{Angular Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-angular}
-}
-\hfill
-\subfloat[\label{fig:graph5-ourRestricted-tr}{Total Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-ourRestricted-total}
-}
-\hfill
-\subfloat[\label{fig:graph5-argyriou-cr}{Crossing Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-argyriou-crossing}
-}
-\hfill
-\subfloat[\label{fig:graph5-argyriou-ar}{Angular Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-argyriou-angular}
-}
-\hfill
-\subfloat[\label{fig:graph5-argyriou-tr}{Total Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-argyriou-total}
-}
-\hfill
-\subfloat[\label{fig:graph5-huang-cr}{Crossing Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-huang-crossing}
-}
-\hfill
-\subfloat[\label{fig:graph5-huang-ar}{Angular Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-huang-angular}
-}
-\hfill
-\subfloat[\label{fig:graph5-huang-tr}{Total Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph5-huang-total}
-}
-
-\caption{Different drawings of the 5th graph given in the Graph Drawing 2017 contest produced by different variants of
-(a)--(c)~the variant of our algorithm without restrictions on the aspect ratio, 
-(d)--(f)~the variant of our algorithm forced to maintain the input aspect ratio,
-(g)--(i)~the algorithm by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and
-(j)--(l)~the algorithm by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
-The aesthetic criterion optimized by each variant is reported in the caption of its subfigure.}
-\label{fig:graph5}
-\end{figure*}
-
-\begin{figure*}[htbp]
-\centering
-\subfloat[\label{fig:graph9-ourBest-cr}{Crossing Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-ourBest-crossing}
-}
-\hfill
-\subfloat[\label{fig:graph9-ourBest-ar}{Angular Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-ourBest-angular}
-}
-\hfill
-\subfloat[\label{fig:graph9-ourBest-tr}{Total Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-ourBest-total}
-}
-
-\subfloat[\label{fig:graph9-ourRestricted-cr}{Crossing Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-crossing}
-}
-\hfill
-\subfloat[\label{fig:graph9-ourRestricted-ar}{Angular Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-angular}
-}
-\hfill
-\subfloat[\label{fig:graph9-ourRestricted-tr}{Total Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-ourRestricted-total}
-}
-
-\subfloat[\label{fig:graph9-argyriou-cr}{Crossing Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-argyriou-crossing}
-}
-\hfill
-\subfloat[\label{fig:graph9-argyriou-ar}{Angular Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-argyriou-angular}
-}
-\hfill
-\subfloat[\label{fig:graph9-argyriou-tr}{Total Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-argyriou-total}
-}
-
-\subfloat[\label{fig:graph9-huang-cr}{Crossing Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-huang-crossing}
-}
-\hfill
-\subfloat[\label{fig:graph9-huang-ar}{Angular Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-huang-angular}
-}
-\hfill
-\subfloat[\label{fig:graph9-huang-tr}{Total Resolution}]{
-\centering
-\includegraphics[width=0.3\textwidth]{graph9-huang-total}
-}
-
-\caption{Different drawings of the 9th graph given in the Graph Drawing 2017 contest produced by different variants of
-(a)--(c)~the variant of our algorithm without restrictions on the aspect ratio, 
-(d)--(f)~the variant of our algorithm forced to maintain the input aspect ratio,
-(g)--(i)~the algorithm by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and
-(j)--(l)~the algorithm by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
-Each variant was obtained by optimizing a different aesthetic criterion, which is named in the caption of each subfigure.}
-\label{fig:graph9}
-\end{figure*}
+\end{figure}
 
 % ==================================================================
 \section{Conclusions}
@@ -596,13 +457,107 @@ Each variant was obtained by optimizing a different aesthetic criterion, which i
 In this paper, we introduced a new heuristic aiming to produce drawings of high crossing resolution, for which we also presented variants that take into account other common aesthetic criteria in Graph Drawing. Our experimental evaluation indicates that the new heuristic is competitive to state of the art force-directed algorithms, even when restricted to a given maximum aspect ratio. 
 %As a future direction, we plan to evaluate the performance of variants of our heuristic that compromise between even more aesthetic criteria.
 
-While working on this project, we made some useful observations and  obtained some interesting insights. In particular, there is a recent hypothesis (also supported by experiments) that drawings, in which the crossing angles, are large are easy to read and understand. We observed that drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other. Hence, angular resolution and aspect ratio were often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped significantly improving the readability of the drawings, without loosing too much of their quality in terms of the crossing resolution.
+It also worth noting that while working on this project, we made some useful observations and obtained some interesting insights. In particular, there is a recent observation (also supported by experiments) that drawings, in which the crossing angles are large, are easy to read and understand. We observed that drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other (see, e.g., Fig.~\ref{fig:graph5-argyriou-cr}). Hence, their angular resolution and aspect ratio were often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped in significantly improving the readability of the produced drawings, without loosing too much of their quality in terms of the crossing resolution.
 
-We conclude by noting that our motivation to work with this problem was our participation to GD2017 contest, where we performed miserably using a force-directed algorithm; for details see Appendix~\ref{app:contest}. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely more promising than our previous as evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing.
+We conclude by noting that our motivation to work with this problem was our participation to the Graph Drawing contest 2017, where we performed miserably using a force-directed algorithm. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely better as also evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing.
 
-\paragraph{Acknowledgments.} The authors would also like to acknowledge Simon Wegendt and Jessica Wolz for implementing the first version of our prototype.
+\paragraph{Acknowledgments.} The authors would also like to thank Simon Wegendt and Jessica Wolz for implementing the first version of our prototype.
 
 \bibliographystyle{compj}
 \bibliography{references}
+
+\clearpage
+
+\begin{figure*}[h!]
+	\centering
+	\subfloat[\label{fig:graph5-ourBest-cr}{Crossing Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-ourBest-crossing}}
+	\hfill
+	\subfloat[\label{fig:graph5-ourBest-ar}{Angular Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-ourBest-angular}}
+	\hfill
+	\subfloat[\label{fig:graph5-ourBest-tr}{Total Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-ourBest-total}}
+	\hfill
+	\subfloat[\label{fig:graph5-ourRestricted-cr}{Crossing Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-ourRestricted-crossing}}
+	\hfill
+	\subfloat[\label{fig:graph5-ourRestricted-ar}{Angular Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-ourRestricted-angular}}
+	\hfill
+	\subfloat[\label{fig:graph5-ourRestricted-tr}{Total Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-ourRestricted-total}}
+	\hfill
+	\subfloat[\label{fig:graph5-argyriou-cr}{Crossing Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-argyriou-crossing}}
+	\hfill
+	\subfloat[\label{fig:graph5-argyriou-ar}{Angular Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-argyriou-angular}}
+	\hfill
+	\subfloat[\label{fig:graph5-argyriou-tr}{Total Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-argyriou-total}}
+	\hfill
+	\subfloat[\label{fig:graph5-huang-cr}{Crossing Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-huang-crossing}}
+	\hfill
+	\subfloat[\label{fig:graph5-huang-ar}{Angular Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-huang-angular}}
+	\hfill
+	\subfloat[\label{fig:graph5-huang-tr}{Total Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph5-huang-total}}
+	\caption{Different drawings of the 5th challenge graph given in the Graph Drawing 2017 contest produced by different variants of
+	(a)--(c)~the variant of our algorithm without restrictions on the aspect ratio, 
+	(d)--(f)~the variant of our algorithm forced to maintain the input aspect ratio,
+	(g)--(i)~the algorithm by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and
+	(j)--(l)~the algorithm by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
+	The aesthetic criterion optimized by each variant is reported in the caption of its subfigure.}
+	\label{fig:graph5}
+\end{figure*}
+
+\begin{figure*}[htbp]
+	\centering
+	\subfloat[\label{fig:graph9-ourBest-cr}{Crossing Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-ourBest-crossing}}
+	\hfill
+	\subfloat[\label{fig:graph9-ourBest-ar}{Angular Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-ourBest-angular}}
+	\hfill
+	\subfloat[\label{fig:graph9-ourBest-tr}{Total Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-ourBest-total}}
+	\hfill	
+	\subfloat[\label{fig:graph9-ourRestricted-cr}{Crossing Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-ourRestricted-crossing}}
+	\hfill
+	\subfloat[\label{fig:graph9-ourRestricted-ar}{Angular Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-ourRestricted-angular}}
+	\hfill
+	\subfloat[\label{fig:graph9-ourRestricted-tr}{Total Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-ourRestricted-total}}	
+	\hfill	
+	\subfloat[\label{fig:graph9-argyriou-cr}{Crossing Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-argyriou-crossing}}
+	\hfill
+	\subfloat[\label{fig:graph9-argyriou-ar}{Angular Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-argyriou-angular}}
+	\hfill
+	\subfloat[\label{fig:graph9-argyriou-tr}{Total Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-argyriou-total}}	
+	\hfill
+	\subfloat[\label{fig:graph9-huang-cr}{Crossing Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-huang-crossing}}
+	\hfill
+	\subfloat[\label{fig:graph9-huang-ar}{Angular Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-huang-angular}}
+	\hfill
+	\subfloat[\label{fig:graph9-huang-tr}{Total Resolution}]{
+	\includegraphics[width=0.27\textwidth]{graph9-huang-total}}
+	\caption{Different drawings of the 9th challenge graph given in the Graph Drawing 2017 contest produced by different variants of
+	(a)--(c)~the variant of our algorithm without restrictions on the aspect ratio, 
+	(d)--(f)~the variant of our algorithm forced to maintain the input aspect ratio,
+	(g)--(i)~the algorithm by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and
+	(j)--(l)~the algorithm by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}.
+	Each variant was obtained by optimizing a different aesthetic criterion, which is named in the caption of each subfigure.}
+	\label{fig:graph9}
+\end{figure*}
 
 \end{document}
