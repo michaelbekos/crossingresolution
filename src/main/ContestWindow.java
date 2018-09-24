@@ -29,7 +29,6 @@ public class ContestWindow {
 
 
     public static void main(String[] args) {
-
         ContestWindow contestWindow = new ContestWindow();
         if (args.length == 0) {
             runSingleFrame(); //TODO test
@@ -50,7 +49,8 @@ public class ContestWindow {
 
         if (args.length == 1) {     //load all files in folder, automate first 8
             folderPath = args[0];
-            try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
+//            try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
+            try (Stream<Path> paths = Files.list(Paths.get(folderPath))) { //non-recursive
                 List<Integer> list = paths
                         .filter(Files::isRegularFile)
                         .map(path -> Integer.parseInt(path.getFileName().toString().replaceFirst("[.][^.]+$", "")))

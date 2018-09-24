@@ -157,7 +157,8 @@ public class GraphFrame {
     }
     public void saveGraph() {
         showBest();
-        String fileNamePath = savePath+Integer.toString(id)+".json";
+//        String fileNamePath = savePath+Integer.toString(id)+"_"+java.time.LocalTime.now().truncatedTo(ChronoUnit.SECONDS).toString().replaceAll(":","-")+".json";
+        String fileNamePath = savePath+Integer.toString(id)+"_"+bestAngleLabel.getText()+".json";
 
         if (fileNamePath != null) {
             try {
