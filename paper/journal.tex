@@ -289,55 +289,152 @@ In this subsection, we report the results of our expertimental evaluation for th
 \myparagraph{Crossing resolution} Our results for the crossing resolution are summarized in Fig.~\ref{fig:cr-res}. Here, each algorithm was adjusted to maximize exclusively the crossing resolution (i.e., by ignoring the drawing's angular resolution). It is immediate to see that our algorithm outperforms all other ones in terms of the crossing resolution of the produced drawings, when we do not impose any restriction on the aspect ratio of the computed drawings; refer to the solid-black curve, denoted as \emph{Unrestricted}, in Fig.~\ref{fig:cr-res-1}. The variant of our algorithm, which does not violate the aspect ratio of the initial layout, leads to drawings with slightly smaller crossing resolution; refer to the solid-gray curve, denoted as \emph{AR-restricted}, in Fig.~\ref{fig:cr-res-1}. Finally, the two force-directed algorithms seem to produce drawings with worse crossing resolution; refer to the dotted-gray and dotted-black curves of Fig.~\ref{fig:cr-res-1} (by Argyriou et al.\ and by Huang et al., respectively).
 
 % ==================================================================
-\input{cr-res-rome.tex}
+%\input{cr-res-rome.tex}
 % ==================================================================
+\begin{figure*}[t]
+	\centering
+	\subfloat[\label{fig:cr-res-1}{Crossing resolution vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=1]{figures/rome}}
+	\hfil
+	\subfloat[\label{fig:cr-res-2}{Aspect ratio vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=2]{figures/rome}}
+	
+	\subfloat[\label{fig:cr-res-3}{No.~of crossings vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=3]{figures/rome}}
+	\hfil
+	\subfloat[\label{fig:cr-res-4}{No.~of iterations vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=4]{figures/rome}}
+	\caption{Experimental results on the crossing resolution for the Rome graphs.}
+	\label{fig:cr-res}
+\end{figure*}
 
 % ==================================================================
-\input{to-res-rome.tex}
+%\input{to-res-rome.tex}
 % ==================================================================
+\begin{figure*}[t]
+	\centering
+	\subfloat[\label{fig:to-res-1}{Crossing resolution vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=5]{figures/rome}}
+	\hfil
+	\subfloat[\label{fig:to-res-2}{Aspect ratio vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=6]{figures/rome}}
+	
+	\subfloat[\label{fig:to-res-3}{No.~of crossings vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=7]{figures/rome}}
+	\hfil
+	\subfloat[\label{fig:to-res-4}{No.~of iterations vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=8]{figures/rome}}
+	\caption{Experimental results on the total resolution for the Rome graphs.}
+	\label{fig:to-res}
+\end{figure*}
 
 % ==================================================================
-\input{an-res-rome.tex}
+%\input{an-res-rome.tex}
 % ==================================================================
+\begin{figure*}[t]
+	\centering
+	\subfloat[\label{fig:an-res-1}{Crossing resolution vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=9]{figures/rome}}
+	\hfil
+	\subfloat[\label{fig:an-res-2}{Aspect ratio vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=10]{figures/rome}}
+	
+	\subfloat[\label{fig:an-res-3}{No.~of crossings vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=11]{figures/rome}}
+	\hfil
+	\subfloat[\label{fig:an-res-4}{No.~of iterations vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=12]{figures/rome}}
+	\caption{Experimental results on the angular resolution for the Rome graphs.}
+	\label{fig:an-res}
+\end{figure*}
 
 % ==================================================================
-\input{cr-res-north.tex}
+%\input{cr-res-north.tex}
 % ==================================================================
+\begin{figure*}[t!]
+	\centering
+	\subfloat[\label{fig:northCrossing-1}{Crossing resolution vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=1]{figures/north}}
+	\hfil
+	\subfloat[\label{fig:northCrossing-2}{Aspect ratio vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=2]{figures/north}}
+	
+	\subfloat[\label{fig:northCrossing-3}{No.~of crossings vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=3]{figures/north}}
+	\hfil
+	\subfloat[\label{fig:northCrossing-4}{No.~of iterations vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=4]{figures/north}}
+	\caption{Experimental results for the crossing resolution on the AT\&T graphs.}
+	\label{fig:northCrossing}
+\end{figure*}
 
 % ==================================================================
-\input{to-res-north.tex}
+%\input{to-res-north.tex}
 % ==================================================================
+\begin{figure*}[t!]
+	\centering
+	\subfloat[\label{fig:northTotal-1}{Crossing resolution vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=5]{figures/north}}
+	\hfil
+	\subfloat[\label{fig:northTotal-2}{Aspect ratio vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=6]{figures/north}}
+	
+	\subfloat[\label{fig:northTotal-3}{No.~of crossings vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=7]{figures/north}}
+	\hfil
+	\subfloat[\label{fig:northTotal-4}{No.~of iterations vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=8]{figures/north}}
+	\caption{Experimental results for the total resolution on the AT\&T graphs.}
+	\label{fig:northTotal}
+\end{figure*}
 
 % ==================================================================
-\input{an-res-north.tex}
+%\input{an-res-north.tex}
 % ==================================================================
+\begin{figure*}[t!]
+	\centering
+	\subfloat[\label{fig:northAngular-1}{Crossing resolution vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=9]{figures/north}}
+	\hfil
+	\subfloat[\label{fig:northAngular-2}{Aspect ratio vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=10]{figures/north}}
+	
+	\subfloat[\label{fig:northAngular-3}{No.~of crossings vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=11]{figures/north}}
+	\hfil
+	\subfloat[\label{fig:northAngular-4}{No.~of iterations vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=12]{figures/north}}
+	\caption{Experimental results for the angular resolution on the AT\&T graphs.}
+	\label{fig:northAngular}
+\end{figure*}
 
 % ==================================================================
 \input{grid-rome.tex}
 % ==================================================================
 
-\begin{table*}[t!]
+\begin{table*}
 \caption{Summary of the results for the Graph Drawing Contest 2017.}
 \centering
 \begin{tabular}{c|c|c|c|c}
 \toprule
 ~~Graph~~ & ~~CoffeeVM~~ & ~~TuebingenMidnight~~ & ~~Time restricted~~ & ~~Our best~~ \\
 \midrule
-1 & 90  & 77  & 89.99 & 89.99\\
-2 & 88.23  & 42 & 88.21 & 88.7 \\
-3 & 90  & 89 & 87.86 & 89.95 \\
-4 & 88.97  & 89 & 77.13  & 89.05 \\
-5 & 80.4  &  30 & 78.68 & 86.96 \\
-6 & 90  & 78 & 89.96 & 89.96\\
-7 & 56.537  & 34 & 55.77  & 63.62 \\
-8 & 84.95  & 61 & 81.18 & 89.28 \\
-9 & 59.885  & 9 & 54.63 & 88.2 \\
-10 & 20.978  & 4 & 23.60  & 23.72 \\
-11 & 46.684  & 6 & 57.00 & 72.00 \\
-12 & 36.47  & 5 & 26.24 & 35.86 \\
-13 & 25.456  & 4 & 22.43 & 33.68 \\
-14 & 33.52  & 5 & 29.69 & 43.08 \\
-15 & 20.512  & 4 & 13.51 & 29.18 \\
+1 & 90.00  & 77  & 89.99 & 89.99\\
+2 & 88.23  & 42  & 88.21 & 88.7 \\
+3 & 90.00  & 89  & 87.86 & 89.95 \\
+4 & 88.97  & 89  & 77.13 & 89.05 \\
+5 & 80.40  & 30  & 78.68 & 86.96 \\
+6 & 90.00  & 78  & 89.96 & 89.96\\
+7 & 56.53  & 34  & 55.77 & 63.62 \\
+8 & 84.95  & 61  & 81.18 & 89.28 \\
+9 & 59.88  & 9   & 54.63 & 88.2 \\
+10 & 20.97  & 4  & 23.60 & 23.72 \\
+11 & 46.68  & 6  & 57.00 & 72.00 \\
+12 & 36.47  & 5  & 26.24 & 35.86 \\
+13 & 25.45  & 4  & 22.43 & 33.68 \\
+14 & 33.52  & 5  & 29.69 & 43.08 \\
+15 & 20.51  & 4  & 13.51 & 29.18 \\
+16 & 19.83  & 3  & 12.13 & 26.12 \\
 \bottomrule
 \end{tabular}
 \label{tab:gdContest2017}
@@ -438,10 +535,10 @@ In this section, we present sample drawings of the 5th and of the 9th graph give
 \begin{figure}[t]
 \centering
 \subfloat[\label{fig:graph5-yfiles}{}]{
-\includegraphics[width=0.3\textwidth]{graph5-yfiles}}
+\includegraphics[width=0.4\textwidth]{graph5-yfiles}}
 
 \subfloat[\label{fig:graph9-yfiles}{}]{
-\includegraphics[width=0.27\textwidth]{graph9-yfiles}}
+\includegraphics[width=0.37\textwidth]{graph9-yfiles}}
 \caption{Illustration of 
 (a)~the 5th, and of
 (b)~the 9th graph of the Graph Drawing contest 2017.}
@@ -454,12 +551,11 @@ In this section, we present sample drawings of the 5th and of the 9th graph give
 % ==================================================================
 
 %
-In this paper, we introduced a new heuristic aiming to produce drawings of high crossing resolution, for which we also presented variants that take into account other common aesthetic criteria in Graph Drawing. Our experimental evaluation indicates that the new heuristic is competitive to state of the art force-directed algorithms, even when restricted to a given maximum aspect ratio. 
-%As a future direction, we plan to evaluate the performance of variants of our heuristic that compromise between even more aesthetic criteria.
+In this paper, we introduced a new heuristic aiming to produce drawings of high crossing resolution, for which we also presented variants that take into account other common aesthetic criteria in Graph Drawing. Our experimental evaluation indicates that the new heuristic is competitive to the state of the art force-directed algorithms, even when restricted to a given maximum aspect ratio. 
 
 It also worth noting that while working on this project, we made some useful observations and obtained some interesting insights. In particular, there is a recent observation (also supported by experiments) that drawings, in which the crossing angles are large, are easy to read and understand. We observed that drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other (see, e.g., Fig.~\ref{fig:graph5-argyriou-cr}). Hence, their angular resolution and aspect ratio were often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped in significantly improving the readability of the produced drawings, without loosing too much of their quality in terms of the crossing resolution.
 
-We conclude by noting that our motivation to work with this problem was our participation to the Graph Drawing contest 2017, where we performed miserably using a force-directed algorithm. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely better as also evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing.
+We conclude by noting that our motivation to work with this problem was our participation to the Graph Drawing contest 2017, where we performed miserably using a force-directed algorithm. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely better as also evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing. Thus, as a future direction, we plan to further extend and evaluate our technique, e.g., by using a multi-criteria objective function (i.e., that is not limited to the crossing angles) that takes into account more aesthetic criteria. 
 
 \paragraph{Acknowledgments.} The authors would also like to thank Simon Wegendt and Jessica Wolz for implementing the first version of our prototype.
 
