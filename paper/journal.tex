@@ -419,25 +419,51 @@ In this subsection, we report the results of our expertimental evaluation for th
 \toprule
 ~~Graph~~ & ~~CoffeeVM~~ & ~~TuebingenMidnight~~ & ~~Time restricted~~ & ~~Our best~~ \\
 \midrule
-1 & 90.00  & 77  & 89.99 & 89.99\\
-2 & 88.23  & 42  & 88.21 & 88.7 \\
-3 & 90.00  & 89  & 87.86 & 89.95 \\
-4 & 88.97  & 89  & 77.13 & 89.05 \\
-5 & 80.40  & 30  & 78.68 & 86.96 \\
-6 & 90.00  & 78  & 89.96 & 89.96\\
-7 & 56.53  & 34  & 55.77 & 63.62 \\
-8 & 84.95  & 61  & 81.18 & 89.28 \\
-9 & 59.88  & 9   & 54.63 & 88.2 \\
-10 & 20.97  & 4  & 23.60 & 23.72 \\
-11 & 46.68  & 6  & 57.00 & 72.00 \\
-12 & 36.47  & 5  & 26.24 & 35.86 \\
-13 & 25.45  & 4  & 22.43 & 33.68 \\
-14 & 33.52  & 5  & 29.69 & 43.08 \\
-15 & 20.51  & 4  & 13.51 & 29.18 \\
-16 & 19.83  & 3  & 12.13 & 26.12 \\
+1 & 90.00$\circ$   & 77$^\circ$ & 89.99$^\circ$ & 89.99$^\circ$\\
+2 & 88.23$^\circ$  & 42$^\circ$ & 88.21$^\circ$ & 88.70$^\circ$\\
+3 & 90.00$^\circ$  & 89$^\circ$ & 87.86$^\circ$ & 89.95$^\circ$\\
+4 & 88.97$^\circ$  & 89$^\circ$ & 77.13$^\circ$ & 89.05$^\circ$\\
+5 & 80.40$^\circ$  & 30$^\circ$ & 78.68$^\circ$ & 86.96$^\circ$\\
+6 & 90.00$^\circ$  & 78$^\circ$ & 89.96$^\circ$ & 89.96$^\circ$\\
+7 & 56.53$^\circ$  & 34$^\circ$ & 55.77$^\circ$ & 63.62$^\circ$\\
+8 & 84.95$^\circ$  & 61$^\circ$ & 81.18$^\circ$ & 89.28$^\circ$\\
+9 & 59.88$^\circ$  & 9$^\circ$  & 54.63$^\circ$ & 88.20$^\circ$\\
+10 & 20.97$^\circ$ & 4$^\circ$  & 23.60$^\circ$ & 23.72$^\circ$\\
+11 & 46.68$^\circ$ & 6$^\circ$  & 57.00$^\circ$ & 72.00$^\circ$\\
+12 & 36.47$^\circ$ & 5$^\circ$  & 26.24$^\circ$ & 35.86$^\circ$\\
+13 & 25.45$^\circ$ & 4$^\circ$  & 22.43$^\circ$ & 33.68$^\circ$\\
+14 & 33.52$^\circ$ & 5$^\circ$  & 29.69$^\circ$ & 43.08$^\circ$\\
+15 & 20.51$^\circ$ & 4$^\circ$  & 13.51$^\circ$ & 29.18$^\circ$\\
+16 & 19.83$^\circ$ & 3$^\circ$  & 12.13$^\circ$ & 26.12$^\circ$\\
 \bottomrule
 \end{tabular}
 \label{tab:gdContest2017}
+\end{table*}
+
+\begin{table*}
+\caption{Summary of the results for the Graph Drawing Contest 2018.}
+\centering
+\begin{tabular}{c|c|c|c}
+\toprule
+~~Graph~~ & ~~TuebingenColdShower~~ & ~~CoffeeVM+~~ & ~~Our best~~ \\
+\midrule
+1 & 90.00$\circ$   & 77$^\circ$ & 89.99$^\circ$\\
+2 & 88.23$^\circ$  & 42$^\circ$ & 88.70$^\circ$\\
+3 & 90.00$^\circ$  & 89$^\circ$ & 89.95$^\circ$\\
+4 & 88.97$^\circ$  & 89$^\circ$ & 89.05$^\circ$\\
+5 & 80.40$^\circ$  & 30$^\circ$ & 86.96$^\circ$\\
+6 & 90.00$^\circ$  & 78$^\circ$ & 89.96$^\circ$\\
+7 & 56.53$^\circ$  & 34$^\circ$ & 63.62$^\circ$\\
+8 & 84.95$^\circ$  & 61$^\circ$ & 89.28$^\circ$\\
+9 & 59.88$^\circ$  & 9$^\circ$  & 88.20$^\circ$\\
+10 & 20.97$^\circ$ & 4$^\circ$  & 23.72$^\circ$\\
+11 & 46.68$^\circ$ & 6$^\circ$  & 72.00$^\circ$\\
+12 & 36.47$^\circ$ & 5$^\circ$  & 35.86$^\circ$\\
+13 & 25.45$^\circ$ & 4$^\circ$  & 33.68$^\circ$\\
+14 & 33.52$^\circ$ & 5$^\circ$  & 43.08$^\circ$\\
+\bottomrule
+\end{tabular}
+\label{tab:gdContest2018}
 \end{table*}
 
 While our unrestricted algorithm produces drawings with better crossing resolution, this comes at a cost of drastically increased aspect ratio (see Fig.~\ref{fig:cr-res-2}), which, however, is still better that the corresponding aspect ratio of the drawings produced by the algorithm of Argyriou et al. For the latter algorithm, it seems that the forces due to the angles formed at the crossings outperform the corresponding spring forces, which try to keep the lengths of the edges short. Going back to our unrestricted algorithm, its behavior is up to a certain degree expected, mainly due to the fact that there is no control on the lengths of the edges (as it is, e.g., in the case of the force-directed algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, whose sping forces inpose stong restrictions on the edge lengths). On the other hand, the restricted variant of our algorithm, which does not allow the aspect ratio to increase, has more or less comparable performance (in terms of aspect ratio) as the one of Huang et al.
@@ -507,25 +533,23 @@ In general, the number of iterations needed for convergence increases with the s
 In conclusion, we can state that our algorithm is still able to compute drawings with high crossing resolution, when restricted to a grid, as long as the grid is not too small. However, the computation of a grid drawing takes longer, which is of course expected. Finally, the choice of the initial grid drawing seems to affect the performance of our algorithm, both with respect to the quality of the produced drawings (counted here in terms of the crossing resolution), but also with respect to the number of iterations needed for convergence.
 
 % ==================================================================
-\subsection{Graph Drawing Contests}
+\subsection{Graph Drawing Contests 2018 and 2019}
 \label{ssec:contest}
 % ==================================================================
 
-Every year, the Graph Drawing conference organizes a contest, in which the task is to visualize a set of challenge graphs in a predefined drawing style. The teams participating to the contest receive a set of challenge graphs, and after one hour they must submit their final drawings for each of them. The team with the highest cumulative score wins. In years 2017 and 2018, the task of the contest was the crossing resolution maximization problem, which actually formed our primary motivation for this work. 
+Every year, the Graph Drawing conference organizes a contest, in which the task is to visualize a set of challenge graphs in a predefined drawing style. The teams participating to the contest receive a set of challenge graphs, and after one hour they must submit their final drawings for each of them. The team with the highest cumulative score wins. In years 2017 and 2018, the task of the contest was to produce a drawing for each of the given challenge graphs with as high crossing resolution as possible (which actually also formed our primary motivation for this work). 
 
 \myparagraph{Graph Drawing Contest 2017} In 2017, we participated to the contest (by implementing a mixture of the two force-directed algorithms by Argyriou et al. and by Huang et al.). 
 %
 Table~\ref{tab:gdContest2017} summarizes the results, which are also available at \texttt{www.graphdrawing.de/contest2017/results.html}. 
 
-It is far from clear that the wining team was the team  ``CoffeeVM''. Our team ``TuebingenMidnight''  miserably performed. As already mentioned, each team had only one hour to compute a layout for each of the $16$ challenge graphs. In Table~\ref{tab:gdContest2017}, we additionally provide results that were achieved with our algorithm with the same time limit (see column ``Time restricted''), as well as our best results, which were achieved without any time limitations (see column ``Our best'').
+It is far from clear that the wining team was the team  ``\texttt{CoffeeVM}''. Our team ``\texttt{TuebingenMidnight}''  miserably performed; we actually took the third position out of a total of four teams that participated. As already mentioned, each team had only one hour to compute a layout for each of the challenge graphs, which in year 2017 were in total $16$. In Table~\ref{tab:gdContest2017}, we additionally provide results that were achieved by the algorithm presented in this paper in two settings; within the time limit of the contest (see column ``Time restricted''), as well as our best results, which were achieved without any time limitations (see column ``Our best'').
 
-We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the contest's winner when restricted within the one hour. On a few graphs (namely, graphs 10 and 11), we even achieved better results. With a single exception (namely, graph 4), we could easily outperformed our results from last year. If we neglect the time restriction, for all the graphs, the results  are (sometimes considerably) better than or at least about the same as the contest's winner. 
+We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the contest's winner when restricted within the one hour. On a few graphs (namely, graphs 10 and 11), we even achieved better results. With a single exception (namely, graph 4), we could easily outperform the results that we achieved with the spring-embedder algorithm. If we neglect the time restriction, then for all the graphs, the results  are (sometimes considerably) better than or at least about the same as the contest's winner. 
 
-%We can conclude that our new approach has good potential for the application in this year's graph drawing contest, however, we also note that more careful graph dependent parameterization will be needed to compute competitive solutions within the provided time.
+\myparagraph{Graph Drawing Contest 2018} In 2018, we participated again to the Graph Drawing contest under the name ``\texttt{T\"ubingenColdShower}'' (using an implementation of the algorithm presented in this paper). The winning team of the Graph Drawing contest 2017 also participated under the name ``\texttt{CoffeeVM+}''. Table~\ref{tab:gdContest2018} summarizes the results, which are also available at \texttt{www.graphdrawing.de/contest2018/results.html}. 
 
-\myparagraph{Graph Drawing Contest 2018} In 2018,  
-\vspace{10cm}
-
+It is eye-catching that our team was the winning one; team \texttt{CoffeeVM+} took the second position of the contest (out of a total of four teams that participated to the contest). It is worth noting that for almost all $14$ challenge graphs our team achieved significantly better results than those of the second team \texttt{CoffeeVM+}, which clearly indicates that our new approach is very competitive (and definitely better than our previous,  as also evidenced by the experimental evaluation).
 
 \section{Sample Drawings}
 \label{app:samples}
@@ -555,7 +579,9 @@ In this paper, we introduced a new heuristic aiming to produce drawings of high 
 
 It also worth noting that while working on this project, we made some useful observations and obtained some interesting insights. In particular, there is a recent observation (also supported by experiments) that drawings, in which the crossing angles are large, are easy to read and understand. We observed that drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other (see, e.g., Fig.~\ref{fig:graph5-argyriou-cr}). Hence, their angular resolution and aspect ratio were often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped in significantly improving the readability of the produced drawings, without loosing too much of their quality in terms of the crossing resolution.
 
-We conclude by noting that our motivation to work with this problem was our participation to the Graph Drawing contest 2017, where we performed miserably using a force-directed algorithm. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account; our new approach is definitely better as also evidenced by our experiments. The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing. Thus, as a future direction, we plan to further extend and evaluate our technique, e.g., by using a multi-criteria objective function (i.e., that is not limited to the crossing angles) that takes into account more aesthetic criteria. 
+We conclude by noting that our motivation to work with this problem was our participation to the Graph Drawing contest 2017, where we performed miserably using a force-directed algorithm. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account. 
+
+The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing. Thus, as a future direction, we plan to further extend and evaluate our technique, e.g., by using a multi-criteria objective function (i.e., that is not limited to the crossing angles) that takes into account more aesthetic criteria. 
 
 \paragraph{Acknowledgments.} The authors would also like to thank Simon Wegendt and Jessica Wolz for implementing the first version of our prototype.
 
