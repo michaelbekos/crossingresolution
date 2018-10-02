@@ -6,12 +6,11 @@
 \let\pdfpagewidth\paperwidth
 
 \usepackage{amsmath,amssymb}
-\usepackage{graphicx,pgfplots}
+\usepackage{graphicx,color,pgfplots}
 \usepackage[font=small]{subfig,caption}
-%\usepackage{algorithm2e}
 \usepackage{todonotes,lineno,paralist,soul}
 \usepackage{rotating,hyperref,multicol}
-\usepackage{booktabs,tabularx}
+\usepackage{booktabs,tabularx,colortbl}
 \graphicspath{{figures/}}
 
 % ==================================================================
@@ -417,53 +416,27 @@ In this subsection, we report the results of our expertimental evaluation for th
 \centering
 \begin{tabular}{c|c|c|c|c}
 \toprule
-~~Graph~~ & ~~CoffeeVM~~ & ~~TuebingenMidnight~~ & ~~Time restricted~~ & ~~Our best~~ \\
+\rowcolor{gray!30!}~~Graph~~ & ~~CoffeeVM~~ & ~~T\"ubingenMidnight~~ & ~~Time restricted~~ & ~~Our best~~ \\
 \midrule
-1 & 90.00$\circ$   & 77$^\circ$ & 89.99$^\circ$ & 89.99$^\circ$\\
-2 & 88.23$^\circ$  & 42$^\circ$ & 88.21$^\circ$ & 88.70$^\circ$\\
-3 & 90.00$^\circ$  & 89$^\circ$ & 87.86$^\circ$ & 89.95$^\circ$\\
-4 & 88.97$^\circ$  & 89$^\circ$ & 77.13$^\circ$ & 89.05$^\circ$\\
-5 & 80.40$^\circ$  & 30$^\circ$ & 78.68$^\circ$ & 86.96$^\circ$\\
-6 & 90.00$^\circ$  & 78$^\circ$ & 89.96$^\circ$ & 89.96$^\circ$\\
-7 & 56.53$^\circ$  & 34$^\circ$ & 55.77$^\circ$ & 63.62$^\circ$\\
-8 & 84.95$^\circ$  & 61$^\circ$ & 81.18$^\circ$ & 89.28$^\circ$\\
-9 & 59.88$^\circ$  & 9$^\circ$  & 54.63$^\circ$ & 88.20$^\circ$\\
-10 & 20.97$^\circ$ & 4$^\circ$  & 23.60$^\circ$ & 23.72$^\circ$\\
-11 & 46.68$^\circ$ & 6$^\circ$  & 57.00$^\circ$ & 72.00$^\circ$\\
-12 & 36.47$^\circ$ & 5$^\circ$  & 26.24$^\circ$ & 35.86$^\circ$\\
-13 & 25.45$^\circ$ & 4$^\circ$  & 22.43$^\circ$ & 33.68$^\circ$\\
-14 & 33.52$^\circ$ & 5$^\circ$  & 29.69$^\circ$ & 43.08$^\circ$\\
-15 & 20.51$^\circ$ & 4$^\circ$  & 13.51$^\circ$ & 29.18$^\circ$\\
-16 & 19.83$^\circ$ & 3$^\circ$  & 12.13$^\circ$ & 26.12$^\circ$\\
+\rowcolor{gray!30!} 1 & 90.00$^\circ$  & 77$^\circ$ & 89.99$^\circ$ & 89.99$^\circ$\\
+\rowcolor{gray!00!} 2 & 88.23$^\circ$  & 42$^\circ$ & 88.21$^\circ$ & 88.70$^\circ$\\
+\rowcolor{gray!30!} 3 & 90.00$^\circ$  & 89$^\circ$ & 87.86$^\circ$ & 89.95$^\circ$\\
+\rowcolor{gray!00!} 4 & 88.97$^\circ$  & 89$^\circ$ & 77.13$^\circ$ & 89.05$^\circ$\\
+\rowcolor{gray!30!} 5 & 80.40$^\circ$  & 30$^\circ$ & 78.68$^\circ$ & 86.96$^\circ$\\
+\rowcolor{gray!00!} 6 & 90.00$^\circ$  & 78$^\circ$ & 89.96$^\circ$ & 89.96$^\circ$\\
+\rowcolor{gray!30!} 7 & 56.53$^\circ$  & 34$^\circ$ & 55.77$^\circ$ & 63.62$^\circ$\\
+\rowcolor{gray!00!} 8 & 84.95$^\circ$  & 61$^\circ$ & 81.18$^\circ$ & 89.28$^\circ$\\
+\rowcolor{gray!30!} 9 & 59.88$^\circ$  & 9$^\circ$  & 54.63$^\circ$ & 88.20$^\circ$\\
+\rowcolor{gray!00!} 10 & 20.97$^\circ$ & 4$^\circ$  & 23.60$^\circ$ & 23.72$^\circ$\\
+\rowcolor{gray!30!} 11 & 46.68$^\circ$ & 6$^\circ$  & 57.00$^\circ$ & 72.00$^\circ$\\
+\rowcolor{gray!00!} 12 & 36.47$^\circ$ & 5$^\circ$  & 26.24$^\circ$ & 35.86$^\circ$\\
+\rowcolor{gray!30!} 13 & 25.45$^\circ$ & 4$^\circ$  & 22.43$^\circ$ & 33.68$^\circ$\\
+\rowcolor{gray!00!} 14 & 33.52$^\circ$ & 5$^\circ$  & 29.69$^\circ$ & 43.08$^\circ$\\
+\rowcolor{gray!30!} 15 & 20.51$^\circ$ & 4$^\circ$  & 13.51$^\circ$ & 29.18$^\circ$\\
+\rowcolor{gray!00!} 16 & 19.83$^\circ$ & 3$^\circ$  & 12.13$^\circ$ & 26.12$^\circ$\\
 \bottomrule
 \end{tabular}
 \label{tab:gdContest2017}
-\end{table*}
-
-\begin{table*}
-\caption{Summary of the results for the Graph Drawing Contest 2018.}
-\centering
-\begin{tabular}{c|c|c|c}
-\toprule
-~~Graph~~ & ~~TuebingenColdShower~~ & ~~CoffeeVM+~~ & ~~Our best~~ \\
-\midrule
-1 & 90.00$\circ$   & 77$^\circ$ & 89.99$^\circ$\\
-2 & 88.23$^\circ$  & 42$^\circ$ & 88.70$^\circ$\\
-3 & 90.00$^\circ$  & 89$^\circ$ & 89.95$^\circ$\\
-4 & 88.97$^\circ$  & 89$^\circ$ & 89.05$^\circ$\\
-5 & 80.40$^\circ$  & 30$^\circ$ & 86.96$^\circ$\\
-6 & 90.00$^\circ$  & 78$^\circ$ & 89.96$^\circ$\\
-7 & 56.53$^\circ$  & 34$^\circ$ & 63.62$^\circ$\\
-8 & 84.95$^\circ$  & 61$^\circ$ & 89.28$^\circ$\\
-9 & 59.88$^\circ$  & 9$^\circ$  & 88.20$^\circ$\\
-10 & 20.97$^\circ$ & 4$^\circ$  & 23.72$^\circ$\\
-11 & 46.68$^\circ$ & 6$^\circ$  & 72.00$^\circ$\\
-12 & 36.47$^\circ$ & 5$^\circ$  & 35.86$^\circ$\\
-13 & 25.45$^\circ$ & 4$^\circ$  & 33.68$^\circ$\\
-14 & 33.52$^\circ$ & 5$^\circ$  & 43.08$^\circ$\\
-\bottomrule
-\end{tabular}
-\label{tab:gdContest2018}
 \end{table*}
 
 While our unrestricted algorithm produces drawings with better crossing resolution, this comes at a cost of drastically increased aspect ratio (see Fig.~\ref{fig:cr-res-2}), which, however, is still better that the corresponding aspect ratio of the drawings produced by the algorithm of Argyriou et al. For the latter algorithm, it seems that the forces due to the angles formed at the crossings outperform the corresponding spring forces, which try to keep the lengths of the edges short. Going back to our unrestricted algorithm, its behavior is up to a certain degree expected, mainly due to the fact that there is no control on the lengths of the edges (as it is, e.g., in the case of the force-directed algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, whose sping forces inpose stong restrictions on the edge lengths). On the other hand, the restricted variant of our algorithm, which does not allow the aspect ratio to increase, has more or less comparable performance (in terms of aspect ratio) as the one of Huang et al.
@@ -537,6 +510,32 @@ In conclusion, we can state that our algorithm is still able to compute drawings
 \label{ssec:contest}
 % ==================================================================
 
+\begin{table*}
+\caption{Summary of the results for the Graph Drawing Contest 2018.}
+\centering
+\begin{tabular}{c|c|c|c}
+\toprule
+\rowcolor{gray!30!} ~~Graph~~ & ~~T\"ubingenColdShower~~ & ~~CoffeeVM+~~ & ~~Our best~~ \\
+\midrule
+\rowcolor{gray!30!} 1 & 90.00$^\circ$  & 77$^\circ$ & 89.99$^\circ$\\
+\rowcolor{gray!00!} 2 & 88.23$^\circ$  & 42$^\circ$ & 88.70$^\circ$\\
+\rowcolor{gray!30!} 3 & 90.00$^\circ$  & 89$^\circ$ & 89.95$^\circ$\\
+\rowcolor{gray!00!} 4 & 88.97$^\circ$  & 89$^\circ$ & 89.05$^\circ$\\
+\rowcolor{gray!30!} 5 & 80.40$^\circ$  & 30$^\circ$ & 86.96$^\circ$\\
+\rowcolor{gray!00!} 6 & 90.00$^\circ$  & 78$^\circ$ & 89.96$^\circ$\\
+\rowcolor{gray!30!} 7 & 56.53$^\circ$  & 34$^\circ$ & 63.62$^\circ$\\
+\rowcolor{gray!00!} 8 & 84.95$^\circ$  & 61$^\circ$ & 89.28$^\circ$\\
+\rowcolor{gray!30!} 9 & 59.88$^\circ$  & 9$^\circ$  & 88.20$^\circ$\\
+\rowcolor{gray!00!} 10 & 20.97$^\circ$ & 4$^\circ$  & 23.72$^\circ$\\
+\rowcolor{gray!30!} 11 & 46.68$^\circ$ & 6$^\circ$  & 72.00$^\circ$\\
+\rowcolor{gray!00!} 12 & 36.47$^\circ$ & 5$^\circ$  & 35.86$^\circ$\\
+\rowcolor{gray!30!} 13 & 25.45$^\circ$ & 4$^\circ$  & 33.68$^\circ$\\
+\rowcolor{gray!00!} 14 & 33.52$^\circ$ & 5$^\circ$  & 43.08$^\circ$\\
+\bottomrule
+\end{tabular}
+\label{tab:gdContest2018}
+\end{table*}
+
 Every year, the Graph Drawing conference organizes a contest, in which the task is to visualize a set of challenge graphs in a predefined drawing style. The teams participating to the contest receive a set of challenge graphs, and after one hour they must submit their final drawings for each of them. The team with the highest cumulative score wins. In years 2017 and 2018, the task of the contest was to produce a drawing for each of the given challenge graphs with as high crossing resolution as possible (which actually also formed our primary motivation for this work). 
 
 \myparagraph{Graph Drawing Contest 2017} In 2017, we participated to the contest (by implementing a mixture of the two force-directed algorithms by Argyriou et al. and by Huang et al.). 
@@ -550,6 +549,8 @@ We can observe that for almost all graphs, our new approach achieves only slight
 \myparagraph{Graph Drawing Contest 2018} In 2018, we participated again to the Graph Drawing contest under the name ``\texttt{T\"ubingenColdShower}'' (using an implementation of the algorithm presented in this paper). The winning team of the Graph Drawing contest 2017 also participated under the name ``\texttt{CoffeeVM+}''. Table~\ref{tab:gdContest2018} summarizes the results, which are also available at \texttt{www.graphdrawing.de/contest2018/results.html}. 
 
 It is eye-catching that our team was the winning one; team \texttt{CoffeeVM+} took the second position of the contest (out of a total of four teams that participated to the contest). It is worth noting that for almost all $14$ challenge graphs our team achieved significantly better results than those of the second team \texttt{CoffeeVM+}, which clearly indicates that our new approach is very competitive (and definitely better than our previous,  as also evidenced by the experimental evaluation).
+
+
 
 \section{Sample Drawings}
 \label{app:samples}
