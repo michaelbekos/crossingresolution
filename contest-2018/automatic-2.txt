@@ -1,0 +1,164 @@
+{
+     "edges": [
+          {
+               "source": 0,
+               "target": 1
+          },
+          {
+               "source": 6,
+               "target": 7
+          },
+          {
+               "source": 1,
+               "target": 7
+          },
+          {
+               "source": 5,
+               "target": 6
+          },
+          {
+               "source": 11,
+               "target": 9
+          },
+          {
+               "source": 4,
+               "target": 9
+          },
+          {
+               "source": 2,
+               "target": 7
+          },
+          {
+               "source": 3,
+               "target": 9
+          },
+          {
+               "source": 2,
+               "target": 11
+          },
+          {
+               "source": 11,
+               "target": 10
+          },
+          {
+               "source": 4,
+               "target": 1
+          },
+          {
+               "source": 5,
+               "target": 0
+          },
+          {
+               "source": 6,
+               "target": 8
+          },
+          {
+               "source": 7,
+               "target": 8
+          },
+          {
+               "source": 4,
+               "target": 5
+          },
+          {
+               "source": 6,
+               "target": 2
+          },
+          {
+               "source": 2,
+               "target": 8
+          },
+          {
+               "source": 5,
+               "target": 1
+          },
+          {
+               "source": 3,
+               "target": 0
+          },
+          {
+               "source": 3,
+               "target": 10
+          },
+          {
+               "source": 11,
+               "target": 3
+          },
+          {
+               "source": 4,
+               "target": 0
+          },
+          {
+               "source": 8,
+               "target": 10
+          },
+          {
+               "source": 10,
+               "target": 9
+          }
+     ],
+     "nodes": [
+          {
+               "id": 0,
+               "x": 50,
+               "y": 26
+          },
+          {
+               "id": 1,
+               "x": 38,
+               "y": 29
+          },
+          {
+               "id": 2,
+               "x": 73,
+               "y": 50
+          },
+          {
+               "id": 3,
+               "x": 61,
+               "y": 29
+          },
+          {
+               "id": 4,
+               "x": 50,
+               "y": 73
+          },
+          {
+               "id": 5,
+               "x": 61,
+               "y": 70
+          },
+          {
+               "id": 6,
+               "x": 70,
+               "y": 61
+          },
+          {
+               "id": 7,
+               "x": 29,
+               "y": 38
+          },
+          {
+               "id": 8,
+               "x": 26,
+               "y": 50
+          },
+          {
+               "id": 9,
+               "x": 38,
+               "y": 70
+          },
+          {
+               "id": 10,
+               "x": 29,
+               "y": 61
+          },
+          {
+               "id": 11,
+               "x": 70,
+               "y": 38
+          }
+     ],
+     "xdimension": 100,
+     "ydimension": 100
+}
