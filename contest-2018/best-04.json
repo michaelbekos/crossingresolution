@@ -1,0 +1,307 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "x": 167,
+      "y": 194
+    },
+    {
+      "id": 1,
+      "x": 114,
+      "y": 70
+    },
+    {
+      "id": 2,
+      "x": 128,
+      "y": 70
+    },
+    {
+      "id": 3,
+      "x": 5,
+      "y": 161
+    },
+    {
+      "id": 4,
+      "x": 162,
+      "y": 191
+    },
+    {
+      "id": 5,
+      "x": 106,
+      "y": 103
+    },
+    {
+      "id": 6,
+      "x": 128,
+      "y": 29
+    },
+    {
+      "id": 7,
+      "x": 101,
+      "y": 38
+    },
+    {
+      "id": 8,
+      "x": 86,
+      "y": 124
+    },
+    {
+      "id": 9,
+      "x": 167,
+      "y": 119
+    },
+    {
+      "id": 10,
+      "x": 198,
+      "y": 73
+    },
+    {
+      "id": 11,
+      "x": 128,
+      "y": 104
+    },
+    {
+      "id": 12,
+      "x": 168,
+      "y": 132
+    },
+    {
+      "id": 13,
+      "x": 170,
+      "y": 198
+    },
+    {
+      "id": 14,
+      "x": 161,
+      "y": 134
+    },
+    {
+      "id": 15,
+      "x": 145,
+      "y": 141
+    },
+    {
+      "id": 16,
+      "x": 124,
+      "y": 104
+    },
+    {
+      "id": 17,
+      "x": 37,
+      "y": 0
+    },
+    {
+      "id": 18,
+      "x": 84,
+      "y": 125
+    },
+    {
+      "id": 19,
+      "x": 55,
+      "y": 170
+    },
+    {
+      "id": 20,
+      "x": 128,
+      "y": 105
+    },
+    {
+      "id": 21,
+      "x": 96,
+      "y": 39
+    },
+    {
+      "id": 22,
+      "x": 117,
+      "y": 96
+    }
+  ],
+  "edges": [
+    {
+      "source": 22,
+      "target": 17
+    },
+    {
+      "source": 3,
+      "target": 13
+    },
+    {
+      "source": 7,
+      "target": 6
+    },
+    {
+      "source": 4,
+      "target": 13
+    },
+    {
+      "source": 10,
+      "target": 9
+    },
+    {
+      "source": 17,
+      "target": 3
+    },
+    {
+      "source": 5,
+      "target": 22
+    },
+    {
+      "source": 20,
+      "target": 0
+    },
+    {
+      "source": 17,
+      "target": 16
+    },
+    {
+      "source": 1,
+      "target": 15
+    },
+    {
+      "source": 1,
+      "target": 17
+    },
+    {
+      "source": 10,
+      "target": 2
+    },
+    {
+      "source": 6,
+      "target": 17
+    },
+    {
+      "source": 11,
+      "target": 15
+    },
+    {
+      "source": 18,
+      "target": 20
+    },
+    {
+      "source": 10,
+      "target": 13
+    },
+    {
+      "source": 10,
+      "target": 11
+    },
+    {
+      "source": 10,
+      "target": 7
+    },
+    {
+      "source": 22,
+      "target": 4
+    },
+    {
+      "source": 10,
+      "target": 8
+    },
+    {
+      "source": 22,
+      "target": 3
+    },
+    {
+      "source": 15,
+      "target": 0
+    },
+    {
+      "source": 0,
+      "target": 11
+    },
+    {
+      "source": 10,
+      "target": 16
+    },
+    {
+      "source": 9,
+      "target": 19
+    },
+    {
+      "source": 8,
+      "target": 5
+    },
+    {
+      "source": 4,
+      "target": 0
+    },
+    {
+      "source": 11,
+      "target": 16
+    },
+    {
+      "source": 13,
+      "target": 15
+    },
+    {
+      "source": 1,
+      "target": 13
+    },
+    {
+      "source": 1,
+      "target": 3
+    },
+    {
+      "source": 10,
+      "target": 12
+    },
+    {
+      "source": 0,
+      "target": 16
+    },
+    {
+      "source": 4,
+      "target": 16
+    },
+    {
+      "source": 2,
+      "target": 21
+    },
+    {
+      "source": 10,
+      "target": 3
+    },
+    {
+      "source": 21,
+      "target": 1
+    },
+    {
+      "source": 14,
+      "target": 15
+    },
+    {
+      "source": 16,
+      "target": 1
+    },
+    {
+      "source": 10,
+      "target": 18
+    },
+    {
+      "source": 19,
+      "target": 4
+    },
+    {
+      "source": 13,
+      "target": 0
+    },
+    {
+      "source": 3,
+      "target": 4
+    },
+    {
+      "source": 11,
+      "target": 1
+    },
+    {
+      "source": 12,
+      "target": 14
+    },
+    {
+      "source": 16,
+      "target": 22
+    }
+  ],
+  "xdimension": 200,
+  "ydimension": 200
+}
