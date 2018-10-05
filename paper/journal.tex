@@ -565,16 +565,16 @@ In conclusion, we can state that our algorithm is still able to compute drawings
 In this section, we present sample drawings of the 5th and of the 9th graph given in the Graph Drawing contest 2017 that are produced by different variants of our algorithm and of the algorithms by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}; see Figures~\ref{fig:graph5} and~\ref{fig:graph9}, respectively. Each variant was obtained by adjusting each of the aforementioned algorithms to optimize the crossing resolution, the angular resolution and the total resolution, respectively; the aesthetic criterion optimized by each variant is reported in the caption of its corresponding subfigure. As initial drawings for all algorithms, we used the layouts shown in Fig.~\ref{fig:graph5And9-yfiles} that we computed with the SmartOrganic layouter of the yFiles library~\cite{DBLP:books/sp/04/WieseE004}.
 
 \begin{figure}[t]
-\centering
-\subfloat[\label{fig:graph5-yfiles}{}]{
-\includegraphics[width=0.4\textwidth]{graph5-yfiles}}
+	\centering
+	\subfloat[\label{fig:graph5-yfiles}{}]{
+	\includegraphics[width=0.4\textwidth]{graph5-yfiles}}
 
-\subfloat[\label{fig:graph9-yfiles}{}]{
-\includegraphics[width=0.37\textwidth]{graph9-yfiles}}
-\caption{Illustration of 
-(a)~the 5th, and of
-(b)~the 9th graph of the Graph Drawing contest 2017.}
-\label{fig:graph5And9-yfiles}
+	\subfloat[\label{fig:graph9-yfiles}{}]{
+	\includegraphics[width=0.37\textwidth]{graph9-yfiles}}
+	\caption{Illustration of 
+	(a)~the 5th, and of
+	(b)~the 9th graph of the Graph Drawing contest 2017.}
+	\label{fig:graph5And9-yfiles}
 \end{figure}
 
 % ==================================================================
@@ -582,12 +582,11 @@ In this section, we present sample drawings of the 5th and of the 9th graph give
 \label{sec:conclusions}
 % ==================================================================
 
-%
-In this paper, we introduced a new heuristic aiming to produce drawings of high crossing resolution, for which we also presented variants that take into account other common aesthetic criteria in Graph Drawing. Our experimental evaluation indicates that the new heuristic is competitive to the state of the art force-directed algorithms, even when restricted to a given maximum aspect ratio. 
+In this paper, we introduced a new heuristic aiming to produce drawings of high crossing resolution, for which we also presented variants that take into account other common aesthetic criteria in Graph Drawing. Our experimental evaluation indicates that the new heuristic is competitive to the state of the art force-directed algorithms (even when restricted to a given maximum aspect ratio). For the latter algorithms, our evaluation indicates that their performance is good, only when several aesthetic criteria are taken into account.
 
 It also worth noting that while working on this project, we made some useful observations and obtained some interesting insights. In particular, there is a recent observation (also supported by experiments) that drawings, in which the crossing angles are large, are easy to read and understand. We observed that drawings that are optimized only in terms of the crossing angles might be arbitrarily bad and may have several undesired properties. In particular, in these drawings it was very common to have adjacent edges to run almost in parallel and vertices to be very close to each other (see, e.g., Fig.~\ref{fig:graph5-argyriou-cr}). Hence, their angular resolution and aspect ratio were often poor. The additional restrictions that we imposed regarding the angular resolution and the aspect ratio helped in significantly improving the readability of the produced drawings, without loosing too much of their quality in terms of the crossing resolution.
 
-We conclude by noting that our motivation to work with this problem was our participation to the Graph Drawing contest 2017, where we performed miserably using a force-directed algorithm. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account. 
+%We conclude by noting that our motivation to work with this problem was our participation to the Graph Drawing contest 2017, where we performed miserably using a force-directed algorithm. As our evaluation shows, the performance of such algorithms is good, only when several aesthetic criteria are taken into account. 
 
 The framework that we developed seems to be quite adaptable to optimize or to take into account also other desired aesthetic properties of a drawing. Thus, as a future direction, we plan to further extend and evaluate our technique, e.g., by using a multi-criteria objective function (i.e., that is not limited to the crossing angles) that takes into account more aesthetic criteria. 
 
