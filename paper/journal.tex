@@ -125,26 +125,26 @@ Unless otherwise specified, in this paper we consider simple undirected graphs. 
 \begin{table*}
 \caption{Summary of the results for the Graph Drawing Contest 2017.}
 \centering
-\begin{tabular}{c|c|c|c|c}
+\begin{tabular}{c|c|c|c|c|c|c}
 \toprule
-\rowcolor{gray!30!}~~Graph~~ & ~~CoffeeVM~~ & ~~T\"ubingenMidnight~~ & ~~Time restricted~~ & ~~Our best~~ \\
+\rowcolor{gray!30!}~Graph~ & ~no. of vertices~ & ~no. of edges~ & ~CoffeeVM~ & ~T\"ubingenMidnight~ & ~Time restricted~ & ~Our best~ \\
 \midrule
-\rowcolor{gray!30!} 1  & 90$^\circ$  & 77$^\circ$ & 90$^\circ$ & 90$^\circ$\\
-\rowcolor{gray!00!} 2  & 88$^\circ$  & 42$^\circ$ & 88$^\circ$ & 89$^\circ$\\
-\rowcolor{gray!30!} 3  & 90$^\circ$  & 89$^\circ$ & 88$^\circ$ & 90$^\circ$\\
-\rowcolor{gray!00!} 4  & 89$^\circ$  & 89$^\circ$ & 77$^\circ$ & 89$^\circ$\\
-\rowcolor{gray!30!} 5  & 80$^\circ$  & 30$^\circ$ & 79$^\circ$ & 87$^\circ$\\
-\rowcolor{gray!00!} 6  & 90$^\circ$  & 78$^\circ$ & 90$^\circ$ & 90$^\circ$\\
-\rowcolor{gray!30!} 7  & 57$^\circ$  & 34$^\circ$ & 56$^\circ$ & 64$^\circ$\\
-\rowcolor{gray!00!} 8  & 85$^\circ$  & 61$^\circ$ & 81$^\circ$ & 89$^\circ$\\
-\rowcolor{gray!30!} 9  & 60$^\circ$  & 9$^\circ$  & 55$^\circ$ & 88$^\circ$\\
-\rowcolor{gray!00!} 10 & 21$^\circ$  & 4$^\circ$  & 24$^\circ$ & 24$^\circ$\\
-\rowcolor{gray!30!} 11 & 47$^\circ$  & 6$^\circ$  & 57$^\circ$ & 72$^\circ$\\
-\rowcolor{gray!00!} 12 & 36$^\circ$  & 5$^\circ$  & 26$^\circ$ & 36$^\circ$\\
-\rowcolor{gray!30!} 13 & 25$^\circ$  & 4$^\circ$  & 22$^\circ$ & 34$^\circ$\\
-\rowcolor{gray!00!} 14 & 34$^\circ$  & 5$^\circ$  & 30$^\circ$ & 43$^\circ$\\
-\rowcolor{gray!30!} 15 & 21$^\circ$  & 4$^\circ$  & 13$^\circ$ & 29$^\circ$\\
-\rowcolor{gray!00!} 16 & 20$^\circ$  & 3$^\circ$  & 12$^\circ$ & 26$^\circ$\\
+\rowcolor{gray!30!} 1  &  9  & 18    & 90$^\circ$ & 77$^\circ$ & 90$^\circ$ & 90$^\circ$\\
+\rowcolor{gray!00!} 2  & 12  & 36    & 88$^\circ$ & 42$^\circ$ & 88$^\circ$ & 89$^\circ$\\
+\rowcolor{gray!30!} 3  & 16  & 42    & 90$^\circ$ & 89$^\circ$ & 88$^\circ$ & 90$^\circ$\\
+\rowcolor{gray!00!} 4  & 17  & 54    & 89$^\circ$ & 89$^\circ$ & 77$^\circ$ & 89$^\circ$\\
+\rowcolor{gray!30!} 5  & 30  & 95    & 80$^\circ$ & 30$^\circ$ & 79$^\circ$ & 87$^\circ$\\
+\rowcolor{gray!00!} 6  & 40  & 75    & 90$^\circ$ & 78$^\circ$ & 90$^\circ$ & 90$^\circ$\\
+\rowcolor{gray!30!} 7  & 80  & 254   & 57$^\circ$ & 34$^\circ$ & 56$^\circ$ & 64$^\circ$\\
+\rowcolor{gray!00!} 8  & 85  & 136   & 85$^\circ$ & 61$^\circ$ & 81$^\circ$ & 89$^\circ$\\
+\rowcolor{gray!30!} 9  & 149 & 258   & 60$^\circ$ & 9$^\circ$  & 55$^\circ$ & 88$^\circ$\\
+\rowcolor{gray!00!} 10 & 174 & 344   & 21$^\circ$ & 4$^\circ$  & 24$^\circ$ & 24$^\circ$\\
+\rowcolor{gray!30!} 11 & 250 & 400   & 47$^\circ$ & 6$^\circ$  & 57$^\circ$ & 72$^\circ$\\
+\rowcolor{gray!00!} 12 & 300 & 987   & 36$^\circ$ & 5$^\circ$  & 26$^\circ$ & 36$^\circ$\\
+\rowcolor{gray!30!} 13 & 392 & 562   & 25$^\circ$ & 4$^\circ$  & 22$^\circ$ & 34$^\circ$\\
+\rowcolor{gray!00!} 14 & 510 & 820   & 34$^\circ$ & 5$^\circ$  & 30$^\circ$ & 43$^\circ$\\
+\rowcolor{gray!30!} 15 & 650 & 2,173 & 21$^\circ$ & 4$^\circ$  & 13$^\circ$ & 29$^\circ$\\
+\rowcolor{gray!00!} 16 & 998 & 1,596 & 20$^\circ$ & 3$^\circ$  & 12$^\circ$ & 26$^\circ$\\
 \bottomrule
 \end{tabular}
 \label{tab:gdContest2017}
@@ -166,7 +166,7 @@ In a follow up work, Didimo et al.~\cite{DBLP:conf/gd/DidimoLR10} describe heuri
 %
 However, the obtained drawings are not straight-line. For straight-line drawings, Nguyen et al.~\cite{DBLP:conf/gd/NguyenEHH10} suggest a quadratic-programming based approach to increase the crossing angles of circular drawings. However, its usefulness is only limited to small graphs and to a specific kind of drawings.
 
-Of more general scope are, of course, the already mentioned works by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, which are also based on the force-directed technique.
+Of more general scope are, of course, the already mentioned works by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, which are based on the force-directed technique.
 
 
 
@@ -176,38 +176,40 @@ Of more general scope are, of course, the already mentioned works by Argyriou et
 % ==================================================================
 
 
-Every year, the Graph Drawing conference organizes a contest, in which the task is to visualize a set of challenge graphs in a predefined drawing style. The teams participating to the contest receive a set of challenge graphs, and after one hour they must submit their final drawings for each of them. The team with the highest cumulative score wins. In years 2017 and 2018, the task of the contest was to produce a drawing for each of the given challenge graphs with as high crossing resolution as possible (which actually also formed our primary motivation for this work). 
+Every year, the Graph Drawing conference organizes a contest, in which the task is to visualize a set of challenge graphs in a prescribed drawing style. The teams participating to the contest receive a set of challenge graphs, and after one hour they must submit their final drawings for each of them. The team with the highest cumulative score wins. 
+%
+In years 2017 and 2018, the task of the contest was to produce a drawing for each of the given challenge graphs with as high crossing resolution as possible (i.e., ignoring other aesthetic measures on the produced drawings). This task was actually our primary motivation for this work. 
 
 %\myparagraph{Graph Drawing Contest 2017} 
-In 2017, we participated to the contest (by implementing a mixture of the two force-directed algorithms by Argyriou et al. and by Huang et al.). 
+In 2017, we participated to the contest (by implementing a mixture of the two force-directed algorithms by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}). 
 %
 Table~\ref{tab:gdContest2017} summarizes the results, which are also available at \texttt{www.graphdrawing.de/contest2017/results.html}. 
 
-It is far from clear that the wining team was the team  ``\texttt{CoffeeVM}''. Our team ``\texttt{TuebingenMidnight}''  miserably performed; we actually took the third position out of a total of four teams that participated. As already mentioned, each team had only one hour to compute a layout for each of the challenge graphs, which in year 2017 were in total $16$. In Table~\ref{tab:gdContest2017}, we additionally provide results that were achieved by the algorithm presented in this paper in two settings; within the time limit of the contest (see column ``Time restricted''), as well as our best results, which were achieved without any time limitations (see column ``Our best'').
+It is far from clear that the wining team was the team  ``\texttt{CoffeeVM}''; details for their approach can be found in~\cite{DBLP:journals/corr/abs-1807-09483}. Our team ``\texttt{TuebingenMidnight}''  miserably performed; we actually took the third position out of a total of four teams that participated. As already mentioned, each team had only one hour to compute a layout for each of the challenge graphs, which in year 2017 were in total $16$. In Table~\ref{tab:gdContest2017}, we additionally provide results that were achieved by the algorithm presented in this paper in two settings; within the time limit of the contest (see column ``Time restricted''), as well as our best results, which were achieved without any time limitations (see column ``Our best'').
 
-We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the contest's winner when restricted within the one hour. On a few graphs (namely, graphs 10 and 11), we even achieved better results. With a single exception (namely, graph 4), we could easily outperform the results that we achieved with the spring-embedder algorithm. If we neglect the time restriction, then for all the graphs, the results  are (sometimes considerably) better than or at least about the same as the contest's winner. 
+We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the contest's winner when restricted within the one hour. On a few graphs (namely, graphs 10 and 11), we even achieved better results. With a single exception (namely, graph 4), we could easily outperform the results that we achieved with the spring-embedder algorithm. If we neglect the time restriction, then for all the graphs, the results are (sometimes considerably) better than or at least about the same as the contest's winner. Nevertheless, what we realized is that the spring-embedder algorithm was not efficient enough for participating to the contest.
 
 \begin{table*}
 \caption{Summary of the results for the Graph Drawing Contest 2018.}
 \centering
-\begin{tabular}{c|c|c|c|c}
+\begin{tabular}{c|c|c|c|c|c|c}
 \toprule
-\rowcolor{gray!30!} ~~Graph~~ & ~~Grid size~~ & ~~T\"ubingenColdShower~~ & ~~CoffeeVM+~~ & ~~Our best~~ \\
+\rowcolor{gray!30!} Graph & no. of vertices & no. of edges  & Grid size & T\"ubingenColdShower & CoffeeVM+ & Our best \\
 \midrule
-\rowcolor{gray!30!} 1  & 100 $\times$ 100             & 87$^\circ$ & 58$^\circ$ & 88$^\circ$\\
-\rowcolor{gray!00!} 2  & 100 $\times$ 100             & 90$^\circ$ & 90$^\circ$ & 90$^\circ$\\
-\rowcolor{gray!30!} 3  & 150 $\times$ 150             & 88$^\circ$ & 85$^\circ$ & 90$^\circ$\\
-\rowcolor{gray!00!} 4  & 200 $\times$ 200             & 88$^\circ$ & 60$^\circ$ & 89$^\circ$\\
-\rowcolor{gray!30!} 5  & 200 $\times$ 200             & 71$^\circ$ & 48$^\circ$ & 78$^\circ$\\
-\rowcolor{gray!00!} 6  & 200 $\times$ 200             & 89$^\circ$ & 71$^\circ$ & 90$^\circ$\\
-\rowcolor{gray!30!} 7  & 250 $\times$ 250             & 80$^\circ$ & 43$^\circ$ & 83$^\circ$\\
-\rowcolor{gray!00!} 8  & 10,000 $\times$ 10,000       & 34$^\circ$ & 27$^\circ$ & 43$^\circ$\\
-\rowcolor{gray!30!} 9  & 10,000 $\times$ 10,000       & 77$^\circ$ & 60$^\circ$ & 83$^\circ$\\
-\rowcolor{gray!00!} 10 & 30,000 $\times$ 30,000       & 13$^\circ$ & 19$^\circ$ & 24$^\circ$\\
-\rowcolor{gray!30!} 11 & 50,000 $\times$ 50,000       & 11$^\circ$ & 22$^\circ$ & 18$^\circ$\\
-\rowcolor{gray!00!} 12 & 100,000 $\times$ 100,000     & 74$^\circ$ &  9$^\circ$ & 80$^\circ$\\
-\rowcolor{gray!30!} 13 & 1,000,000 $\times$ 1,000,000 &  2$^\circ$ &  2$^\circ$ & 4$^\circ$\\
-\rowcolor{gray!00!} 14 & 1,000,000 $\times$ 1,000,000 &  3$^\circ$ & 11$^\circ$ & 11$^\circ$\\
+\rowcolor{gray!30!} 1  & 10    & 32    & 100 $\times$ 100             & 87$^\circ$ & 58$^\circ$ & 88$^\circ$\\
+\rowcolor{gray!00!} 2  & 12    & 24    & 100 $\times$ 100             & 90$^\circ$ & 90$^\circ$ & 90$^\circ$\\
+\rowcolor{gray!30!} 3  & 18    & 49    & 150 $\times$ 150             & 88$^\circ$ & 85$^\circ$ & 90$^\circ$\\
+\rowcolor{gray!00!} 4  & 23    & 46    & 200 $\times$ 200             & 88$^\circ$ & 60$^\circ$ & 89$^\circ$\\
+\rowcolor{gray!30!} 5  & 30    & 91    & 200 $\times$ 200             & 71$^\circ$ & 48$^\circ$ & 78$^\circ$\\
+\rowcolor{gray!00!} 6  & 40    & 68    & 200 $\times$ 200             & 89$^\circ$ & 71$^\circ$ & 90$^\circ$\\
+\rowcolor{gray!30!} 7  & 50    & 94    & 250 $\times$ 250             & 80$^\circ$ & 43$^\circ$ & 83$^\circ$\\
+\rowcolor{gray!00!} 8  & 102   & 400   & 10,000 $\times$ 10,000       & 34$^\circ$ & 27$^\circ$ & 43$^\circ$\\
+\rowcolor{gray!30!} 9  & 128   & 256   & 10,000 $\times$ 10,000       & 77$^\circ$ & 60$^\circ$ & 83$^\circ$\\
+\rowcolor{gray!00!} 10 & 500   & 1,534 & 30,000 $\times$ 30,000       & 13$^\circ$ & 19$^\circ$ & 24$^\circ$\\
+\rowcolor{gray!30!} 11 & 709   & 1,602 & 50,000 $\times$ 50,000       & 11$^\circ$ & 22$^\circ$ & 18$^\circ$\\
+\rowcolor{gray!00!} 12 & 1,800 & 6,961 & 100,000 $\times$ 100,000     & 74$^\circ$ &  9$^\circ$ & 80$^\circ$\\
+\rowcolor{gray!30!} 13 & 1,500 & 4,467 & 1,000,000 $\times$ 1,000,000 &  2$^\circ$ &  2$^\circ$ & 4$^\circ$\\
+\rowcolor{gray!00!} 14 & 3,000 & 5,899 & 1,000,000 $\times$ 1,000,000 &  3$^\circ$ & 11$^\circ$ & 11$^\circ$\\
 \bottomrule
 \end{tabular}
 \label{tab:gdContest2018}
