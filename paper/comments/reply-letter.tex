@@ -1,0 +1,514 @@
+\documentclass{article}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage{soul}
+\usepackage{enumerate}
+\usepackage{xcolor,url}
+
+\newcommand{\rcomment}[1]{\vspace{0.3cm} \item \textbf{Reviewer's Comment:} {\em #1}}
+\newcommand{\tcomment}[1]{\vspace{0.3cm} {\color{red} \item \textbf{Reviewer's Comment:} {\em #1}}}
+\newcommand{\jcomment}[1]{\vspace{0.3cm} {\color{blue} \item \textbf{Reviewer's Comment:} {\em #1}}}
+
+\newcommand{\response}{\vspace{0.2cm} \textbf{Response: }}
+\newcommand{\jresponse}[1]{\vspace{0.2cm} \textbf{Response: }{\color{blue} {\em #1}}}
+
+\begin{document}
+
+% ==================================================================================
+\section*{Reviewer 1}
+% ==================================================================================
+
+The authors present a heuristic that aims to maximize the crossing resolution of graph. Their heuristic can be adopted to also aim towards maximizing angular and total resolution. The authors present an extensive experimental analysis which demonstrates that their heuristic
+outperforms the previously known approaches ([21,22], which are both ``spring-embedder'' like heuristics). The authors also demonstrate that their approach is efficient, resulting results in reasonable
+amounts of time. On the practical side they also produce grid drawings of restricted size, which is something previously known algorithms did not address. 
+
+The paper is well written. The heuristic is presented in a clear and simple way so that it is possible to be programmed by other researchers/developers. Sufficients details are also provided
+on how to run each step of the heuristic efficiently. Given the limited applied previous work on the topic (most of the previous work focuses on the case of RAC graphs), i believe that their contribution is significant and it is definetely worth publishing. I suggest ACCEPTANCE subject to addressing the following 
+
+MINOR issues:
+
+\begin{itemize}
+\rcomment{pg 2, ln 19, right. Remove ``Unless otherwise specified''. No directed or non-simple graphs are considered.}
+
+\response{Done.}
+
+\rcomment{pg 3, ln 30 right. change to ''... performed miserably''}
+
+\response{Done.}
+
+\rcomment{Table 1: Indicate in the caption or in the column headings that the last 2 columns correspond to the results presented in this paper.}
+
+\response{Done.}
+
+\rcomment{Table 2: Use a better heading than "our best" (for example, "no-time restriction"?)
+
+\response{Revised as suggested.}
+
+\rcomment{pg 4, ln 41, left: Mention Section 4}
+
+\response{Done.}
+
+\rcomment{pg 4, ln 60, left: The text followin "In other words.." is not implied by the formula. The formula should be: $c(\Gamma_{k}) \geq c(\Gamma_{k-1}), ~~0 \leq k \leq i-1$ or similar.}
+
+\response{Done.}
+
+7. pg 4, ln 46, right: "or of a vertex that is in the neighborhood of the critical vertex..."
+Why is this true in general? The edges incident to vertices in the neighborhood are not related
+to the
+crossing considered.
+
+8. pg 4, ln 52, right: If possible, provide an intuition why you are using graph-distance instead of
+geometric-distance.
+9. pg 5, ln 17, left: "chooses uniformly at random". This is not accurate. You are not using the
+uniform distribution.
+In the previous page you assigned probalilities to the vertices wrt their graph-distance from the
+critical
+vertex. Are you applying this rule. Please clarify.
+10. pg 5. ln 30 left: Mention that $\rho$ is also a parameter of the algorithm.
+11. General comment for section 2. Mention early in the section that your heuristic, as described,
+produces real coordinates
+and that you explain in Sect 2.3 how to produce a grid drawing. (Having seen Table 2, a reader
+expects to get an algorithm that
+produces grid drawing at the first place).
+12. General comment for section 2. Have a discussion regarding the real-number computations
+involved. How many decimal points used
+for crossing resolution, vertex position, etc.
+13. Pg 6, ln 11, right: "Aspect ratio" This is not the traditional definition. Aspect ratio is
+typically defined as the ration of
+largest to smaller side-length of the enclosing renctange of the drawing. The smaller edge to
+largest edge ratio is more of a
+"resolution" type measurement.
+14. Figures 4,5,7,8. In caption (a) you state that it is the crossing resolution. In these figures it is
+either angular of total
+resolution.
+15. Figure 9. Clearly state that the double line refers to an algorithm that is unrestricted wrt the
+grid size. (So far, you have
+used the term "unrestricted" wrt the time devoted to each run; the user then expectes to have 4
+such lines, one per grid size).
+16. pg 16, line 38, left: "naturalLY observe".
+17. General comment: It should be also interesting to compare the crossing resolution between
+the "non-grid" and the "grid"
+versions of your algorithm
+
+
+% ==================================================================================
+\newpage
+\section*{Reviewer 2}
+% ==================================================================================
+
+\st{In graph drawing, book embeddings represent an intuitive way to draw graphs. Vertices are ordered along a /spine/, and edges are embedded as arcs on /pages/ without crossings. Book embeddings have been thoroughly studied, however several important questions still remain. In the present paper, the authors study a more restrictive variant of book embeddings, which requires each page to have no edges incident to the same vertex. Such an embedding is called a /dispersable/ book embedding.}
+
+\st{The authors conduct a thorough study of this variant, centered on disproving a long-standing open conjecture from the original paper on dispersable book embedings by Bernhart and Kainen from 1979: that any $k$-regular bipartite graph is /dispersable/ (i.e., it has a dispersable book embedding on $k$ pages). The present authors successfully disprove the conjecture for $k=3$ and $k=4$; however, it is still unknown for $k>4$. They further show that all 3-connected 3-regular planar bipartite graphs are dispersable, and conjecture that all 3-regular planar bipartite graphs are dispersable.}
+
+\st{This represents a major step in furthering research on dispersable book embeddings, and has the potential to spur on further research in the area. Although a majority of the paper is dedicated to a heavy (and somewhat tedious) case analysis, the result represents a significant contribution to graph drawing and, by extension, combinatorics. Lastly, aside from some minor grammatical errors, the paper is written rather well.}
+
+
+\st{Contributions, Techniques and Novelty}
+
+\st{The paper can be broken down into 3 main results, which I will address in turn:}
+
+\begin{enumerate}
+
+\item \st{First, the authors disprove the conjecture for $k=3$. That is, they prove that not all 4-regular bipartite graphs are dispersable. They prove this by finding one 4-regular bipartite graph, namely the Folkman graph, that is not dispersable. Their proof that this graph is not dispersable is a nontrivial, case-heavy analysis. The proof relies on the fact that a graph has a $k$-page book embedding if and only if it also has a circular embedding with a $k$-edge coloring, such that no two edges with the same color cross. And furthermore there is a simple transformation from one to the other. The authors argue using the structure of such a circular layout (and the fact that crossing edges do not have the same color), and show that forbidden patterns in the ordering of vertices around the circular layout emerge as a result. The end result of these forbidden patterns is that a $4$-page dispersable book embedding does not exist.}
+
+\item \st{Next, the authors briefly discuss a computer-assisted proof that the conjecture fails also for $k=3$. The authors investigate the /Gray/ graph, and use an extension of a recently introduced SAT formulation to check that it does not have a $3$-page dispersable book embedding.}
+
+\item \st{Finally, and perhaps most interestingly, the authors show that the conjecture is true for $k=3$ when the graph is additionally 3-connected and planar. This argument relies on the existence of 3-coloring of the edges, and  a 3-coloring of the vertices in the dual graph (that is, a coloring of the faces), such that faces have a color different from any of the edges incident to the face. This proof is a refreshing departure from the heavy case analysis given for the first result, and in my opinion, is also more appealing than the computer-aided proof.}
+\end{enumerate}
+
+
+Minor Comments
+
+\begin{itemize}
+\rcomment{Line 6: ``equals to the maximum'' $\rightarrow$ ``equals the maximum''}
+
+\response{Done.}
+
+\rcomment{Lines 41/42: ``The book thickness is known to be bounded only for bounded genus graphs.'' $\rightarrow$ Suggest ``...only known to be bounded for bounded genus graphs.'' Otherwise, the former is stating that it is known that only bounded genus graphs have bounded book thickness. Is this intentional?}
+
+\response{Added e.g. instead.}
+
+\rcomment{Lines 132/133 ``there is no twins'' $\rightarrow$ ``there are no twins''}
+
+\response{Done.}
+
+\rcomment{Line 136: ``twin pairs'' $\rightarrow$ Is this different from ``twins'' or are they equivalent? I notice several uses of both, and I’m not sure if the meanings are distinct.}
+
+\response{Changed a bit to make it more clear.}
+
+\rcomment{Line 153: I suggest preceding $(A_2,ab)$ with ``edges'' since these also resemble open intervals.}
+
+\response{Done, but only in the journal version due to space limitation.}
+
+\rcomment{Line 169 (and others): for each declaration of a forbidden pair, I was initially confused by the center dots in the notation. Are they meant to match a single connector vertex? Please mention this explicitly somewhere.}
+
+\response{Done in the journal version.}
+
+\rcomment{Line 179 ``there are not exactly two same twin vertices'' $\rightarrow$ I found this confusing, and the same can be said of several of the forbidden pair definitions. Do you mean ``there is not a single twin pair'' or even ``there is not a single twin''. Perhaps clarifying the usage of the word twin would be helpful.}
+
+\response{Done.}
+
+\rcomment{For all forbidden pairs, A and B are used; however they apply without loss of generality to any distinct twins. That should perhaps be stated somewhere.}
+
+\response{Come on... that should be clear.}
+
+\rcomment{Line 206: ``no a A’s connector'' $\rightarrow$ ``no connector of A''. There are many uses like this, I suggest carefully searching the manuscript to find all occurrences. (See further, 207 ``a A’s connectors'', 208 ``the B’s connectors'', footnote 4: ``there are C’s connectors'', and others.)}
+
+\response{Done.}
+
+\rcomment{Line 247: ``Each of X,Y and U,V are different.'' The exact meaning is not clear to me. Is it that X and Y are not twins? and U,V are not twins?}
+
+\response{Done.}
+
+\rcomment{Line 285: It took me a while to realize that $d(A_1,A_2)$ includes $A_1$ and $A_2$, which results in $d(A)$ counts.}
+
+\response{Added a note in the journal version.}
+
+\rcomment{Line 298: ``By Lemma 3 applied for A and C'' $\rightarrow$ ``Applying Lemma 3 for A and C''}
+
+\response{Done.}
+
+\rcomment{Line 306: ``We study the book thickness of'' $\rightarrow$ ``We study the dispersable book thickness of''}
+
+\response{Done.}
+
+\rcomment{Line 308/309: I highly suggesting fitting image 9 in the paper; it is very helpful to visualize the Gray graph}
+
+\response{Come on... that's impossible.}
+
+\rcomment{Line 314: ``From this formulation'' $\rightarrow$ Based on the previous sentence, it is not clear if you are referring to the original SAT formulation, or your modified SAT formulation.}
+
+\response{Done.}
+
+\rcomment{Lines 326-331: It is worth mentioning how the computer actually assisted; what I think happened is that you ran a SAT solver, and it did not find $3$-page dispersable book embedding, and therefore there does not exist one. This deserves to be explicitly stated. Did it take long to verify?}
+
+\response{Revised in the journal version.}
+
+\rcomment{Line 333: I believe there should be a Corollary here as a result of Theorem 2, indicating that the conjecture is false for $k=3$.}
+
+\response{It's exactly like this in the journal version.}
+
+\rcomment{Line 334: Capitalize connected and regular}
+
+\response{Done.}
+
+\rcomment{References: At least references 9, 11 and 12 have minor errors. in [9], the journal is called ``SIAM Journal of Algebraic and Discrete Methods''. In [11] and [12] The same author is abbreviated differently in each, and in [11], ``Geomentry'' $\rightarrow$ ``Geometry''. Please thoroughly inspect the references.}
+
+\response{Done.}
+\end{itemize}
+
+% ==================================================================================
+\newpage
+\section*{Reviewer 3}
+% ==================================================================================
+
+\st{The paper deals with dispersable book embeddings, i.e. classical book embeddings (the vertices are ordered along a line l (the spine), the edges are drawn crossing-free at different half-planes (pages) bounded by l), with the additional property that the graphs induced by the edges of each page are 1-regular. It is clear that the number of pages needed for a dispersable book embedding of a graph G is at least the maximum degree of G. If this number of pages suffices, the graph G is called dispersable. A conjecture of Barnhart and Kainen from 1979 states that each k-regular bipartite graph is dispersable
+(for k=1,2 this is clearly true).}
+
+\st{In the paper the following three things are shown:}
+\begin{enumerate}[(a)]
+\item \st{The conjecture of Barnhart and Kainen is disproven for the case k=3 with a computer-aided proof.}
+\item \st{The conjecture of Barnhart and Kainen is disproven for the case k=4 with a hand-written proof.}
+\item \st{It is proven that each 3-connected 3-regular bipartite planar graph is dispersable.}
+\end{enumerate}
+
+\begin{enumerate}[(a)]
+\item \st{There is a known reduction of the problem of finding a book embedding with a given number of pages to SAT.
+   The authors extend this reduction to the case of dispersable book embeddings what is really simple and straight-forward.
+   Then they say that computer experiments showed that there is no 3-page dispersable book embedding of the 47-vertex
+   Gray graph. So the main contribution in this part is that the authors have found a graph for which the computer
+   program gave a negative answer, and not the computer program itself.}
+\item \st{It is proven that there is no 4-page dispersable book embedding of the 20-vertex Folkman graph.
+   The proof works as follows: By proving forbidden patterns for the order of the vertices on the spine
+   of the book embedding gradually all permutations of the vertices are excluded as orders on the spine.
+   This leads to a lot of case distinctions over more than 13 pages. I read the part of the proof in the main part,
+   but not the remaining part in the appendix. There are some inaccuracies in the proof, especially in the part where
+   it is shown that the forbidden patterns indeed forbid every permutation. In the end, I did not find any mistakes which cannot be fixed easily, but it is hard to check its correctness as part of a converence review because it is very
+   technical.}
+\item \st{First the authors show that 3-connected 3-regular bipartite planar graphs have a coloring of the edges
+   and faces with certain properties. Afterwards this coloring is used for a recursive geometric construction
+   of the 3-page dispersable book embedding of the graph.}
+\end{enumerate}
+
+\st{Evaluation:}
+
+\st{With results A and B the authors make a good progress in the area of book embeddings. These results are interesting
+and should be published. Unfortunately, these results are not suitable for a presentation at a conference
+since result A is proven by the computer and result B is proven by a long series of case distinctions without
+good structural insight for other graphs than the considered Folkman graph.
+After disproving the conjecture of Barnhart and Kainen, result C is an appropriate weaker variant to consider.
+The proof seems to be correct and interesting for at least parts of the WG community.
+Since the focus of the paper does not lie on result C (it is only a small part of the paper) and result C on its own would be weak for a WG
+contribution, I recommend that this paper should be published in a journal and not be presented at a
+conference.}
+
+\st{Comments for the authors:}
+
+\begin{itemize}
+\rcomment{l. 19: in early $\rightarrow$ to the early}
+
+\response{Done.}
+
+\rcomment{l. 39: $\rightarrow$ while all graphs with ... treewidth [11] have sublinear book thickness}
+
+\response{Done.}
+
+\rcomment{l. 81: avoid abbreviations at the beginning of a sentence: Figs. $\rightarrow$ Figures}
+
+\response{Done.}
+
+\rcomment{l. 88: later you call this construction a subdivision. why not here?}
+
+\response{Done in the journal version.}
+
+\rcomment{l. 118: $\rightarrow$ be the two intervals defined by the twins in a dispersable order.}
+
+\response{Done.}
+
+\rcomment{l. 136: $\rightarrow$ of pairs of twin pairs}
+
+\response{Done.}
+
+\rcomment{l. 139: pairs of non-crossing twins $\rightarrow$ non-crossing twin pairs}
+
+\response{Done.}
+
+\rcomment{l. 143, 145: twins $\rightarrow$ twin vertices}
+
+\response{Done.}
+
+\rcomment{l. 148: a $\rightarrow$ another}
+
+\response{Done in the journal version.}
+
+\rcomment{l. 151 ff: add reference to Figure 3}
+
+\response{Done.}
+
+\rcomment{l. 161: no comma after $B_2$}
+
+\response{Done.}
+
+\rcomment{l. 161: pairs of crossing twins $\rightarrow$ crossing pairs of twins}
+
+\response{Done.}
+
+\rcomment{l. 167: twins $\rightarrow$ twin vertices}
+
+\response{Done.}
+
+\rcomment{l. 179: including ab: add reference to Lemma 3}
+
+\response{Done.}
+
+\rcomment{l. 197: overfull box}
+
+\response{Ignored}
+
+\rcomment{l. 206: remove a}
+
+\response{Done.}
+
+\rcomment{l. 206: $\rightarrow$ Lemma 4 applied for}
+
+\response{Done.}
+
+\rcomment{l. 207: a $\rightarrow$ an}
+
+\response{Done.}
+
+\rcomment{l. 211: then $\rightarrow$ the edge}
+
+\response{Done.}
+
+\rcomment{l. 216: $[C_2,A_2]$ $\rightarrow$ $[C_2,A_1]$}
+
+\response{Done.}
+
+\rcomment{l. 221: no comma after that}
+
+\response{Done.}
+
+\rcomment{l. 224: twins $\rightarrow$ twin vertices}
+
+\response{Done.}
+
+\rcomment{l. 225: $\leq$ $\rightarrow$ $=$}
+
+\response{Not done.}
+
+\rcomment{l. 228: twin $\rightarrow$ twin vertex}
+
+\response{Done.}
+
+\rcomment{l. 238: later $\rightarrow$ latter}
+
+\response{Done.}
+
+\rcomment{l. 240: $(C_1,ac)$ $\rightarrow$ $(A_1,ac)$}
+
+\response{Done.}
+
+\rcomment{l. 242: overfull box}
+
+\response{Ignored.}
+
+\rcomment{l. 245: no comma}
+
+\response{Done.}
+
+\rcomment{l. 245: $\rightarrow$ there are at least two twin vertices}
+
+\response{Done.}
+
+\rcomment{l. 247: different $\rightarrow$ no pair of twin vertices}
+
+\response{Done.}
+
+\rcomment{l. 250, 251: twins $\rightarrow$ twin vertices}
+
+\response{Done.}
+
+\rcomment{l. 258: no comma before is}
+
+\response{Done.}
+
+\rcomment{l. 261: at $\rightarrow$ in}
+
+\response{Done.}
+
+\rcomment{l. 284 ff: before you used the notation delta and counted strictly inside. why do you change the notation?}
+
+\response{The notation changed.}
+
+\rcomment{l. 287: two twins are $\rightarrow$ any pair of twins is}
+
+\response{Done.}
+
+\rcomment{l. 289: 4 $\rightarrow$ 6}
+
+\response{Done.}
+
+\rcomment{l. 291: Figs. $\rightarrow$ Figures}
+
+\response{Done.}
+
+\rcomment{l. 292: are $\rightarrow$ is}
+
+\response{Done.}
+
+\rcomment{l. 292: a $\rightarrow$ an}
+
+\response{Done.}
+
+\rcomment{l. 294: later $\rightarrow$ latter}
+
+\response{Done.}
+
+\rcomment{l. 296: the order of the vertices does not coincide with Figure 4e}
+
+\response{Done.}
+
+\rcomment{l. 301: $y = ab.$ Here some arguments are missing. My suggestion: (a) analogously to $z \neq ab$ we get $x \neq ab$, (b) $u,w \neq ab$ since $u$ is D's connector and $w$ is E's connector, (c) $v \neq ab$ because the following 5 pairwise crossing edges: $A_1 ab$, $A_2 ab$, $B_1 ab$, $B_2 ab$, $C_1 ce$}
+
+\response{There is no reason to add this discussion. Symmetry implies the properties.}
+
+\rcomment{l. 321: An $\rightarrow$ A set of}
+
+\response{Done.}
+
+\rcomment{l. 323: add "we" after "details"}
+
+\response{Done.}
+
+\rcomment{l. 384: $\rightarrow$ and its right side}
+
+\response{Done.}
+
+\rcomment{l. 428: exist $\rightarrow$ exists}
+
+\response{Done.}
+
+\rcomment{l. 436: $\rightarrow$ study the dispersable}
+
+\response{Done.}
+
+\rcomment{Fig. 5: the dotted gray is hard to see}
+
+\response{Done.}
+
+\end{itemize}
+
+% ==================================================================================
+\newpage
+\section*{Reviewer 4}
+% ==================================================================================
+
+\st{In this paper, the authors tackle an older open question:  Given a k-regular bipartite graph, can we split its edges into k matchings and find a vertex order such that each matching forms a planar graph when placing the vertices in this order around a cycle?}
+
+\st{It was known that this is true for k=1,2 and conjectured that it is also true for larger k.  But, the authors disprove it for k=3 and k=4.  The proof for k=4 is combinatorial, while the proof for k=3 was done by phrasing the problem as a SAT problem and running experiments.  The authors also show that the conjecture is true for k=3 if additionally the graph is 3-connected and planar.}
+
+\st{On the whole, this is a nice paper.  However, I was very lost in the combinatorial proof.  The authors state a crucial Lemma 2, and then use it to classify vertices as either far or near.  But I don't see how that far/near follows from the lemma.  In consequence, I could not follow the rest of the proof.  As such, I'm a bit unsure whether this main result is true.  (My guess is that it is true---the authors probably checked that with their SAT solver?---but this proof does not convince me.) That's why I ranked the paper somewhat lower.}
+
+\st{Detailed comments to the authors:}
+
+\begin{itemize}
+\rcomment{Lemma 2 classifies a pair of twins A1,A2, and the connectors that relates to them (ab,ac,ad,ae).  But then in the next paragraph, you claim that the first configuration implies that the twins A1,A2 have to lie next to each other, with no other twin between them.  I don't see why this is true.  For example, what's wrong with the order A1,ac,B1,bc,A2,ab,...,ad....ae.  This satisfies all the conclusions for Lemma 2 and has A in the 1-3-configuration, but A1 and A2 are not close.  Neither are they far (because the way you define far means that they have to be in the 2-2-configuration).    So this is an entirely different configuration that you are omitting in all the later cases. You need to either convince me that this order is impossible, or you need to expand all the later analysis to include this possibility.}
+
+\response{We agreed that this comment is not correct.}
+
+\rcomment{Lemma 3 also has some issues.  Statement iii just says that the four twins are separated by A's connectors.  But then the explanatory side-phrase says something stronger, namely, that the connector betwee A1 and A2 *must* be ab.    This should be said clearly in the main statement of iii.  (Same thing for iv.)}
+
+\response{We agreed that this comment is not correct.}
+\end{itemize}
+
+Further minor comments:
+
+\begin{itemize}
+\rcomment{p2, l40: "while sublinear book thickness have all graphs". This is not proper English, reword.  Maybe "while sublinear book thickness can be shown for all graphs..."}
+
+\response{Revised based on some earlier comment of another reviewer.}
+
+\rcomment{p2 (and throughout the paper):  You seem to use the term "1-regular" in a very strange sense.  Normally d-regular means that every vertex has degree *exactly* d, neither more nor less.  But you seem to equate "1-regular" with "is a matching", i.e., every vertex has degree *at*most* 1.  At the very minimum you should make this very clear.  Better even, avoid the term 1-regular and replace it with "maximum degree 1" everywhere.}
+
+\response{MB: I believe that this is a wrong comment, but Martin suggested an easy hack which we applied.}
+
+\rcomment{p2, l51: define "circular embedding"}
+
+\response{Come on... We have references and also a figure thas illustrate this obvious thing.}
+
+\rcomment{p4, l125: "with three or four A's connectors" insert "of" before "A's" (and same thing on the next line)}
+
+\response{Done.}
+\end{itemize}
+
+% ==================================================================================
+\newpage
+\section*{Reviewer 5}
+% ==================================================================================
+
+\st{This is a deep paper with solutions to two long standing open questions involving Dispersable Book Embeddings (DBE).  The minimum number of pages needed for a DBE is called the dispersible book thickness (dbt) and it is clear that $dbt(G) >= max-degree-of-G$ and it was conjectured by Bernhart and Kainen that equality holds for every k-regular bipartite graph.  They showed that the conjecture holds for k =1, 2.  In this paper, counter-examples are presented for $k = 3, 4$.}
+
+\st{The paper is well written with only a few typos}
+
+\begin{itemize}
+\rcomment{one common (see for example pg 6, line 172) is the absence of "of" between "two" and "A's connectors".}
+
+\response{Done.}
+
+\rcomment{Also on page 10, line 348, I suggest including a statement of the 3-color theorem.}
+
+\response{Added a note in the journal version.}
+\end{itemize}
+
+% ==================================================================================
+\newpage
+\section*{Reviewer 6}
+% ==================================================================================
+
+\st{This is a nice one. The authors disprove a conjecture from the late 70's by means of a computer proof (and a somewhat weaker proof by hand). They also show that the desired property (being dispersable) is held by Barnette graphs.}
+
+\st{The writing is very nice and the math seems sound. The only drawback of the paper might be that it fits into the scope of WG only to some extend, as no deeper connection of the result to concepts in computer science is given. This seems like a minor issue to me, though.}
+
+\end{document}
