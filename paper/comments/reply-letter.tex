@@ -13,18 +13,31 @@
 \newcommand{\response}{\vspace{0.2cm} \textbf{Response: }}
 \newcommand{\jresponse}[1]{\vspace{0.2cm} \textbf{Response: }{\color{blue} {\em #1}}}
 
+\title{{\normalsize Revision Report for the Computer Journal submission}\\
+{\Large\em ``A Heuristic Approach towards Drawings of Graphs with\\High Crossing Resolution''}}
+\author{}
+\date{}
+
+%\author{Patrizio Angelini, Michael A. Bekos, Giuseppe Liotta, Fabrizio Montecchiani}
+
+\author{M.~Bekos, H.~F\"orster, C.~Geckeler, L.~Holl\"ander, M.~Kaufmann, A.~Spallek, J.~Splett}
+
 \begin{document}
+
+\maketitle
+
+\noindent We thank all reviewers for their very helpful comments and suggestions. We have addressed all the raised issues. Details are provided below, where we list all reviews together with a detailed response to each suggestion by the reviewers.
+
+\newpage
+
 
 % ==================================================================================
 \section*{Reviewer 1}
 % ==================================================================================
 
-The authors present a heuristic that aims to maximize the crossing resolution of graph. Their heuristic can be adopted to also aim towards maximizing angular and total resolution. The authors present an extensive experimental analysis which demonstrates that their heuristic
-outperforms the previously known approaches ([21,22], which are both ``spring-embedder'' like heuristics). The authors also demonstrate that their approach is efficient, resulting results in reasonable
-amounts of time. On the practical side they also produce grid drawings of restricted size, which is something previously known algorithms did not address. 
+The authors present a heuristic that aims to maximize the crossing resolution of graph. Their heuristic can be adopted to also aim towards maximizing angular and total resolution. The authors present an extensive experimental analysis which demonstrates that their heuristic outperforms the previously known approaches ([21,22], which are both ``spring-embedder'' like heuristics). The authors also demonstrate that their approach is efficient, resulting results in reasonable amounts of time. On the practical side they also produce grid drawings of restricted size, which is something previously known algorithms did not address. 
 
-The paper is well written. The heuristic is presented in a clear and simple way so that it is possible to be programmed by other researchers/developers. Sufficients details are also provided
-on how to run each step of the heuristic efficiently. Given the limited applied previous work on the topic (most of the previous work focuses on the case of RAC graphs), i believe that their contribution is significant and it is definetely worth publishing. I suggest ACCEPTANCE subject to addressing the following 
+The paper is well written. The heuristic is presented in a clear and simple way so that it is possible to be programmed by other researchers/developers. Sufficient details are also provided on how to run each step of the heuristic efficiently. Given the limited applied previous work on the topic (most of the previous work focuses on the case of RAC graphs), i believe that their contribution is significant and it is definitely worth publishing. I suggest ACCEPTANCE subject to addressing the following 
 
 MINOR issues:
 
@@ -41,7 +54,7 @@ MINOR issues:
 
 \response{Done.}
 
-\rcomment{Table 2: Use a better heading than "our best" (for example, "no-time restriction"?)
+\rcomment{Table 2: Use a better heading than "our best" (for example, "no-time restriction"?)}
 
 \response{Revised as suggested.}
 
@@ -53,43 +66,51 @@ MINOR issues:
 
 \response{Done.}
 
-7. pg 4, ln 46, right: "or of a vertex that is in the neighborhood of the critical vertex..."
-Why is this true in general? The edges incident to vertices in the neighborhood are not related
-to the
-crossing considered.
+\rcomment{pg 4, ln 46, right: ``or of a vertex that is in the neighborhood of the critical vertex...'' Why is this true in general? The edges incident to vertices in the neighborhood are not related to the crossing considered.}
 
-8. pg 4, ln 52, right: If possible, provide an intuition why you are using graph-distance instead of
-geometric-distance.
-9. pg 5, ln 17, left: "chooses uniformly at random". This is not accurate. You are not using the
-uniform distribution.
-In the previous page you assigned probalilities to the vertices wrt their graph-distance from the
-critical
-vertex. Are you applying this rule. Please clarify.
-10. pg 5. ln 30 left: Mention that $\rho$ is also a parameter of the algorithm.
-11. General comment for section 2. Mention early in the section that your heuristic, as described,
-produces real coordinates
-and that you explain in Sect 2.3 how to produce a grid drawing. (Having seen Table 2, a reader
-expects to get an algorithm that
-produces grid drawing at the first place).
-12. General comment for section 2. Have a discussion regarding the real-number computations
-involved. How many decimal points used
-for crossing resolution, vertex position, etc.
-13. Pg 6, ln 11, right: "Aspect ratio" This is not the traditional definition. Aspect ratio is
-typically defined as the ration of
-largest to smaller side-length of the enclosing renctange of the drawing. The smaller edge to
-largest edge ratio is more of a
-"resolution" type measurement.
-14. Figures 4,5,7,8. In caption (a) you state that it is the crossing resolution. In these figures it is
-either angular of total
-resolution.
-15. Figure 9. Clearly state that the double line refers to an algorithm that is unrestricted wrt the
-grid size. (So far, you have
-used the term "unrestricted" wrt the time devoted to each run; the user then expectes to have 4
-such lines, one per grid size).
-16. pg 16, line 38, left: "naturalLY observe".
-17. General comment: It should be also interesting to compare the crossing resolution between
-the "non-grid" and the "grid"
-versions of your algorithm
+\response{This is not easy to answer precisely. Indeed, the vertices in the neighborhood are not related to the crossing resolution of the current drawing. However, by also considering these vertices (and in particular by moving them), we have observed that in several cases it is possible to gain the necessary space for the actual critical vertices, i.e., those that define the drawing's crossing resolution, to move and thus to improve the drawing's crossing resolution. This is the idea underneath.}
+
+\rcomment{pg 4, ln 52, right: If possible, provide an intuition why you are using graph-distance instead of geometric-distance.}
+
+\response{Of course, one could naturally use the Euclidean distance as an alternative criterion for selecting the vertices to be moved. Here, we have chosen the graph-distance instead, mainly for reasons of efficiency. In the revised version, we have added a corresponding note discussing this observation.}
+
+\rcomment{pg 5, ln 17, left: ``chooses uniformly at random''. This is not accurate. You are not using the uniform distribution. In the previous page you assigned probalilities to the vertices wrt their graph-distance from the critical vertex. Are you applying this rule. Please clarify.}
+
+\response{Indeed, this statement was not accurate. The quoted text has been removed in the revised version.}
+
+\rcomment{pg 5. ln 30 left: Mention that $\rho$ is also a parameter of the algorithm.}
+
+\response{In the revised version, we mention that $\rho$ is a parameter of the algorithm as follows: ``where $\rho > 0$ is an integer parameter of the algorithm''.}
+
+\rcomment{General comment for section 2. Mention early in the section that your heuristic, as described, produces real coordinates and that you explain in Sect 2.3 how to produce a grid drawing. (Having seen Table 2, a reader expects to get an algorithm that produces grid drawing at the first place).}
+
+\response{Revised according to the reviewer's suggestion.}
+
+\rcomment{General comment for section 2. Have a discussion regarding the real-number computations involved. How many decimal points used for crossing resolution, vertex position, etc.}
+
+\response{We have made a corresponding note about this well-known issue in Section~2; in particular, at the point in which we describe how to compute the set of critical vertices. Note that in our approach we do not adopt any special data structure from Computational Geometry to increase the precision in our computations. Hence, the precision depends on the used machine.}
+
+\rcomment{pg 6, ln 11, right: "Aspect ratio" This is not the traditional definition. Aspect ratio is typically defined as the ratio of largest to smaller side-length of the enclosing renctange of the drawing. The smaller edge to largest edge ratio is more of a
+"resolution" type measurement.} 
+
+\response{Indeed, we were misusing the term ``aspect ratio''. The correct term is ``edge-length ratio''. In the revised version, this problem has been resolved. We have also added a reference to a recent paper introducing and studying this measure for outerplanar graphs (Sylvain Lazard, William J. Lenhart, Giuseppe Liotta: On the edge-length ratio of outerplanar graphs. Theor. Comput. Sci. 770: 88-94 (2019)).}
+
+\rcomment{Figures 4,5,7,8. In caption (a) you state that it is the crossing resolution. In these figures it is either angular of total resolution.}
+
+\response{We have resolved this problem.}
+
+\rcomment{Figure 9. Clearly state that the double line refers to an algorithm that is unrestricted wrt the grid size. (So far, you have used the term "unrestricted" wrt the time devoted to each run; the user then expectes to have 4 such lines, one per grid size).}
+
+\response{In the revised version, we have revised the caption of Figure~9 to make this clear.}
+
+\rcomment{pg 16, line 38, left: "naturalLY observe".}
+
+\response{Done.}
+
+\tcomment{General comment: It should be also interesting to compare the crossing resolution between the "non-grid" and the "grid" versions of your algorithm}
+
+\response{\textcolor{red}{Which version of the algorithm do we use in the experiments?}}
+\end{itemize}
 
 
 % ==================================================================================
@@ -97,418 +118,105 @@ versions of your algorithm
 \section*{Reviewer 2}
 % ==================================================================================
 
-\st{In graph drawing, book embeddings represent an intuitive way to draw graphs. Vertices are ordered along a /spine/, and edges are embedded as arcs on /pages/ without crossings. Book embeddings have been thoroughly studied, however several important questions still remain. In the present paper, the authors study a more restrictive variant of book embeddings, which requires each page to have no edges incident to the same vertex. Such an embedding is called a /dispersable/ book embedding.}
-
-\st{The authors conduct a thorough study of this variant, centered on disproving a long-standing open conjecture from the original paper on dispersable book embedings by Bernhart and Kainen from 1979: that any $k$-regular bipartite graph is /dispersable/ (i.e., it has a dispersable book embedding on $k$ pages). The present authors successfully disprove the conjecture for $k=3$ and $k=4$; however, it is still unknown for $k>4$. They further show that all 3-connected 3-regular planar bipartite graphs are dispersable, and conjecture that all 3-regular planar bipartite graphs are dispersable.}
-
-\st{This represents a major step in furthering research on dispersable book embeddings, and has the potential to spur on further research in the area. Although a majority of the paper is dedicated to a heavy (and somewhat tedious) case analysis, the result represents a significant contribution to graph drawing and, by extension, combinatorics. Lastly, aside from some minor grammatical errors, the paper is written rather well.}
+The paper studies how to compute straight-line drawings of graphs such that the angle at which two edges cross is as large as possible. Deciding whether a graph has a drawing where each pair of crossing edges cross at a 90-degree angle is an NP-hard problem. The literature contains three heuristic approaches that aim to optimize the crossing angle, two force-directed approaches (Argyriou et al, Huang et al.) and a randomized approach (Demel et al., aka CoffeeVM). The randomized approach has been published at the same conference as the preliminary version of the paper at hand.  The authors participated with their approach at the annual Graph Drawing Contest 2018. Their approach outperformed the winner (CoffeeVM) of the 2018 edition of the contest [0,1].
 
 
-\st{Contributions, Techniques and Novelty}
+The paper introduces a heuristic based on local modifications. The approach iteratively moves a vertex v to a better position. Since it is unclear how to efficiently compute a good position of a vertex, the authors follow a randomized approach. They compute a random sample S following certain restrictions and move to v to the position in S that maximizes the crossing angle of the edges incident to v. In order to escape local maxima, the authors introduce some parameters to control the sample space and the vertex candidates. The approach is evaluated in an experimental evaluation. First, the authors show that the approach computes larger crossing angles compared to the force-directed approaches. Moreover, they provide insights on the interaction between large crossing angle affects other metrics, in particular, the number of crossing and the aspect ratio of the drawing.
 
-\st{The paper can be broken down into 3 main results, which I will address in turn:}
-
-\begin{enumerate}
-
-\item \st{First, the authors disprove the conjecture for $k=3$. That is, they prove that not all 4-regular bipartite graphs are dispersable. They prove this by finding one 4-regular bipartite graph, namely the Folkman graph, that is not dispersable. Their proof that this graph is not dispersable is a nontrivial, case-heavy analysis. The proof relies on the fact that a graph has a $k$-page book embedding if and only if it also has a circular embedding with a $k$-edge coloring, such that no two edges with the same color cross. And furthermore there is a simple transformation from one to the other. The authors argue using the structure of such a circular layout (and the fact that crossing edges do not have the same color), and show that forbidden patterns in the ordering of vertices around the circular layout emerge as a result. The end result of these forbidden patterns is that a $4$-page dispersable book embedding does not exist.}
-
-\item \st{Next, the authors briefly discuss a computer-assisted proof that the conjecture fails also for $k=3$. The authors investigate the /Gray/ graph, and use an extension of a recently introduced SAT formulation to check that it does not have a $3$-page dispersable book embedding.}
-
-\item \st{Finally, and perhaps most interestingly, the authors show that the conjecture is true for $k=3$ when the graph is additionally 3-connected and planar. This argument relies on the existence of 3-coloring of the edges, and  a 3-coloring of the vertices in the dual graph (that is, a coloring of the faces), such that faces have a color different from any of the edges incident to the face. This proof is a refreshing departure from the heavy case analysis given for the first result, and in my opinion, is also more appealing than the computer-aided proof.}
-\end{enumerate}
-
-
-Minor Comments
+In contrast to the conference version, the full journal contains a significant amount of new material. Nevertheless, before publishing, I would like to see the following two concerns addressed.
 
 \begin{itemize}
-\rcomment{Line 6: ``equals to the maximum'' $\rightarrow$ ``equals the maximum''}
+\tcomment{First, the authors claim (Page 2, L20) to be aware of only two approaches (Argyriou et al. and Huang et al.) that optimize the crossing angle. On the other hand, the introduction contains a comparison to a third approach (CoffeeVM). The abstract in [1] suggests that CoffeeVM follows a similar local randomized approach. In my opinion, it is only fair to the authors of CoffeeVM to discuss similarities and differences between the two approaches.  Moreover, the vertex movement paradigm is an established technique and has successfully applied to graph theoretic and geometric problems. I propose to add [1-6] as relevant related work.}
 
-\response{Done.}
+\response{}
 
-\rcomment{Lines 41/42: ``The book thickness is known to be bounded only for bounded genus graphs.'' $\rightarrow$ Suggest ``...only known to be bounded for bounded genus graphs.'' Otherwise, the former is stating that it is known that only bounded genus graphs have bounded book thickness. Is this intentional?}
+\tcomment{Second, I think that the structure of the evaluation can be improved by formulating a set of research questions. For example:
 
-\response{Added e.g. instead.}
+I) Does algorithm A compute larger crossing angles than algorithm B?
 
-\rcomment{Lines 132/133 ``there is no twins'' $\rightarrow$ ``there are no twins''}
+II) What is the angular resolution in drawings with small crossing angles?
 
-\response{Done.}
+III) How many iterations need the algorithms to converge?
 
-\rcomment{Line 136: ``twin pairs'' $\rightarrow$ Is this different from ``twins'' or are they equivalent? I notice several uses of both, and I’m not sure if the meanings are distinct.}
+Once the research questions are stated, one can think about proper setup and tools to investigate these questions. Of course with an experimental evaluation, it is unlikely that we are able to verify the research questions in their entirety. But we can collect indications that the statements are likely to be true (on specific data sets). One indicator that can be compared is the mean of two datasets, that is is the sole statistic used by the authors. }
 
-\response{Changed a bit to make it more clear.}
+\response{}
 
-\rcomment{Line 153: I suggest preceding $(A_2,ab)$ with ``edges'' since these also resemble open intervals.}
+\tcomment{In my opinion, the mean should be accompanied by more statistics (at least the standard deviation), since the mean is sensitive to outliers. Moreover, I have the impression that the writing of the experimental evaluation lacks precision. A more formal style of writing reduces the possibility that statements can be misunderstood.
+For example, the word /significant/ has a defined meaning, it implies that a statement is very unlikely and this has been confirmed with a proper statistical test. But comparing the means of two sequences of observations A and B does not imply significance. Instead of writing "A has significantly smaller crossing angles than B", I propose to write "The mean of A is (considerably) smaller than the mean of B", or "the mean of A is X degrees smaller than the mean of B". In the following, I give an incomplete list of statements that should be revised.}
 
-\response{Done, but only in the journal version due to space limitation.}
+\response{}
 
-\rcomment{Line 169 (and others): for each declaration of a forbidden pair, I was initially confused by the center dots in the notation. Are they meant to match a single connector vertex? Please mention this explicitly somewhere.}
+\tcomment{p7,c2, ~l42) 'It is immediate to see that our algorithm outperforms all other ones in terms of the crossing resolution[...]'.
 
-\response{Done in the journal version.}
+The statement suggests an irrevocable truth but the only conclusion that you can draw from the plots is the following 'the mean crossing resolution of drawings obtained by your algorithm is considerably larger than the mean crossing resolutions of the remaining algorithms'. Alternatively, (globally) define the meaning of 'outperforms' "A outperforms B if the mean of A is X degrees smaller than the mean of B"}
 
-\rcomment{Line 179 ``there are not exactly two same twin vertices'' $\rightarrow$ I found this confusing, and the same can be said of several of the forbidden pair definitions. Do you mean ``there is not a single twin pair'' or even ``there is not a single twin''. Perhaps clarifying the usage of the word twin would be helpful.}
+\response{}
 
-\response{Done.}
+\tcomment{p7, c2, l54: While our unrestricted algorithm produces drawings with better crossing resolution no need to say /better/, it is /larger/}
 
-\rcomment{For all forbidden pairs, A and B are used; however they apply without loss of generality to any distinct twins. That should perhaps be stated somewhere.}
+\response{}
 
-\response{Come on... that should be clear.}
+\tcomment{p8, c1, l56: ... has more or less comparable performance.... what does 'more or less' mean? Does the mean crossing resolution differ by at most x degrees?}
 
-\rcomment{Line 206: ``no a A’s connector'' $\rightarrow$ ``no connector of A''. There are many uses like this, I suggest carefully searching the manuscript to find all occurrences. (See further, 207 ``a A’s connectors'', 208 ``the B’s connectors'', footnote 4: ``there are C’s connectors'', and others.)}
+\response{}
 
-\response{Done.}
+\tcomment{p8, c1/2: ...which at the same time is significantly smaller;}
 
-\rcomment{Line 247: ``Each of X,Y and U,V are different.'' The exact meaning is not clear to me. Is it that X and Y are not twins? and U,V are not twins?}
+\response{}
 
-\response{Done.}
+\tcomment{p9, c1, l55: ... significant... I do not see why you are able to claim significance.}
 
-\rcomment{Line 285: It took me a while to realize that $d(A_1,A_2)$ includes $A_1$ and $A_2$, which results in $d(A)$ counts.}
+\response{}
 
-\response{Added a note in the journal version.}
+\tcomment{p10 c1, l47: For the vast majority of the graphs in the experiments; I am not sure whether you are still comparing the mean or the number of graphs that have a smaller angle. In the latter case there is no need to be vague: e.g. 'On 90\% of the graphs our algorithms compute drawings with a smaller crossing than drawings obtained by B'}
 
-\rcomment{Line 298: ``By Lemma 3 applied for A and C'' $\rightarrow$ ``Applying Lemma 3 for A and C''}
+\response{}
 
-\response{Done.}
 
-\rcomment{Line 306: ``We study the book thickness of'' $\rightarrow$ ``We study the dispersable book thickness of''}
+\tcomment{p10, c1, l57: ...tend to produce drawings of the same total resolution on larger graphs 
 
-\response{Done.}
+What does 'tend to the same' mean? Either they are equal or they are not. 
 
-\rcomment{Line 308/309: I highly suggesting fitting image 9 in the paper; it is very helpful to visualize the Gray graph}
+How many vertices do the larger graphs have?    
 
-\response{Come on... that's impossible.}
+I guess what you would like to say is along the following lines:
 
-\rcomment{Line 314: ``From this formulation'' $\rightarrow$ Based on the previous sentence, it is not clear if you are referring to the original SAT formulation, or your modified SAT formulation.}
+The mean values for the total resolution of drawings obtained by our algorithm and by Argyriou et al. differ by a most 5(?) degrees for graphs with more than 90 vertices.}
 
-\response{Done.}
+\response{}
 
-\rcomment{Lines 326-331: It is worth mentioning how the computer actually assisted; what I think happened is that you ran a SAT solver, and it did not find $3$-page dispersable book embedding, and therefore there does not exist one. This deserves to be explicitly stated. Did it take long to verify?}
+\tcomment{p11, c2, ~l51: ...small graphs.... medium-size graphs
 
-\response{Revised in the journal version.}
+As before, it is not clear when a graph is small, medium-sized or large. In case that you would like to use these terms frequently, I propose to introduce graphs classes: S, M, L that partition the rome graphs based on their number of vertices.}
 
-\rcomment{Line 333: I believe there should be a Corollary here as a result of Theorem 2, indicating that the conjecture is false for $k=3$.}
+\response{}
 
-\response{It's exactly like this in the journal version.}
+\tcomment{p12, c1, l48: the angular resolution dominates the crossing resolution
 
-\rcomment{Line 334: Capitalize connected and regular}
+I have problems understanding this statement. What does dominate mean?  Do you want to investigate the number of graphs whose crossing resolution is smaller than the total resolution? If so, I do not see how you can observe this based on the plots (even ignoring that my statement is on the number of graphs). Moreover, it seems strange to refactor this information from your plots when you could simply get this information from your data.}
 
-\response{Done.}
+\response{}
+        
+\end{itemize} 
 
-\rcomment{References: At least references 9, 11 and 12 have minor errors. in [9], the journal is called ``SIAM Journal of Algebraic and Discrete Methods''. In [11] and [12] The same author is abbreviated differently in each, and in [11], ``Geomentry'' $\rightarrow$ ``Geometry''. Please thoroughly inspect the references.}
+\textbf{References:}
 
-\response{Done.}
-\end{itemize}
+[0] Devanny W., Kindermann P., Löffler M., Rutter I. (2018) Graph Drawing Contest Report. In: Frati F., Ma KL. (eds) Graph Drawing and Network Visualization. GD 2017. Lecture Notes in Computer Science, vol 10692. Springer, Cham
 
-% ==================================================================================
-\newpage
-\section*{Reviewer 3}
-% ==================================================================================
+[1] Demel A., Dürrschnabel D., Mchedlidze T., Radermacher M., Wulf L. (2018) A Greedy Heuristic for Crossing-Angle Maximization. In: Biedl T., Kerren A. (eds) Graph Drawing and Network Visualization. GD 2018. Lecture Notes in Computer Science, vol 11282. Springer, Cham
 
-\st{The paper deals with dispersable book embeddings, i.e. classical book embeddings (the vertices are ordered along a line l (the spine), the edges are drawn crossing-free at different half-planes (pages) bounded by l), with the additional property that the graphs induced by the edges of each page are 1-regular. It is clear that the number of pages needed for a dispersable book embedding of a graph G is at least the maximum degree of G. If this number of pages suffices, the graph G is called dispersable. A conjecture of Barnhart and Kainen from 1979 states that each k-regular bipartite graph is dispersable
-(for k=1,2 this is clearly true).}
+[2] Johan Ugander and Lars Backstrom. 2013. Balanced label propagation for partitioning massive graphs. In Proceedings of the sixth ACM international conference on Web search and data mining (WSDM '13). ACM, New York, NY, USA, 507-516. DOI: https://doi.org/10.1145/2433396.2433461 
 
-\st{In the paper the following three things are shown:}
-\begin{enumerate}[(a)]
-\item \st{The conjecture of Barnhart and Kainen is disproven for the case k=3 with a computer-aided proof.}
-\item \st{The conjecture of Barnhart and Kainen is disproven for the case k=4 with a hand-written proof.}
-\item \st{It is proven that each 3-connected 3-regular bipartite planar graph is dispersable.}
-\end{enumerate}
+[3] C. M. Fiduccia and R. M. Mattheyses, "A Linear-Time Heuristic for Improving Network Partitions," 19th Design Automation Conference, Las Vegas, NV, USA, 1982, pp. 175-181.
+doi: 10.1109/DAC.1982.1585498
 
-\begin{enumerate}[(a)]
-\item \st{There is a known reduction of the problem of finding a book embedding with a given number of pages to SAT.
-   The authors extend this reduction to the case of dispersable book embeddings what is really simple and straight-forward.
-   Then they say that computer experiments showed that there is no 3-page dispersable book embedding of the 47-vertex
-   Gray graph. So the main contribution in this part is that the authors have found a graph for which the computer
-   program gave a negative answer, and not the computer program itself.}
-\item \st{It is proven that there is no 4-page dispersable book embedding of the 20-vertex Folkman graph.
-   The proof works as follows: By proving forbidden patterns for the order of the vertices on the spine
-   of the book embedding gradually all permutations of the vertices are excluded as orders on the spine.
-   This leads to a lot of case distinctions over more than 13 pages. I read the part of the proof in the main part,
-   but not the remaining part in the appendix. There are some inaccuracies in the proof, especially in the part where
-   it is shown that the forbidden patterns indeed forbid every permutation. In the end, I did not find any mistakes which cannot be fixed easily, but it is hard to check its correctness as part of a converence review because it is very
-   technical.}
-\item \st{First the authors show that 3-connected 3-regular bipartite planar graphs have a coloring of the edges
-   and faces with certain properties. Afterwards this coloring is used for a recursive geometric construction
-   of the 3-page dispersable book embedding of the graph.}
-\end{enumerate}
+[4] Kernighan, B. W. and Lin, S. (1970), An Efficient Heuristic Procedure for Partitioning Graphs. Bell System Technical Journal, 49: 291-307. doi:10.1002/j.1538-7305.1970.tb01770.x
 
-\st{Evaluation:}
+[5]  A Geometric Heuristic for Rectilinear Crossing Minimization
+Marcel Radermacher, Klara Reichard, Ignaz Rutter, and Dorothea Wagner
+2018 Proceedings of the Twentieth Workshop on Algorithm Engineering and Experiments (ALENEX). 2018, 129-138 
 
-\st{With results A and B the authors make a good progress in the area of book embeddings. These results are interesting
-and should be published. Unfortunately, these results are not suitable for a presentation at a conference
-since result A is proven by the computer and result B is proven by a long series of case distinctions without
-good structural insight for other graphs than the considered Folkman graph.
-After disproving the conjecture of Barnhart and Kainen, result C is an appropriate weaker variant to consider.
-The proof seems to be correct and interesting for at least parts of the WG community.
-Since the focus of the paper does not lie on result C (it is only a small part of the paper) and result C on its own would be weak for a WG
-contribution, I recommend that this paper should be published in a journal and not be presented at a
-conference.}
-
-\st{Comments for the authors:}
-
-\begin{itemize}
-\rcomment{l. 19: in early $\rightarrow$ to the early}
-
-\response{Done.}
-
-\rcomment{l. 39: $\rightarrow$ while all graphs with ... treewidth [11] have sublinear book thickness}
-
-\response{Done.}
-
-\rcomment{l. 81: avoid abbreviations at the beginning of a sentence: Figs. $\rightarrow$ Figures}
-
-\response{Done.}
-
-\rcomment{l. 88: later you call this construction a subdivision. why not here?}
-
-\response{Done in the journal version.}
-
-\rcomment{l. 118: $\rightarrow$ be the two intervals defined by the twins in a dispersable order.}
-
-\response{Done.}
-
-\rcomment{l. 136: $\rightarrow$ of pairs of twin pairs}
-
-\response{Done.}
-
-\rcomment{l. 139: pairs of non-crossing twins $\rightarrow$ non-crossing twin pairs}
-
-\response{Done.}
-
-\rcomment{l. 143, 145: twins $\rightarrow$ twin vertices}
-
-\response{Done.}
-
-\rcomment{l. 148: a $\rightarrow$ another}
-
-\response{Done in the journal version.}
-
-\rcomment{l. 151 ff: add reference to Figure 3}
-
-\response{Done.}
-
-\rcomment{l. 161: no comma after $B_2$}
-
-\response{Done.}
-
-\rcomment{l. 161: pairs of crossing twins $\rightarrow$ crossing pairs of twins}
-
-\response{Done.}
-
-\rcomment{l. 167: twins $\rightarrow$ twin vertices}
-
-\response{Done.}
-
-\rcomment{l. 179: including ab: add reference to Lemma 3}
-
-\response{Done.}
-
-\rcomment{l. 197: overfull box}
-
-\response{Ignored}
-
-\rcomment{l. 206: remove a}
-
-\response{Done.}
-
-\rcomment{l. 206: $\rightarrow$ Lemma 4 applied for}
-
-\response{Done.}
-
-\rcomment{l. 207: a $\rightarrow$ an}
-
-\response{Done.}
-
-\rcomment{l. 211: then $\rightarrow$ the edge}
-
-\response{Done.}
-
-\rcomment{l. 216: $[C_2,A_2]$ $\rightarrow$ $[C_2,A_1]$}
-
-\response{Done.}
-
-\rcomment{l. 221: no comma after that}
-
-\response{Done.}
-
-\rcomment{l. 224: twins $\rightarrow$ twin vertices}
-
-\response{Done.}
-
-\rcomment{l. 225: $\leq$ $\rightarrow$ $=$}
-
-\response{Not done.}
-
-\rcomment{l. 228: twin $\rightarrow$ twin vertex}
-
-\response{Done.}
-
-\rcomment{l. 238: later $\rightarrow$ latter}
-
-\response{Done.}
-
-\rcomment{l. 240: $(C_1,ac)$ $\rightarrow$ $(A_1,ac)$}
-
-\response{Done.}
-
-\rcomment{l. 242: overfull box}
-
-\response{Ignored.}
-
-\rcomment{l. 245: no comma}
-
-\response{Done.}
-
-\rcomment{l. 245: $\rightarrow$ there are at least two twin vertices}
-
-\response{Done.}
-
-\rcomment{l. 247: different $\rightarrow$ no pair of twin vertices}
-
-\response{Done.}
-
-\rcomment{l. 250, 251: twins $\rightarrow$ twin vertices}
-
-\response{Done.}
-
-\rcomment{l. 258: no comma before is}
-
-\response{Done.}
-
-\rcomment{l. 261: at $\rightarrow$ in}
-
-\response{Done.}
-
-\rcomment{l. 284 ff: before you used the notation delta and counted strictly inside. why do you change the notation?}
-
-\response{The notation changed.}
-
-\rcomment{l. 287: two twins are $\rightarrow$ any pair of twins is}
-
-\response{Done.}
-
-\rcomment{l. 289: 4 $\rightarrow$ 6}
-
-\response{Done.}
-
-\rcomment{l. 291: Figs. $\rightarrow$ Figures}
-
-\response{Done.}
-
-\rcomment{l. 292: are $\rightarrow$ is}
-
-\response{Done.}
-
-\rcomment{l. 292: a $\rightarrow$ an}
-
-\response{Done.}
-
-\rcomment{l. 294: later $\rightarrow$ latter}
-
-\response{Done.}
-
-\rcomment{l. 296: the order of the vertices does not coincide with Figure 4e}
-
-\response{Done.}
-
-\rcomment{l. 301: $y = ab.$ Here some arguments are missing. My suggestion: (a) analogously to $z \neq ab$ we get $x \neq ab$, (b) $u,w \neq ab$ since $u$ is D's connector and $w$ is E's connector, (c) $v \neq ab$ because the following 5 pairwise crossing edges: $A_1 ab$, $A_2 ab$, $B_1 ab$, $B_2 ab$, $C_1 ce$}
-
-\response{There is no reason to add this discussion. Symmetry implies the properties.}
-
-\rcomment{l. 321: An $\rightarrow$ A set of}
-
-\response{Done.}
-
-\rcomment{l. 323: add "we" after "details"}
-
-\response{Done.}
-
-\rcomment{l. 384: $\rightarrow$ and its right side}
-
-\response{Done.}
-
-\rcomment{l. 428: exist $\rightarrow$ exists}
-
-\response{Done.}
-
-\rcomment{l. 436: $\rightarrow$ study the dispersable}
-
-\response{Done.}
-
-\rcomment{Fig. 5: the dotted gray is hard to see}
-
-\response{Done.}
-
-\end{itemize}
-
-% ==================================================================================
-\newpage
-\section*{Reviewer 4}
-% ==================================================================================
-
-\st{In this paper, the authors tackle an older open question:  Given a k-regular bipartite graph, can we split its edges into k matchings and find a vertex order such that each matching forms a planar graph when placing the vertices in this order around a cycle?}
-
-\st{It was known that this is true for k=1,2 and conjectured that it is also true for larger k.  But, the authors disprove it for k=3 and k=4.  The proof for k=4 is combinatorial, while the proof for k=3 was done by phrasing the problem as a SAT problem and running experiments.  The authors also show that the conjecture is true for k=3 if additionally the graph is 3-connected and planar.}
-
-\st{On the whole, this is a nice paper.  However, I was very lost in the combinatorial proof.  The authors state a crucial Lemma 2, and then use it to classify vertices as either far or near.  But I don't see how that far/near follows from the lemma.  In consequence, I could not follow the rest of the proof.  As such, I'm a bit unsure whether this main result is true.  (My guess is that it is true---the authors probably checked that with their SAT solver?---but this proof does not convince me.) That's why I ranked the paper somewhat lower.}
-
-\st{Detailed comments to the authors:}
-
-\begin{itemize}
-\rcomment{Lemma 2 classifies a pair of twins A1,A2, and the connectors that relates to them (ab,ac,ad,ae).  But then in the next paragraph, you claim that the first configuration implies that the twins A1,A2 have to lie next to each other, with no other twin between them.  I don't see why this is true.  For example, what's wrong with the order A1,ac,B1,bc,A2,ab,...,ad....ae.  This satisfies all the conclusions for Lemma 2 and has A in the 1-3-configuration, but A1 and A2 are not close.  Neither are they far (because the way you define far means that they have to be in the 2-2-configuration).    So this is an entirely different configuration that you are omitting in all the later cases. You need to either convince me that this order is impossible, or you need to expand all the later analysis to include this possibility.}
-
-\response{We agreed that this comment is not correct.}
-
-\rcomment{Lemma 3 also has some issues.  Statement iii just says that the four twins are separated by A's connectors.  But then the explanatory side-phrase says something stronger, namely, that the connector betwee A1 and A2 *must* be ab.    This should be said clearly in the main statement of iii.  (Same thing for iv.)}
-
-\response{We agreed that this comment is not correct.}
-\end{itemize}
-
-Further minor comments:
-
-\begin{itemize}
-\rcomment{p2, l40: "while sublinear book thickness have all graphs". This is not proper English, reword.  Maybe "while sublinear book thickness can be shown for all graphs..."}
-
-\response{Revised based on some earlier comment of another reviewer.}
-
-\rcomment{p2 (and throughout the paper):  You seem to use the term "1-regular" in a very strange sense.  Normally d-regular means that every vertex has degree *exactly* d, neither more nor less.  But you seem to equate "1-regular" with "is a matching", i.e., every vertex has degree *at*most* 1.  At the very minimum you should make this very clear.  Better even, avoid the term 1-regular and replace it with "maximum degree 1" everywhere.}
-
-\response{MB: I believe that this is a wrong comment, but Martin suggested an easy hack which we applied.}
-
-\rcomment{p2, l51: define "circular embedding"}
-
-\response{Come on... We have references and also a figure thas illustrate this obvious thing.}
-
-\rcomment{p4, l125: "with three or four A's connectors" insert "of" before "A's" (and same thing on the next line)}
-
-\response{Done.}
-\end{itemize}
-
-% ==================================================================================
-\newpage
-\section*{Reviewer 5}
-% ==================================================================================
-
-\st{This is a deep paper with solutions to two long standing open questions involving Dispersable Book Embeddings (DBE).  The minimum number of pages needed for a DBE is called the dispersible book thickness (dbt) and it is clear that $dbt(G) >= max-degree-of-G$ and it was conjectured by Bernhart and Kainen that equality holds for every k-regular bipartite graph.  They showed that the conjecture holds for k =1, 2.  In this paper, counter-examples are presented for $k = 3, 4$.}
-
-\st{The paper is well written with only a few typos}
-
-\begin{itemize}
-\rcomment{one common (see for example pg 6, line 172) is the absence of "of" between "two" and "A's connectors".}
-
-\response{Done.}
-
-\rcomment{Also on page 10, line 348, I suggest including a statement of the 3-color theorem.}
-
-\response{Added a note in the journal version.}
-\end{itemize}
-
-% ==================================================================================
-\newpage
-\section*{Reviewer 6}
-% ==================================================================================
-
-\st{This is a nice one. The authors disprove a conjecture from the late 70's by means of a computer proof (and a somewhat weaker proof by hand). They also show that the desired property (being dispersable) is held by Barnette graphs.}
-
-\st{The writing is very nice and the math seems sound. The only drawback of the paper might be that it fits into the scope of WG only to some extend, as no deeper connection of the result to concepts in computer science is given. This seems like a minor issue to me, though.}
+[6] Bläsius T., Radermacher M., Rutter I. (2017) How to Draw a Planarization. In: Steffen B., Baier C., van den Brand M., Eder J., Hinchey M., Margaria T. (eds) SOFSEM 2017: Theory and Practice of Computer Science. SOFSEM 2017. Lecture Notes in Computer Science, vol 10139. Springer, Cham
 
 \end{document}

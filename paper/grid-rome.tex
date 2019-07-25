@@ -25,14 +25,14 @@ tick pos=left,ymajorgrids]
 \legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
 \end{axis}
 \end{tikzpicture}}
-\subfloat[\label{fig:crossingResolutionAspectRatioGrid}{Aspect ratio vs no.~of vertices}]{
+\subfloat[\label{fig:crossingResolutionAspectRatioGrid}{Edge-length ratio vs no.~of vertices}]{
 \centering
 %===================================
 % Crossing Resolution Aspect Ratio
 %===================================
 \begin{tikzpicture}
 \begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
-anchor=north,legend columns=2,draw=none},ylabel style={yshift=-0.2cm}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={0,10,20,30,40,50,60,70,80,90,100},ylabel={Aspect Ratio},
+anchor=north,legend columns=2,draw=none},ylabel style={yshift=-0.2cm}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={0,10,20,30,40,50,60,70,80,90,100},ylabel={Edge-length Ratio},
 xlabel={Number of Vertices},
 xmin=10,
 xmax=100,
@@ -87,7 +87,6 @@ xlabel={Number of Vertices},ymajorgrids]
 \legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
 \end{axis}
 \end{tikzpicture}}
-\caption{Our experimental results on the crossing resolution with different grid restrictions.
-The double line corresponds to our unrestricted algorithm.}
+\caption{Our experimental results on the crossing resolution with different grid restrictions. The double line corresponds to the variant of our algorithm which does not impose any restriction on the size of the grid of the output drawings.}
 \label{fig:experimentsGrid}
 \end{figure*}
