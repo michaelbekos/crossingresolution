@@ -1,0 +1,353 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.8}
+\usepgfplotslibrary{statistics}
+\usepackage{amssymb}
+\usepackage{subfig}
+
+%\pgfplotscreateplotcyclelist{mylist}{%
+%{blue!80!black,mark options={mark size=1.5pt,fill=white},mark=*},
+%{red!80!black,densely dashdotted, mark options={mark size=1.5pt,solid,fill=white},mark=square*},
+%{green!50!black,mark options={mark size=1.5pt,solid,fill=white},densely dashed,mark=*},
+%{yellow!40!black,densely dashdotdotted,mark options={solid,fill=white},mark=triangle*},
+%{densely dotted,mark options={solid,fill=white},mark=diamond*}
+%}
+\tikzstyle{densely dashed}=[dash pattern=on 0.75pt off 0.5pt]
+
+%\definecolor{dark-blue}{rgb}{0,0,0.545}
+%\definecolor{dark-red}{rgb}{0.545,0,0}
+%\definecolor{dark-green}{rgb}{0,0.392,0}
+%\definecolor{dark-magenta}{rgb}{0.545,0,0.545}
+%\pgfplotsset{ytick style={draw=o}}
+%\renewcommand{\axisdefaultwidth}{300pt}
+\renewcommand{\axisdefaultheight}{185pt}
+
+\pgfplotscreateplotcyclelist{mylist}{%
+{black,thick,smooth,o},
+{black!50!white,thick,smooth,o},
+{black,thick,densely dashed,smooth,o},
+{black!50!white,thick,densely dashed,smooth,o},
+{black,double,smooth,o}
+}
+
+\pgfplotscreateplotcyclelist{fourlist}{%
+{black,thick,smooth,mark=x},
+{black!50!white,thick,smooth,mark=x},
+{black,thick,densely dashed,smooth,mark=x},
+{black!50!white,thick,densely dashed,smooth,mark=x}
+}
+
+\pgfplotsset{
+  /pgfplots/xlabel near ticks/.style={
+     /pgfplots/every axis x label/.style={
+        at={(ticklabel cs:0.5)},anchor=near ticklabel
+     }
+  },
+  /pgfplots/ylabel near ticks/.style={
+     /pgfplots/every axis y label/.style={
+        at={(ticklabel cs:0.5)},rotate=90,anchor=near ticklabel}
+     }
+  }
+
+\begin{document}
+\pgfkeys{/pgf/number format/.cd,1000 sep={}}
+\begin{figure}
+\centering
+\subfloat[\label{fig:crossingResolution}{}]{
+\centering
+\scalebox{.95}{
+\centering
+%======================
+% Crossing Resolution
+%======================
+\begin{tikzpicture}
+\begin{axis}[
+			 width=\textwidth,
+			 boxplot/draw direction=y,
+			 boxplot/draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*mod(\plotnumofactualtype,4)},
+			 boxplot/box extend=0.18,
+			 cycle list name=fourlist,
+			 ytick={0,10,20,30,40,50,60,70,80,90},
+			 ymajorgrids,
+			 xtick={0,1,2,...,9},
+			 x tick label as interval,
+     	     xticklabels={11--20,21--30,31--40,41--50,51--60,
+     	     61--70,71--80,81--90,91--100},
+     	     ylabel={Crossing Resolution},
+			 xlabel={Number of Vertices},
+			 ylabel style={yshift=-0.2cm}]
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr11-20.csv};
+
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr21-30.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr21-30.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr21-30.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr21-30.csv};
+
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr31-40.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr31-40.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr31-40.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr31-40.csv};
+
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr41-50.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr41-50.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr41-50.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr41-50.csv};
+
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr51-60.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr51-60.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr51-60.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr51-60.csv};
+
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr61-70.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr61-70.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr61-70.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr61-70.csv};
+
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr71-80.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr71-80.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr71-80.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr71-80.csv};
+
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr81-90.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr81-90.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr81-90.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr81-90.csv};
+
+\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr91-100.csv};
+\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr91-100.csv};
+\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr91-100.csv};
+\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr91-100.csv};
+
+\end{axis}
+\end{tikzpicture}}}
+
+\subfloat[\label{fig:crossingResolution-aspectRatio}{}]{
+\centering
+\scalebox{.95}{
+\centering
+%===================================
+% Crossing Resolution Aspect Ratio
+%===================================
+\begin{tikzpicture}
+\begin{axis}[
+			 width=\textwidth,
+			 boxplot/draw direction=y,
+			 boxplot/draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*mod(\plotnumofactualtype,4)},
+			 boxplot/box extend=0.18,
+			 cycle list name=fourlist,
+			 ytick={1,2.5,10,25,100,250,1000,2500,10000},
+			 ymode=log, log ticks with fixed point,
+			 ymajorgrids,
+			 xtick={0,1,2,...,9},
+			 x tick label as interval,
+     	     xticklabels={11--20,21--30,31--40,41--50,51--60,
+     	     61--70,71--80,81--90,91--100},
+     	     ylabel style={yshift=-0.2cm},
+			 ylabel={Aspect Ratio},
+			 xlabel={Number of Vertices}]
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr11-20.csv};
+
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr21-30.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr21-30.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr21-30.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr21-30.csv};
+
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr31-40.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr31-40.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr31-40.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr31-40.csv};
+
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr41-50.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr41-50.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr41-50.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr41-50.csv};
+
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr51-60.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr51-60.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr51-60.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr51-60.csv};
+
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr61-70.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr61-70.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr61-70.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr61-70.csv};
+
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr71-80.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr71-80.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr71-80.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr71-80.csv};
+
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr81-90.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr81-90.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr81-90.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr81-90.csv};
+
+\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr91-100.csv};
+\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr91-100.csv};
+\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr91-100.csv};
+\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr91-100.csv};
+
+\end{axis}
+\end{tikzpicture}}}
+
+\end{figure}
+
+\begin{figure}
+\centering
+
+\subfloat[\label{fig:crossingResolution-crossings}{}]{
+\centering
+\scalebox{.95}{
+\centering
+%======================================
+% Crossing Resolution Crossing Number
+%======================================
+\begin{tikzpicture}
+\begin{axis}[
+			 width=\textwidth,
+			 boxplot/draw direction=y,
+			 boxplot/draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*mod(\plotnumofactualtype,4)},
+			 boxplot/box extend=0.18,
+			 cycle list name=fourlist,
+			 ytick={0,25,50,75,100,125,150,175,200,225,250,275,300},
+			 ymajorgrids,
+			 xtick={0,1,2,...,9},
+			 x tick label as interval,
+     	     xticklabels={11--20,21--30,31--40,41--50,51--60,
+     	     61--70,71--80,81--90,91--100},
+     	     ylabel={Number of Crossings},
+			 xlabel={Number of Vertices},
+			 ylabel style={yshift=-0.2cm},
+			]
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr11-20.csv};
+
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr21-30.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr21-30.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr21-30.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr21-30.csv};
+
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr31-40.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr31-40.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr31-40.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr31-40.csv};
+
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr41-50.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr41-50.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr41-50.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr41-50.csv};
+
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr51-60.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr51-60.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr51-60.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr51-60.csv};
+
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr61-70.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr61-70.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr61-70.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr61-70.csv};
+
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr71-80.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr71-80.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr71-80.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr71-80.csv};
+
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr81-90.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr81-90.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr81-90.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr81-90.csv};
+
+\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr91-100.csv};
+\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr91-100.csv};
+\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr91-100.csv};
+\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr91-100.csv};
+
+\end{axis}
+\end{tikzpicture}}}
+
+\subfloat[\label{fig:crossingResolution-iterations}{}]{
+\centering
+\scalebox{.95}{
+\centering
+%==================================
+% Crossing Resolution Iterations
+%==================================
+\begin{tikzpicture}
+\begin{axis}[
+			 width=\textwidth,
+			 boxplot/draw direction=y,
+			 boxplot/draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*mod(\plotnumofactualtype,4)},
+			 boxplot/box extend=0.18,
+			 cycle list name=fourlist,
+			 ytick={0,1000,2000,3000,4000,5000,6000,7000,8000},
+			 ymajorgrids,
+			 xtick={0,1,2,...,9},
+			 x tick label as interval,
+     	    xticklabels={11--20,21--30,31--40,41--50,51--60,
+     	     61--70,71--80,81--90,91--100},
+     	     ylabel={Iterations},
+     	     ylabel style={yshift=-0.2cm},
+			 xlabel={Number of Vertices}]
+\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr11-20.csv};
+\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr11-20.csv};
+
+\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr21-30.csv};
+\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr21-30.csv};
+\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr21-30.csv};
+\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr21-30.csv};
+
+\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr31-40.csv};
+\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr31-40.csv};
+\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr31-40.csv};
+\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr31-40.csv};
+
+\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr41-50.csv};
+\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr41-50.csv};
+\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr41-50.csv};
+\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr41-50.csv};
+
+\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr51-60.csv};
+\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr51-60.csv};
+\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr51-60.csv};
+\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr51-60.csv};
+
+\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr61-70.csv};
+\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr61-70.csv};
+\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr61-70.csv};
+\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr61-70.csv};
+
+\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr71-80.csv};
+\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr71-80.csv};
+\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr71-80.csv};
+\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr71-80.csv};
+
+\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr81-90.csv};
+\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr81-90.csv};
+\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr81-90.csv};
+\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr81-90.csv};
+
+\addplot+[mark = x, boxplot] table [y=iterations-rm, col sep=semicolon]  {cr91-100.csv};
+\addplot+[mark = x, boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr91-100.csv};
+\addplot+[mark = x, boxplot] table [y=iterations-fa, col sep=semicolon] {cr91-100.csv};
+\addplot+[mark = x, boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr91-100.csv};
+
+\end{axis}
+\end{tikzpicture}}}
+
+
+\end{figure}
+
+\end{document}

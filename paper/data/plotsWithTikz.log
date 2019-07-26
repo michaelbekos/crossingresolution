@@ -1,0 +1,2247 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.12)  26 JUL 2019 15:15
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**plotsWithTikz.tex
+(./plotsWithTikz.tex
+LaTeX2e <2017-04-15>
+Babel <3.18> and hyphenation patterns for 84 language(s) loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2015/03/17 v1.2c Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
+Now handling font encoding OML ...
+... no UTF-8 mapping file for font encoding OML
+Now handling font encoding T1 ...
+... processing UTF-8 mapping file for font encoding T1
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.dfu
+File: t1enc.dfu 2017/01/28 v1.1t UTF-8 support for inputenc
+   defining Unicode char U+00A0 (decimal 160)
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00AB (decimal 171)
+   defining Unicode char U+00AD (decimal 173)
+   defining Unicode char U+00BB (decimal 187)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C0 (decimal 192)
+   defining Unicode char U+00C1 (decimal 193)
+   defining Unicode char U+00C2 (decimal 194)
+   defining Unicode char U+00C3 (decimal 195)
+   defining Unicode char U+00C4 (decimal 196)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00C7 (decimal 199)
+   defining Unicode char U+00C8 (decimal 200)
+   defining Unicode char U+00C9 (decimal 201)
+   defining Unicode char U+00CA (decimal 202)
+   defining Unicode char U+00CB (decimal 203)
+   defining Unicode char U+00CC (decimal 204)
+   defining Unicode char U+00CD (decimal 205)
+   defining Unicode char U+00CE (decimal 206)
+   defining Unicode char U+00CF (decimal 207)
+   defining Unicode char U+00D0 (decimal 208)
+   defining Unicode char U+00D1 (decimal 209)
+   defining Unicode char U+00D2 (decimal 210)
+   defining Unicode char U+00D3 (decimal 211)
+   defining Unicode char U+00D4 (decimal 212)
+   defining Unicode char U+00D5 (decimal 213)
+   defining Unicode char U+00D6 (decimal 214)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00D9 (decimal 217)
+   defining Unicode char U+00DA (decimal 218)
+   defining Unicode char U+00DB (decimal 219)
+   defining Unicode char U+00DC (decimal 220)
+   defining Unicode char U+00DD (decimal 221)
+   defining Unicode char U+00DE (decimal 222)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E0 (decimal 224)
+   defining Unicode char U+00E1 (decimal 225)
+   defining Unicode char U+00E2 (decimal 226)
+   defining Unicode char U+00E3 (decimal 227)
+   defining Unicode char U+00E4 (decimal 228)
+   defining Unicode char U+00E5 (decimal 229)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00E7 (decimal 231)
+   defining Unicode char U+00E8 (decimal 232)
+   defining Unicode char U+00E9 (decimal 233)
+   defining Unicode char U+00EA (decimal 234)
+   defining Unicode char U+00EB (decimal 235)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F0 (decimal 240)
+   defining Unicode char U+00F1 (decimal 241)
+   defining Unicode char U+00F2 (decimal 242)
+   defining Unicode char U+00F3 (decimal 243)
+   defining Unicode char U+00F4 (decimal 244)
+   defining Unicode char U+00F5 (decimal 245)
+   defining Unicode char U+00F6 (decimal 246)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+00F9 (decimal 249)
+   defining Unicode char U+00FA (decimal 250)
+   defining Unicode char U+00FB (decimal 251)
+   defining Unicode char U+00FC (decimal 252)
+   defining Unicode char U+00FD (decimal 253)
+   defining Unicode char U+00FE (decimal 254)
+   defining Unicode char U+00FF (decimal 255)
+   defining Unicode char U+0100 (decimal 256)
+   defining Unicode char U+0101 (decimal 257)
+   defining Unicode char U+0102 (decimal 258)
+   defining Unicode char U+0103 (decimal 259)
+   defining Unicode char U+0104 (decimal 260)
+   defining Unicode char U+0105 (decimal 261)
+   defining Unicode char U+0106 (decimal 262)
+   defining Unicode char U+0107 (decimal 263)
+   defining Unicode char U+0108 (decimal 264)
+   defining Unicode char U+0109 (decimal 265)
+   defining Unicode char U+010A (decimal 266)
+   defining Unicode char U+010B (decimal 267)
+   defining Unicode char U+010C (decimal 268)
+   defining Unicode char U+010D (decimal 269)
+   defining Unicode char U+010E (decimal 270)
+   defining Unicode char U+010F (decimal 271)
+   defining Unicode char U+0110 (decimal 272)
+   defining Unicode char U+0111 (decimal 273)
+   defining Unicode char U+0112 (decimal 274)
+   defining Unicode char U+0113 (decimal 275)
+   defining Unicode char U+0114 (decimal 276)
+   defining Unicode char U+0115 (decimal 277)
+   defining Unicode char U+0116 (decimal 278)
+   defining Unicode char U+0117 (decimal 279)
+   defining Unicode char U+0118 (decimal 280)
+   defining Unicode char U+0119 (decimal 281)
+   defining Unicode char U+011A (decimal 282)
+   defining Unicode char U+011B (decimal 283)
+   defining Unicode char U+011C (decimal 284)
+   defining Unicode char U+011D (decimal 285)
+   defining Unicode char U+011E (decimal 286)
+   defining Unicode char U+011F (decimal 287)
+   defining Unicode char U+0120 (decimal 288)
+   defining Unicode char U+0121 (decimal 289)
+   defining Unicode char U+0122 (decimal 290)
+   defining Unicode char U+0123 (decimal 291)
+   defining Unicode char U+0124 (decimal 292)
+   defining Unicode char U+0125 (decimal 293)
+   defining Unicode char U+0128 (decimal 296)
+   defining Unicode char U+0129 (decimal 297)
+   defining Unicode char U+012A (decimal 298)
+   defining Unicode char U+012B (decimal 299)
+   defining Unicode char U+012C (decimal 300)
+   defining Unicode char U+012D (decimal 301)
+   defining Unicode char U+012E (decimal 302)
+   defining Unicode char U+012F (decimal 303)
+   defining Unicode char U+0130 (decimal 304)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0132 (decimal 306)
+   defining Unicode char U+0133 (decimal 307)
+   defining Unicode char U+0134 (decimal 308)
+   defining Unicode char U+0135 (decimal 309)
+   defining Unicode char U+0136 (decimal 310)
+   defining Unicode char U+0137 (decimal 311)
+   defining Unicode char U+0139 (decimal 313)
+   defining Unicode char U+013A (decimal 314)
+   defining Unicode char U+013B (decimal 315)
+   defining Unicode char U+013C (decimal 316)
+   defining Unicode char U+013D (decimal 317)
+   defining Unicode char U+013E (decimal 318)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0143 (decimal 323)
+   defining Unicode char U+0144 (decimal 324)
+   defining Unicode char U+0145 (decimal 325)
+   defining Unicode char U+0146 (decimal 326)
+   defining Unicode char U+0147 (decimal 327)
+   defining Unicode char U+0148 (decimal 328)
+   defining Unicode char U+014A (decimal 330)
+   defining Unicode char U+014B (decimal 331)
+   defining Unicode char U+014C (decimal 332)
+   defining Unicode char U+014D (decimal 333)
+   defining Unicode char U+014E (decimal 334)
+   defining Unicode char U+014F (decimal 335)
+   defining Unicode char U+0150 (decimal 336)
+   defining Unicode char U+0151 (decimal 337)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+0154 (decimal 340)
+   defining Unicode char U+0155 (decimal 341)
+   defining Unicode char U+0156 (decimal 342)
+   defining Unicode char U+0157 (decimal 343)
+   defining Unicode char U+0158 (decimal 344)
+   defining Unicode char U+0159 (decimal 345)
+   defining Unicode char U+015A (decimal 346)
+   defining Unicode char U+015B (decimal 347)
+   defining Unicode char U+015C (decimal 348)
+   defining Unicode char U+015D (decimal 349)
+   defining Unicode char U+015E (decimal 350)
+   defining Unicode char U+015F (decimal 351)
+   defining Unicode char U+0160 (decimal 352)
+   defining Unicode char U+0161 (decimal 353)
+   defining Unicode char U+0162 (decimal 354)
+   defining Unicode char U+0163 (decimal 355)
+   defining Unicode char U+0164 (decimal 356)
+   defining Unicode char U+0165 (decimal 357)
+   defining Unicode char U+0168 (decimal 360)
+   defining Unicode char U+0169 (decimal 361)
+   defining Unicode char U+016A (decimal 362)
+   defining Unicode char U+016B (decimal 363)
+   defining Unicode char U+016C (decimal 364)
+   defining Unicode char U+016D (decimal 365)
+   defining Unicode char U+016E (decimal 366)
+   defining Unicode char U+016F (decimal 367)
+   defining Unicode char U+0170 (decimal 368)
+   defining Unicode char U+0171 (decimal 369)
+   defining Unicode char U+0172 (decimal 370)
+   defining Unicode char U+0173 (decimal 371)
+   defining Unicode char U+0174 (decimal 372)
+   defining Unicode char U+0175 (decimal 373)
+   defining Unicode char U+0176 (decimal 374)
+   defining Unicode char U+0177 (decimal 375)
+   defining Unicode char U+0178 (decimal 376)
+   defining Unicode char U+0179 (decimal 377)
+   defining Unicode char U+017A (decimal 378)
+   defining Unicode char U+017B (decimal 379)
+   defining Unicode char U+017C (decimal 380)
+   defining Unicode char U+017D (decimal 381)
+   defining Unicode char U+017E (decimal 382)
+   defining Unicode char U+01CD (decimal 461)
+   defining Unicode char U+01CE (decimal 462)
+   defining Unicode char U+01CF (decimal 463)
+   defining Unicode char U+01D0 (decimal 464)
+   defining Unicode char U+01D1 (decimal 465)
+   defining Unicode char U+01D2 (decimal 466)
+   defining Unicode char U+01D3 (decimal 467)
+   defining Unicode char U+01D4 (decimal 468)
+   defining Unicode char U+01E2 (decimal 482)
+   defining Unicode char U+01E3 (decimal 483)
+   defining Unicode char U+01E6 (decimal 486)
+   defining Unicode char U+01E7 (decimal 487)
+   defining Unicode char U+01E8 (decimal 488)
+   defining Unicode char U+01E9 (decimal 489)
+   defining Unicode char U+01EA (decimal 490)
+   defining Unicode char U+01EB (decimal 491)
+   defining Unicode char U+01F0 (decimal 496)
+   defining Unicode char U+01F4 (decimal 500)
+   defining Unicode char U+01F5 (decimal 501)
+   defining Unicode char U+0218 (decimal 536)
+   defining Unicode char U+0219 (decimal 537)
+   defining Unicode char U+021A (decimal 538)
+   defining Unicode char U+021B (decimal 539)
+   defining Unicode char U+0232 (decimal 562)
+   defining Unicode char U+0233 (decimal 563)
+   defining Unicode char U+1E02 (decimal 7682)
+   defining Unicode char U+1E03 (decimal 7683)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2010 (decimal 8208)
+   defining Unicode char U+2011 (decimal 8209)
+   defining Unicode char U+2012 (decimal 8210)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2015 (decimal 8213)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201A (decimal 8218)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+   defining Unicode char U+201E (decimal 8222)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+2039 (decimal 8249)
+   defining Unicode char U+203A (decimal 8250)
+   defining Unicode char U+2423 (decimal 9251)
+   defining Unicode char U+1E20 (decimal 7712)
+   defining Unicode char U+1E21 (decimal 7713)
+)
+Now handling font encoding OT1 ...
+... processing UTF-8 mapping file for font encoding OT1
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ot1enc.dfu
+File: ot1enc.dfu 2017/01/28 v1.1t UTF-8 support for inputenc
+   defining Unicode char U+00A0 (decimal 160)
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00AD (decimal 173)
+   defining Unicode char U+00B8 (decimal 184)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+0174 (decimal 372)
+   defining Unicode char U+0175 (decimal 373)
+   defining Unicode char U+0176 (decimal 374)
+   defining Unicode char U+0177 (decimal 375)
+   defining Unicode char U+0218 (decimal 536)
+   defining Unicode char U+0219 (decimal 537)
+   defining Unicode char U+021A (decimal 538)
+   defining Unicode char U+021B (decimal 539)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+)
+Now handling font encoding OMS ...
+... processing UTF-8 mapping file for font encoding OMS
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/omsenc.dfu
+File: omsenc.dfu 2017/01/28 v1.1t UTF-8 support for inputenc
+   defining Unicode char U+00A7 (decimal 167)
+   defining Unicode char U+00B6 (decimal 182)
+   defining Unicode char U+00B7 (decimal 183)
+   defining Unicode char U+2020 (decimal 8224)
+   defining Unicode char U+2021 (decimal 8225)
+   defining Unicode char U+2022 (decimal 8226)
+)
+Now handling font encoding OMX ...
+... no UTF-8 mapping file for font encoding OMX
+Now handling font encoding U ...
+... no UTF-8 mapping file for font encoding U
+   defining Unicode char U+00A9 (decimal 169)
+   defining Unicode char U+00AA (decimal 170)
+   defining Unicode char U+00AE (decimal 174)
+   defining Unicode char U+00BA (decimal 186)
+   defining Unicode char U+02C6 (decimal 710)
+   defining Unicode char U+02DC (decimal 732)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2026 (decimal 8230)
+   defining Unicode char U+2122 (decimal 8482)
+   defining Unicode char U+2423 (decimal 9251)
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2017/09/02 v2.17a AMS math features
+\@mathmargin=\skip43
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks16
+\ex@=\dimen103
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen104
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count87
+LaTeX Info: Redefining \frac on input line 213.
+\uproot@=\count88
+\leftroot@=\count89
+LaTeX Info: Redefining \overline on input line 375.
+\classnum@=\count90
+\DOTSCASE@=\count91
+LaTeX Info: Redefining \ldots on input line 472.
+LaTeX Info: Redefining \dots on input line 475.
+LaTeX Info: Redefining \cdots on input line 596.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen105
+LaTeX Font Info:    Redeclaring font encoding OML on input line 712.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 713.
+\macc@depth=\count92
+\c@MaxMatrixCols=\count93
+\dotsspace@=\muskip10
+\c@parentequation=\count94
+\dspbrk@lvl=\count95
+\tag@help=\toks17
+\row@=\count96
+\column@=\count97
+\maxfields@=\count98
+\andhelp@=\toks18
+\eqnshift@=\dimen106
+\alignsep@=\dimen107
+\tagshift@=\dimen108
+\tagwidth@=\dimen109
+\totwidth@=\dimen110
+\lineht@=\dimen111
+\@envbody=\toks19
+\multlinegap=\skip44
+\multlinetaggap=\skip45
+\mathdisplay@stack=\toks20
+LaTeX Info: Redefining \[ on input line 2817.
+LaTeX Info: Redefining \] on input line 2818.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pgfplots/pgfplots.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplots.revision.tex)
+Package: pgfplots 2017/06/05 v1.15 Data Visualization (1.15)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks21
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 99.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen112
+\Gin@req@width=\dimen113
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
+\pgfutil@everybye=\toks22
+\pgfutil@tempdima=\dimen114
+\pgfutil@tempdimb=\dimen115
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common-lists.t
+ex)) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
+\pgfutil@abb=\box28
+(/usr/share/texlive/texmf-dist/tex/latex/ms/everyshi.sty
+Package: everyshi 2001/05/15 v3.00 EveryShipout Package (MS)
+))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
+Package: pgfrcs 2015/08/07 v3.0.1a (rcs-revision 1.31)
+))
+Package: pgf 2015/08/07 v3.0.1a (rcs-revision 1.15)
+
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
+Package: pgfsys 2014/07/09 v3.0.1a (rcs-revision 1.48)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+\pgfkeys@pathtoks=\toks23
+\pgfkeys@temptoks=\toks24
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeysfiltered.code.t
+ex
+\pgfkeys@tmptoks=\toks25
+))
+\pgf@x=\dimen116
+\pgf@y=\dimen117
+\pgf@xa=\dimen118
+\pgf@ya=\dimen119
+\pgf@xb=\dimen120
+\pgf@yb=\dimen121
+\pgf@xc=\dimen122
+\pgf@yc=\dimen123
+\w@pgf@writea=\write3
+\r@pgf@reada=\read1
+\c@pgf@counta=\count99
+\c@pgf@countb=\count100
+\c@pgf@countc=\count101
+\c@pgf@countd=\count102
+\t@pgf@toka=\toks26
+\t@pgf@tokb=\toks27
+\t@pgf@tokc=\toks28
+ (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
+File: pgf.cfg 2008/05/14  (rcs-revision 1.7)
+)
+Driver file for pgf: pgfsys-pdftex.def
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2014/10/11  (rcs-revision 1.35)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.de
+f
+File: pgfsys-common-pdf.def 2013/10/10  (rcs-revision 1.13)
+)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.
+tex
+File: pgfsyssoftpath.code.tex 2013/09/09  (rcs-revision 1.9)
+\pgfsyssoftpath@smallbuffer@items=\count103
+\pgfsyssoftpath@bigbuffer@items=\count104
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.
+tex
+File: pgfsysprotocol.code.tex 2006/10/16  (rcs-revision 1.4)
+)) (/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
+Package: pgfcore 2010/04/11 v3.0.1a (rcs-revision 1.7)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
+\pgfmath@dimen=\dimen124
+\pgfmath@count=\count105
+\pgfmath@box=\box29
+\pgfmath@toks=\toks29
+\pgfmath@stack@operand=\toks30
+\pgfmath@stack@operation=\toks31
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonomet
+ric.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.cod
+e.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerari
+thmetics.code.tex)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count106
+))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.te
+x
+File: pgfcorepoints.code.tex 2013/10/07  (rcs-revision 1.27)
+\pgf@picminx=\dimen125
+\pgf@picmaxx=\dimen126
+\pgf@picminy=\dimen127
+\pgf@picmaxy=\dimen128
+\pgf@pathminx=\dimen129
+\pgf@pathmaxx=\dimen130
+\pgf@pathminy=\dimen131
+\pgf@pathmaxy=\dimen132
+\pgf@xx=\dimen133
+\pgf@xy=\dimen134
+\pgf@yx=\dimen135
+\pgf@yy=\dimen136
+\pgf@zx=\dimen137
+\pgf@zy=\dimen138
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.
+code.tex
+File: pgfcorepathconstruct.code.tex 2013/10/07  (rcs-revision 1.29)
+\pgf@path@lastx=\dimen139
+\pgf@path@lasty=\dimen140
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code
+.tex
+File: pgfcorepathusage.code.tex 2014/11/02  (rcs-revision 1.24)
+\pgf@shorten@end@additional=\dimen141
+\pgf@shorten@start@additional=\dimen142
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.te
+x
+File: pgfcorescopes.code.tex 2015/05/08  (rcs-revision 1.46)
+\pgfpic=\box30
+\pgf@hbox=\box31
+\pgf@layerbox@main=\box32
+\pgf@picture@serial@count=\count107
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.c
+ode.tex
+File: pgfcoregraphicstate.code.tex 2014/11/02  (rcs-revision 1.12)
+\pgflinewidth=\dimen143
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformation
+s.code.tex
+File: pgfcoretransformations.code.tex 2015/08/07  (rcs-revision 1.20)
+\pgf@pt@x=\dimen144
+\pgf@pt@y=\dimen145
+\pgf@pt@temp=\dimen146
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
+File: pgfcorequick.code.tex 2008/10/09  (rcs-revision 1.3)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.t
+ex
+File: pgfcoreobjects.code.tex 2006/10/11  (rcs-revision 1.2)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathprocessing
+.code.tex
+File: pgfcorepathprocessing.code.tex 2013/09/09  (rcs-revision 1.9)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.te
+x
+File: pgfcorearrows.code.tex 2015/05/14  (rcs-revision 1.43)
+\pgfarrowsep=\dimen147
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
+File: pgfcoreshade.code.tex 2013/07/15  (rcs-revision 1.15)
+\pgf@max=\dimen148
+\pgf@sys@shading@range@num=\count108
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
+File: pgfcoreimage.code.tex 2013/07/15  (rcs-revision 1.18)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.
+tex
+File: pgfcoreexternal.code.tex 2014/07/09  (rcs-revision 1.21)
+\pgfexternal@startupbox=\box33
+))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.te
+x
+File: pgfcorelayers.code.tex 2013/07/18  (rcs-revision 1.7)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.c
+ode.tex
+File: pgfcoretransparency.code.tex 2013/09/30  (rcs-revision 1.5)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.
+tex
+File: pgfcorepatterns.code.tex 2013/11/07  (rcs-revision 1.5)
+)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
+File: pgfmoduleshapes.code.tex 2014/03/21  (rcs-revision 1.35)
+\pgfnodeparttextbox=\box34
+) (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
+File: pgfmoduleplot.code.tex 2015/08/03  (rcs-revision 1.13)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65
+.sty
+Package: pgfcomp-version-0-65 2007/07/03 v3.0.1a (rcs-revision 1.7)
+\pgf@nodesepstart=\dimen149
+\pgf@nodesepend=\dimen150
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18
+.sty
+Package: pgfcomp-version-1-18 2007/07/23 v3.0.1a (rcs-revision 1.1)
+)) (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
+Package: pgffor 2013/12/13 v3.0.1a (rcs-revision 1.25)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
+\pgffor@iter=\dimen151
+\pgffor@skip=\dimen152
+\pgffor@stack=\toks32
+\pgffor@toks=\toks33
+))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+Package: tikz 2015/08/07 v3.0.1a (rcs-revision 1.151)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
+.code.tex
+File: pgflibraryplothandlers.code.tex 2013/08/31 v3.0.1a (rcs-revision 1.20)
+\pgf@plot@mark@count=\count109
+\pgfplotmarksize=\dimen153
+)
+\tikz@lastx=\dimen154
+\tikz@lasty=\dimen155
+\tikz@lastxsaved=\dimen156
+\tikz@lastysaved=\dimen157
+\tikzleveldistance=\dimen158
+\tikzsiblingdistance=\dimen159
+\tikz@figbox=\box35
+\tikz@figbox@bg=\box36
+\tikz@tempbox=\box37
+\tikz@tempbox@bg=\box38
+\tikztreelevel=\count110
+\tikznumberofchildren=\count111
+\tikznumberofcurrentchild=\count112
+\tikz@fig@count=\count113
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2013/09/17  (rcs-revision 1.8)
+\pgfmatrixcurrentrow=\count114
+\pgfmatrixcurrentcolumn=\count115
+\pgf@matrix@numberofcolumns=\count116
+)
+\tikz@expandcount=\count117
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2008/06/17 v3.0.1a (rcs-revision 1.2)
+)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplots.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplotscore.code.tex
+\t@pgfplots@toka=\toks34
+\t@pgfplots@tokb=\toks35
+\t@pgfplots@tokc=\toks36
+\pgfplots@tmpa=\dimen160
+\c@pgfplots@coordindex=\count118
+\c@pgfplots@scanlineindex=\count119
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/sys/pgfplotssysgeneric.code
+.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/libs/pgfplotslibrary.code.t
+ex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/oldpgfcompatib/pgfplotsoldp
+gfsupp_loader.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryfpu.code.tex
+)
+Package pgfplots: loading complementary arithmetics for your pgf version...
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/oldpgfcompatib/pgfplotsoldp
+gfsupp_pgflibraryfpu.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/oldpgfcompatib/pgfplotsoldp
+gfsupp_pgfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count120
+))
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/util/pgfplotsutil.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotslists
+tructure.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotslists
+tructureext.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsarray
+.code.tex
+\c@pgfplotsarray@tmp=\count121
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsmatri
+x.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/numtable/pgfplotstableshare
+d.code.tex
+\c@pgfplotstable@counta=\count122
+\t@pgfplotstable@a=\toks37
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsdeque
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/util/pgfplotsbinary.code.te
+x
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/util/pgfplotsbinary.data.co
+de.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/util/pgfplotsutil.verb.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/libs/pgflibrarypgfplots.sur
+fshading.code.tex
+\c@pgfplotslibrarysurf@no=\count123
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/sys/pgflibrarypgfplots.surf
+shading.pgfsys-pdftex.def)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/util/pgfplotscolormap.code.
+tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/util/pgfplotscolor.code.tex
+))
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplotsstackedplots.code.t
+ex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplotsplothandlers.code.t
+ex
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplotsmeshplothandler.cod
+e.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplotsmeshplotimage.code.
+tex)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplots.scaling.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplotscoordprocessing.cod
+e.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplots.errorbars.code.tex
+) (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplots.markers.code.tex
+) (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplotsticks.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplots.paths.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarydecorations.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduledecorations.cod
+e.tex
+\pgfdecoratedcompleteddistance=\dimen161
+\pgfdecoratedremainingdistance=\dimen162
+\pgfdecoratedinputsegmentcompleteddistance=\dimen163
+\pgfdecoratedinputsegmentremainingdistance=\dimen164
+\pgf@decorate@distancetomove=\dimen165
+\pgf@decorate@repeatstate=\count124
+\pgfdecorationsegmentamplitude=\dimen166
+\pgfdecorationsegmentlength=\dimen167
+)
+\tikz@lib@dec@box=\box39
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarydecorations.pathmorphing.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrary
+decorations.pathmorphing.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarydecorations.pathreplacing.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrary
+decorations.pathreplacing.code.tex))
+\pgfplots@numplots=\count125
+\pgfplots@xmin@reg=\dimen168
+\pgfplots@xmax@reg=\dimen169
+\pgfplots@ymin@reg=\dimen170
+\pgfplots@ymax@reg=\dimen171
+\pgfplots@zmin@reg=\dimen172
+\pgfplots@zmax@reg=\dimen173
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryplotmarks.code.tex
+File: tikzlibraryplotmarks.code.tex 2008/01/09 v3.0.1a (rcs-revision 1.1)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplotmarks.co
+de.tex
+File: pgflibraryplotmarks.code.tex 2015/08/03 v3.0.1a (rcs-revision 1.14)
+)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgfplots/libs/tikzlibrarypgfplots.st
+atistics.code.tex)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+)
+(/usr/share/texlive/texmf-dist/tex/latex/subfig/subfig.sty
+Package: subfig 2005/06/28 ver: 1.3 subfig package
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2016/05/22 v1.7-166 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
+\captionmargin=\dimen174
+\captionmargin@=\dimen175
+\captionwidth=\dimen176
+\caption@tempdima=\dimen177
+\caption@indent=\dimen178
+\caption@parindent=\dimen179
+\caption@hangindent=\dimen180
+)
+\c@ContinuedFloat=\count126
+)
+\c@KVtest=\count127
+\sf@farskip=\skip46
+\sf@captopadj=\dimen181
+\sf@capskip=\skip47
+\sf@nearskip=\skip48
+\c@subfigure=\count128
+\c@subfigure@save=\count129
+\c@lofdepth=\count130
+\c@subtable=\count131
+\c@subtable@save=\count132
+\c@lotdepth=\count133
+\sf@top=\skip49
+\sf@bottom=\skip50
+)
+(./plotsWithTikz.aux)
+\openout1 = `plotsWithTikz.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count134
+\scratchdimen=\dimen182
+\scratchbox=\box40
+\nofMPsegments=\count135
+\nofMParguments=\count136
+\everyMPshowfont=\toks38
+\MPscratchCnt=\count137
+\MPscratchDim=\dimen183
+\MPnumerator=\count138
+\makeMPintoPDFobject=\count139
+\everyMPtoPDFconversion=\toks39
+) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2018/01/21 v0.26 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+ABD: EveryShipout initializing macros
+Package pgfplots notification 'compat/show suggested version=true': you might b
+enefit from \pgfplotsset{compat=1.15} (current compat level: 1.8).
+
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: subfig package v1.3 is loaded.
+Package caption Info: End \AtBeginDocument code.
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=8.936081e1
+
+Package pgfplots info on input line 128: boxplot: got median=8.9833832e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.9956436e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 128: boxplot: got lower whisker=8.85607e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99962e1
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=7.3482208e
+1
+Package pgfplots info on input line 128: boxplot: got median=8.5940094e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.9659042e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 128: boxplot: got lower whisker=5.94426e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.9992e1
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=6.2642365e
+1
+Package pgfplots info on input line 128: boxplot: got median=7.1780548e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=7.9920273e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 128: boxplot: got lower whisker=4.02964e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99906e1
+PGFPlots: reading {abs-cr11-20.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.927002e1
+
+Package pgfplots info on input line 128: boxplot: got median=6.5025024e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=7.8324966e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 128: boxplot: got lower whisker=3.371e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.97e1
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=8.776268e1
+
+Package pgfplots info on input line 128: boxplot: got median=8.943924e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.9897537e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 128: boxplot: got lower whisker=8.48016e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99964e1
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=7.3433914e
+1
+Package pgfplots info on input line 128: boxplot: got median=8.7492905e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.938179e1
+
+Package pgfplots info on input line 128: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 128: boxplot: got lower whisker=5.02487e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99893e1
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=6.080101e1
+
+Package pgfplots info on input line 128: boxplot: got median=7.1983414e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=7.736496e1
+
+Package pgfplots info on input line 128: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 128: boxplot: got lower whisker=4.03157e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99739e1
+PGFPlots: reading {abs-cr21-30.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.0605011e
+1
+Package pgfplots info on input line 128: boxplot: got median=6.4294968e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=7.9104996e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.63e2
+Package pgfplots info on input line 128: boxplot: got lower whisker=1.443e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.955e1
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=8.3451996e
+1
+Package pgfplots info on input line 128: boxplot: got median=8.8007965e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.9502487e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=7.44355e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99982e1
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=6.762497e1
+
+Package pgfplots info on input line 128: boxplot: got median=7.8163681e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.7421722e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=4.0191e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99827e1
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.7408371e
+1
+Package pgfplots info on input line 128: boxplot: got median=6.693512e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=7.383995e1
+
+Package pgfplots info on input line 128: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=3.36186e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99987e1
+PGFPlots: reading {abs-cr31-40.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=4.64749985
+e1
+Package pgfplots info on input line 128: boxplot: got median=5.9834976e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=7.4110031e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.323e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=1.035e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.997e1
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=7.6956635e
+1
+Package pgfplots info on input line 128: boxplot: got median=8.4257126e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.8417664e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=5.9787e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99875e1
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.9642334e
+1
+Package pgfplots info on input line 128: boxplot: got median=7.1718674e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.2035065e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.80488e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.99396e1
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.0478668e
+1
+Package pgfplots info on input line 128: boxplot: got median=5.8991089e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=6.8928375e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.38078e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.93877e1
+PGFPlots: reading {abs-cr41-50.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=3.80699997
+e1
+Package pgfplots info on input line 128: boxplot: got median=5.149e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=6.4329987e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.33e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.899e1
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=6.7309875e
+1
+Package pgfplots info on input line 128: boxplot: got median=7.8430481e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.515953e1
+
+Package pgfplots info on input line 128: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=4.18047e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.9931e1
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.5516968e
+1
+Package pgfplots info on input line 128: boxplot: got median=6.3979263e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=7.4987564e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.72975e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.98742e1
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=4.52601471
+e1
+Package pgfplots info on input line 128: boxplot: got median=5.3529663e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=6.3670349e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.06184e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.83994e1
+PGFPlots: reading {abs-cr51-60.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=3.31399994
+e1
+Package pgfplots info on input line 128: boxplot: got median=4.61200027e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=5.9830017e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.037e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.82e1
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.8435516e
+1
+Package pgfplots info on input line 128: boxplot: got median=7.10964e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=8.0466385e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.74916e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.98156e1
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.0764236e
+1
+Package pgfplots info on input line 128: boxplot: got median=5.88653e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=6.9601974e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.36095e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.96845e1
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=3.9998848e
+1
+Package pgfplots info on input line 128: boxplot: got median=4.95771e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=5.8920517e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=1.4926e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.57135e1
+PGFPlots: reading {abs-cr61-70.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=2.89800034
+e1
+Package pgfplots info on input line 128: boxplot: got median=4.0949997e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=5.362503e1
+
+Package pgfplots info on input line 128: boxplot: got sample size=1.091e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.857e1
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=5.4256668e
+1
+Package pgfplots info on input line 128: boxplot: got median=6.3660278e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=7.527008e1
+
+Package pgfplots info on input line 128: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.27789e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.97138e1
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=4.70960464
+e1
+Package pgfplots info on input line 128: boxplot: got median=5.5404129e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=6.2345428e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.49732e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.52065e1
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=3.62226028
+e1
+Package pgfplots info on input line 128: boxplot: got median=4.48231506e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=5.2484894e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=1.26627e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=7.61021e1
+PGFPlots: reading {abs-cr71-80.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=2.86800003
+e1
+Package pgfplots info on input line 128: boxplot: got median=3.85200043e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=4.81849976
+e1
+Package pgfplots info on input line 128: boxplot: got sample size=1.007e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 128: boxplot: got upper whisker=7.636e1
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=4.82377014
+e1
+Package pgfplots info on input line 128: boxplot: got median=5.6266174e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=6.7064285e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.02796e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.7502e1
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=4.33927002
+e1
+Package pgfplots info on input line 128: boxplot: got median=5.076416e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=5.7793503e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 128: boxplot: got lower whisker=2.25893e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=7.92851e1
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=3.14610977
+e1
+Package pgfplots info on input line 128: boxplot: got median=3.897155e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=4.76352463
+e1
+Package pgfplots info on input line 128: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 128: boxplot: got lower whisker=1.1791e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=7.18221e1
+PGFPlots: reading {abs-cr81-90.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=2.41800003
+e1
+Package pgfplots info on input line 128: boxplot: got median=3.41050034e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=4.28799973
+e1
+Package pgfplots info on input line 128: boxplot: got sample size=7.25e2
+Package pgfplots info on input line 128: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 128: boxplot: got upper whisker=7.022e1
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=4.23137512
+e1
+Package pgfplots info on input line 128: boxplot: got median=5.1395187e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=5.9935532e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=1.6742e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=8.60996e1
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=4.05022507
+e1
+Package pgfplots info on input line 128: boxplot: got median=4.76306992e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=5.5509872e
+1
+Package pgfplots info on input line 128: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=1.83672e1
+Package pgfplots info on input line 128: boxplot: got upper whisker=7.79621e1
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=2.73422012
+e1
+Package pgfplots info on input line 128: boxplot: got median=3.48271027e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=4.37079468
+e1
+Package pgfplots info on input line 128: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=9.4439e0
+Package pgfplots info on input line 128: boxplot: got upper whisker=6.79841e1
+PGFPlots: reading {abs-cr91-100.csv}
+Package pgfplots info on input line 128: boxplot: got lower quartile=2.17350006
+e1
+Package pgfplots info on input line 128: boxplot: got median=3.17949982e1
+Package pgfplots info on input line 128: boxplot: got upper quartile=4.02399979
+e1
+Package pgfplots info on input line 128: boxplot: got sample size=1.342e3
+Package pgfplots info on input line 128: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 128: boxplot: got upper whisker=6.798e1
+LaTeX Font Info:    Try loading font information for U+msa on input line 128.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 128.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=6.0130157e
+0
+Package pgfplots info on input line 200: boxplot: got median=9.9666748e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=1.80914612
+e1
+Package pgfplots info on input line 200: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.806632790
+15739e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.251295058
+20709e1
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.66872711
+e0
+Package pgfplots info on input line 200: boxplot: got median=1.81718979e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=1.9996933e
+0
+Package pgfplots info on input line 200: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.330766813
+22606e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.474558927
+22105e0
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.58437729
+e0
+Package pgfplots info on input line 200: boxplot: got median=1.70827637e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=1.89405899
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.294290573
+19692e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.356794175
+58619e0
+PGFPlots: reading {abs-cr11-20.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.20195236
+e0
+Package pgfplots info on input line 200: boxplot: got median=1.34400711e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=1.6340065e
+0
+Package pgfplots info on input line 200: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.008228525
+55526e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.118349882
+94179e0
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=8.0708694e
+0
+Package pgfplots info on input line 200: boxplot: got median=1.2812622e1
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.0416565e
+1
+Package pgfplots info on input line 200: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.931038428
+81977e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.881750409
+53693e1
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.7209343e
+0
+Package pgfplots info on input line 200: boxplot: got median=1.9297493e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.1338974e
+0
+Package pgfplots info on input line 200: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.433653234
+22715e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.698105940
+622e0
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.63458252
+e0
+Package pgfplots info on input line 200: boxplot: got median=1.79804916e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=1.98593369
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.369398078
+22876e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.467590753
+27e0
+PGFPlots: reading {abs-cr21-30.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.18256378
+e0
+Package pgfplots info on input line 200: boxplot: got median=1.37293777e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=1.69910355
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.63e2
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.006958383
+51398e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.441707116
+03627e0
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.15562439
+e1
+Package pgfplots info on input line 200: boxplot: got median=1.80012283e1
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.07239304
+e1
+Package pgfplots info on input line 200: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.952591799
+29149e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=5.925561315
+67986e1
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.90913162
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.09265518e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.34046173
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.411371786
+61005e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.986855982
+00875e0
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.68263931
+e0
+Package pgfplots info on input line 200: boxplot: got median=1.85643768e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.06034317
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.308791322
+07616e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.615435564
+44496e0
+PGFPlots: reading {abs-cr31-40.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.28740768
+e0
+Package pgfplots info on input line 200: boxplot: got median=1.49853973e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=1.96721954
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.323e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.009613458
+84238e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.977640789
+88611e0
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.51776428
+e1
+Package pgfplots info on input line 200: boxplot: got median=2.29934769e1
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.87640839
+e1
+Package pgfplots info on input line 200: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=2.102431118
+134e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=7.407642454
+77885e1
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.05437927
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.26860657e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.57828217
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.471207696
+67035e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.357394423
+71209e0
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.80620117
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.01573639e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.25296402
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.304712949
+72748e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.915006966
+8046e0
+PGFPlots: reading {abs-cr41-50.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.44709396
+e0
+Package pgfplots info on input line 200: boxplot: got median=1.75035472831984e0
+
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.30788193
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.33e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.020498392
+28296e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.575846473
+53624e0
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.9086937e
+1
+Package pgfplots info on input line 200: boxplot: got median=2.98211136e1
+Package pgfplots info on input line 200: boxplot: got upper quartile=4.71704025
+e1
+Package pgfplots info on input line 200: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=2.498843663
+21288e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=8.745835044
+00486e1
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.22946167
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.47710037e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.81498642
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.673429055
+76256e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.689965134
+94623e0
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.91335068
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.13032379e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.42571182
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.414356346
+64296e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.170441399
+96399e0
+PGFPlots: reading {abs-cr51-60.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.63097687
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.04343796e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.95225677
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.037e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.042558904
+47741e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=4.919296712
+89724e0
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.26375961
+e1
+Package pgfplots info on input line 200: boxplot: got median=3.3551039163688e1
+Package pgfplots info on input line 200: boxplot: got upper quartile=5.4485245e
+1
+Package pgfplots info on input line 200: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=2.703823545
+40859e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=1.021295272
+95543e2
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.38407593
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.6754085454083e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.11577225
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.724432375
+02161e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=4.208589504
+7147e0
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.99654236
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.25128518486404e0
+
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.56368484
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.436041421
+45663e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.408368534
+41361e0
+PGFPlots: reading {abs-cr61-70.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.80394211
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.24324646e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.4017273e
+0
+Package pgfplots info on input line 200: boxplot: got sample size=1.091e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.143186910
+1772e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=5.675602903
+30133e0
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.57146301
+e1
+Package pgfplots info on input line 200: boxplot: got median=3.84249649e1
+Package pgfplots info on input line 200: boxplot: got upper quartile=6.2859421e
+1
+Package pgfplots info on input line 200: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=2.839025048
+22462e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=1.184189971
+02958e2
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.5049385e
+0
+Package pgfplots info on input line 200: boxplot: got median=2.81061859e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.33204193
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.858606457
+7903e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=4.562704553
+50166e0
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.08829803
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.34378891e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.73128738
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.539505628
+6465e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.695442636
+33294e0
+PGFPlots: reading {abs-cr71-80.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=1.95597e0
+Package pgfplots info on input line 200: boxplot: got median=2.39372482e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.74571228
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.007e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.137422467
+26396e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=6.288857176
+83434e0
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.94177628
+e1
+Package pgfplots info on input line 200: boxplot: got median=4.56629715e1
+Package pgfplots info on input line 200: boxplot: got upper quartile=7.6745224e
+1
+Package pgfplots info on input line 200: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 200: boxplot: got lower whisker=2.603902685
+29126e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=1.460322150
+45866e2
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.69030304
+e0
+Package pgfplots info on input line 200: boxplot: got median=3.06316528e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.62071228
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.870757800
+46766e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=4.984526619
+24656e0
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.24037628
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.5585167e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=2.94660416
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.607529269
+22941e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=3.989837779
+47174e0
+PGFPlots: reading {abs-cr81-90.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.19109116
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.76302261e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=5.6914978e
+0
+Package pgfplots info on input line 200: boxplot: got sample size=7.25e2
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.222554958
+14333e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=1.013066157
+76081e1
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=3.09915161
+e1
+Package pgfplots info on input line 200: boxplot: got median=4.68363647e1
+Package pgfplots info on input line 200: boxplot: got upper quartile=7.8113098e
+1
+Package pgfplots info on input line 200: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=2.695162409
+75155e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=1.478620321
+03416e2
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.84699478
+e0
+Package pgfplots info on input line 200: boxplot: got median=3.21257706e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.85793839
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=2.039343113
+60791e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=5.357493965
+41117e0
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.37602692
+e0
+Package pgfplots info on input line 200: boxplot: got median=2.70958786e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=3.10216293
+e0
+Package pgfplots info on input line 200: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.557299478
+54906e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=4.185860770
+94915e0
+PGFPlots: reading {abs-cr91-100.csv}
+Package pgfplots info on input line 200: boxplot: got lower quartile=2.41207962
+e0
+Package pgfplots info on input line 200: boxplot: got median=3.05229034e0
+Package pgfplots info on input line 200: boxplot: got upper quartile=1.20414124
+e1
+Package pgfplots info on input line 200: boxplot: got sample size=1.342e3
+Package pgfplots info on input line 200: boxplot: got lower whisker=1.296742808
+79865e0
+Package pgfplots info on input line 200: boxplot: got upper whisker=2.639896707
+55326e1
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=2.0e0
+Package pgfplots info on input line 277: boxplot: got median=3.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=5.0e0
+Package pgfplots info on input line 277: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=9.0e0
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=2.0e0
+Package pgfplots info on input line 277: boxplot: got median=4.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=6.0e0
+Package pgfplots info on input line 277: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.1e1
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=3.0e0
+Package pgfplots info on input line 277: boxplot: got median=5.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=8.0e0
+Package pgfplots info on input line 277: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.4e1
+PGFPlots: reading {abs-cr11-20.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=3.0e0
+Package pgfplots info on input line 277: boxplot: got median=6.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.05e1
+Package pgfplots info on input line 277: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=2.0e1
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=3.0e0
+Package pgfplots info on input line 277: boxplot: got median=5.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=8.0e0
+Package pgfplots info on input line 277: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.4e1
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=3.0e0
+Package pgfplots info on input line 277: boxplot: got median=5.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=9.0e0
+Package pgfplots info on input line 277: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.7e1
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=4.0e0
+Package pgfplots info on input line 277: boxplot: got median=7.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.0e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.9e1
+PGFPlots: reading {abs-cr21-30.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=5.0e0
+Package pgfplots info on input line 277: boxplot: got median=9.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.7e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.63e2
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=3.4e1
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=5.0e0
+Package pgfplots info on input line 277: boxplot: got median=9.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.4e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=2.7e1
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=5.0e0
+Package pgfplots info on input line 277: boxplot: got median=8.0e0
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.3e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=2.5e1
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=7.0e0
+Package pgfplots info on input line 277: boxplot: got median=1.0e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.6e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=2.9e1
+PGFPlots: reading {abs-cr31-40.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=9.0e0
+Package pgfplots info on input line 277: boxplot: got median=1.6e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=2.9e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.323e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=5.9e1
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=8.0e0
+Package pgfplots info on input line 277: boxplot: got median=1.4e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=2.5e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=5.0e1
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=9.0e0
+Package pgfplots info on input line 277: boxplot: got median=1.4e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=2.1e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=3.9e1
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=1.0e1
+Package pgfplots info on input line 277: boxplot: got median=1.6e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=2.5e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=4.7e1
+PGFPlots: reading {abs-cr41-50.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=1.5e1
+Package pgfplots info on input line 277: boxplot: got median=2.6e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=5.0e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.33e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.02e2
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=1.4e1
+Package pgfplots info on input line 277: boxplot: got median=2.4e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=4.0e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=7.9e1
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=1.3e1
+Package pgfplots info on input line 277: boxplot: got median=2.1e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=3.3e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=2.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=6.3e1
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=1.55e1
+Package pgfplots info on input line 277: boxplot: got median=2.4e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=3.8e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=2.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=7.1e1
+PGFPlots: reading {abs-cr51-60.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=2.2e1
+Package pgfplots info on input line 277: boxplot: got median=3.6e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=6.699997e1
+
+Package pgfplots info on input line 277: boxplot: got sample size=1.037e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=3.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.34e2
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=2.1e1
+Package pgfplots info on input line 277: boxplot: got median=3.9e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=6.699997e1
+
+Package pgfplots info on input line 277: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=3.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.34e2
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=1.9e1
+Package pgfplots info on input line 277: boxplot: got median=3.0e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=4.8e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=3.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=9.1e1
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=2.2e1
+Package pgfplots info on input line 277: boxplot: got median=3.5e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=5.300003e1
+
+Package pgfplots info on input line 277: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=4.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=9.9e1
+PGFPlots: reading {abs-cr61-70.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=3.1e1
+Package pgfplots info on input line 277: boxplot: got median=5.199997e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=9.5999985e
+1
+Package pgfplots info on input line 277: boxplot: got sample size=1.091e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=4.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.89e2
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=3.6e1
+Package pgfplots info on input line 277: boxplot: got median=5.800003e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=8.800003e1
+
+Package pgfplots info on input line 277: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=5.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.64e2
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=2.8e1
+Package pgfplots info on input line 277: boxplot: got median=4.1e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=5.800003e1
+
+Package pgfplots info on input line 277: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=6.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.03e2
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=3.2e1
+Package pgfplots info on input line 277: boxplot: got median=4.65e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=6.5e1
+Package pgfplots info on input line 277: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=5.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.14e2
+PGFPlots: reading {abs-cr71-80.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=4.2e1
+Package pgfplots info on input line 277: boxplot: got median=6.5999985e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.1e2
+Package pgfplots info on input line 277: boxplot: got sample size=1.007e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=7.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=2.12e2
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=5.5e1
+Package pgfplots info on input line 277: boxplot: got median=8.9000015e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.25999985
+e2
+Package pgfplots info on input line 277: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.2e1
+Package pgfplots info on input line 277: boxplot: got upper whisker=2.29e2
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=4.0e1
+Package pgfplots info on input line 277: boxplot: got median=5.8499985e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=8.300003e1
+
+Package pgfplots info on input line 277: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.1e1
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.46e2
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=4.6e1
+Package pgfplots info on input line 277: boxplot: got median=6.699997e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=9.0e1
+Package pgfplots info on input line 277: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 277: boxplot: got lower whisker=1.3e1
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.54e2
+PGFPlots: reading {abs-cr81-90.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=5.8499985e
+1
+Package pgfplots info on input line 277: boxplot: got median=9.199997e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.65999985
+e2
+Package pgfplots info on input line 277: boxplot: got sample size=7.25e2
+Package pgfplots info on input line 277: boxplot: got lower whisker=9.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=3.25e2
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=7.5999985e
+1
+Package pgfplots info on input line 277: boxplot: got median=1.19000015e2
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.7050003e
+2
+Package pgfplots info on input line 277: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=8.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=3.12e2
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=5.0999985e
+1
+Package pgfplots info on input line 277: boxplot: got median=7.699997e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.05999985
+e2
+Package pgfplots info on input line 277: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=8.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.88e2
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=5.800003e1
+
+Package pgfplots info on input line 277: boxplot: got median=8.4000015e1
+Package pgfplots info on input line 277: boxplot: got upper quartile=1.1300003e
+2
+Package pgfplots info on input line 277: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=9.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=1.95e2
+PGFPlots: reading {abs-cr91-100.csv}
+Package pgfplots info on input line 277: boxplot: got lower quartile=7.300003e1
+
+Package pgfplots info on input line 277: boxplot: got median=1.1699997e2
+Package pgfplots info on input line 277: boxplot: got upper quartile=2.0949997e
+2
+Package pgfplots info on input line 277: boxplot: got sample size=1.342e3
+Package pgfplots info on input line 277: boxplot: got lower whisker=9.0e0
+Package pgfplots info on input line 277: boxplot: got upper whisker=4.14e2
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=4.5e2
+Package pgfplots info on input line 348: boxplot: got median=8.5e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.2e3
+Package pgfplots info on input line 348: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 348: boxplot: got lower whisker=1.0e2
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.3e3
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=4.0e2
+Package pgfplots info on input line 348: boxplot: got median=8.5e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.35e3
+Package pgfplots info on input line 348: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 348: boxplot: got lower whisker=1.0e2
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.7e3
+PGFPlots: reading {cr11-20.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.5e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=2.0e3
+Package pgfplots info on input line 348: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=4.7e3
+PGFPlots: reading {abs-cr11-20.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=1.26100006
+e3
+Package pgfplots info on input line 348: boxplot: got median=2.64000015e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=3.42399979
+e3
+Package pgfplots info on input line 348: boxplot: got sample size=9.1e1
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.303e3
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=5.0e2
+Package pgfplots info on input line 348: boxplot: got median=8.5e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.3e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 348: boxplot: got lower whisker=1.0e2
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.3e3
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=5.0e2
+Package pgfplots info on input line 348: boxplot: got median=8.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.35e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 348: boxplot: got lower whisker=1.0e2
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.5e3
+PGFPlots: reading {cr21-30.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.2e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.64e2
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.6e3
+PGFPlots: reading {abs-cr21-30.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=1.40699997
+e3
+Package pgfplots info on input line 348: boxplot: got median=2.87649994e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=4.11800003
+e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.63e2
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.884e3
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=6.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.1e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.6e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=3.1e3
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=6.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.0e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.5e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.8e3
+PGFPlots: reading {cr31-40.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=9.0e2
+Package pgfplots info on input line 348: boxplot: got sample size=1.346e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=1.9e3
+PGFPlots: reading {abs-cr31-40.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=9.1449966e
+2
+Package pgfplots info on input line 348: boxplot: got median=2.71399994e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=4.34850006
+e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.323e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.996e3
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=7.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.1e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.7e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=3.2e3
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=6.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.0e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.5e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.8e3
+PGFPlots: reading {cr41-50.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=9.0e2
+Package pgfplots info on input line 348: boxplot: got sample size=1.349e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=1.9e3
+PGFPlots: reading {abs-cr41-50.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=9.9349976e
+2
+Package pgfplots info on input line 348: boxplot: got median=2.607e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=4.27949982
+e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.33e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.999e3
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=7.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.2e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.8e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=3.4e3
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=6.0e2
+Package pgfplots info on input line 348: boxplot: got median=9.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.5e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.8e3
+PGFPlots: reading {cr51-60.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=8.0e2
+Package pgfplots info on input line 348: boxplot: got sample size=1.054e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=1.7e3
+PGFPlots: reading {abs-cr51-60.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=9.0999985e
+2
+Package pgfplots info on input line 348: boxplot: got median=2.3425003e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=3.8425003e
+3
+Package pgfplots info on input line 348: boxplot: got sample size=1.037e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.958e3
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=8.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.2e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.7e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=3.0e3
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=6.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.0e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.4e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.6e3
+PGFPlots: reading {cr61-70.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=7.0e2
+Package pgfplots info on input line 348: boxplot: got sample size=1.102e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=1.4e3
+PGFPlots: reading {abs-cr61-70.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=1.12399979
+e3
+Package pgfplots info on input line 348: boxplot: got median=2.42750015e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=3.98099976
+e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.091e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.943e3
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=8.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.2e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.8e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=3.3e3
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=6.0e2
+Package pgfplots info on input line 348: boxplot: got median=9.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.4e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.6e3
+PGFPlots: reading {cr71-80.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=7.0e2
+Package pgfplots info on input line 348: boxplot: got sample size=1.023e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=1.4e3
+PGFPlots: reading {abs-cr71-80.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=1.08550034
+e3
+Package pgfplots info on input line 348: boxplot: got median=2.24550018e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=3.70999985
+e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.007e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.954e3
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=8.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.2e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.8e3
+Package pgfplots info on input line 348: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=3.3e3
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=6.0e2
+Package pgfplots info on input line 348: boxplot: got median=9.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.4e3
+Package pgfplots info on input line 348: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.6e3
+PGFPlots: reading {cr81-90.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=7.0e2
+Package pgfplots info on input line 348: boxplot: got sample size=7.44e2
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=1.4e3
+PGFPlots: reading {abs-cr81-90.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=9.2399979e
+2
+Package pgfplots info on input line 348: boxplot: got median=1.96800003e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=3.39700012
+e3
+Package pgfplots info on input line 348: boxplot: got sample size=7.25e2
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.995e3
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=7.0e2
+Package pgfplots info on input line 348: boxplot: got median=1.1e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.7e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=3.2e3
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=6.0e2
+Package pgfplots info on input line 348: boxplot: got median=9.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=1.4e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=2.6e3
+PGFPlots: reading {cr91-100.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=2.0e2
+Package pgfplots info on input line 348: boxplot: got median=4.0e2
+Package pgfplots info on input line 348: boxplot: got upper quartile=7.0e2
+Package pgfplots info on input line 348: boxplot: got sample size=1.376e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=1.4e3
+PGFPlots: reading {abs-cr91-100.csv}
+Package pgfplots info on input line 348: boxplot: got lower quartile=8.875e2
+Package pgfplots info on input line 348: boxplot: got median=1.84550018e3
+Package pgfplots info on input line 348: boxplot: got upper quartile=3.38600006
+e3
+Package pgfplots info on input line 348: boxplot: got sample size=1.342e3
+Package pgfplots info on input line 348: boxplot: got lower whisker=0.0e0
+Package pgfplots info on input line 348: boxplot: got upper whisker=6.984e3
+ [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (./plotsWithTikz.au
+x) ) 
+Here is how much of TeX's memory you used:
+ 27335 strings out of 492982
+ 676379 string characters out of 6134895
+ 1688174 words of memory out of 5000000
+ 30474 multiletter control sequences out of 15000+600000
+ 5638 words of font info for 23 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 62i,14n,107p,733b,6920s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on plotsWithTikz.pdf (2 pages, 150703 bytes).
+PDF statistics:
+ 34 PDF objects out of 1000 (max. 8388607)
+ 24 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+
