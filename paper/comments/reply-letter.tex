@@ -18,9 +18,8 @@
 \author{}
 \date{}
 
-%\author{Patrizio Angelini, Michael A. Bekos, Giuseppe Liotta, Fabrizio Montecchiani}
 
-\author{M.~Bekos, H.~F\"orster, C.~Geckeler, L.~Holl\"ander, M.~Kaufmann, A.~Spallek, J.~Splett}
+\author{M.~A.~Bekos, H.~F\"orster, C.~Geckeler, L.~Holl\"ander,\\M.~Kaufmann, A.~Spallek, J.~Splett}
 
 \begin{document}
 
@@ -37,9 +36,7 @@
 
 The authors present a heuristic that aims to maximize the crossing resolution of graph. Their heuristic can be adopted to also aim towards maximizing angular and total resolution. The authors present an extensive experimental analysis which demonstrates that their heuristic outperforms the previously known approaches ([21,22], which are both ``spring-embedder'' like heuristics). The authors also demonstrate that their approach is efficient, resulting results in reasonable amounts of time. On the practical side they also produce grid drawings of restricted size, which is something previously known algorithms did not address. 
 
-The paper is well written. The heuristic is presented in a clear and simple way so that it is possible to be programmed by other researchers/developers. Sufficient details are also provided on how to run each step of the heuristic efficiently. Given the limited applied previous work on the topic (most of the previous work focuses on the case of RAC graphs), i believe that their contribution is significant and it is definitely worth publishing. I suggest ACCEPTANCE subject to addressing the following 
-
-MINOR issues:
+The paper is well written. The heuristic is presented in a clear and simple way so that it is possible to be programmed by other researchers/developers. Sufficient details are also provided on how to run each step of the heuristic efficiently. Given the limited applied previous work on the topic (most of the previous work focuses on the case of RAC graphs), i believe that their contribution is significant and it is definitely worth publishing. I suggest ACCEPTANCE subject to addressing the following MINOR issues:
 
 \begin{itemize}
 \rcomment{pg 2, ln 19, right. Remove ``Unless otherwise specified''. No directed or non-simple graphs are considered.}
@@ -62,13 +59,13 @@ MINOR issues:
 
 \response{Done.}
 
-\rcomment{pg 4, ln 60, left: The text followin "In other words.." is not implied by the formula. The formula should be: $c(\Gamma_{k}) \geq c(\Gamma_{k-1}), ~~0 \leq k \leq i-1$ or similar.}
+\rcomment{pg 4, ln 60, left: The text following "In other words.." is not implied by the formula. The formula should be: $c(\Gamma_{k}) \geq c(\Gamma_{k-1}), ~~0 \leq k \leq i-1$ or similar.}
 
-\response{Done.}
+\response{We agree with the reviewer. We have revised this part in the paper to make it clear.}
 
 \rcomment{pg 4, ln 46, right: ``or of a vertex that is in the neighborhood of the critical vertex...'' Why is this true in general? The edges incident to vertices in the neighborhood are not related to the crossing considered.}
 
-\response{This is not easy to answer precisely. Indeed, the vertices in the neighborhood are not related to the crossing resolution of the current drawing. However, by also considering these vertices (and in particular by moving them), we have observed that in several cases it is possible to gain the necessary space for the actual critical vertices, i.e., those that define the drawing's crossing resolution, to move and thus to improve the drawing's crossing resolution. This is the idea underneath.}
+\response{This is not easy to answer precisely. Indeed, the vertices in the neighborhood are not related to the crossing resolution of the current drawing. However, by also considering these vertices (and in particular by moving them), we have observed that in several cases it is possible to gain the necessary space for the actual critical vertices (i.e., those that define the drawing's crossing resolution) to move and thus to improve the drawing's crossing resolution. This is the idea underneath.}
 
 \rcomment{pg 4, ln 52, right: If possible, provide an intuition why you are using graph-distance instead of geometric-distance.}
 
@@ -97,11 +94,11 @@ MINOR issues:
 
 \rcomment{Figures 4,5,7,8. In caption (a) you state that it is the crossing resolution. In these figures it is either angular of total resolution.}
 
-\response{We have resolved this problem.}
+\response{In the revised version, we have changed the caption of the subfigures.}
 
 \rcomment{Figure 9. Clearly state that the double line refers to an algorithm that is unrestricted wrt the grid size. (So far, you have used the term "unrestricted" wrt the time devoted to each run; the user then expectes to have 4 such lines, one per grid size).}
 
-\response{In the revised version, we have revised the caption of Figure~9 to make this clear.}
+\response{In the revised version, we have changed the caption of Figure~9 to make this clear.}
 
 \rcomment{pg 16, line 38, left: "naturalLY observe".}
 
@@ -126,87 +123,16 @@ The paper introduces a heuristic based on local modifications. The approach iter
 In contrast to the conference version, the full journal contains a significant amount of new material. Nevertheless, before publishing, I would like to see the following two concerns addressed.
 
 \begin{itemize}
-\tcomment{First, the authors claim (Page 2, L20) to be aware of only two approaches (Argyriou et al. and Huang et al.) that optimize the crossing angle. On the other hand, the introduction contains a comparison to a third approach (CoffeeVM). The abstract in [1] suggests that CoffeeVM follows a similar local randomized approach. In my opinion, it is only fair to the authors of CoffeeVM to discuss similarities and differences between the two approaches.  Moreover, the vertex movement paradigm is an established technique and has successfully applied to graph theoretic and geometric problems. I propose to add [1-6] as relevant related work.}
-
-\response{}
-
-\tcomment{Second, I think that the structure of the evaluation can be improved by formulating a set of research questions. For example:
-
-I) Does algorithm A compute larger crossing angles than algorithm B?
-
-II) What is the angular resolution in drawings with small crossing angles?
-
-III) How many iterations need the algorithms to converge?
-
-Once the research questions are stated, one can think about proper setup and tools to investigate these questions. Of course with an experimental evaluation, it is unlikely that we are able to verify the research questions in their entirety. But we can collect indications that the statements are likely to be true (on specific data sets). One indicator that can be compared is the mean of two datasets, that is is the sole statistic used by the authors. }
-
-\response{}
-
-\tcomment{In my opinion, the mean should be accompanied by more statistics (at least the standard deviation), since the mean is sensitive to outliers. Moreover, I have the impression that the writing of the experimental evaluation lacks precision. A more formal style of writing reduces the possibility that statements can be misunderstood.
-For example, the word /significant/ has a defined meaning, it implies that a statement is very unlikely and this has been confirmed with a proper statistical test. But comparing the means of two sequences of observations A and B does not imply significance. Instead of writing "A has significantly smaller crossing angles than B", I propose to write "The mean of A is (considerably) smaller than the mean of B", or "the mean of A is X degrees smaller than the mean of B". In the following, I give an incomplete list of statements that should be revised.}
-
-\response{}
-
-\tcomment{p7,c2, ~l42) 'It is immediate to see that our algorithm outperforms all other ones in terms of the crossing resolution[...]'.
-
-The statement suggests an irrevocable truth but the only conclusion that you can draw from the plots is the following 'the mean crossing resolution of drawings obtained by your algorithm is considerably larger than the mean crossing resolutions of the remaining algorithms'. Alternatively, (globally) define the meaning of 'outperforms' "A outperforms B if the mean of A is X degrees smaller than the mean of B"}
-
-\response{}
-
-\tcomment{p7, c2, l54: While our unrestricted algorithm produces drawings with better crossing resolution no need to say /better/, it is /larger/}
-
-\response{}
-
-\tcomment{p8, c1, l56: ... has more or less comparable performance.... what does 'more or less' mean? Does the mean crossing resolution differ by at most x degrees?}
-
-\response{}
-
-\tcomment{p8, c1/2: ...which at the same time is significantly smaller;}
-
-\response{}
-
-\tcomment{p9, c1, l55: ... significant... I do not see why you are able to claim significance.}
-
-\response{}
-
-\tcomment{p10 c1, l47: For the vast majority of the graphs in the experiments; I am not sure whether you are still comparing the mean or the number of graphs that have a smaller angle. In the latter case there is no need to be vague: e.g. 'On 90\% of the graphs our algorithms compute drawings with a smaller crossing than drawings obtained by B'}
-
-\response{}
-
-
-\tcomment{p10, c1, l57: ...tend to produce drawings of the same total resolution on larger graphs 
-
-What does 'tend to the same' mean? Either they are equal or they are not. 
-
-How many vertices do the larger graphs have?    
-
-I guess what you would like to say is along the following lines:
-
-The mean values for the total resolution of drawings obtained by our algorithm and by Argyriou et al. differ by a most 5(?) degrees for graphs with more than 90 vertices.}
-
-\response{}
-
-\tcomment{p11, c2, ~l51: ...small graphs.... medium-size graphs
-
-As before, it is not clear when a graph is small, medium-sized or large. In case that you would like to use these terms frequently, I propose to introduce graphs classes: S, M, L that partition the rome graphs based on their number of vertices.}
-
-\response{}
-
-\tcomment{p12, c1, l48: the angular resolution dominates the crossing resolution
-
-I have problems understanding this statement. What does dominate mean?  Do you want to investigate the number of graphs whose crossing resolution is smaller than the total resolution? If so, I do not see how you can observe this based on the plots (even ignoring that my statement is on the number of graphs). Moreover, it seems strange to refactor this information from your plots when you could simply get this information from your data.}
-
-\response{}
-        
-\end{itemize} 
-
-\textbf{References:}
-
-[0] Devanny W., Kindermann P., Löffler M., Rutter I. (2018) Graph Drawing Contest Report. In: Frati F., Ma KL. (eds) Graph Drawing and Network Visualization. GD 2017. Lecture Notes in Computer Science, vol 10692. Springer, Cham
+\rcomment{First, the authors claim (Page 2, L20) to be aware of only two approaches (Argyriou et al. and Huang et al.) that optimize the crossing angle. On the other hand, the introduction contains a comparison to a third approach (CoffeeVM). The abstract in [1] suggests that CoffeeVM follows a similar local randomized approach. In my opinion, it is only fair to the authors of CoffeeVM to discuss similarities and differences between the two approaches.
 
 [1] Demel A., Dürrschnabel D., Mchedlidze T., Radermacher M., Wulf L. (2018) A Greedy Heuristic for Crossing-Angle Maximization. In: Biedl T., Kerren A. (eds) Graph Drawing and Network Visualization. GD 2018. Lecture Notes in Computer Science, vol 11282. Springer, Cham
+}
 
-[2] Johan Ugander and Lars Backstrom. 2013. Balanced label propagation for partitioning massive graphs. In Proceedings of the sixth ACM international conference on Web search and data mining (WSDM '13). ACM, New York, NY, USA, 507-516. DOI: https://doi.org/10.1145/2433396.2433461 
+\response{We added a paragraph discussing the general ideas of the approach in [1]}
+
+\rcomment{Moreover, the vertex movement paradigm is an established technique and has successfully applied to graph theoretic and geometric problems. I propose to add [1-6] as relevant related work.
+
+[2] Johan Ugander and Lars Backstrom. 2013. Balanced label propagation for partitioning massive graphs. In Proceedings of the sixth ACM international conference on Web search and data mining (WSDM '13). ACM, New York, NY, USA, 507-516.\\DOI: https://doi.org/10.1145/2433396.2433461 
 
 [3] C. M. Fiduccia and R. M. Mattheyses, "A Linear-Time Heuristic for Improving Network Partitions," 19th Design Automation Conference, Las Vegas, NV, USA, 1982, pp. 175-181.
 doi: 10.1109/DAC.1982.1585498
@@ -217,6 +143,80 @@ doi: 10.1109/DAC.1982.1585498
 Marcel Radermacher, Klara Reichard, Ignaz Rutter, and Dorothea Wagner
 2018 Proceedings of the Twentieth Workshop on Algorithm Engineering and Experiments (ALENEX). 2018, 129-138 
 
-[6] Bläsius T., Radermacher M., Rutter I. (2017) How to Draw a Planarization. In: Steffen B., Baier C., van den Brand M., Eder J., Hinchey M., Margaria T. (eds) SOFSEM 2017: Theory and Practice of Computer Science. SOFSEM 2017. Lecture Notes in Computer Science, vol 10139. Springer, Cham
+[6] Bläsius T., Radermacher M., Rutter I. (2017) How to Draw a Planarization. In: Steffen B., Baier C., van den Brand M., Eder J., Hinchey M., Margaria T. (eds) SOFSEM 2017: Theory and Practice of Computer Science. SOFSEM 2017. Lecture Notes in Computer Science, vol 10139. Springer, Cham}
+
+\response{References [1-6] have been added as related work.}
+
+\rcomment{Second, I think that the structure of the evaluation can be improved by formulating a set of research questions. For example:
+
+I) Does algorithm A compute larger crossing angles than algorithm B?
+
+II) What is the angular resolution in drawings with small crossing angles?
+
+III) How many iterations need the algorithms to converge?
+
+Once the research questions are stated, one can think about proper setup and tools to investigate these questions. Of course with an experimental evaluation, it is unlikely that we are able to verify the research questions in their entirety. But we can collect indications that the statements are likely to be true (on specific data sets). One indicator that can be compared is the mean of two datasets, that is is the sole statistic used by the authors.}
+
+\response{We preferred not to pose such exact questions, because we simply cannot provide answers to any of them. The reason is that an experimental evaluation can only give some indications. Instead, we now explicitly mention which are the parameters that are interested~in.}
+
+\rcomment{In my opinion, the mean should be accompanied by more statistics (at least the standard deviation), since the mean is sensitive to outliers.}
+
+\response{As mentioned in the previous reply, our experimental evaluation aims in giving some indications. The mean is a good metric in this direction, even though it is sensitive to outliers. \textcolor{red}{For completeness, we have added a diagram illustrating the standard deviation as suggested by the reviewer.}}
+
+\rcomment{Moreover, I have the impression that the writing of the experimental evaluation lacks precision. A more formal style of writing reduces the possibility that statements can be misunderstood. For example, the word /significant/ has a defined meaning, it implies that a statement is very unlikely and this has been confirmed with a proper statistical test. But comparing the means of two sequences of observations A and B does not imply significance. Instead of writing "A has significantly smaller crossing angles than B", I propose to write "The mean of A is (considerably) smaller than the mean of B", or "the mean of A is X degrees smaller than the mean of B". In the following, I give an incomplete list of statements that should be revised.}
+
+\response{We agree with the reviewer that some of our statements might be questionable. So, in the following, we have addressed each of the reviewer's specific comments in order to improve the presentation.}
+
+\rcomment{p7,c2, ~l42) 'It is immediate to see that our algorithm outperforms all other ones in terms of the crossing resolution[...]'. The statement suggests an irrevocable truth but the only conclusion that you can draw from the plots is the following 'the mean crossing resolution of drawings obtained by your algorithm is considerably larger than the mean crossing resolutions of the remaining algorithms'. Alternatively, (globally) define the meaning of 'outperforms' "A outperforms B if the mean of A is X degrees smaller than the mean of B"}
+
+\response{We revised according to the first suggestion of the reviewer.}
+
+\rcomment{p7, c2, l54: While our unrestricted algorithm produces drawings with better crossing resolution no need to say /better/, it is /larger/}
+
+\response{Done.}
+
+\rcomment{p8, c1, l56: ... has more or less comparable performance.... what does 'more or less' mean? Does the mean crossing resolution differ by at most x degrees?}
+
+\response{The phrase 'more or less' was describing the fact that the corresponding two curve in Fig.3b coincide. We have revised the statement to make it more clear.}
+
+\rcomment{p8, c1/2: ...which at the same time is significantly smaller;}
+
+\response{Done.}
+
+\rcomment{p9, c1, l55: ... significant... I do not see why you are able to claim significance.}
+
+\response{Indeed, the claim was overestimating the situation. We have revised accordingly.}
+
+\rcomment{p10 c1, l47: For the vast majority of the graphs in the experiments; I am not sure whether you are still comparing the mean or the number of graphs that have a smaller angle. In the latter case there is no need to be vague: e.g. 'On 90\% of the graphs our algorithms compute drawings with a smaller crossing than drawings obtained by B'}
+
+\response{We are always comparing mean numbers. This is explicitly stated at the beginning of Section 3. Here, we intended to distinguish between some graphs with small number of vertices ($<20$) and the remaining ones of the experiment. In the revised version, we are more precise in our description by explicitly mentioning this. We have revised accordingly.}
+
+
+\rcomment{p10, c1, l57: ...tend to produce drawings of the same total resolution on larger graphs.
+%
+What does 'tend to the same' mean? Either they are equal or they are not. 
+%
+How many vertices do the larger graphs have?    
+%
+I guess what you would like to say is along the following lines:
+%
+The mean values for the total resolution of drawings obtained by our algorithm and by Argyriou et al. differ by a most 5(?) degrees for graphs with more than 90 vertices.}
+
+\response{No, this was not what we intended to describe at this point. We really wanted to describe the tendency of the lines in the plot. In particular, the fact that they seem to converge to the same values after a point on. Nevertheless, to avoid confusion we removed this note in the revised version.}
+
+\rcomment{p11, c2, ~l51: ...small graphs.... medium-size graphs:
+%
+As before, it is not clear when a graph is small, medium-sized or large. In case that you would like to use these terms frequently, I propose to introduce graphs classes: S, M, L that partition the rome graphs based on their number of vertices.}
+
+\response{In the revised version, we use neither the term ``small graphs'' nor the term ``medium-size graphs''.}
+
+\rcomment{p12, c1, l48: the angular resolution dominates the crossing resolution:
+%
+I have problems understanding this statement. What does dominate mean?  Do you want to investigate the number of graphs whose crossing resolution is smaller than the total resolution? If so, I do not see how you can observe this based on the plots (even ignoring that my statement is on the number of graphs). Moreover, it seems strange to refactor this information from your plots when you could simply get this information from your data.}
+
+\response{We agree with the reviewer. This observation was questionable, as it was not supported by numbers in our experiment. It was simply our intuition but we somehow failed to transfer this information. In the revised version, the observation has been completely removed to avoid confusion.}
+        
+\end{itemize} 
+
 
 \end{document}
