@@ -31,7 +31,7 @@
 {blue,thick,smooth},
 {red,thick,smooth},
 {green!70!black,thick,smooth},
-{blue!50!red,thick,smooth},
+{red!40!blue,thick,smooth},
 {black,double,smooth}
 }
 
@@ -74,306 +74,7 @@
 
 \begin{document}
 \pgfkeys{/pgf/number format/.cd,1000 sep={}}
-\begin{figure}
-\centering
-\subfloat[\label{fig:crossingResolution}{}]{
-\centering
-\scalebox{.95}{
-\centering
-%======================
-% Crossing Resolution
-%======================
-\begin{tikzpicture}
-\begin{axis}[
-			 width=\textwidth,
-			 boxplot/draw direction=y,
-			 boxplot/draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*mod(\plotnumofactualtype,4)},
-			 boxplot/box extend=0.18,
-			 cycle list name=fourlist,
-			 ytick={0,10,20,30,40,50,60,70,80,90},
-			 ymajorgrids,
-			 xmajorgrids,
-			 xtick={0,1,2,...,9},
-			 x tick label as interval,
-     	     xticklabels={11--20,21--30,31--40,41--50,51--60,
-     	     61--70,71--80,81--90,91--100},
-     	     ylabel={Crossing Resolution},
-			 xlabel={Number of Vertices},
-			 ylabel style={yshift=-0.2cm}]
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr11-20.csv};
 
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr21-30.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr21-30.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr21-30.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr21-30.csv};
-
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr31-40.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr31-40.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr31-40.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr31-40.csv};
-
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr41-50.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr41-50.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr41-50.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr41-50.csv};
-
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr51-60.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr51-60.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr51-60.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr51-60.csv};
-
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr61-70.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr61-70.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr61-70.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr61-70.csv};
-
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr71-80.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr71-80.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr71-80.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr71-80.csv};
-
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr81-90.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr81-90.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr81-90.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr81-90.csv};
-
-\addplot+[boxplot] table [y=cr-rm, col sep=semicolon]  {cr91-100.csv};
-\addplot+[boxplot] table [y=cr-rm-1, col sep=semicolon] {cr91-100.csv};
-\addplot+[boxplot] table [y=cr-fa, col sep=semicolon] {cr91-100.csv};
-\addplot+[boxplot] table [y=Crossing Only Crossing Res, col sep=semicolon]{abs-cr91-100.csv};
-
-\end{axis}
-\end{tikzpicture}}}
-
-\subfloat[\label{fig:crossingResolution-aspectRatio}{}]{
-\centering
-\scalebox{.95}{
-\centering
-%===================================
-% Crossing Resolution Aspect Ratio
-%===================================
-\begin{tikzpicture}
-\begin{axis}[
-			 width=\textwidth,
-			 boxplot/draw direction=y,
-			 boxplot/draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*mod(\plotnumofactualtype,4)},
-			 boxplot/box extend=0.18,
-			 cycle list name=fourlist,
-			 ytick={1,2.5,10,25,100,250,1000,2500,10000,25000,100000,250000},
-			 ymode=log, log ticks with fixed point,
-			 ymajorgrids,
-			 xmajorgrids,
-			 xtick={0,1,2,...,9},
-			 x tick label as interval,
-     	     xticklabels={11--20,21--30,31--40,41--50,51--60,
-     	     61--70,71--80,81--90,91--100},
-     	     ylabel style={yshift=-0.2cm},
-			 ylabel={Aspect Ratio},
-			 xlabel={Number of Vertices}]
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr11-20.csv};
-
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr21-30.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr21-30.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr21-30.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr21-30.csv};
-
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr31-40.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr31-40.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr31-40.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr31-40.csv};
-
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr41-50.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr41-50.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr41-50.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr41-50.csv};
-
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr51-60.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr51-60.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr51-60.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr51-60.csv};
-
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr61-70.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr61-70.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr61-70.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr61-70.csv};
-
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr71-80.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr71-80.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr71-80.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr71-80.csv};
-
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr81-90.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr81-90.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr81-90.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr81-90.csv};
-
-\addplot+[boxplot] table [y=asp-rm, col sep=semicolon]  {cr91-100.csv};
-\addplot+[boxplot] table [y=asp-rm-1, col sep=semicolon] {cr91-100.csv};
-\addplot+[boxplot] table [y=asp-fa, col sep=semicolon] {cr91-100.csv};
-\addplot+[boxplot] table [y=Aspect Ratio, col sep=semicolon]{abs-cr91-100.csv};
-
-\end{axis}
-\end{tikzpicture}}}
-
-\end{figure}
-
-\begin{figure}
-\centering
-
-\subfloat[\label{fig:crossingResolution-crossings}{}]{
-\centering
-\scalebox{.95}{
-\centering
-%======================================
-% Crossing Resolution Crossing Number
-%======================================
-\begin{tikzpicture}
-\begin{axis}[
-			 width=\textwidth,
-			 boxplot/draw direction=y,
-     		 boxplot/draw position={1/5 + floor(\plotnumofactualtype/4) + (1/5)*mod(\plotnumofactualtype,4)},
-%			 boxplot/draw position={1/5*(\plotnumofactualtype+1) + 1/5*floor(\plotnumofactualtype/4)},
-			 boxplot/box extend=0.18,
-			 cycle list name=fourlist,
-			 ytick={0,50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000},
-			 ymajorgrids,
-			 xmajorgrids,
-			 xtick={0,1,2,3,4,5,6,7,8,9},
-			 x tick label as interval,
-     	     xticklabels={11--20,21--30,31--40,41--50,51--60,
-     	     61--70,71--80,81--90,91--100},
-     	     ylabel={Number of Crossings},
-			 xlabel={Number of Vertices},
-			 ylabel style={yshift=-0.2cm},
-			]
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr11-20.csv};
-
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr21-30.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr21-30.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr21-30.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr21-30.csv};
-
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr31-40.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr31-40.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr31-40.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr31-40.csv};
-
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr41-50.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr41-50.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr41-50.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr41-50.csv};
-
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr51-60.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr51-60.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr51-60.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr51-60.csv};
-
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr61-70.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr61-70.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr61-70.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr61-70.csv};
-
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr71-80.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr71-80.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr71-80.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr71-80.csv};
-
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr81-90.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr81-90.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr81-90.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr81-90.csv};
-
-\addplot+[boxplot] table [y=cn-rm, col sep=semicolon]  {cr91-100.csv};
-\addplot+[boxplot] table [y=cn-rm-1, col sep=semicolon] {cr91-100.csv};
-\addplot+[boxplot] table [y=cn-fa, col sep=semicolon] {cr91-100.csv};
-\addplot+[boxplot] table [y=Crossing Only No of Crossings, col sep=semicolon]{abs-cr91-100.csv};
-
-\end{axis}
-\end{tikzpicture}}}
-
-\subfloat[\label{fig:crossingResolution-iterations}{}]{
-\centering
-\scalebox{.95}{
-\centering
-%==================================
-% Crossing Resolution Iterations
-%==================================
-\begin{tikzpicture}
-\begin{axis}[
-			 width=\textwidth,
-			 boxplot/draw direction=y,
-			 boxplot/draw position={1/5 + floor(\plotnumofactualtype/4) + 1/5*mod(\plotnumofactualtype,4)},
-			 boxplot/box extend=0.18,
-			 cycle list name=fourlist,
-			 ytick={0,5000,10000,15000,20000,25000,30000,35000,40000,45000,50000,55000,  60000,65000},
-			 ymajorgrids,
-			 xmajorgrids,
-			 xtick={0,1,2,...,9},
-			 x tick label as interval,
-     	    xticklabels={11--20,21--30,31--40,41--50,51--60,
-     	     61--70,71--80,81--90,91--100},
-     	     ylabel={Iterations},
-     	     ylabel style={yshift=-0.2cm},
-			 xlabel={Number of Vertices}]
-\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr11-20.csv};
-\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr11-20.csv};
-
-\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr21-30.csv};
-\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr21-30.csv};
-\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr21-30.csv};
-\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr21-30.csv};
-
-\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr31-40.csv};
-\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr31-40.csv};
-\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr31-40.csv};
-\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr31-40.csv};
-
-\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr41-50.csv};
-\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr41-50.csv};
-\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr41-50.csv};
-\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr41-50.csv};
-
-\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr51-60.csv};
-\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr51-60.csv};
-\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr51-60.csv};
-\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr51-60.csv};
-
-\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr61-70.csv};
-\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr61-70.csv};
-\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr61-70.csv};
-\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr61-70.csv};
-
-\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr71-80.csv};
-\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr71-80.csv};
-\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr71-80.csv};
-\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr71-80.csv};
-
-\addplot+[boxplot] table [y=iterations-rm, col sep=semicolon]  {cr81-90.csv};
-\addplot+[boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr81-90.csv};
-\addplot+[boxplot] table [y=iterations-fa, col sep=semicolon] {cr81-90.csv};
-\addplot+[boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr81-90.csv};
-
-\addplot+[mark = x, boxplot] table [y=iterations-rm, col sep=semicolon]  {cr91-100.csv};
-\addplot+[mark = x, boxplot] table [y=iterations-rm-1, col sep=semicolon] {cr91-100.csv};
-\addplot+[mark = x, boxplot] table [y=iterations-fa, col sep=semicolon] {cr91-100.csv};
-\addplot+[mark = x, boxplot] table [y=Crossing Only Iterations, col sep=semicolon]{abs-cr91-100.csv};
-
-\end{axis}
-\end{tikzpicture}}}
-
-
-\end{figure}
 
 \begin{figure*}[t]
 \centering
@@ -404,10 +105,15 @@ mark repeat={5}, xtick={10,20,30,40,50,60,70,80,90,100}, ytick={0,10,20,30,40,50
 \addplot[name path=fa_d,,green!70!black,smooth,opacity=0.175] table [x=n, y=cr_down fa, col sep=semicolon]{crossingResolution.csv};
 \addplot[green!70!black,fill opacity=0.1] fill between[of=fa_u and fa_d];
 
+\addplot[name path=abs_u,red!40!blue,smooth,opacity=0.175] table [x=Nodes, y=cr_up, col sep=semicolon]{abs-crossingResolution.csv};
+\addplot[name path=abs_d,red!40!blue,smooth,opacity=0.175] table [x=Nodes, y=cr_down, col sep=semicolon]{abs-crossingResolution.csv};
+\addplot[red!40!blue,fill opacity=0.1] fill between[of=abs_u and abs_d];
+
+
 \addplot[blue,smooth,thick] table [x=n, y=crossing resolution rm, col sep=semicolon]{crossingResolution.csv};
 \addplot[red,smooth,thick] table [x=n, y=crossing resolution rm-1, col sep=semicolon] {crossingResolution.csv};
 \addplot[green!70!black,smooth,thick] table [x=n, y=crossing resolution fa, col sep=semicolon]{crossingResolution.csv};
-\addplot[blue!50!red,smooth,thick] table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-crossingResolution.csv};
+\addplot[red!40!blue,smooth,thick] table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-crossingResolution.csv};
 
 
 
@@ -420,11 +126,36 @@ mark repeat={5}, xtick={10,20,30,40,50,60,70,80,90,100}, ytick={0,10,20,30,40,50
 % Crossing Resolution Aspect Ratio
 %===================================
 \begin{tikzpicture}
-\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist-filled, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},ylabel={Aspect Ratio}, xlabel={Number of Vertices}, ytick={1,2.5,10,25,100,250,1000,2500,10000}, xmin=10, xmax=100,ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},ylabel={Aspect Ratio}, xlabel={Number of Vertices}, ytick={1,2.5,10,25,100,250,1000,2500,10000}, xmin=10, xmax=100,ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
+
 \addplot table [x=n, y=Aspect ratio rm, col sep=semicolon]{crossingResolution.csv};
 \addplot table [x=n, y=Aspect ratio rm-1, col sep=semicolon] {crossingResolution.csv};
 \addplot table [x=n, y=Aspect ratio fa, col sep=semicolon]{crossingResolution.csv};
 \addplot table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-aspectRatio.csv};
+
+\addplot[name path=rm_u,blue,smooth,opacity=0.175] table [x=n, y=asp_up rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[name path=rm_d,blue,smooth,opacity=0.175] table [x=n, y=asp_down rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[blue!80,fill opacity=0.1] fill between[of=rm_u and rm_d];
+
+\addplot[name path=rm-1_u,red!80,smooth,opacity=0.175] table [x=n, y=asp_up rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[name path=rm-1_d,red!80,smooth,opacity=0.175] table [x=n, y=asp_down rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[red!80,fill opacity=0.1] fill between[of=rm-1_u and rm-1_d];
+
+
+\addplot[name path=fa_u,green!70!black,smooth,opacity=0.175] table [x=n, y=asp_up fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[name path=fa_d,,green!70!black,smooth,opacity=0.175] table [x=n, y=asp_down fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[green!70!black,fill opacity=0.1] fill between[of=fa_u and fa_d];
+
+\addplot[name path=abs_u,red!40!blue,smooth,opacity=0.175] table [x=Nodes, y=cr_up, col sep=semicolon]{abs-aspectRatio.csv};
+\addplot[name path=abs_d,red!40!blue,smooth,opacity=0.175] table [x=Nodes, y=cr_down, col sep=semicolon]{abs-aspectRatio.csv};
+\addplot[red!40!blue,fill opacity=0.1] fill between[of=abs_u and abs_d];
+
+
+\addplot[blue,smooth,thick] table [x=n, y=Aspect ratio rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[red,smooth,thick] table [x=n, y=Aspect ratio rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[green!70!black,smooth,thick] table [x=n, y=Aspect ratio fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[red!40!blue,smooth,thick] table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-aspectRatio.csv};
+
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}
@@ -435,11 +166,35 @@ mark repeat={5}, xtick={10,20,30,40,50,60,70,80,90,100}, ytick={0,10,20,30,40,50
 % Crossing Resolution Crossing Number
 %======================================
 \begin{tikzpicture}
-\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist-filled,  mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100}, xmin=10, xmax=100, ytick={0,25,50,75,100,125,150,175,200},ylabel={Number of Crossings}, xlabel={Number of Vertices},tick pos=left, ymajorgrids]
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100}, xmin=10, xmax=100, ytick={0,50,...,350},ylabel={Number of Crossings}, xlabel={Number of Vertices},tick pos=left, ymajorgrids]
+
 \addplot table [x=n, y=Crossing number rm, col sep=semicolon]{crossingResolution.csv};
 \addplot table [x=n, y=Crossing number rm-1, col sep=semicolon] {crossingResolution.csv};
 \addplot table [x=n, y=Crossing number fa, col sep=semicolon]{crossingResolution.csv};
 \addplot table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-crossings.csv};
+
+\addplot[name path=rm_u,blue,smooth,opacity=0.175] table [x=n, y=cn_up rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[name path=rm_d,blue,smooth,opacity=0.175] table [x=n, y=cn_down rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[blue!80,fill opacity=0.1] fill between[of=rm_u and rm_d];
+
+\addplot[name path=rm-1_u,red!80,smooth,opacity=0.175] table [x=n, y=cn_up rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[name path=rm-1_d,red!80,smooth,opacity=0.175] table [x=n, y=cn_down rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[red!80,fill opacity=0.1] fill between[of=rm-1_u and rm-1_d];
+
+
+\addplot[name path=fa_u,green!70!black,smooth,opacity=0.175] table [x=n, y=cn_up fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[name path=fa_d,,green!70!black,smooth,opacity=0.175] table [x=n, y=cn_down fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[green!70!black,fill opacity=0.1] fill between[of=fa_u and fa_d];
+
+\addplot[name path=abs_u,red!40!blue,smooth,opacity=0.175] table [x=Nodes, y=cr_up, col sep=semicolon]{abs-crossings.csv};
+\addplot[name path=abs_d,red!40!blue,smooth,opacity=0.175] table [x=Nodes, y=cr_down, col sep=semicolon]{abs-crossings.csv};
+\addplot[red!40!blue,fill opacity=0.1] fill between[of=abs_u and abs_d];
+
+\addplot[blue,smooth,thick] table [x=n, y=Crossing number rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[red,smooth,thick] table [x=n, y=Crossing number rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[green!70!black,smooth,thick] table [x=n, y=Crossing number fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[red!40!blue,smooth,thick] table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-crossings.csv};
+
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}
@@ -449,12 +204,37 @@ mark repeat={5}, xtick={10,20,30,40,50,60,70,80,90,100}, ytick={0,10,20,30,40,50
 % Crossing Resolution Iterations
 %==================================
 \begin{tikzpicture}
-\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist-filled,  ylabel={Iterations}, xlabel={Number of Vertices}, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100}, xmin=10,
-xmax=100, ytick={0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000},tick pos=left, ymajorgrids]
+\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,ylabel style={yshift=-0.2cm},legend style={at={(0.425,1.35)}, anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  ylabel={Iterations}, xlabel={Number of Vertices}, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100}, xmin=10,
+xmax=100, ytick={0,2000,4000,...,14000},tick pos=left, ymajorgrids]
+
 \addplot table [x=n, y=Iterations rm, col sep=semicolon]{crossingResolution.csv};
 \addplot table [x=n, y=Iterations rm-1, col sep=semicolon] {crossingResolution.csv};
 \addplot table [x=n, y=Iterations fa, col sep=semicolon]{crossingResolution.csv};
 \addplot table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-iterations.csv};
+
+\addplot[name path=rm_u,blue,smooth,opacity=0.175] table [x=n, y=it_up rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[name path=rm_d,blue,smooth,opacity=0.175] table [x=n, y=it_down rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[blue!80,fill opacity=0.1] fill between[of=rm_u and rm_d];
+
+\addplot[name path=rm-1_u,red!80,smooth,opacity=0.175] table [x=n, y=it_up rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[name path=rm-1_d,red!80,smooth,opacity=0.175] table [x=n, y=it_down rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[red!80,fill opacity=0.1] fill between[of=rm-1_u and rm-1_d];
+
+
+\addplot[name path=fa_u,green!70!black,smooth,opacity=0.175] table [x=n, y=it_up fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[name path=fa_d,,green!70!black,smooth,opacity=0.175] table [x=n, y=it_down fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[green!70!black,fill opacity=0.1] fill between[of=fa_u and fa_d];
+
+\addplot[name path=abs_u,red!40!blue,smooth,opacity=0.175] table [x=Nodes, y=cr_up, col sep=semicolon]{abs-iterations.csv};
+\addplot[name path=abs_d,red!40!blue,smooth,opacity=0.175] table [x=Nodes, y=cr_down, col sep=semicolon]{abs-iterations.csv};
+\addplot[red!40!blue,fill opacity=0.1] fill between[of=abs_u and abs_d];
+
+
+\addplot[blue,smooth,thick] table [x=n, y=Iterations rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[red,smooth,thick] table [x=n, y=Iterations rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[green!70!black,smooth,thick] table [x=n, y=Iterations fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[red!40!blue,smooth,thick] table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-iterations.csv};
+
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
 \end{axis}
 \end{tikzpicture}}
