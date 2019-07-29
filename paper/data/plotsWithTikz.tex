@@ -28,10 +28,10 @@
 \renewcommand{\axisdefaultheight}{185pt}
 
 \pgfplotscreateplotcyclelist{mylist}{%
-{black,thick,smooth},
-{black!50!white,thick,smooth},
-{black,thick,densely dashed,smooth},
-{black!50!white,thick,densely dashed,smooth},
+{blue,thick,smooth},
+{red,thick,smooth},
+{green!70!black,thick,smooth},
+{blue!50!red,thick,smooth},
 {black,double,smooth}
 }
 
@@ -391,19 +391,24 @@ mark repeat={5}, xtick={10,20,30,40,50,60,70,80,90,100}, ytick={0,10,20,30,40,50
 \addplot table [x=n, y=crossing resolution fa, col sep=semicolon]{crossingResolution.csv};
 \addplot table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-crossingResolution.csv};
 
+\addplot[name path=rm_u,blue,smooth,opacity=0.175] table [x=n, y=cr_up rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[name path=rm_d,blue,smooth,opacity=0.175] table [x=n, y=cr_down rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[blue!80,fill opacity=0.1] fill between[of=rm_u and rm_d];
 
-\addplot[name path=rm_u,black,smooth] table [x=n, y=cr_up rm, col sep=semicolon]{crossingResolution.csv};
-\addplot[name path=rm_d,black,smooth] table [x=n, y=cr_down rm, col sep=semicolon]{crossingResolution.csv};
-\addplot[black!50,fill opacity=0.5] fill between[of=rm_u and rm_d];
-
-\addplot[name path=rm-1_u,black!50!white,smooth] table [x=n, y=cr_up rm-1, col sep=semicolon] {crossingResolution.csv};
-\addplot[name path=rm-1_d,black!50!white,smooth] table [x=n, y=cr_down rm-1, col sep=semicolon] {crossingResolution.csv};
-\addplot[black!25,fill opacity=0.5] fill between[of=rm-1_u and rm-1_d];
+\addplot[name path=rm-1_u,red!80,smooth,opacity=0.175] table [x=n, y=cr_up rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[name path=rm-1_d,red!80,smooth,opacity=0.175] table [x=n, y=cr_down rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[red!80,fill opacity=0.1] fill between[of=rm-1_u and rm-1_d];
 
 
-\addplot[name path=fa_u,black,smooth,densely dashed] table [x=n, y=cr_up fa, col sep=semicolon]{crossingResolution.csv};
-\addplot[name path=fa_d,black,smooth,densely dashed] table [x=n, y=cr_down fa, col sep=semicolon]{crossingResolution.csv};
-\addplot[black!50,fill opacity=0.5] fill between[of=fa_u and fa_d];
+\addplot[name path=fa_u,green!70!black,smooth,opacity=0.175] table [x=n, y=cr_up fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[name path=fa_d,,green!70!black,smooth,opacity=0.175] table [x=n, y=cr_down fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[green!70!black,fill opacity=0.1] fill between[of=fa_u and fa_d];
+
+\addplot[blue,smooth,thick] table [x=n, y=crossing resolution rm, col sep=semicolon]{crossingResolution.csv};
+\addplot[red,smooth,thick] table [x=n, y=crossing resolution rm-1, col sep=semicolon] {crossingResolution.csv};
+\addplot[green!70!black,smooth,thick] table [x=n, y=crossing resolution fa, col sep=semicolon]{crossingResolution.csv};
+\addplot[blue!50!red,smooth,thick] table [x=Nodes, y=Crossing Only, col sep=semicolon]{abs-crossingResolution.csv};
+
 
 
 \legend{{Unrestricted},{AR-restricted~~},{Huang et al.},{Argyriou et al.}}
