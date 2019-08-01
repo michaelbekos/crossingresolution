@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.12)  29 JUL 2019 15:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.12)  29 JUL 2019 17:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1092,128 +1092,12 @@ PGFPlots: reading {crossingResolution.csv}
 NOTE: coordinate (,) has been dropped because of a coordinate filter. (see also
  unbounded coords=jump). 
 PGFPlots: reading {crossingResolution.csv}
-NOTE: coordinate (11,-5.46607788156759) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (16,-2.73901355774482) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (17,-12.1089832936363) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (18,-5.74592442268248) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (19,-8.74286202350559) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (20,-2.91620782733488) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (22,-1.03814575839784) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (26,-21.5319068002423) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (27,-10.5352264522743) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (28,-23.4071349549024) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (33,-12.8239689943993) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (35,-1.49807415069801) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (36,-22.027478602056) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (37,-6.84586024175916) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (38,-13.6567673561487) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (39,-4.57676680373222) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (40,-5.1612766348916) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (41,-6.12935912184437) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (44,-4.3534235113697) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (45,-8.16895510276848) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (48,-13.2360586786968) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (50,-5.4416304781037) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (53,-17.7542704243396) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (54,-24.1963426129328) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (56,-13.8758035049891) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (57,-14.2002804024496) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (58,-17.3340182488979) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (59,-3.16335916362755) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (60,-14.1749734685815) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (61,-22.9474584520943) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (62,-6.4685733201827) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (63,-8.51790601687599) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (64,-9.94178031234382) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (65,-0.848250250298975) has been dropped because it is unbound
-ed (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (66,-16.9137787109415) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (67,-7.76308655604304) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (69,-29.0028610217727) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (70,-8.15196762585743) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (71,-8.81029024175201) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (72,-6.51869504670085) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (73,-27.3778121369334) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (74,-13.7693354576914) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (75,-32.4155720430746) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (76,-0.675620583670174) has been dropped because it is unbound
-ed (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (77,-3.54559492978979) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (79,-27.999863823086) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (80,-1.38461773778688) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (81,-2.27382488902069) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (83,-69.8783660911904) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (84,-17.7085946045147) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (88,-5.80113904843675) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (89,-33.8503283508667) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (90,-23.8715337973876) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (94,-12.0037556960475) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (95,-17.3287971648876) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (99,-8.51472789100717) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
 NOTE: coordinate (,) has been dropped because of a coordinate filter. (see also
  unbounded coords=jump). 
 PGFPlots: reading {crossingResolution.csv}
 NOTE: coordinate (,) has been dropped because of a coordinate filter. (see also
  unbounded coords=jump). 
 PGFPlots: reading {crossingResolution.csv}
-NOTE: coordinate (66,-3.77787601628788) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (89,-0.103772721722834) has been dropped because it is unbound
-ed (in y). (see also unbounded coords=jump). 
 NOTE: coordinate (,) has been dropped because of a coordinate filter. (see also
  unbounded coords=jump). 
 PGFPlots: reading {crossingResolution.csv}
@@ -1284,164 +1168,6 @@ Package pgfplots Warning: Table 'abs-aspectRatio.csv' has an empty column name;
  replacing it by '17'' on input line 161.
 
  [warning /pgfplots/warning/empty column name]
-NOTE: coordinate (16,-508.438873109602) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (19,-122.969276013784) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (20,-676.6894006693) has been dropped because it is unbounded 
-(in y). (see also unbounded coords=jump). 
-NOTE: coordinate (21,-10983.2052766039) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (23,-1055.5522731398) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (26,-3340.41958265904) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (27,-373.487489750486) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (29,-1113.50721603777) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (30,-445.763076242885) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (31,-178.665535258896) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (32,-115.743669196699) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (33,-983.603720421893) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (34,-3906.20636891699) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (35,-2102.32123149616) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (36,-4176.49550264058) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (37,-1908.35293590868) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (38,-1536.21995929903) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (39,-6160.61029852624) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (40,-1256.91628653823) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (41,-1055.60018105896) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (42,-2415.45124037687) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (43,-2294.7045652615) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (44,-169.503407504862) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (45,-578.821073881212) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (46,-1007.41577205706) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (47,-4501.60531421066) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (48,-17943.077040264) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (49,-1785.28972815594) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (50,-1928.33669910974) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (51,-616.682982804539) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (52,-675.024181912435) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (53,-6833.20371409939) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (54,-6137.81394511384) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (55,-2381.1171504011) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (56,-1768.69725052321) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (57,-11380.1779282205) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (58,-1487.70668218058) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (59,-7293.67746898752) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (60,-845.192711595546) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (61,-1470.96095774636) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (62,-962.939860993206) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (63,-3469.62167938761) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (64,-1929.27335158831) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (65,-6265.65634627126) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (66,-833.054260178611) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (67,-3435.68487956132) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (68,-660.344686545032) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (69,-5351.8180831707) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (70,-1487.30297736888) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (71,-3626.58874779974) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (72,-5649.03608592116) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (73,-2558.56869779552) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (74,-1204.19225862015) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (75,-6242.74723442344) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (76,-2382.41398068311) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (77,-3672.27425849812) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (78,-22930.5788126895) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (79,-17793.4660427089) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (80,-1475.08478594534) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (81,-1161.35033565016) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (82,-2573.98319912363) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (83,-1298.19144908588) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (84,-3202.56315724944) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (85,-2828.26975532501) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (86,-6063.86090766184) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (87,-7749.45636954467) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (88,-859.930793184256) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (89,-1315.61068216223) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (90,-17743.3723431158) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (91,-617.622074367336) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (92,-15298.0213881985) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (93,-2466.37776330084) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (94,-5458.21786698126) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (95,-6539.8243547813) has been dropped because it is unbounded
- (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (96,-15752.7595499316) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (97,-9575.24467542119) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (98,-9969.01540603216) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (99,-11708.9989060264) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
-NOTE: coordinate (100,-1729.7938186005) has been dropped because it is unbounde
-d (in y). (see also unbounded coords=jump). 
 PGFPlots: reading {crossingResolution.csv}
 NOTE: coordinate (,) has been dropped because of a coordinate filter. (see also
  unbounded coords=jump). 
@@ -1822,25 +1548,27 @@ ics
 Package pgfplots info on input line 240: Setting layers 'axis background,axis g
 rid,axis ticks,axis lines,axis tick labels,pre main,main,axis descriptions,axis
  foreground'...
+
+Overfull \hbox (4.84486pt too wide) in paragraph at lines 200--241
+ [][][] 
+ []
+
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./plotsWithTikz.aux) ) 
 Here is how much of TeX's memory you used:
- 24995 strings out of 492982
- 646439 string characters out of 6134895
- 2090411 words of memory out of 5000000
- 28132 multiletter control sequences out of 15000+600000
+ 24994 strings out of 492982
+ 646400 string characters out of 6134895
+ 2122390 words of memory out of 5000000
+ 28131 multiletter control sequences out of 15000+600000
  5638 words of font info for 23 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 65i,18n,111p,1052b,2222s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 65i,18n,111p,1049b,2220s stack positions out of 5000i,500n,10000p,200000b,80000s
 <
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/te
-xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on plotsWithTikz.pdf (1 page, 220731 bytes).
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
+Output written on plotsWithTikz.pdf (1 page, 199585 bytes).
 PDF statistics:
- 31 PDF objects out of 1000 (max. 8388607)
- 22 compressed objects within 1 object stream
+ 19 PDF objects out of 1000 (max. 8388607)
+ 13 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
