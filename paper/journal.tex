@@ -112,7 +112,7 @@ The latter result is an indication that the problem of finding drawings with hig
 
 From a practical point of view, we are only aware of two methods that aim at drawings with high crossing resolution; both of them are adjustments of force-directed algorithms~\cite{DBLP:journals/congnum/Eades84}. The first one is due to Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13}, while the~second one is due to Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}. Common in both algorithms is that they apply appropriate forces on the endvertices of every pair of crossing edges. Each of them uses a different way to compute (the direction and the magnitude of) the forces, but the underlying idea of both is the same: the smaller the crossing angles are, the larger are the magnitudes of the forces applied at their endvertices.
 
-In this work, we approach the crossing resolution maximization problem from a different perspective. We suggest a simple and intuitive randomization method for computing drawings with high crossing resolution, which, in a sense, mimics the way a human would try to increase the crossing resolution of a drawing. How would one increase the crossing resolution of a given drawing? First, she would try to identify the pair of edges that define the crossing resolution of the drawing (we call them \emph{critical} edges); then, she would try to move an endvertex of this pair (which we choose at random), hoping that by this move the crossing resolution will increase. Of course, we cannot consider all possible positions for the vertex to be moved. Instead, we consider a small set of randomly generated ones. If there exists a position among them, that does not lead to a reduction of the crossing resolution, we move the vertex to this position. Note at that in general the vertex movement paradigm is an established technique and has successfully applied to graph theoretic and geometric problems; see, e.g.,~\cite{DBLP:conf/sofsem/BlasiusRR17,DBLP:conf/dac/FiducciaM82,6771089,DBLP:conf/alenex/RadermacherRRW18,DBLP:conf/wsdm/UganderB13}.
+In this work, we approach the crossing resolution maximization problem from a different perspective. We suggest a simple and intuitive randomization method for computing drawings with high crossing resolution, which, in a sense, mimics the way a human would try to increase the crossing resolution of a drawing. How would one increase the crossing resolution of a given drawing? First, she would try to identify the pair of edges that define the crossing resolution of the drawing (we call them \emph{critical} edges); then, she would try to move an endvertex of this pair (which we choose at random), hoping that by this move the crossing resolution will increase. Of course, we cannot consider all possible positions for the vertex to be moved. Instead, we consider a small set of randomly generated ones. If there exists a position among them, that does not lead to a reduction of the crossing resolution, we move the vertex to this position. Note that that in general the vertex movement paradigm is an established technique and has successfully applied to graph-theoretic and geometric problems; see, e.g.,~\cite{DBLP:conf/sofsem/BlasiusRR17,DBLP:conf/dac/FiducciaM82,6771089,DBLP:conf/alenex/RadermacherRRW18,DBLP:conf/wsdm/UganderB13}.
 
 On the other hand, randomization is a technique that has not been deeply examined in Graph Drawing, as it seems difficult to even speculate about the expected quality of the produced drawings; a notable exception is the randomized approach by Goldschmidt and Takvorian~\cite{DBLP:journals/networks/GoldschmidtT94} for computing large planar subgraphs of general graphs. Since we also could not provide any theoretical guarantee on the expected quality of the produced drawings (mainly due to the nature of the problem itself), we followed a more practical approach. We implemented our algorithm and the force-directed ones by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, and we experimentally compared them on standard benchmark graphs that are widely used in Graph Drawing for comparing different drawing algorithms. Our evaluation indicates that our method significantly outperforms the aforementioned force-directed algorithms in terms of crossing resolution, but this comes at the cost of slightly worse running time, especially for large and dense graphs. Analogous results are obtained, when our algorithm and the ones by Argyriou et al.~\cite{DBLP:journals/cj/ArgyriouBS13} and by Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13} are adjusted to maximize the \emph{angular resolution} (that is, the minimum value of the angle between any two adjacent edges~\cite{DBLP:journals/siamcomp/FormannHHKLSWW93}) or the \emph{total resolution} (that is, the minimum of the angular and the crossing resolution~\cite{DBLP:journals/cj/ArgyriouBS13}).
 
@@ -392,16 +392,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t]
 	\centering
 	\subfloat[\label{fig:cr-res-1}{Crossing resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=13]{figures/rome}}
+	\includegraphics[scale=0.99,page=1]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:cr-res-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=14]{figures/rome}}
+	\includegraphics[scale=0.99,page=2]{figures/rome_colored}}
 	
 	\subfloat[\label{fig:cr-res-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=15]{figures/rome}}
+	\includegraphics[scale=0.99,page=3]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:cr-res-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=16]{figures/rome}}
+	\includegraphics[scale=0.99,page=4]{figures/rome_colored}}
 	\caption{Experimental results on the crossing resolution for the Rome graphs.}
 	\label{fig:cr-res}
 \end{figure*}
@@ -412,16 +412,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t]
 	\centering
 	\subfloat[\label{fig:to-res-1}{Total resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=5]{figures/rome}}
+	\includegraphics[scale=0.99,page=9]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:to-res-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=6]{figures/rome}}
+	\includegraphics[scale=0.99,page=10]{figures/rome_colored}}
 	
 	\subfloat[\label{fig:to-res-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=7]{figures/rome}}
+	\includegraphics[scale=0.99,page=11]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:to-res-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=8]{figures/rome}}
+	\includegraphics[scale=0.99,page=12]{figures/rome_colored}}
 	\caption{Experimental results on the total resolution for the Rome graphs.}
 	\label{fig:to-res}
 \end{figure*}
@@ -432,16 +432,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t]
 	\centering
 	\subfloat[\label{fig:an-res-1}{Angular resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=9]{figures/rome}}
+	\includegraphics[scale=0.99,page=5]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:an-res-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=10]{figures/rome}}
+	\includegraphics[scale=0.99,page=6]{figures/rome_colored}}
 	
 	\subfloat[\label{fig:an-res-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=11]{figures/rome}}
+	\includegraphics[scale=0.99,page=7]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:an-res-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=12]{figures/rome}}
+	\includegraphics[scale=0.99,page=8]{figures/rome_colored}}
 	\caption{Experimental results on the angular resolution for the Rome graphs.}
 	\label{fig:an-res}
 \end{figure*}
@@ -528,7 +528,7 @@ Analogous observations can be made for the number of crossings of the produced l
 
 On the negative side, both the unrestricted and the restricted variants of our algorithm require more iterations than the force-directed algorithm by Huang et al.\ in order to converge; see Fig.~\ref{fig:to-res-4}. Recall, however, that the latter algorithm is clearly outperformed by both our variants in term of total resolution. The algorithm by Argyriou et al.\ clearly requires the highest number of iterations (especially for large graphs). We note that the convergence criterion was the same as for the crossing resolution; however, the measured quality was (not the crossing but) the total resolution.
 
-\myparagraph{Angular resolution} We conclude the analysis of our experimental evaluation with the results for the angular resolution; see Fig.~\ref{fig:an-res}. Here, each algorithm was adjusted  to maximize only the angular resolution (i.e., by ignoring the drawing's crossing resolution). A notable observation is that, for graphs with less than $30$ vertices the best results are achieved by the algorithm by Argyriou et al., while for the remaining graphs by our unrestricted algorithm; see Fig.~\ref{fig:an-res-1}. For large graphs, the two algorithms tend to have the same performance. The restricted variant of our algorithm yields drawings with slightly worse angular resolution. The algorithm by Huang et al.\ is outperformed by all algorithms of the experiment.
+\myparagraph{Angular resolution} We conclude the analysis of our experimental evaluation with the results for the angular resolution; see Fig.~\ref{fig:an-res}. Here, each algorithm was adjusted  to maximize only the angular resolution (i.e., by ignoring the drawing's crossing resolution). Our unrestricted algorithm yields drawings with better angular resolution than the corresponding ones produced by our restricted variant, and by the algorithms by Argyriou et al.\ and by Huang et al.; see Fig.~\ref{fig:an-res-1}. For graphs with 90 or more vertices, however, our unrestricted algorithms and the algorithm by Argyriou et al.\ tend to produce drawings with the same angular resolution on average. The restricted variant of our algorithm yields drawings with slightly worse angular resolution. The algorithm by Huang et al.\ is outperformed by all algorithms of the experiment.
 %
 The results for the edge-length ratio, the number of crossings and the required number of iterations are very similar with corresponding ones for the total resolution; see Figs.~\ref{fig:an-res-2}--\ref{fig:an-res-4}.% This observation suggests that, for most of the graphs of our experiment, the angular resolution is greater than the crossing resolution (and thus is the one defining the total resolution) in the constructed drawings, which explains the similarity in the reported results. The small differences result from the fact that the crossing resolution cannot be entirely neglected.
 

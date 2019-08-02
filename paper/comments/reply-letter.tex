@@ -25,7 +25,7 @@
 
 \maketitle
 
-\noindent We thank all reviewers for their very helpful comments and suggestions. We have addressed all the raised issues. Details are provided below, where we list all reviews together with a detailed response to each suggestion by the reviewers.
+\noindent We thank all reviewers for their very helpful comments and suggestions. We have addressed all the raised issues. Details are provided below, where we list all reviews together with a detailed response to each suggestion by the reviewers. For convenience, we also attach a diff PDF highlighting the differences between the submitted version and the revision.
 
 \newpage
 
@@ -104,9 +104,9 @@ The paper is well written. The heuristic is presented in a clear and simple way 
 
 \response{Done.}
 
-\tcomment{General comment: It should be also interesting to compare the crossing resolution between the "non-grid" and the "grid" versions of your algorithm}
+\rcomment{General comment: It should be also interesting to compare the crossing resolution between the "non-grid" and the "grid" versions of your algorithm}
 
-\response{\textcolor{red}{Which version of the algorithm do we use in the experiments?}}
+\response{In the experiments, since we are comparing our approach with spring embedding algorithms, which do not produce grid drawings, we indeed report results only for the non-grid variant of our algorithm. Only if there exist strong constraints on the size of the underlying grid, one can observe differences between the grid and non-grid variants  in terms of the crossings resolution of the produced drawings, which are again not big (less than 2 degrees). Hence, plotting these differences results in two almost overlapping curves.}
 \end{itemize}
 
 
@@ -157,11 +157,11 @@ III) How many iterations need the algorithms to converge?
 
 Once the research questions are stated, one can think about proper setup and tools to investigate these questions. Of course with an experimental evaluation, it is unlikely that we are able to verify the research questions in their entirety. But we can collect indications that the statements are likely to be true (on specific data sets). One indicator that can be compared is the mean of two datasets, that is is the sole statistic used by the authors.}
 
-\response{We preferred not to pose such exact questions, because we simply cannot provide answers to any of them. The reason is that an experimental evaluation can only give some indications. Instead, we now explicitly mention which are the parameters that are interested~in.}
+\response{We preferred not to pose such exact questions, because we simply cannot provide answers to any of them. The reason is that an experimental evaluation can only give some indications. Instead, we now explicitly mention which are the parameters that are interested~in (indicated by P.1-P.5 in the revision).}
 
 \rcomment{In my opinion, the mean should be accompanied by more statistics (at least the standard deviation), since the mean is sensitive to outliers.}
 
-\response{As mentioned in the previous reply, our experimental evaluation aims in giving some indications. The mean is a good metric in this direction, even though it is sensitive to outliers. \textcolor{red}{For completeness, we have added a diagram illustrating the standard deviation as suggested by the reviewer.}}
+\response{As mentioned in the previous reply, our experimental evaluation aims in giving some indications. The mean is a good metric in this direction, even though it is sensitive to outliers as the reviewer points out. For completeness, we added in our diagrams the standard deviation as suggested by the reviewer. Note that we had to use colors in our figures, as otherwise the amount of information to be visualized in grayscale made the figures hard to read.}
 
 \rcomment{Moreover, I have the impression that the writing of the experimental evaluation lacks precision. A more formal style of writing reduces the possibility that statements can be misunderstood. For example, the word /significant/ has a defined meaning, it implies that a statement is very unlikely and this has been confirmed with a proper statistical test. But comparing the means of two sequences of observations A and B does not imply significance. Instead of writing "A has significantly smaller crossing angles than B", I propose to write "The mean of A is (considerably) smaller than the mean of B", or "the mean of A is X degrees smaller than the mean of B". In the following, I give an incomplete list of statements that should be revised.}
 
