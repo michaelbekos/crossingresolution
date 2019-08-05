@@ -1,7 +1,7 @@
 \documentclass{comjnl}
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL submitted.tex   Fri Jul 26 08:45:28 2019
-%DIF ADD journal.tex     Fri Jul 26 10:21:36 2019
+%DIF ADD journal.tex     Mon Aug  5 14:50:50 2019
 
 %% These two lines are needed to get the correct paper size
 %% in TeX Live 2016
@@ -188,7 +188,7 @@ From a practical point of view, we are only aware of two methods that aim at dra
 In this work, we approach the crossing resolution maximization problem from a different perspective. We suggest a simple and intuitive randomization method for computing drawings with high crossing resolution, which, in a sense, mimics the way a human would try to increase the crossing resolution of a drawing. How would one increase the crossing resolution of a given drawing? First, she would try to identify the pair of edges that define the crossing resolution of the drawing (we call them \emph{critical} edges); then, she would try to move an endvertex of this pair (which we choose at random), hoping that by this move the crossing resolution will increase. Of course, we cannot consider all possible positions for the vertex to be moved. Instead, we consider a small set of randomly generated ones. If there exists a position among them, that does not lead to a reduction of the crossing resolution, we move the vertex to this position. \DIFdelbegin %DIFDELCMD < 
 
 %DIFDELCMD < %%%
-\DIFdel{Note that, in general }\DIFdelend \DIFaddbegin \DIFadd{Note at that in general the vertex movement paradigm is an established technique and has successfully applied to graph theoretic and geometric problems; see, e.g.,~\mbox{%DIFAUXCMD
+\DIFdel{Note that , in general }\DIFdelend \DIFaddbegin \DIFadd{Note that that in general the vertex movement paradigm is an established technique and has successfully applied to graph-theoretic and geometric problems; see, e.g.,~\mbox{%DIFAUXCMD
 \cite{DBLP:conf/sofsem/BlasiusRR17,DBLP:conf/dac/FiducciaM82,6771089,DBLP:conf/alenex/RadermacherRRW18,DBLP:conf/wsdm/UganderB13}}\hspace{0pt}%DIFAUXCMD
 .
 }
@@ -200,7 +200,7 @@ In this work, we approach the crossing resolution maximization problem from a di
 
 
 \begin{table*}
-\caption{Summary of the results for the Graph Drawing Contest \DIFdelbeginFL \DIFdelFL{2017.}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{2017; the last two columns correspond to results presented in this paper (with and without time limitations, respectively).}\DIFaddendFL }
+\caption{Summary of the results for the Graph Drawing Contest \DIFdelbeginFL \DIFdelFL{2017.}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{2017; the last two columns correspond to results obtained by the implementation of the algorithm presented in this paper (with and without time limitations, respectively).}\DIFaddendFL }
 \centering
 \DIFaddbeginFL \begin{adjustbox}{width=1\textwidth}
 \DIFaddendFL \begin{tabular}{c|c|c|c|c|c|c}
@@ -274,7 +274,7 @@ It is far from clear that the wining team was the team  ``\texttt{CoffeeVM}''\DI
 .
 }
 
-\DIFaddend Our team ``\texttt{TuebingenMidnight}''  \DIFdelbegin \DIFdel{miserably performed }\DIFdelend \DIFaddbegin \DIFadd{performed miserably}\DIFaddend ; we actually took the third position out of a total of four teams that participated. As already mentioned, each team had only one hour to compute a layout for each of the challenge graphs, which in year 2017 were in total $16$. In Table~\ref{tab:gdContest2017}, we additionally provide results that were achieved by the algorithm presented in this paper in two settings; within the time limit of the contest (see column ``Time restricted''), as well as \DIFdelbegin \DIFdel{our best }\DIFdelend \DIFaddbegin \DIFadd{s }\DIFaddend results, which were achieved without any time limitations (see column ``\DIFdelbegin \DIFdel{Our best}\DIFdelend \DIFaddbegin \DIFadd{No-time restriction}\DIFaddend '').
+\DIFaddend Our team ``\texttt{TuebingenMidnight}''  \DIFdelbegin \DIFdel{miserably performed }\DIFdelend \DIFaddbegin \DIFadd{performed miserably}\DIFaddend ; we actually took the third position out of a total of four teams that participated. As already mentioned, each team had only one hour to compute a layout for each of the challenge graphs, which in year 2017 were in total $16$. In Table~\ref{tab:gdContest2017}, we additionally provide results that were achieved by the algorithm presented in this paper in two settings; within the time limit of the contest (see column ``Time restricted''), as well as  \DIFdelbegin \DIFdel{our best }\DIFdelend results, which were achieved without any time limitations (see column ``\DIFdelbegin \DIFdel{Our best}\DIFdelend \DIFaddbegin \DIFadd{No-time restriction}\DIFaddend '').
 
 We can observe that for almost all graphs, our new approach achieves only slightly worse results than the ones of the contest's winner when restricted within the one hour. On a few graphs (namely, graphs 10 and 11), we even achieved better results. With a single exception (namely, graph 4), we could easily outperform the results that we achieved with the spring-embedder algorithm. If we neglect the time restriction, then for all the graphs, the results are (sometimes considerably) better than or at least about the same as the contest's winner. Nevertheless, what we realized is that the spring-embedder algorithm was not efficient enough for participating to the contest.
 
@@ -461,8 +461,7 @@ The experiment was performed on a Linux laptop with four cores at 2.4 GHz and 8 
 \item[--] the force-directed algorithm by Huang et al.
 \end{itemize}
 
-Since all algorithms of the experiment can easily be adjusted to maximize~only the crossing resolution, or only the angular resolution or both (by maximizing~the total resolution), we adjusted each of them to maximize exclusively the corresponding measures. In our algorithm, this can be achieved by modifying appropriately the content of the vertex-pool (as we discussed in Section~\ref{ssec:variants}), while in the algorithms of Argyriou et al.\ and of Huang et al.\ by switching on only the forces that maximize the corresponding properties under measure (note that, each of these two algorithms has a different set of forces to maximize the crossing and the angular resolution, such that together they maximize the total resolution). The reported results, illustrated in Figures~\ref{fig:cr-res}--\ref{fig:northAngular}, are on average across different drawings with same number of vertices \DIFdelbegin \DIFdel{.
-}\DIFdelend \DIFaddbegin \DIFadd{on the following set of parameters:
+Since all algorithms of the experiment can easily be adjusted to maximize~only the crossing resolution, or only the angular resolution or both (by maximizing~the total resolution), we adjusted each of them to maximize exclusively the corresponding measures. In our algorithm, this can be achieved by modifying appropriately the content of the vertex-pool (as we discussed in Section~\ref{ssec:variants}), while in the algorithms of Argyriou et al.\ and of Huang et al.\ by switching on only the forces that maximize the corresponding properties under measure (note that, each of these two algorithms has a different set of forces to maximize the crossing and the angular resolution, such that together they maximize the total resolution). The reported results, illustrated in Figures~\ref{fig:cr-res}--\ref{fig:northAngular}, are on average across different drawings with same number of vertices \DIFaddbegin \DIFadd{on the following set of parameters:
 %DIF > 
 }\begin{enumerate}[P.1.]
 \item \label{p:cr-res} \DIFadd{crossing resolution
@@ -471,7 +470,8 @@ Since all algorithms of the experiment can easily be adjusted to maximize~only t
 }\item \label{p:as-rat} \DIFadd{edge-length ratio
 }\item \label{p:no-xing} \DIFadd{number of crossings
 }\end{enumerate}
-\DIFaddend 
+%DIF > 
+\DIFadd{Each bold-drawn curve corresponds to the mean values. The two same-colored curves above and below represent the upper and the lower standard deviation, respectively}\DIFaddend . 
 
 
 % ==================================================================
@@ -479,7 +479,7 @@ Since all algorithms of the experiment can easily be adjusted to maximize~only t
 \label{ssec:rome}
 % ==================================================================
 
-In this subsection, we report the results of our expertimental evaluation for the non-planar Rome graphs. Note that we did not impose any grid constraint on our algorithms. Our results are summarized in Figures~\ref{fig:cr-res}, \ref{fig:an-res} and~\ref{fig:to-res}.
+In this subsection, we report the results of our expertimental evaluation for the non-planar Rome graphs. Note that we did not impose any grid constraint on our algorithms. Our results are summarized in Figures~\ref{fig:cr-res}, \DIFdelbegin \DIFdel{\ref{fig:an-res} and~\ref{fig:to-res}}\DIFdelend \DIFaddbegin \DIFadd{\ref{fig:to-res} and~\ref{fig:an-res}}\DIFaddend .
 
 \myparagraph{Crossing resolution} Our results for the crossing resolution are summarized in Fig.~\ref{fig:cr-res}. Here, each algorithm was adjusted to maximize exclusively the crossing resolution (i.e., by ignoring the drawing's angular resolution). It is immediate to see that \DIFdelbegin \DIFdel{our algorithm outperforms all other ones in terms of }\DIFdelend \DIFaddbegin \DIFadd{on average }\DIFaddend the crossing resolution of the \DIFdelbegin \DIFdel{produced drawings , when we do }\DIFdelend \DIFaddbegin \DIFadd{drawings obtained by your algorithm, which does }\DIFaddend not impose any restriction on the \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio of the computed drawings\DIFaddbegin \DIFadd{, is considerably larger than the crossing resolutions of the remaining algorithms}\DIFaddend ; refer to the solid-black curve, denoted as \emph{Unrestricted}, in Fig.~\ref{fig:cr-res-1}. The variant of our algorithm, which does not violate the \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio of the initial layout, leads to drawings with slightly smaller crossing resolution; refer to the solid-gray curve, denoted as \emph{\DIFdelbegin \DIFdel{AR-restricted}\DIFdelend \DIFaddbegin \DIFadd{ELR-restricted}\DIFaddend }, in Fig.~\ref{fig:cr-res-1}. Finally, the two force-directed algorithms seem to produce drawings with worse crossing resolution; refer to the dotted-gray and dotted-black curves of Fig.~\ref{fig:cr-res-1} (by Argyriou et al.\ and by Huang et al., respectively).
 
@@ -489,17 +489,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t]
 	\centering
 	\subfloat[\label{fig:cr-res-1}{Crossing resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=1]{figures/rome}}
+	\includegraphics[scale=0.99,page=1]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:cr-res-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=2]{figures/rome}}
-	\DIFaddendFL 
-
+	\includegraphics[scale=0.99,page=2]{figures/rome_colored}}
+	
 	\subfloat[\label{fig:cr-res-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=3]{figures/rome}}
+	\includegraphics[scale=0.99,page=3]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:cr-res-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=4]{figures/rome}}
+	\includegraphics[scale=0.99,page=4]{figures/rome_colored}}
 	\caption{Experimental results on the crossing resolution for the Rome graphs.}
 	\label{fig:cr-res}
 \end{figure*}
@@ -510,16 +509,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t]
 	\centering
 	\subfloat[\label{fig:to-res-1}{Total resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=5]{figures/rome}}
+	\includegraphics[scale=0.99,page=9]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:to-res-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=6]{figures/rome}}
+	\includegraphics[scale=0.99,page=10]{figures/rome_colored}}
 	
 	\subfloat[\label{fig:to-res-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=7]{figures/rome}}
+	\includegraphics[scale=0.99,page=11]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:to-res-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=8]{figures/rome}}
+	\includegraphics[scale=0.99,page=12]{figures/rome_colored}}
 	\caption{Experimental results on the total resolution for the Rome graphs.}
 	\label{fig:to-res}
 \end{figure*}
@@ -530,16 +529,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t]
 	\centering
 	\subfloat[\label{fig:an-res-1}{Angular resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=9]{figures/rome}}
+	\includegraphics[scale=0.99,page=5]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:an-res-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=10]{figures/rome}}
+	\includegraphics[scale=0.99,page=6]{figures/rome_colored}}
 	
 	\subfloat[\label{fig:an-res-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=11]{figures/rome}}
+	\includegraphics[scale=0.99,page=7]{figures/rome_colored}}
 	\hfil
 	\subfloat[\label{fig:an-res-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=12]{figures/rome}}
+	\includegraphics[scale=0.99,page=8]{figures/rome_colored}}
 	\caption{Experimental results on the angular resolution for the Rome graphs.}
 	\label{fig:an-res}
 \end{figure*}
@@ -550,16 +549,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t!]
 	\centering
 	\subfloat[\label{fig:northCrossing-1}{Crossing resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=1]{figures/north}}
+	\includegraphics[scale=0.99,page=1]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northCrossing-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=2]{figures/north}}
+	\includegraphics[scale=0.99,page=2]{figures/north_colored}}
 	
 	\subfloat[\label{fig:northCrossing-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=3]{figures/north}}
+	\includegraphics[scale=0.99,page=3]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northCrossing-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=4]{figures/north}}
+	\includegraphics[scale=0.99,page=4]{figures/north_colored}}
 	\caption{Experimental results for the crossing resolution on the AT\&T graphs.}
 	\label{fig:northCrossing}
 \end{figure*}
@@ -570,16 +569,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t!]
 	\centering
 	\subfloat[\label{fig:northTotal-1}{Total resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=5]{figures/north}}
+	\includegraphics[scale=0.99,page=9]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northTotal-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=6]{figures/north}}
+	\includegraphics[scale=0.99,page=10]{figures/north_colored}}
 	
 	\subfloat[\label{fig:northTotal-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=7]{figures/north}}
+	\includegraphics[scale=0.99,page=11]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northTotal-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=8]{figures/north}}
+	\includegraphics[scale=0.99,page=12]{figures/north_colored}}
 	\caption{Experimental results for the total resolution on the AT\&T graphs.}
 	\label{fig:northTotal}
 \end{figure*}
@@ -590,126 +589,53 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t!]
 	\centering
 	\subfloat[\label{fig:northAngular-1}{Angular resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=9]{figures/north}}
+	\includegraphics[scale=0.99,page=5]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northAngular-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=10]{figures/north}}
+	\includegraphics[scale=0.99,page=6]{figures/north_colored}}
 	
 	\subfloat[\label{fig:northAngular-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=11]{figures/north}}
+	\includegraphics[scale=0.99,page=7]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northAngular-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=12]{figures/north}}
+	\includegraphics[scale=0.99,page=8]{figures/north_colored}}
 	\caption{Experimental results for the angular resolution on the AT\&T graphs.}
 	\label{fig:northAngular}
 \end{figure*}
 
 % ==================================================================
-\begin{figure*}[!t]
-\centering
-\subfloat[\label{fig:crossingResolutionGrid}{Crossing resolution vs no.~of vertices}]{
-\centering
-%======================
-% Crossing Resolution
-%======================
-\begin{tikzpicture}
-\begin{axis}[
-axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,
-legend style={at={(0.425,1.35)},anchor=north,,legend columns=2,draw=none},
-width=0.475\textwidth,
-cycle list name=mylist,
-mark repeat={5},xlabel={Number of Vertices},ylabel={Crossing Resolution},
-xtick={10,20,30,40,50,60,70,80,90,100},
-xmin=10,
-xmax=100,
-ytick={10,20,30,40,50,60,70,80,90},
-tick pos=left,ymajorgrids]
-\addplot table [x=n, y=crossing resolution rm1M, col sep=semicolon]{gridExperiment.csv};
-\addplot table [x=n, y=crossing resolution rm10k, col sep=semicolon] {gridExperiment.csv};
-\addplot table [x=n, y=crossing resolution rm1000, col sep=semicolon]{gridExperiment.csv};
-\addplot table [x=n, y=crossing resolution rm100, col sep=semicolon] {gridExperiment.csv};
-\addplot table [x=n, y=crossing resolution rm, col sep=semicolon]{gridExperiment.csv};
-\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
-\end{axis}
-\end{tikzpicture}}
-\subfloat[\label{fig:crossingResolutionAspectRatioGrid}{Edge-length ratio vs no.~of vertices}]{
-\centering
-%===================================
-% Crossing Resolution Aspect Ratio
-%===================================
-\begin{tikzpicture}
-\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
-anchor=north,legend columns=2,draw=none},ylabel style={yshift=-0.2cm}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={0,10,20,30,40,50,60,70,80,90,100},ylabel={Edge-length Ratio},
-xlabel={Number of Vertices},
-xmin=10,
-xmax=100,
-ytick={1,2,5,10,20,50,100,200},ymode=log, log ticks with fixed point,tick pos=left, ymajorgrids,]
-\addplot table [x=n, y=Aspect ratio rm1M, col sep=semicolon]{gridExperiment.csv};
-\addplot table [x=n, y=Aspect ratio rm10k, col sep=semicolon] {gridExperiment.csv};
-\addplot table [x=n, y=Aspect ratio rm1000, col sep=semicolon]{gridExperiment.csv};
-\addplot table [x=n, y=Aspect ratio rm100, col sep=semicolon] {gridExperiment.csv};
-\addplot table [x=n, y=Aspect ratio rm, col sep=semicolon]{gridExperiment.csv};
-\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
-\end{axis}
-\end{tikzpicture}}
-
-\subfloat[\label{fig:crossingResolutionCrossingNumberGrid}{No.~of crossings vs no.~of vertices}]{
-\centering
-%======================================
-% Crossing Resolution Crossing Number
-%======================================
-\begin{tikzpicture}
-\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
-anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist,  mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
-xmin=10,
-xmax=100,
-ytick={0,250,500,750,1000,1250,1500,1750},ylabel={Number of Crossings},
-xlabel={Number of Vertices},tick pos=left,ylabel style={yshift=-0.2cm}, ymajorgrids]
-\addplot table [x=n, y=Crossing number rm1M, col sep=semicolon]{gridExperiment.csv};
-\addplot table [x=n, y=Crossing number rm10k, col sep=semicolon] {gridExperiment.csv};
-\addplot table [x=n, y=Crossing number rm1000, col sep=semicolon]{gridExperiment.csv};
-\addplot table [x=n, y=Crossing number rm100, col sep=semicolon] {gridExperiment.csv};
-\addplot table [x=n, y=Crossing number rm, col sep=semicolon] {gridExperiment.csv};
-\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
-\end{axis}
-\end{tikzpicture}}
-\subfloat[\label{fig:crossingResolutionTimeGrid}{Iterations vs no.~of vertices}]{
-\centering
-%==================================
-% Crossing Resolution Iterations
-%==================================
-\begin{tikzpicture}
-\begin{axis}[axis x line*=bottom,xlabel style={yshift=0.2cm},ylabel style={yshift=-0.2cm},axis y line*=left,legend style={at={(0.425,1.35)},
-anchor=north,legend columns=2,draw=none}, width=0.475\textwidth,cycle list name=mylist, mark repeat={5},xtick={10,20,30,40,50,60,70,80,90,100},
-xmin=10,
-xmax=100,
-ytick={0,1000,2000,3000,4000,5000,6000,7000,8000},tick pos=left,
-ylabel={Iterations},
-xlabel={Number of Vertices},ymajorgrids]
-\addplot table [x=n, y=Iterations rm1M, col sep=semicolon]{gridExperiment.csv};
-\addplot table [x=n, y=Iterations rm10k, col sep=semicolon] {gridExperiment.csv};
-\addplot table [x=n, y=Iterations rm1000, col sep=semicolon]{gridExperiment.csv};
-\addplot table [x=n, y=Iterations rm100, col sep=semicolon] {gridExperiment.csv};
-\addplot table [x=n, y=Iterations rm, col sep=semicolon] {gridExperiment.csv};
-\legend{{$10^6 \times 10^6$},{$10^4 \times 10^4$},{$10^3 \times 10^3$},{$10^2 \times 10^2$}}
-\end{axis}
-\end{tikzpicture}}
-\caption{Our experimental results on the crossing resolution with different grid restrictions. The double line corresponds to the variant of our algorithm which does not impose any restriction on the size of the grid of the output drawings.}
-\label{fig:experimentsGrid}
-\end{figure*}
+%\input{grid-rome.tex}
 % ==================================================================
+\begin{figure*}[t!]
+	\centering
+	\subfloat[\label{fig:crossingResolutionGrid}{Crossing resolution vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=1]{figures/grid_colored}}
+	\hfil
+	\subfloat[\label{fig:crossingResolutionAspectRatioGrid}{Edge-length ratio vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=2]{figures/grid_colored}}
+	
+	\subfloat[\label{fig:crossingResolutionCrossingNumberGrid}{No.~of crossings vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=3]{figures/grid_colored}}
+	\hfil
+	\subfloat[\label{fig:crossingResolutionTimeGrid}{No.~of iterations vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=4]{figures/grid_colored}}
+	\caption{Experimental results for the angular resolution on the AT\&T graphs.}
+	\label{fig:experimentsGrid}
+\end{figure*}
 
-While our unrestricted algorithm produces drawings with \DIFdelbegin \DIFdel{better crossing resolution }\DIFdelend \DIFaddbegin \DIFadd{larger crossing resolution on average}\DIFaddend , this comes at a cost of drastically increased \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio (see Fig.~\ref{fig:cr-res-2}), which, however, is still better that the corresponding \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio of the drawings produced by the algorithm of Argyriou et al. For the latter algorithm, it seems that the forces due to the angles formed at the crossings outperform the corresponding spring forces, which try to keep the lengths of the edges short. Going back to our unrestricted algorithm, its behavior is up to a certain degree expected, mainly due to the fact that there is no control on the lengths of the edges (as it is, e.g., in the case of the force-directed algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, whose sping forces inpose stong restrictions on the edge lengths). On the other hand, the restricted variant of our algorithm, which does not allow the \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio to increase, has more or less comparable performance (in terms of \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio) as the one of Huang et al.
+While our unrestricted algorithm produces drawings with \DIFdelbegin \DIFdel{better crossing resolution }\DIFdelend \DIFaddbegin \DIFadd{larger crossing resolution on average}\DIFaddend , this comes at a cost of drastically increased \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio (see Fig.~\ref{fig:cr-res-2}), which, however, is still better that the corresponding \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio of the drawings produced by the algorithm of Argyriou et al. For the latter algorithm, it seems that the forces due to the angles formed at the crossings outperform the corresponding spring forces, which try to keep the lengths of the edges short. Going back to our unrestricted algorithm, its behavior is up to a certain degree expected, mainly due to the fact that there is no control on the lengths of the edges (as it is, e.g., in the case of the force-directed algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, whose \DIFdelbegin \DIFdel{sping forces inpose stong }\DIFdelend \DIFaddbegin \DIFadd{spring forces impose strong }\DIFaddend restrictions on the edge lengths). On the other hand, the \DIFaddbegin \DIFadd{edge-length ratio of the drawings obtained by the }\DIFaddend restricted variant of our algorithm, which does not allow the \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio to increase, \DIFdelbegin \DIFdel{has more or less comparable performance (in terms of aspect ratio ) as the one }\DIFdelend \DIFaddbegin \DIFadd{is very close to the edge-length ratio of the drawings obtained by the algorithm }\DIFaddend of Huang et al. \DIFdelbegin %DIFDELCMD < 
 
-Regarding the number of crossings, the restricted variant of our algorithm and the force-directed algorithm of Huang et al.\ yield drawings with comparable number of crossings, which at the same time is significantly smaller than the  number of crossings produced by the two other algorithms; see Fig.~\ref{fig:cr-res-3}.
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \DIFadd{Note that the latter algorithm is the one yielding drawings that on average have the lowest edge-length ratio. }\DIFaddend Regarding the number of crossings, the restricted variant of our algorithm and the force-directed algorithm of Huang et al.\ yield drawings with comparable number of crossings\DIFdelbegin \DIFdel{, which at the same time is significantly smaller than the number of crossings produced by }\DIFdelend \DIFaddbegin \DIFadd{. On the other hand, }\DIFaddend the two other algorithms \DIFaddbegin \DIFadd{of our experiment produce drawings that on average have more crossings}\DIFaddend ; see Fig.~\ref{fig:cr-res-3}.
 
-A different behavior can be observed in the number of iterations, which are required by the algorithms to converge; refer to Fig.~\ref{fig:cr-res-4}. We note here that we used different criteria to determine whether the algorithms of our experiment had converged. For our algorithms and for the force-directed algorithm by Huang et al., we assumed that the algorithm had converged, if the crossing resolution between 500 consecutive iterations was not improved by more than 0.001 degrees. For the algorithm by Argyriou et al., we decided to use a much more restricted convergence criterion, because the produced layouts can change vastly between  consecutive iterations. We made this choice mainly to have ``comparable'' number of iterations among the algorithms of the experiment. In this direction, we adopted the convergence criterion that the authors used in their previous experimental analysis, that is, we assumed that the algorithm had converged, if the crossing resolution between two consecutive iterations was not improved by more than 0.001 degrees. Observe that even under this different convergence criterion, the algorithm needs significantly more iterations to converge than the remaining three algorithms of the experiment; see Fig.~\ref{fig:cr-res-4}. 
+A different behavior can be observed in the number of iterations, which are required by the algorithms to converge; refer to Fig.~\ref{fig:cr-res-4}. We note here that we used different criteria to determine whether the algorithms of our experiment had converged. For our algorithms and for the force-directed algorithm by Huang et al., we assumed that the algorithm had converged, if the crossing resolution between 500 consecutive iterations was not improved by more than 0.001 degrees. For the algorithm by Argyriou et al., we decided to use a much more restricted convergence criterion, because the produced layouts can change vastly between  consecutive iterations. We made this choice mainly to have ``comparable'' number of iterations among the algorithms of the experiment. In this direction, we adopted the convergence criterion that the authors used in their previous experimental analysis, that is, we assumed that the algorithm had converged, if the crossing resolution between two consecutive iterations was not improved by more than 0.001 degrees. Observe that even under this different convergence criterion, the algorithm needs \DIFdelbegin \DIFdel{significantly }\DIFdelend more iterations to converge than the remaining three algorithms of the experiment; see Fig.~\ref{fig:cr-res-4}. 
 
 The maximum number of iterations that each of the algorithms of the experiment could perform in order to converge was set to 100.000, but notably this limit was never reached. 
 
 We observe that both force-directed algorithms by Argyriou et al.\ and by Huang et al.\ seem to require a great amount of iterations to converge for small graphs, where a drawing with really good crossing resolution is more likely to be computed. However, that for larger graphs the algorithm by Huang et al.\ requires the least amount of iterations. Regarding the unrestricted and the restricted variants of our algorithm, it is clear that both require comparable number of iterations to converge, but clearly more than the ones of the algorithm by Huang et al.
 
-\myparagraph{Total resolution} Our results for the total resolution are summarized in Fig.~\ref{fig:to-res}. Here, each algorithm was adjusted to maximize both the crossing and the angular resolution, simultaneously. For the vast majority of the graphs in the experiment, both our unrestricted algorithm and its restricted variant yield drawings with better total resolution than the corresponding ones by Argyriou et al. The drawings produced by the algorithm by Huang et al.\ seems to have worse total resolution; see Fig.~\ref{fig:to-res-1}. Note, however, that both variants of our algorithm as well as the force-directed algorithm by Argyriou et al.\ tend to produce drawings of the same total resolution for larger graphs with a small difference in our favor.
+\myparagraph{Total resolution} Our results for the total resolution are summarized in Fig.~\ref{fig:to-res}. Here, each algorithm was adjusted to maximize both the crossing and the angular resolution, simultaneously. For \DIFdelbegin \DIFdel{the vast majority of the graphs in the experiment}\DIFdelend \DIFaddbegin \DIFadd{graphs with more 20 vertices}\DIFaddend , both our unrestricted algorithm and its restricted variant yield drawings with better total resolution than the corresponding ones by Argyriou et al. The drawings produced by the algorithm by Huang et al.\ \DIFdelbegin \DIFdel{seems }\DIFdelend \DIFaddbegin \DIFadd{seem }\DIFaddend to have worse total resolution; see Fig.~\ref{fig:to-res-1}.\DIFdelbegin \DIFdel{Note, however, that both variants of our algorithm as well as the force-directed algorithm by Argyriou et al.\ tend to produce drawings of the same total resolution for larger graphs with a small difference in our favor.
+}\DIFdelend %DIF > Note, however, that both variants of our algorithm as well as the force-directed algorithm by Argyriou et al.\ tend to produce drawings of the same total resolution for larger graphs with a small difference in our favor.
 
 Contrary to the results for the total resolution, the results for the \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio show that the drawings produced by the algorithm by Huang et al.\ are better (in terms of this measure) than the drawings produced by remaining algorithms; see Fig.~\ref{fig:to-res-2}. 
 %More concretely, the 
@@ -719,9 +645,13 @@ Analogous observations can be made for the number of crossings of the produced l
 
 On the negative side, both the unrestricted and the restricted variants of our algorithm require more iterations than the force-directed algorithm by Huang et al.\ in order to converge; see Fig.~\ref{fig:to-res-4}. Recall, however, that the latter algorithm is clearly outperformed by both our variants in term of total resolution. The algorithm by Argyriou et al.\ clearly requires the highest number of iterations (especially for large graphs). We note that the convergence criterion was the same as for the crossing resolution; however, the measured quality was (not the crossing but) the total resolution.
 
-\myparagraph{Angular resolution} We conclude the analysis of our experimental evaluation with the results for the angular resolution; see Fig.~\ref{fig:an-res}. Here, each algorithm was adjusted  to maximize only the angular resolution (i.e., by ignoring the drawing's crossing resolution). A notable observation is that, for small graphs the best results are achieved by the algorithm by Argyriou et al., while for medium-size graphs by our unrestricted algorithm; see Fig.~\ref{fig:an-res-1}. For large graphs, the two algorithms tend to have the same performance. The restricted variant of our algorithm yields drawings with slightly worse angular resolution. The algorithm by Huang et al.\ is outperformed by all algorithms of the experiment.
+\myparagraph{Angular resolution} We conclude the analysis of our experimental evaluation with the results for the angular resolution; see Fig.~\ref{fig:an-res}. Here, each algorithm was adjusted  to maximize only the angular resolution (i.e., by ignoring the drawing's crossing resolution). \DIFdelbegin \DIFdel{A notable observation is that, for small graphs the best results are achieved by the algorithm }\DIFdelend \DIFaddbegin \DIFadd{Our unrestricted algorithm yields drawings with better angular resolution than the corresponding ones produced by our restricted variant, and by the algorithms }\DIFaddend by Argyriou et al.\DIFdelbegin \DIFdel{, while for medium-size graphs by our unrestricted algorithm}\DIFdelend \DIFaddbegin \DIFadd{\ and by Huang et al.}\DIFaddend ; see Fig.~\ref{fig:an-res-1}. For \DIFdelbegin \DIFdel{large graphs , the two algorithms tend to have the same performance}\DIFdelend \DIFaddbegin \DIFadd{graphs with 90 or more vertices, however, our unrestricted algorithms and the algorithm by Argyriou et al.\ tend to produce drawings with the same angular resolution on average}\DIFaddend . The restricted variant of our algorithm yields drawings with slightly worse angular resolution. The algorithm by Huang et al.\ is outperformed by all algorithms of the experiment.
+\DIFdelbegin %DIFDELCMD < 
 
-The results for the \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio, the number of crossings and the required number of iterations are very similar with corresponding ones for the total resolution; see Figs.~\ref{fig:an-res-2}--\ref{fig:an-res-4}. This observation suggests that, for most of the graphs of our experiment, the angular resolution dominates the crossing resolution (and thus is the one defining the total resolution) in the constructed drawings, which explains the similarity in the reported results. The small differences result from the fact that the crossing resolution cannot be entirely neglected.
+%DIFDELCMD < %%%
+\DIFdelend %DIF > 
+The results for the \DIFdelbegin \DIFdel{aspect }\DIFdelend \DIFaddbegin \DIFadd{edge-length }\DIFaddend ratio, the number of crossings and the required number of iterations are very similar with corresponding ones for the total resolution; see Figs.~\ref{fig:an-res-2}--\ref{fig:an-res-4}.\DIFdelbegin \DIFdel{This observation suggests that, for most of the graphs of our experiment, the angular resolution dominates the crossing resolution (and thus is the one defining the total resolution) in the constructed drawings, which explains the similarity in the reported results. The small differences result from the fact that the crossing resolution cannot be entirely neglected.
+}\DIFdelend %DIF >  This observation suggests that, for most of the graphs of our experiment, the angular resolution is greater than the crossing resolution (and thus is the one defining the total resolution) in the constructed drawings, which explains the similarity in the reported results. The small differences result from the fact that the crossing resolution cannot be entirely neglected.
 
 % ==================================================================
 \subsection{The AT\&T  Graph Test Set}
@@ -991,7 +921,7 @@ Arikushi, K., Fulek, R., Keszegh, B., Moric, F., and T{\'{o}}th, C.~D. (2012)
 \newblock {\em Comput. Geom.}, {\bf  45}, 169--177.
 
 \bibitem{DBLP:journals/mst/GiacomoDLM11}
-Giacomo, E.~D., Didimo, W., Liotta, G., and Meijer, H. (2011) Area, curve
+\DIFdelbegin \DIFdel{Giacomo}\DIFdelend \DIFaddbegin {\DIFadd{Di Giacomo}}\DIFaddend , E.\DIFdelbegin \DIFdel{~D.}\DIFdelend , Didimo, W., Liotta, G., and Meijer, H. (2011) Area, curve
   complexity, and crossing resolution of non-planar graph drawings.
 \newblock {\em Theory Comput. Syst.}, {\bf  49}, 565--575.
 
@@ -1008,7 +938,7 @@ Didimo, W., Eades, P., and Liotta, G. (2010) A characterization of complete
 \newblock {\em Inf. Process. Lett.}, {\bf  110}, 687--691.
 
 \bibitem{DBLP:journals/algorithmica/GiacomoDEL14}
-Giacomo, E.~D., Didimo, W., Eades, P., and Liotta, G. (2014) 2-layer right
+\DIFdelbegin \DIFdel{Giacomo}\DIFdelend \DIFaddbegin {\DIFadd{Di Giacomo}}\DIFaddend , E.\DIFdelbegin \DIFdel{~D.}\DIFdelend , Didimo, W., Eades, P., and Liotta, G. (2014) 2-layer right
   angle crossing drawings.
 \newblock {\em Algorithmica}, {\bf  68}, 954--997.
 
@@ -1059,14 +989,14 @@ Nguyen, Q.~H., Eades, P., Hong, S., and Huang, W. (2010) Large crossing angles
   L. (2018) A greedy heuristic for crossing-angle maximization.
 \newblock \DIFaddbegin \DIFadd{In Biedl, T.~C. and Kerren, A. (eds.), }\DIFaddend {\em \DIFdelbegin \DIFdel{CoRR}\DIFdelend \DIFaddbegin \DIFadd{Graph Drawing and Network
   Visualization}\DIFaddend },  \DIFaddbegin \DIFadd{LNCS, }\DIFaddend {\DIFdelbegin %DIFDELCMD < \bf  %%%
-\DIFdel{abs/1807.09483}\DIFdelend \DIFaddbegin \bf11282}\DIFadd{,  pp. 286--299. Springer.
+\DIFdel{abs/1807.09483}\DIFdelend \DIFaddbegin \bf11282\DIFaddend }\DIFaddbegin \DIFadd{,  pp. 286--299. Springer.
 }
 
 \bibitem{DBLP:conf/gd/DevannyKLR18}
 \DIFadd{Devanny, W.~E., Kindermann, P., L}{\DIFadd{\"{o}}}\DIFadd{ffler, M., and Rutter, I. (2018) Graph
   drawing contest report.
 }\newblock \DIFadd{In Biedl, T.~C. and Kerren, A. (eds.), }{\em \DIFadd{Graph Drawing and Network
-  Visualization}}\DIFadd{,  LNCS, }{\bf11282\DIFaddend }\DIFaddbegin \DIFadd{,  pp. 609--617. Springer}\DIFaddend .
+  Visualization}}\DIFadd{,  LNCS, }{\bf11282}\DIFadd{,  pp. 609--617. Springer}\DIFaddend .
 
 \bibitem{DBLP:books/lib/BergCKO08}
 de Berg, M., Cheong, O., van Kreveld, M.~J., and Overmars, M.~H. (2008) {\em

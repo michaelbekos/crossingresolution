@@ -375,6 +375,8 @@ Since all algorithms of the experiment can easily be adjusted to maximize~only t
 \item \label{p:as-rat} edge-length ratio
 \item \label{p:no-xing} number of crossings
 \end{enumerate}
+%
+Each bold-drawn curve corresponds to the mean values. The two same-colored curves above and below represent the upper and the lower standard deviation, respectively. 
 
 
 % ==================================================================
@@ -382,7 +384,7 @@ Since all algorithms of the experiment can easily be adjusted to maximize~only t
 \label{ssec:rome}
 % ==================================================================
 
-In this subsection, we report the results of our expertimental evaluation for the non-planar Rome graphs. Note that we did not impose any grid constraint on our algorithms. Our results are summarized in Figures~\ref{fig:cr-res}, \ref{fig:an-res} and~\ref{fig:to-res}.
+In this subsection, we report the results of our expertimental evaluation for the non-planar Rome graphs. Note that we did not impose any grid constraint on our algorithms. Our results are summarized in Figures~\ref{fig:cr-res}, \ref{fig:to-res} and~\ref{fig:an-res}.
 
 \myparagraph{Crossing resolution} Our results for the crossing resolution are summarized in Fig.~\ref{fig:cr-res}. Here, each algorithm was adjusted to maximize exclusively the crossing resolution (i.e., by ignoring the drawing's angular resolution). It is immediate to see that on average the crossing resolution of the drawings obtained by your algorithm, which does not impose any restriction on the edge-length ratio of the computed drawings, is considerably larger than the crossing resolutions of the remaining algorithms; refer to the solid-black curve, denoted as \emph{Unrestricted}, in Fig.~\ref{fig:cr-res-1}. The variant of our algorithm, which does not violate the edge-length ratio of the initial layout, leads to drawings with slightly smaller crossing resolution; refer to the solid-gray curve, denoted as \emph{ELR-restricted}, in Fig.~\ref{fig:cr-res-1}. Finally, the two force-directed algorithms seem to produce drawings with worse crossing resolution; refer to the dotted-gray and dotted-black curves of Fig.~\ref{fig:cr-res-1} (by Argyriou et al.\ and by Huang et al., respectively).
 
@@ -452,16 +454,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t!]
 	\centering
 	\subfloat[\label{fig:northCrossing-1}{Crossing resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=1]{figures/north}}
+	\includegraphics[scale=0.99,page=1]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northCrossing-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=2]{figures/north}}
+	\includegraphics[scale=0.99,page=2]{figures/north_colored}}
 	
 	\subfloat[\label{fig:northCrossing-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=3]{figures/north}}
+	\includegraphics[scale=0.99,page=3]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northCrossing-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=4]{figures/north}}
+	\includegraphics[scale=0.99,page=4]{figures/north_colored}}
 	\caption{Experimental results for the crossing resolution on the AT\&T graphs.}
 	\label{fig:northCrossing}
 \end{figure*}
@@ -472,16 +474,16 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t!]
 	\centering
 	\subfloat[\label{fig:northTotal-1}{Total resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=5]{figures/north}}
+	\includegraphics[scale=0.99,page=9]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northTotal-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=6]{figures/north}}
+	\includegraphics[scale=0.99,page=10]{figures/north_colored}}
 	
 	\subfloat[\label{fig:northTotal-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=7]{figures/north}}
+	\includegraphics[scale=0.99,page=11]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northTotal-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=8]{figures/north}}
+	\includegraphics[scale=0.99,page=12]{figures/north_colored}}
 	\caption{Experimental results for the total resolution on the AT\&T graphs.}
 	\label{fig:northTotal}
 \end{figure*}
@@ -492,23 +494,39 @@ In this subsection, we report the results of our expertimental evaluation for th
 \begin{figure*}[t!]
 	\centering
 	\subfloat[\label{fig:northAngular-1}{Angular resolution vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=9]{figures/north}}
+	\includegraphics[scale=0.99,page=5]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northAngular-2}{Edge-length ratio vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=10]{figures/north}}
+	\includegraphics[scale=0.99,page=6]{figures/north_colored}}
 	
 	\subfloat[\label{fig:northAngular-3}{No.~of crossings vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=11]{figures/north}}
+	\includegraphics[scale=0.99,page=7]{figures/north_colored}}
 	\hfil
 	\subfloat[\label{fig:northAngular-4}{No.~of iterations vs no.~of vertices}]{
-	\includegraphics[scale=0.99,page=12]{figures/north}}
+	\includegraphics[scale=0.99,page=8]{figures/north_colored}}
 	\caption{Experimental results for the angular resolution on the AT\&T graphs.}
 	\label{fig:northAngular}
 \end{figure*}
 
 % ==================================================================
-\input{grid-rome.tex}
+%\input{grid-rome.tex}
 % ==================================================================
+\begin{figure*}[t!]
+	\centering
+	\subfloat[\label{fig:crossingResolutionGrid}{Crossing resolution vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=1]{figures/grid_colored}}
+	\hfil
+	\subfloat[\label{fig:crossingResolutionAspectRatioGrid}{Edge-length ratio vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=2]{figures/grid_colored}}
+	
+	\subfloat[\label{fig:crossingResolutionCrossingNumberGrid}{No.~of crossings vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=3]{figures/grid_colored}}
+	\hfil
+	\subfloat[\label{fig:crossingResolutionTimeGrid}{No.~of iterations vs no.~of vertices}]{
+	\includegraphics[scale=0.99,page=4]{figures/grid_colored}}
+	\caption{Experimental results for the angular resolution on the AT\&T graphs.}
+	\label{fig:experimentsGrid}
+\end{figure*}
 
 While our unrestricted algorithm produces drawings with larger crossing resolution on average, this comes at a cost of drastically increased edge-length ratio (see Fig.~\ref{fig:cr-res-2}), which, however, is still better that the corresponding edge-length ratio of the drawings produced by the algorithm of Argyriou et al. For the latter algorithm, it seems that the forces due to the angles formed at the crossings outperform the corresponding spring forces, which try to keep the lengths of the edges short. Going back to our unrestricted algorithm, its behavior is up to a certain degree expected, mainly due to the fact that there is no control on the lengths of the edges (as it is, e.g., in the case of the force-directed algorithm of Huang et al.~\cite{DBLP:journals/vlc/HuangEHL13}, whose spring forces impose strong restrictions on the edge lengths). On the other hand, the edge-length ratio of the drawings obtained by the restricted variant of our algorithm, which does not allow the edge-length ratio to increase, is very close to the edge-length ratio of the drawings obtained by the algorithm of Huang et al. Note that the latter algorithm is the one yielding drawings that on average have the lowest edge-length ratio. Regarding the number of crossings, the restricted variant of our algorithm and the force-directed algorithm of Huang et al.\ yield drawings with comparable number of crossings. On the other hand, the two other algorithms of our experiment produce drawings that on average have more crossings; see Fig.~\ref{fig:cr-res-3}.
 
